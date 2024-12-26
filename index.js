@@ -2015,7 +2015,11 @@ function generator$1$(configOptions = {}) {
       const key = keyTmp.toLowerCase() !== "default" ? `-${keyTmp}` : "";
       return `
           ${prefix}${key} {
-            border-width: ${value};
+            border-style: solid;
+            border-top-width: ${value};
+            border-bottom-width: ${value};
+            border-left-width: ${value};
+            border-right-width: ${value};
           }
           ${prefix}-x${key} {
             border-left-width: ${value};
@@ -5679,7 +5683,7 @@ function replaceAndRemoveCSSVariables(styleString) {
   return updatedStyleString;
 }
 
-function twss(classNames, convertToJson) {
+function tws(classNames, convertToJson) {
   const cssString = generateTailwindCssString().replace(/\s\s+/g, " ");
 
   const cssClasses = generateCssClasses(cssString);
@@ -5701,4 +5705,4 @@ function twss(classNames, convertToJson) {
   return cssResult;
 }
 
-module.exports = twss;
+module.exports = tws;
