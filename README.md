@@ -24,7 +24,7 @@ yarn add tailwind-to-style
 ## Usage
 
 ```javascript
-import tws from "tailwind-to-style";
+import { tws } from "tailwind-to-style";
 
 // Convert classes to inline CSS
 const styleInline = tws(`bg-white mx-auto`);
@@ -41,7 +41,7 @@ Here is an example of how to use `tailwind-to-style` in a React application:
 
 ```javascript
 import React from 'react';
-import tws from 'tailwind-to-style';
+import { tws } from 'tailwind-to-style';
 
 const App = () => {
   return (
