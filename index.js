@@ -5615,18 +5615,18 @@ function generateTailwindCssString(options = {}) {
   return cssString;
 }
 
-function generateCssClasses(cssString) {
-  const cssClasses = {};
-  // eslint-disable-next-line
-  const regex = /([a-zA-Z0-9\-]+)\s*{\s*([^}]+)\s*}/g;
+function convertCssToObject(cssString) {
+  const cssObject = {};
+  const regex = /([a-zA-Z0-9\-\\.]+)\s*{\s*([^}]+)\s*}/g;
   let match;
-  while ((match = regex.exec(cssString)) !== null) {
-    const className = match[1].trim();
-    const cssRules = match[2].trim();
 
-    cssClasses[className] = cssRules;
+  while ((match = regex.exec(cssString)) !== null) {
+    const className = match[1].replace(/\\/g, "");
+    const cssRules = match[2].trim().replace(/\s+/g, " ");
+    cssObject[className] = cssRules;
   }
-  return cssClasses;
+
+  return cssObject;
 }
 
 function inlineStyleToJson(styleString) {
@@ -5649,7 +5649,6 @@ function inlineStyleToJson(styleString) {
 function jsonToStyle(json) {
   return Object.entries(json)
     .map(([key, value]) => {
-      // Convert camelCase to kebab-case for CSS properties
       const kebabCaseKey = key.replace(
         /[A-Z]/g,
         (letter) => `-${letter.toLowerCase()}`
@@ -5665,7 +5664,7 @@ function replaceAndRemoveCSSVariables(styleString) {
   let match;
 
   while ((match = variableRegex.exec(styleString)) !== null) {
-    const [_, variableName, value] = match;
+    const [, variableName, value] = match;
     customProperties[variableName] = value.trim();
   }
 
@@ -5694,12 +5693,12 @@ const breakpoints = {
 function tws(classNames, convertToJson) {
   const cssString = generateTailwindCssString().replace(/\s\s+/g, " ");
 
-  const cssClasses = generateCssClasses(cssString);
+  const cssObject = convertCssToObject(cssString);
 
   const classes = classNames.split(" ");
   let cssResult = classes.map((className) => {
-    if (cssClasses[className]) {
-      return cssClasses[className];
+    if (cssObject[className]) {
+      return cssObject[className];
     }
     return "";
   });
