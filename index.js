@@ -36,7 +36,6 @@ const theme = {
     "gradient-to-l": "linear-gradient(to left, var(--gradient-color-stops))",
     "gradient-to-tl":
       "linear-gradient(to top left, var(--gradient-color-stops))",
-    custom: "custom_value",
   },
   backgroundOpacity: ({ theme }) => theme("opacity"),
   backgroundPosition: {
