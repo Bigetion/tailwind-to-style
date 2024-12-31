@@ -5753,42 +5753,38 @@ function tws(classNames, convertToJson) {
   return cssResult;
 }
 
-function twsx(selectorsConfig) {
-  return Object.entries(selectorsConfig)
-    .map(([selector, [baseStyles, extensions = {}]]) => {
-      let baseCSS = `${selector} { ${tws(baseStyles)} }`;
-      let extendedCSS = "";
+function twsx(obj, parentSelector) {
+  let cssString = "";
 
-      for (const [key, value] of Object.entries(extensions)) {
-        if (breakpoints[key]) {
-          const mediaQuery = breakpoints[key];
-          extendedCSS += `
-                ${mediaQuery} {
-                  ${selector} {
-                    ${tws(value)}
-                  }
-                }
-              `;
-        } else if (key.startsWith("@media")) {
-          extendedCSS += `
-                ${key} {
-                  ${selector} {
-                    ${tws(value)}
-                  }
-                }
-              `;
-        } else {
-          extendedCSS += `
-                ${selector}${key} {
-                  ${tws(value)}
-                }
-              `;
+  for (const key in obj) {
+    const newSelector = parentSelector
+      ? key.startsWith(".") || key.startsWith(":")
+        ? `${parentSelector}${key}`
+        : `${parentSelector} ${key}`
+      : key;
+
+    if (Array.isArray(obj[key])) {
+      const [baseStyle, nestedStyles] = obj[key];
+      cssString += `${newSelector} { ${tws(baseStyle)} } `;
+
+      if (typeof nestedStyles === "object") {
+        cssString += twsx(nestedStyles, newSelector);
+      }
+    } else if (typeof obj[key] === "object" && key !== "breakpoint") {
+      cssString += twsx(obj[key], newSelector);
+    } else if (key === "breakpoint") {
+      const mediaQueries = obj[key];
+      for (const mediaKey in mediaQueries) {
+        if (breakpoints[mediaKey]) {
+          cssString += `${breakpoints[mediaKey]} { ${parentSelector} { ${tws(
+            mediaQueries[mediaKey]
+          )} } } `;
         }
       }
+    }
+  }
 
-      return `${baseCSS} ${extendedCSS}`;
-    })
-    .join(" ");
+  return cssString;
 }
 
 exports.tws = tws;
