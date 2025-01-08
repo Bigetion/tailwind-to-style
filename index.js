@@ -5710,7 +5710,6 @@ const breakpoints = {
 
 function tws(classNames, convertToJson) {
   const cssString = generateTailwindCssString().replace(/\s\s+/g, " ");
-
   const cssObject = convertCssToObject(cssString);
 
   const classes = classNames.split(" ");
@@ -5739,34 +5738,42 @@ function tws(classNames, convertToJson) {
   return cssResult;
 }
 
-function twsx(obj, parentSelector) {
+function twsx(styles, parentSelector = "") {
   let cssString = "";
 
-  for (const key in obj) {
-    const newSelector = parentSelector
-      ? key.startsWith(".") || key.startsWith(":")
-        ? `${parentSelector}${key}`
-        : `${parentSelector} ${key}`
+  for (const key in styles) {
+    const value = styles[key];
+
+    let newSelector = key.includes("&")
+      ? key.replace(/&/g, parentSelector)
+      : parentSelector
+      ? `${parentSelector} ${key}`
       : key;
 
-    if (Array.isArray(obj[key])) {
-      const [baseStyle, nestedStyles] = obj[key];
-      cssString += `${newSelector} { ${tws(baseStyle)} } `;
+    if (Array.isArray(value)) {
+      const [baseStyles, nestedRules] = value;
 
-      if (typeof nestedStyles === "object") {
-        cssString += twsx(nestedStyles, newSelector);
-      }
-    } else if (typeof obj[key] === "object" && key !== "breakpoint") {
-      cssString += twsx(obj[key], newSelector);
-    } else if (key === "breakpoint") {
-      const mediaQueries = obj[key];
-      for (const mediaKey in mediaQueries) {
-        if (breakpoints[mediaKey]) {
-          cssString += `${breakpoints[mediaKey]} { ${parentSelector} { ${tws(
-            mediaQueries[mediaKey]
-          )} } } `;
+      if (breakpoints[key]) {
+        newSelector = newSelector.replace(new RegExp(`\\b${key}\\b`, "g"), "");
+        cssString += `${breakpoints[key]} { ${newSelector} { ${tws(
+          baseStyles
+        )}} ${twsx(nestedRules, newSelector)}}`;
+      } else {
+        cssString += `${newSelector} { ${tws(baseStyles)} } `;
+
+        if (typeof nestedRules === "object") {
+          cssString += twsx(nestedRules, newSelector);
         }
       }
+    } else if (typeof value === "object" && !breakpoints[key]) {
+      cssString += twsx(value, newSelector);
+    } else if (breakpoints[key]) {
+      newSelector = newSelector.replace(new RegExp(`\\b${key}\\b`, "g"), "");
+      cssString += `
+        ${breakpoints[key]} { ${newSelector} { ${tws(value)} }}
+      `;
+    } else {
+      cssString += `${newSelector} { ${tws(value)} } `;
     }
   }
 
