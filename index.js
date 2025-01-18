@@ -5714,22 +5714,27 @@ function tws(classNames, convertToJson) {
   const cssString = generateTailwindCssString().replace(/\s\s+/g, " ");
   const cssObject = convertCssToObject(cssString);
 
-  const classes = classNames.split(" ");
+  const classes = classNames.match(/[\w-]+(?:\[[^\]]+\])?|\w+/g);
+
   let cssResult = classes.map((className) => {
     if (cssObject[className]) {
       return cssObject[className];
     } else if (className.includes("[")) {
-      const customValue = className.match(/\[([^\]]+)\]/)[1];
-      const baseKey = className.split("[")[0];
-      if (cssObject[`${baseKey}custom`]) {
-        return cssObject[`${baseKey}custom`].replace(
-          /custom_value/g,
-          customValue
-        );
+      const match = className.match(/\[([^\]]+)\]/);
+      if (match) {
+        const customValue = match[1];
+        const baseKey = className.split("[")[0];
+        if (cssObject[`${baseKey}custom`]) {
+          return cssObject[`${baseKey}custom`].replace(
+            /custom_value/g,
+            customValue
+          );
+        }
       }
     }
     return "";
   });
+
   cssResult = replaceAndRemoveCSSVariables(cssResult.join(""));
   cssResult = inlineStyleToJson(cssResult);
 
