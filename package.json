@@ -1,6 +1,6 @@
 {
   "name": "tailwind-to-style",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "description": "Convert tailwind classes to inline style",
   "main": "index.js",
   "scripts": {
