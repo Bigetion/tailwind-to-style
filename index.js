@@ -5711,6 +5711,16 @@ const breakpoints = {
 };
 
 function tws(classNames, convertToJson) {
+  if (
+    [
+      !classNames,
+      typeof classNames !== "string",
+      classNames.trim() === "",
+    ].includes(true)
+  ) {
+    return convertToJson ? {} : "";
+  }
+
   const cssString = generateTailwindCssString().replace(/\s\s+/g, " ");
   const cssObject = convertCssToObject(cssString);
 
