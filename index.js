@@ -5724,7 +5724,7 @@ function tws(classNames, convertToJson) {
   const cssString = generateTailwindCssString().replace(/\s\s+/g, " ");
   const cssObject = convertCssToObject(cssString);
 
-  const classes = classNames.match(/[\w-]+(?:\[[^\]]+\])?|\w+/g);
+  const classes = classNames.match(/[\w-]+\[[^\]]+\]|[\w-]+\.\d+|[\w-]+/g);
 
   let cssResult = classes.map((className) => {
     if (cssObject[className]) {
