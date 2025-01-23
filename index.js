@@ -5710,6 +5710,9 @@ const breakpoints = {
   "2xl": "@media (min-width: 1536px)",
 };
 
+const twString = generateTailwindCssString().replace(/\s\s+/g, " ");
+const cssObject = convertCssToObject(twString);
+
 function tws(classNames, convertToJson) {
   if (
     [
@@ -5720,9 +5723,6 @@ function tws(classNames, convertToJson) {
   ) {
     return convertToJson ? {} : "";
   }
-
-  const cssString = generateTailwindCssString().replace(/\s\s+/g, " ");
-  const cssObject = convertCssToObject(cssString);
 
   const classes = classNames.match(/[\w-]+\[[^\]]+\]|[\w-]+\.\d+|[\w-]+/g);
 
