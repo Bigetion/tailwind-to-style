@@ -5678,28 +5678,62 @@ function jsonToStyle(json) {
     .join(" ");
 }
 
-function replaceAndRemoveCSSVariables(styleString) {
-  const customProperties = {};
-  const variableRegex = /--([\w-]+):\s*([^;]+);/g;
-  let match;
+function separateAndResolveCSS(arr) {
+  const cssProperties = [];
+  const cssVariables = [];
+  const variableMap = {};
 
-  while ((match = variableRegex.exec(styleString)) !== null) {
-    const [, variableName, value] = match;
-    customProperties[variableName] = value.trim();
+  arr.forEach((item) => {
+    const declarations = item
+      .split(";")
+      .map((decl) => decl.trim())
+      .filter((decl) => decl);
+
+    declarations.forEach((declaration) => {
+      if (declaration.startsWith("--")) {
+        const [key, value] = declaration.split(":").map((part) => part.trim());
+        variableMap[key] = value;
+        cssVariables.push(declaration + ";");
+      } else {
+        cssProperties.push(declaration + ";");
+      }
+    });
+  });
+
+  function resolveVariable(value) {
+    return value.replace(/var\((--[\w-]+)\)/g, (_, varName) => {
+      if (variableMap[varName]) {
+        return resolveVariable(variableMap[varName]);
+      }
+      return `var(${varName})`;
+    });
   }
 
-  let updatedStyleString = styleString.replace(
-    /var\(--([\w-]+)\)/g,
-    (_, variableName) => {
-      return customProperties[variableName] || `var(--${variableName})`;
-    }
+  const resolvedVariables = cssVariables.map((variable) => {
+    const [key, value] = variable.split(":").map((part) => part.trim());
+    const resolvedValue = resolveVariable(value.slice(0, -1));
+    return `${key}: ${resolvedValue};`;
+  });
+
+  const uniqueVariables = [
+    ...new Map(
+      resolvedVariables.reverse().map((variable) => {
+        const key = variable.split(":")[0].trim();
+        return [key, variable];
+      })
+    ).values(),
+  ].reverse();
+
+  uniqueVariables.forEach((variable) => {
+    const [key, value] = variable.split(":").map((part) => part.trim());
+    variableMap[key] = value.slice(0, -1);
+  });
+
+  const resolvedCSSProperties = cssProperties.map((property) =>
+    resolveVariable(property)
   );
 
-  updatedStyleString = updatedStyleString
-    .replace(/--[\w-]+:\s*[^;]+;/g, "")
-    .trim();
-
-  return updatedStyleString;
+  return resolvedCSSProperties;
 }
 
 const breakpoints = {
@@ -5745,8 +5779,8 @@ function tws(classNames, convertToJson) {
     return "";
   });
 
-  cssResult = replaceAndRemoveCSSVariables(cssResult.join(""));
-  cssResult = inlineStyleToJson(cssResult);
+  cssResult = separateAndResolveCSS(cssResult);
+  cssResult = inlineStyleToJson(cssResult.join(""));
 
   if (!convertToJson) {
     cssResult = jsonToStyle(cssResult);
