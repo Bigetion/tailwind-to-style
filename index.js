@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 const theme = {
   accentColor: ({ theme }) => ({
@@ -1344,7 +1344,7 @@ function generateCssString(getCssString = () => {}) {
   return cssString;
 }
 
-function generator$2l(configOptions = {}) {
+function generator$2q(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}accent`;
@@ -1375,13 +1375,12 @@ function generator$2l(configOptions = {}) {
         `
       );
       return cssString;
-    }
-  );
+    });
 
   return responsiveCssString;
 }
 
-function generator$2k(configOptions = {}) {
+function generator$2p(configOptions = {}) {
   const { prefix } = configOptions;
 
   const responsiveCssString = generateCssString(() => {
@@ -1419,7 +1418,7 @@ function generator$2k(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$2j(configOptions = {}) {
+function generator$2o(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}content`;
@@ -1448,7 +1447,7 @@ function generator$2j(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$2i(configOptions = {}) {
+function generator$2n(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}items`;
@@ -1476,7 +1475,7 @@ function generator$2i(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$2h(configOptions = {}) {
+function generator$2m(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}self`;
@@ -1504,7 +1503,7 @@ function generator$2h(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$2g(configOptions = {}) {
+function generator$2l(configOptions = {}) {
   const { prefix } = configOptions;
 
   const propertyOptions = ["auto", "none"];
@@ -1524,7 +1523,7 @@ function generator$2g(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$2f(configOptions = {}) {
+function generator$2k(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}aspect`;
@@ -1551,7 +1550,7 @@ function generator$2f(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$2e(configOptions = {}) {
+function generator$2j(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}bg`;
@@ -1573,7 +1572,7 @@ function generator$2e(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$2d(configOptions = {}) {
+function generator$2i(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}bg-clip`;
@@ -1601,7 +1600,7 @@ function generator$2d(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$2c(configOptions = {}) {
+function generator$2h(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}bg`;
@@ -1631,7 +1630,7 @@ function generator$2c(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$2b(configOptions = {}) {
+function generator$2g(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}bg`;
@@ -1653,7 +1652,7 @@ function generator$2b(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$2a(configOptions = {}) {
+function generator$2f(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}bg-opacity`;
@@ -1675,7 +1674,7 @@ function generator$2a(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$29(configOptions = {}) {
+function generator$2e(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}bg-origin`;
@@ -1702,7 +1701,7 @@ function generator$29(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$28(configOptions = {}) {
+function generator$2d(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}bg`;
@@ -1724,7 +1723,7 @@ function generator$28(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$27(configOptions = {}) {
+function generator$2c(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}bg`;
@@ -1753,7 +1752,7 @@ function generator$27(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$26(configOptions = {}) {
+function generator$2b(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}bg`;
@@ -1775,7 +1774,7 @@ function generator$26(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$25(configOptions = {}) {
+function generator$2a(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}blur`;
@@ -1801,7 +1800,7 @@ function generator$25(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$24(configOptions = {}) {
+function generator$29(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}border`;
@@ -1823,7 +1822,7 @@ function generator$24(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$23(configOptions = {}) {
+function generator$28(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}border`;
@@ -1898,7 +1897,7 @@ function generator$23(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$22(configOptions = {}) {
+function generator$27(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}border-opacity`;
@@ -1920,7 +1919,7 @@ function generator$22(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$21(configOptions = {}) {
+function generator$26(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}rounded`;
@@ -1990,7 +1989,7 @@ function generator$21(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$20(configOptions = {}) {
+function generator$25(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}border-spacing`;
@@ -2020,7 +2019,7 @@ function generator$20(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1$(configOptions = {}) {
+function generator$24(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}border`;
@@ -2042,7 +2041,7 @@ function generator$1$(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1_(configOptions = {}) {
+function generator$23(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}border`;
@@ -2094,7 +2093,7 @@ function generator$1_(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1Z(configOptions = {}) {
+function generator$22(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}box-decoration`;
@@ -2117,7 +2116,7 @@ function generator$1Z(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1Y(configOptions = {}) {
+function generator$21(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}shadow`;
@@ -2154,13 +2153,12 @@ function generator$1Y(configOptions = {}) {
         return str;
       });
       return cssString;
-    }
-  );
+    });
 
   return responsiveCssString;
 }
 
-function generator$1X(configOptions = {}) {
+function generator$20(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}box`;
@@ -2185,7 +2183,7 @@ function generator$1X(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1W(configOptions = {}) {
+function generator$1$(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}brightness`;
@@ -2211,7 +2209,7 @@ function generator$1W(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1V(configOptions = {}) {
+function generator$1_(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}caption`;
@@ -2233,7 +2231,7 @@ function generator$1V(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1U(configOptions = {}) {
+function generator$1Z(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}caret`;
@@ -2264,13 +2262,12 @@ function generator$1U(configOptions = {}) {
         `
       );
       return cssString;
-    }
-  );
+    });
 
   return responsiveCssString;
 }
 
-function generator$1T(configOptions = {}) {
+function generator$1Y(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}clear`;
@@ -2292,7 +2289,7 @@ function generator$1T(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1S(configOptions = {}) {
+function generator$1X(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}contrast`;
@@ -2318,7 +2315,7 @@ function generator$1S(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1R(configOptions = {}) {
+function generator$1W(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}cursor`;
@@ -2377,7 +2374,7 @@ function generator$1R(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1Q(configOptions = {}) {
+function generator$1V(configOptions = {}) {
   const { prefix } = configOptions;
 
   const propertyOptions = [
@@ -2417,7 +2414,123 @@ function generator$1Q(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1P(configOptions = {}) {
+function generator$1U(configOptions = {}) {
+  const { prefix: globalPrefix, theme = {} } = configOptions;
+
+  const prefix = `${globalPrefix}divide`;
+
+  const { divideColor = {} } = theme;
+
+  const responsiveCssString = generateCssString(({ getCssByColors }) => {
+    const cssString = getCssByColors(divideColor, (key, value, rgbValue) => {
+      let rgbPropertyValue = "";
+      if (rgbValue) {
+        rgbPropertyValue = `border-color: rgba(${rgbValue}, var(--divide-opacity));`;
+      }
+      return `
+            ${prefix}-${key} {
+              --divide-opacity: 1;
+              border-color: ${value};${rgbPropertyValue}
+            }
+          `;
+    });
+    return cssString;
+  });
+
+  return responsiveCssString;
+}
+
+function generator$1T(configOptions = {}) {
+  const { prefix: globalPrefix, theme = {} } = configOptions;
+
+  const prefix = `${globalPrefix}divide-opacity`;
+
+  const { divideOpacity = {} } = theme;
+
+  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
+    const cssString = getCssByOptions(
+      divideOpacity,
+      (key, value) => `
+          ${prefix}-${key} {
+            --divide-opacity: ${value};
+          }
+        `
+    );
+    return cssString;
+  });
+
+  return responsiveCssString;
+}
+
+function generator$1S(configOptions = {}) {
+  const { prefix: globalPrefix } = configOptions;
+
+  const prefix = `${globalPrefix}divide`;
+
+  const propertyOptions = ["solid", "dashed", "dotted", "double", "none"];
+
+  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
+    const cssString = getCssByOptions(
+      propertyOptions,
+      (key, value) => `
+          ${prefix}-${key} {
+            border-style: ${value};
+          }
+        `
+    );
+    return cssString;
+  });
+
+  return responsiveCssString;
+}
+
+function generator$1R(configOptions = {}) {
+  const { prefix: globalPrefix, theme = {} } = configOptions;
+
+  const prefix = `${globalPrefix}divide`;
+
+  const { divideWidth = {} } = theme;
+
+  const responsiveCssString = generateCssString(() => {
+    const generateDivideWidth = (position, keyTmp, value) => {
+      let dividePosition = "x";
+      let borderPosition1 = "left";
+      let borderPosition2 = "right";
+      if (position === "y") {
+        dividePosition = "y";
+        borderPosition1 = "top";
+        borderPosition2 = "bottom";
+      }
+      const key = keyTmp.toLowerCase() !== "default" ? `-${keyTmp}` : "";
+      return `
+          ${prefix}-${dividePosition}${key} {
+            --divide-${dividePosition}-reverse: 0;
+            border-${borderPosition1}-width: calc(${value} * calc(1 - var(--divide-${dividePosition}-reverse)));
+            border-${borderPosition2}-width: calc(${value} * var(--divide-${dividePosition}-reverse));
+          }
+        `;
+    };
+
+    let cssString = "";
+    Object.entries(divideWidth).forEach(([key, value]) => {
+      cssString += generateDivideWidth("y", key, value);
+      cssString += generateDivideWidth("x", key, value);
+    });
+    cssString += `
+        ${prefix}-y-reverse$ {
+          --divide-y-reverse: 1;
+        }
+        ${prefix}-x-reverse {
+          --divide-x-reverse: 1;
+        }
+      `;
+    return cssString;
+  });
+
+  return responsiveCssString;
+}
+
+function generator$1Q(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}drop-shadow`;
@@ -2440,7 +2553,7 @@ function generator$1P(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1O(configOptions = {}) {
+function generator$1P(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}fill`;
@@ -2461,9 +2574,9 @@ function generator$1O(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1N({ prefix }) {
+function generator$1O({ prefix }) {
   return `    
-  .${prefix}filter {
+  ${prefix}filter {
     --blur: ;
     --brightness: ;
     --contrast: ;
@@ -2487,14 +2600,14 @@ function generator$1N({ prefix }) {
     -webkit-backdrop-filter: var(--backdrop-blur) var(--backdrop-brightness) var(--backdrop-contrast) var(--backdrop-grayscale) var(--backdrop-hue-rotate) var(--backdrop-invert) var(--backdrop-opacity) var(--backdrop-saturate) var(--backdrop-sepia);
     backdrop-filter: var(--backdrop-blur) var(--backdrop-brightness) var(--backdrop-contrast) var(--backdrop-grayscale) var(--backdrop-hue-rotate) var(--backdrop-invert) var(--backdrop-opacity) var(--backdrop-saturate) var(--backdrop-sepia);
   }
-  .${prefix}filter-none {
+  ${prefix}filter-none {
     filter: none;
     backdrop-filter: none;
   }
 `;
 }
 
-function generator$1M(configOptions = {}) {
+function generator$1N(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}flex`;
@@ -2516,7 +2629,7 @@ function generator$1M(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1L(configOptions = {}) {
+function generator$1M(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}basis`;
@@ -2538,7 +2651,7 @@ function generator$1L(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1K(configOptions = {}) {
+function generator$1L(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}flex`;
@@ -2565,7 +2678,7 @@ function generator$1K(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1J(configOptions = {}) {
+function generator$1K(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}grow`;
@@ -2587,7 +2700,7 @@ function generator$1J(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1I(configOptions = {}) {
+function generator$1J(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}shrink`;
@@ -2609,7 +2722,7 @@ function generator$1I(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1H(configOptions = {}) {
+function generator$1I(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}flex`;
@@ -2636,7 +2749,7 @@ function generator$1H(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1G(configOptions = {}) {
+function generator$1H(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}float`;
@@ -2658,7 +2771,7 @@ function generator$1G(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1F(configOptions = {}) {
+function generator$1G(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}text`;
@@ -2680,7 +2793,7 @@ function generator$1F(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1E(configOptions = {}) {
+function generator$1F(configOptions = {}) {
   const { prefix } = configOptions;
 
   const responsiveCssString = generateCssString(() => {
@@ -2699,7 +2812,7 @@ function generator$1E(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1D(configOptions = {}) {
+function generator$1E(configOptions = {}) {
   const { prefix } = configOptions;
 
   const propertyOptions = {
@@ -2722,7 +2835,7 @@ function generator$1D(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1C(configOptions = {}) {
+function generator$1D(configOptions = {}) {
   const { prefix } = configOptions;
 
   const propertyOptions = {
@@ -2752,7 +2865,7 @@ function generator$1C(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1B(configOptions = {}) {
+function generator$1C(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}font`;
@@ -2774,7 +2887,7 @@ function generator$1B(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1A(configOptions = {}) {
+function generator$1B(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}gap`;
@@ -2802,7 +2915,7 @@ function generator$1A(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1z(configOptions = {}) {
+function generator$1A(configOptions = {}) {
   const { prefix, theme = {} } = configOptions;
 
   const { gradientColorStops = {} } = theme;
@@ -2841,7 +2954,7 @@ function generator$1z(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1y(configOptions = {}) {
+function generator$1z(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}grayscale`;
@@ -2867,7 +2980,7 @@ function generator$1y(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1x(configOptions = {}) {
+function generator$1y(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   let prefix = `${globalPrefix}auto-cols`;
@@ -2889,7 +3002,7 @@ function generator$1x(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1w(configOptions = {}) {
+function generator$1x(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}grid-flow`;
@@ -2916,7 +3029,7 @@ function generator$1w(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1v(configOptions = {}) {
+function generator$1w(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   let prefix = `${globalPrefix}auto-rows`;
@@ -2938,7 +3051,7 @@ function generator$1v(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1u(configOptions = {}) {
+function generator$1v(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   let prefix = `${globalPrefix}col`;
@@ -2960,7 +3073,7 @@ function generator$1u(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1t(configOptions = {}) {
+function generator$1u(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   let prefix = `${globalPrefix}col-end`;
@@ -2982,7 +3095,7 @@ function generator$1t(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1s(configOptions = {}) {
+function generator$1t(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   let prefix = `${globalPrefix}col-start`;
@@ -3004,7 +3117,7 @@ function generator$1s(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1r(configOptions = {}) {
+function generator$1s(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   let prefix = `${globalPrefix}row`;
@@ -3026,7 +3139,7 @@ function generator$1r(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1q(configOptions = {}) {
+function generator$1r(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   let prefix = `${globalPrefix}row-end`;
@@ -3048,7 +3161,7 @@ function generator$1q(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1p(configOptions = {}) {
+function generator$1q(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   let prefix = `${globalPrefix}row-start`;
@@ -3070,7 +3183,7 @@ function generator$1p(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1o(configOptions = {}) {
+function generator$1p(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   let prefix = `${globalPrefix}grid-cols`;
@@ -3094,7 +3207,7 @@ function generator$1o(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1n(configOptions = {}) {
+function generator$1o(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   let prefix = `${globalPrefix}grid-rows`;
@@ -3118,7 +3231,7 @@ function generator$1n(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1m(configOptions = {}) {
+function generator$1n(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}h`;
@@ -3140,7 +3253,7 @@ function generator$1m(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1l(configOptions = {}) {
+function generator$1m(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const { hueRotate = {} } = theme;
@@ -3169,7 +3282,7 @@ function generator$1l(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1k(configOptions = {}) {
+function generator$1l(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}hyphens`;
@@ -3192,7 +3305,7 @@ function generator$1k(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1j(configOptions = {}) {
+function generator$1k(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const { inset = {} } = theme;
@@ -3244,7 +3357,7 @@ function generator$1j(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1i(configOptions = {}) {
+function generator$1j(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}invert`;
@@ -3270,7 +3383,7 @@ function generator$1i(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1h(configOptions = {}) {
+function generator$1i(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}`;
@@ -3295,7 +3408,7 @@ function generator$1h(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1g(configOptions = {}) {
+function generator$1h(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}justify`;
@@ -3324,7 +3437,7 @@ function generator$1g(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1f(configOptions = {}) {
+function generator$1g(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}justify-items`;
@@ -3346,7 +3459,7 @@ function generator$1f(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1e(configOptions = {}) {
+function generator$1f(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}justify-self`;
@@ -3368,7 +3481,7 @@ function generator$1e(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1d(configOptions = {}) {
+function generator$1e(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}tracking`;
@@ -3390,7 +3503,7 @@ function generator$1d(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1c(configOptions = {}) {
+function generator$1d(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}line-clamp`;
@@ -3415,7 +3528,7 @@ function generator$1c(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1b(configOptions = {}) {
+function generator$1c(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}leading`;
@@ -3437,7 +3550,7 @@ function generator$1b(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$1a(configOptions = {}) {
+function generator$1b(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}list`;
@@ -3459,7 +3572,7 @@ function generator$1a(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$19(configOptions = {}) {
+function generator$1a(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}list`;
@@ -3481,7 +3594,7 @@ function generator$19(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$18(configOptions = {}) {
+function generator$19(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const { margin = {} } = theme;
@@ -3536,7 +3649,7 @@ function generator$18(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$17(configOptions = {}) {
+function generator$18(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}max-h`;
@@ -3558,7 +3671,7 @@ function generator$17(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$16(configOptions = {}) {
+function generator$17(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}max-w`;
@@ -3580,7 +3693,7 @@ function generator$16(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$15(configOptions = {}) {
+function generator$16(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}min-h`;
@@ -3602,7 +3715,7 @@ function generator$15(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$14(configOptions = {}) {
+function generator$15(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}min-w`;
@@ -3624,7 +3737,7 @@ function generator$14(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$13(configOptions = {}) {
+function generator$14(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}mix-blend`;
@@ -3672,7 +3785,7 @@ function generator$13(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$12(configOptions = {}) {
+function generator$13(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}object`;
@@ -3694,7 +3807,7 @@ function generator$12(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$11(configOptions = {}) {
+function generator$12(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}object`;
@@ -3726,7 +3839,7 @@ function generator$11(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$10(configOptions = {}) {
+function generator$11(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}opacity`;
@@ -3752,7 +3865,7 @@ function generator$10(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$$(configOptions = {}) {
+function generator$10(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}order`;
@@ -3774,7 +3887,7 @@ function generator$$(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$_(configOptions = {}) {
+function generator$$(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}outline`;
@@ -3808,7 +3921,7 @@ function generator$_(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$Z(configOptions = {}) {
+function generator$_(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}outline-offset`;
@@ -3829,7 +3942,7 @@ function generator$Z(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$Y(configOptions = {}) {
+function generator$Z(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}outline-opacity`;
@@ -3851,7 +3964,7 @@ function generator$Y(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$X(configOptions = {}) {
+function generator$Y(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}outline`;
@@ -3881,7 +3994,7 @@ function generator$X(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$W(configOptions = {}) {
+function generator$X(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}outline`;
@@ -3902,7 +4015,7 @@ function generator$W(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$V(configOptions = {}) {
+function generator$W(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}overflow`;
@@ -3938,7 +4051,7 @@ function generator$V(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$U(configOptions = {}) {
+function generator$V(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}overscroll`;
@@ -3966,7 +4079,7 @@ function generator$U(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$T(configOptions = {}) {
+function generator$U(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}p`;
@@ -4014,7 +4127,7 @@ function generator$T(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$S(configOptions = {}) {
+function generator$T(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}place-content`;
@@ -4044,7 +4157,7 @@ function generator$S(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$R(configOptions = {}) {
+function generator$S(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}place-items`;
@@ -4066,7 +4179,7 @@ function generator$R(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$Q(configOptions = {}) {
+function generator$R(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}place-self`;
@@ -4088,7 +4201,7 @@ function generator$Q(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$P(configOptions = {}) {
+function generator$Q(configOptions = {}) {
   const { prefix } = configOptions;
 
   const responsiveCssString = generateCssString(() => {
@@ -4105,7 +4218,7 @@ function generator$P(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$O(configOptions = {}) {
+function generator$P(configOptions = {}) {
   const { prefix } = configOptions;
 
   const propertyOptions = ["static", "fixed", "absolute", "relative", "sticky"];
@@ -4125,7 +4238,7 @@ function generator$O(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$N(configOptions = {}) {
+function generator$O(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}resize`;
@@ -4152,7 +4265,7 @@ function generator$N(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$M(configOptions = {}) {
+function generator$N(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}ring`;
@@ -4180,7 +4293,7 @@ function generator$M(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$L(configOptions = {}) {
+function generator$M(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}ring-offset`;
@@ -4202,7 +4315,7 @@ function generator$L(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$K(configOptions = {}) {
+function generator$L(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}ring-offset`;
@@ -4224,7 +4337,7 @@ function generator$K(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$J(configOptions = {}) {
+function generator$K(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}ring-opacity`;
@@ -4246,7 +4359,7 @@ function generator$J(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$I(configOptions = {}) {
+function generator$J(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}ring`;
@@ -4279,7 +4392,7 @@ function generator$I(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$H(configOptions = {}) {
+function generator$I(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}saturate`;
@@ -4305,7 +4418,7 @@ function generator$H(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$G(configOptions = {}) {
+function generator$H(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const { rotate = {} } = theme;
@@ -4324,7 +4437,7 @@ function generator$G(configOptions = {}) {
       }
       return `
           ${prefix}-${key} {
-            --transform-rotate: ${value} !important;
+            --transform-rotate: ${value};
           }
         `;
     });
@@ -4334,7 +4447,7 @@ function generator$G(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$F(configOptions = {}) {
+function generator$G(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}scale`;
@@ -4346,14 +4459,14 @@ function generator$F(configOptions = {}) {
       scale,
       (key, value) => `
           ${prefix}-${key} {
-            --transform-scale-x: ${value} !important;
-            --transform-scale-y: ${value} !important;
+            --transform-scale-x: ${value};
+            --transform-scale-y: ${value};
           }
           ${prefix}-x-${key} {
-            --transform-scale-x: ${value} !important;
+            --transform-scale-x: ${value};
           }
           ${prefix}-y-${key} {
-            --transform-scale-y: ${value} !important;
+            --transform-scale-y: ${value};
           }
         `
     );
@@ -4363,7 +4476,7 @@ function generator$F(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$E(configOptions = {}) {
+function generator$F(configOptions = {}) {
   const { prefix } = configOptions;
 
   const propertyOptions = ["auto", "smooth"];
@@ -4383,7 +4496,7 @@ function generator$E(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$D(configOptions = {}) {
+function generator$E(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const { scrollMargin = {} } = theme;
@@ -4438,7 +4551,7 @@ function generator$D(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$C(configOptions = {}) {
+function generator$D(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const { scrollPadding = {} } = theme;
@@ -4493,7 +4606,7 @@ function generator$C(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$B(configOptions = {}) {
+function generator$C(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}snap`;
@@ -4520,7 +4633,7 @@ function generator$B(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$A(configOptions = {}) {
+function generator$B(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}snap`;
@@ -4542,7 +4655,7 @@ function generator$A(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$z(configOptions = {}) {
+function generator$A(configOptions = {}) {
   const { prefix: globalPrefix } = configOptions;
 
   const prefix = `${globalPrefix}snap`;
@@ -4578,7 +4691,7 @@ function generator$z(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$y(configOptions = {}) {
+function generator$z(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}sepia`;
@@ -4604,7 +4717,7 @@ function generator$y(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$x(configOptions = {}) {
+function generator$y(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}size`;
@@ -4627,7 +4740,7 @@ function generator$x(configOptions = {}) {
   return responsiveCssString;
 }
 
-function generator$w(configOptions = {}) {
+function generator$x(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const { skew = {} } = theme;
@@ -4646,13 +4759,62 @@ function generator$w(configOptions = {}) {
       }
       return `
           ${prefix}-x-${key} {
-            --transform-skew-x: ${value} !important;
+            --transform-skew-x: ${value};
           }
           ${prefix}-y-${key} {
-            --transform-skew-y: ${value} !important;
+            --transform-skew-y: ${value};
           }
         `;
     });
+    return cssString;
+  });
+
+  return responsiveCssString;
+}
+
+function generator$w(configOptions = {}) {
+  const { prefix: globalPrefix, theme = {} } = configOptions;
+
+  const prefix = `${globalPrefix}space`;
+
+  const { space = {} } = theme;
+
+  const responsiveCssString = generateCssString(() => {
+    const generateSpace = (position, key, value) => {
+      let spacePosition = "x";
+      let margin1 = "left";
+      let margin2 = "right";
+      if (position === "y") {
+        spacePosition = "y";
+        margin1 = "top";
+        margin2 = "bottom";
+      }
+      return `
+        ${prefix}-${spacePosition}-${key} {
+          --space-${spacePosition}-reverse: 0;
+          margin-${margin1}: calc(${value} * calc(1 - var(--space-${spacePosition}-reverse)));
+          margin-${margin2}: calc(${value} * var(--space-${spacePosition}-reverse));
+        }
+        -${prefix}-${spacePosition}-${key} {
+          --space-${spacePosition}-reverse: 0;
+          margin-${margin1}: calc(-${value} * calc(1 - var(--space-${spacePosition}-reverse)));
+          margin-${margin2}: calc(-${value} * var(--space-${spacePosition}-reverse));
+        }
+      `;
+    };
+    let cssString = "";
+    Object.entries(space).forEach(([space, spaceValue]) => {
+      cssString += generateSpace("y", space, spaceValue);
+      cssString += generateSpace("x", space, spaceValue);
+    });
+    cssString += `
+      ${prefix}-x-reverse {
+        --space-x-reverse: 1;
+      }
+      ${prefix}-y-reverse {
+        --space-y-reverse: 1;
+      }
+    `;
     return cssString;
   });
 
@@ -4832,8 +4994,7 @@ function generator$p(configOptions = {}) {
         `
       );
       return cssString;
-    }
-  );
+    });
 
   return responsiveCssString;
 }
@@ -5185,7 +5346,7 @@ function generator$b(configOptions = {}) {
 
 function generator$a({ prefix }) {
   return `    
-  .${prefix}transform {
+  ${prefix}transform {
     --transform-translate-x: 0;
     --transform-translate-y: 0;
     --transform-rotate: 0;
@@ -5195,7 +5356,7 @@ function generator$a({ prefix }) {
     --transform-scale-y: 1;
     transform: translateX(var(--transform-translate-x)) translateY(var(--transform-translate-y)) rotate(var(--transform-rotate)) skewX(var(--transform-skew-x)) skewY(var(--transform-skew-y)) scaleX(var(--transform-scale-x)) scaleY(var(--transform-scale-y));
   }
-  .${prefix}transform-none {
+  ${prefix}transform-none {
     transform: none;
   }
 `;
@@ -5252,10 +5413,10 @@ function generator$8(configOptions = {}) {
       }
       return `
           ${prefix}-x-${key} {
-            --transform-translate-x: ${value} !important;
+            --transform-translate-x: ${value};
           }
           ${prefix}-y-${key} {
-            --transform-translate-y: ${value} !important;
+            --transform-translate-y: ${value};
           }
         `;
     });
@@ -5475,124 +5636,129 @@ function generator(configOptions = {}) {
 }
 
 const plugins = {
-  accentColor: generator$2l,
-  accessibility: generator$2k,
-  alignContent: generator$2j,
-  alignItems: generator$2i,
-  alignSelf: generator$2h,
-  appearance: generator$2g,
-  aspect: generator$2f,
-  backgroundAttachment: generator$2e,
-  backgroundClip: generator$2d,
-  backgroundColor: generator$2c,
-  backgroundImage: generator$2b,
-  backgroundOpacity: generator$2a,
-  backgroundOrigin: generator$29,
-  backgroundPosition: generator$28,
-  backgroundRepeat: generator$27,
-  backgroundSize: generator$26,
-  blur: generator$25,
-  borderCollapse: generator$24,
-  borderColor: generator$23,
-  borderOpacity: generator$22,
-  borderRadius: generator$21,
-  borderSpacing: generator$20,
-  borderStyle: generator$1$,
-  borderWidth: generator$1_,
-  boxDecorationBreak: generator$1Z,
-  boxShadow: generator$1Y,
-  boxSizing: generator$1X,
-  brightness: generator$1W,
-  captionSide: generator$1V,
-  caretColor: generator$1U,
-  clear: generator$1T,
-  contrast: generator$1S,
-  cursor: generator$1R,
-  display: generator$1Q,
-  dropShadow: generator$1P,
-  fill: generator$1O,
-  filter: generator$1N,
-  flex: generator$1M,
-  flexBasis: generator$1L,
-  flexDirection: generator$1K,
-  flexGrow: generator$1J,
-  flexShrink: generator$1I,
-  flexWrap: generator$1H,
-  float: generator$1G,
-  fontSize: generator$1F,
-  fontSmoothing: generator$1E,
-  fontStyle: generator$1D,
-  fontVariantNumeric: generator$1C,
-  fontWeight: generator$1B,
-  gap: generator$1A,
-  gradientColorStops: generator$1z,
-  grayscale: generator$1y,
-  gridAutoColumns: generator$1x,
-  gridAutoFlow: generator$1w,
-  gridAutoRows: generator$1v,
-  gridColumn: generator$1u,
-  gridColumnEnd: generator$1t,
-  gridColumnStart: generator$1s,
-  gridRow: generator$1r,
-  gridRowEnd: generator$1q,
-  gridRowStart: generator$1p,
-  gridTemplateColumns: generator$1o,
-  gridTemplateRows: generator$1n,
-  height: generator$1m,
-  hueRotate: generator$1l,
-  hyphens: generator$1k,
-  inset: generator$1j,
-  invert: generator$1i,
-  isolation: generator$1h,
-  justifyContent: generator$1g,
-  justifyItems: generator$1f,
-  justifySelf: generator$1e,
-  letterSpacing: generator$1d,
-  lineClamp: generator$1c,
-  lineHeight: generator$1b,
-  listStylePosition: generator$1a,
-  listStyleType: generator$19,
-  margin: generator$18,
-  maxHeight: generator$17,
-  maxWidth: generator$16,
-  minHeight: generator$15,
-  minWidth: generator$14,
-  objectFit: generator$12,
-  mixBlendMode: generator$13,
-  objectPosition: generator$11,
-  opacity: generator$10,
-  order: generator$$,
-  outlineColor: generator$_,
-  outlineOffset: generator$Z,
-  outlineOpacity: generator$Y,
-  outlineStyle: generator$X,
-  outlineWidth: generator$W,
-  overflow: generator$V,
-  overscrollBehavior: generator$U,
-  padding: generator$T,
-  placeContent: generator$S,
-  placeItems: generator$R,
-  placeSelf: generator$Q,
-  pointerEvents: generator$P,
-  position: generator$O,
-  resize: generator$N,
-  ringColor: generator$M,
-  ringOffsetColor: generator$L,
-  ringOffsetWidth: generator$K,
-  ringOpacity: generator$J,
-  ringWidth: generator$I,
-  rotate: generator$G,
-  saturate: generator$H,
-  scale: generator$F,
-  scrollBehavior: generator$E,
-  scrollMargin: generator$D,
-  scrollPadding: generator$C,
-  scrollSnapAlign: generator$B,
-  scrollSnapStop: generator$A,
-  scrollSnapType: generator$z,
-  sepia: generator$y,
-  size: generator$x,
-  skew: generator$w,
+  accentColor: generator$2q,
+  accessibility: generator$2p,
+  alignContent: generator$2o,
+  alignItems: generator$2n,
+  alignSelf: generator$2m,
+  appearance: generator$2l,
+  aspect: generator$2k,
+  backgroundAttachment: generator$2j,
+  backgroundClip: generator$2i,
+  backgroundColor: generator$2h,
+  backgroundImage: generator$2g,
+  backgroundOpacity: generator$2f,
+  backgroundOrigin: generator$2e,
+  backgroundPosition: generator$2d,
+  backgroundRepeat: generator$2c,
+  backgroundSize: generator$2b,
+  blur: generator$2a,
+  borderCollapse: generator$29,
+  borderColor: generator$28,
+  borderOpacity: generator$27,
+  borderRadius: generator$26,
+  borderSpacing: generator$25,
+  borderStyle: generator$24,
+  borderWidth: generator$23,
+  boxDecorationBreak: generator$22,
+  boxShadow: generator$21,
+  boxSizing: generator$20,
+  brightness: generator$1$,
+  captionSide: generator$1_,
+  caretColor: generator$1Z,
+  clear: generator$1Y,
+  contrast: generator$1X,
+  cursor: generator$1W,
+  display: generator$1V,
+  divideColor: generator$1U,
+  divideOpacity: generator$1T,
+  divideStyle: generator$1S,
+  divideWidth: generator$1R,
+  dropShadow: generator$1Q,
+  fill: generator$1P,
+  filter: generator$1O,
+  flex: generator$1N,
+  flexBasis: generator$1M,
+  flexDirection: generator$1L,
+  flexGrow: generator$1K,
+  flexShrink: generator$1J,
+  flexWrap: generator$1I,
+  float: generator$1H,
+  fontSize: generator$1G,
+  fontSmoothing: generator$1F,
+  fontStyle: generator$1E,
+  fontVariantNumeric: generator$1D,
+  fontWeight: generator$1C,
+  gap: generator$1B,
+  gradientColorStops: generator$1A,
+  grayscale: generator$1z,
+  gridAutoColumns: generator$1y,
+  gridAutoFlow: generator$1x,
+  gridAutoRows: generator$1w,
+  gridColumn: generator$1v,
+  gridColumnEnd: generator$1u,
+  gridColumnStart: generator$1t,
+  gridRow: generator$1s,
+  gridRowEnd: generator$1r,
+  gridRowStart: generator$1q,
+  gridTemplateColumns: generator$1p,
+  gridTemplateRows: generator$1o,
+  height: generator$1n,
+  hueRotate: generator$1m,
+  hyphens: generator$1l,
+  inset: generator$1k,
+  invert: generator$1j,
+  isolation: generator$1i,
+  justifyContent: generator$1h,
+  justifyItems: generator$1g,
+  justifySelf: generator$1f,
+  letterSpacing: generator$1e,
+  lineClamp: generator$1d,
+  lineHeight: generator$1c,
+  listStylePosition: generator$1b,
+  listStyleType: generator$1a,
+  margin: generator$19,
+  maxHeight: generator$18,
+  maxWidth: generator$17,
+  minHeight: generator$16,
+  minWidth: generator$15,
+  objectFit: generator$13,
+  mixBlendMode: generator$14,
+  objectPosition: generator$12,
+  opacity: generator$11,
+  order: generator$10,
+  outlineColor: generator$$,
+  outlineOffset: generator$_,
+  outlineOpacity: generator$Z,
+  outlineStyle: generator$Y,
+  outlineWidth: generator$X,
+  overflow: generator$W,
+  overscrollBehavior: generator$V,
+  padding: generator$U,
+  placeContent: generator$T,
+  placeItems: generator$S,
+  placeSelf: generator$R,
+  pointerEvents: generator$Q,
+  position: generator$P,
+  resize: generator$O,
+  ringColor: generator$N,
+  ringOffsetColor: generator$M,
+  ringOffsetWidth: generator$L,
+  ringOpacity: generator$K,
+  ringWidth: generator$J,
+  rotate: generator$H,
+  saturate: generator$I,
+  scale: generator$G,
+  scrollBehavior: generator$F,
+  scrollMargin: generator$E,
+  scrollPadding: generator$D,
+  scrollSnapAlign: generator$C,
+  scrollSnapStop: generator$B,
+  scrollSnapType: generator$A,
+  sepia: generator$z,
+  size: generator$y,
+  skew: generator$x,
+  space: generator$w,
   stroke: generator$v,
   strokeWidth: generator$u,
   tableLayout: generator$t,
@@ -5643,6 +5809,8 @@ function generateTailwindCssString(options = {}) {
   return cssString;
 }
 
+const twString = generateTailwindCssString().replace(/\s\s+/g, " ");
+
 function convertCssToObject(cssString) {
   const cssObject = {};
   const regex = /([a-zA-Z0-9\-\\.]+)\s*{\s*([^}]+)\s*}/g;
@@ -5692,7 +5860,7 @@ function separateAndResolveCSS(arr) {
 
   const resolveValue = (value, variables) => {
     return value.replace(
-      /var\((--[a-zA-Z0-9-]+)(?:,\s*([^\)]+))?\)/g,
+      /var\((--[a-zA-Z0-9-]+)(?:,\s*([^)]+))?\)/g,
       (match, variable, fallback) => {
         return variables[variable] || fallback || match;
       }
@@ -5717,15 +5885,6 @@ function separateAndResolveCSS(arr) {
     .join(" ");
 }
 
-const breakpoints = {
-  sm: "@media (min-width: 640px)",
-  md: "@media (min-width: 768px)",
-  lg: "@media (min-width: 1024px)",
-  xl: "@media (min-width: 1280px)",
-  "2xl": "@media (min-width: 1536px)",
-};
-
-const twString = generateTailwindCssString().replace(/\s\s+/g, " ");
 const cssObject = convertCssToObject(twString);
 
 function tws(classNames, convertToJson) {
@@ -5769,46 +5928,139 @@ function tws(classNames, convertToJson) {
   return cssResult;
 }
 
-function twsx(styles, parentSelector = "") {
-  let cssString = "";
+const breakpoints = {
+  sm: "@media (min-width: 640px)",
+  md: "@media (min-width: 768px)",
+  lg: "@media (min-width: 1024px)",
+  xl: "@media (min-width: 1280px)",
+  "2xl": "@media (min-width: 1536px)",
+};
 
-  for (const key in styles) {
-    const value = styles[key];
+const pseudoVariants = new Set([
+  "hover",
+  "focus",
+  "active",
+  "visited",
+  "disabled",
+  "first",
+  "last",
+  "checked",
+  "invalid",
+  "required",
+]);
 
-    let newSelector = key.includes("&")
-      ? key.replace(/&/g, parentSelector)
-      : parentSelector
-      ? `${parentSelector} ${key}`
-      : key;
+const specialVariants = {
+  group: (state, sel) => `.group:${state} ${sel}`,
+  peer: (state, sel) => `.peer:${state} ~ ${sel}`,
+};
 
-    if (Array.isArray(value)) {
-      const [baseStyles, nestedRules] = value;
+function resolveVariants(selector, variants) {
+  let media = null;
+  let finalSelector = selector;
 
-      if (breakpoints[key]) {
-        newSelector = newSelector.replace(new RegExp(`\\b${key}\\b`, "g"), "");
-        cssString += `${breakpoints[key]} { ${newSelector} { ${tws(
-          baseStyles
-        )}} ${twsx(nestedRules, newSelector)}}`;
-      } else {
-        cssString += `${newSelector} { ${tws(baseStyles)} } `;
-
-        if (typeof nestedRules === "object") {
-          cssString += twsx(nestedRules, newSelector);
+  for (const v of variants) {
+    if (breakpoints[v]) {
+      media = breakpoints[v];
+    } else if (pseudoVariants.has(v)) {
+      finalSelector += `:${v}`;
+    } else {
+      for (const key in specialVariants) {
+        if (v.startsWith(`${key}-`)) {
+          const state = v.slice(key.length + 1);
+          finalSelector = specialVariants[key](state, finalSelector);
+          break;
         }
       }
-    } else if (typeof value === "object" && !breakpoints[key]) {
-      cssString += twsx(value, newSelector);
-    } else if (breakpoints[key]) {
-      newSelector = newSelector.replace(new RegExp(`\\b${key}\\b`, "g"), "");
-      cssString += `
-        ${breakpoints[key]} { ${newSelector} { ${tws(value)} }}
-      `;
-    } else {
-      cssString += `${newSelector} { ${tws(value)} } `;
     }
   }
 
-  return cssString;
+  return { media, finalSelector };
+}
+
+function twsx(obj) {
+  const styles = {};
+
+  function walk(selector, val) {
+    if (Array.isArray(val)) {
+      const [base, nested] = val;
+      if (typeof base !== "string") return;
+
+      for (const cls of base.split(" ")) {
+        const [rawVariants, className] = cls.includes(":")
+          ? [cls.split(":").slice(0, -1), cls.split(":").slice(-1)[0]]
+          : [[], cls];
+
+        const { media, finalSelector } = resolveVariants(selector, rawVariants);
+
+        let declarations = cssObject[className];
+        if (!declarations && className.includes("[")) {
+          const match = className.match(/^(.+?)\[(.+)\]$/);
+          if (match) {
+            const [, prefix, dynamicValue] = match;
+            const customKey = `${prefix}custom`;
+            const template = cssObject[customKey];
+            if (template) {
+              declarations = template.replace(/custom_value/g, dynamicValue);
+            }
+          }
+        }
+        if (!declarations) continue;
+
+        const isSpaceOrDivide = [
+          "space-x-",
+          "-space-x-",
+          "space-y-",
+          "-space-y-",
+          "divide-x-",
+          "divide-y-",
+        ].some((prefix) => className.startsWith(prefix));
+
+        const targetSelector = isSpaceOrDivide
+          ? `${finalSelector} > :not([hidden]) ~ :not([hidden])`
+          : finalSelector;
+
+        if (media) {
+          styles[media] = styles[media] || {};
+          styles[media][targetSelector] = styles[media][targetSelector] || "";
+          styles[media][targetSelector] += declarations + "\n";
+        } else {
+          styles[targetSelector] = styles[targetSelector] || "";
+          styles[targetSelector] += declarations + "\n";
+        }
+      }
+
+      for (const nestedSel in nested) {
+        const nestedVal = nested[nestedSel];
+        const combinedSel = nestedSel.includes("&")
+          ? nestedSel.replace(/&/g, selector)
+          : `${selector} ${nestedSel}`;
+        walk(combinedSel, nestedVal);
+      }
+    } else if (typeof val === "string") {
+      walk(selector, [val]);
+    }
+  }
+
+  for (const selector in obj) {
+    walk(selector, obj[selector]);
+  }
+
+  let cssString = "";
+  for (const sel in styles) {
+    if (sel.startsWith("@media")) {
+      cssString += `${sel}{`;
+      for (const subSel in styles[sel]) {
+        cssString += `${subSel}{${styles[sel][subSel]
+          .trim()
+          .replace(/\n/g, "")}}`;
+      }
+      cssString += `}`;
+    } else {
+      cssString += `${sel}{${styles[sel].trim().replace(/\n/g, "")}}`;
+    }
+  }
+
+  return cssString.trim();
 }
 
 exports.tws = tws;
