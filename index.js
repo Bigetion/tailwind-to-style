@@ -5980,6 +5980,45 @@ function resolveVariants(selector, variants) {
 function twsx(obj) {
   const styles = {};
 
+  function expandGroupedClass(input) {
+    function process(str, parent = "") {
+      return str.replace(/(\w+)\(([^()]+)\)/g, (_, directive, content) => {
+        return content
+          .trim()
+          .split(/\s+/)
+          .map((part) => {
+            if (/\w+\([^()]+\)/.test(part)) {
+              return process(`${directive}-${part}`, parent);
+            }
+
+            const [variant, value] = part.includes(":")
+              ? part.split(":")
+              : [null, part];
+
+            if (variant) {
+              return `${variant}:${directive}-${value}`;
+            }
+
+            return `${directive}-${part}`;
+          })
+          .join(" ");
+      });
+    }
+
+    const directiveExpanded = process(input);
+
+    return directiveExpanded.replace(
+      /(\w+):\(([^()]+)\)/g,
+      (_, variant, content) => {
+        return content
+          .trim()
+          .split(/\s+/)
+          .map((part) => `${variant}:${part}`)
+          .join(" ");
+      }
+    );
+  }
+
   function walk(selector, val) {
     if (Array.isArray(val)) {
       const [base, nested] = val;
@@ -6042,7 +6081,11 @@ function twsx(obj) {
   }
 
   for (const selector in obj) {
-    walk(selector, obj[selector]);
+    let val = obj[selector];
+    if (typeof val === "string") {
+      val = expandGroupedClass(val);
+    }
+    walk(selector, val);
   }
 
   let cssString = "";
