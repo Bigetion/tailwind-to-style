@@ -472,6 +472,9 @@ const theme = {
     "zoom-in": "zoom-in",
     "zoom-out": "zoom-out",
   },
+  divideColor: ({ theme }) => theme("borderColor"),
+  divideOpacity: ({ theme }) => theme("borderOpacity"),
+  divideWidth: ({ theme }) => theme("borderWidth"),
   dropShadow: {
     sm: "0 1px 1px rgb(0 0 0 / 0.05)",
     DEFAULT: "0 1px 2px rgb(0 0 0 / 0.1) , 0 1px 1px rgb(0 0 0 / 0.06)",
@@ -6082,10 +6085,24 @@ function twsx(obj) {
 
   for (const selector in obj) {
     let val = obj[selector];
+    let baseClass = "";
+    let nested = {};
+
     if (typeof val === "string") {
-      val = expandGroupedClass(val);
+      baseClass = expandGroupedClass(val);
+    } else if (Array.isArray(val)) {
+      for (const item of val) {
+        if (typeof item === "string") {
+          baseClass += (baseClass ? " " : "") + expandGroupedClass(item);
+        } else if (typeof item === "object" && item !== null) {
+          Object.assign(nested, item);
+        }
+      }
+    } else if (typeof val === "object" && val !== null) {
+      nested = val;
     }
-    walk(selector, val);
+
+    walk(selector, [baseClass, nested]);
   }
 
   let cssString = "";
