@@ -6083,8 +6083,50 @@ function twsx(obj) {
     }
   }
 
-  for (const selector in obj) {
-    let val = obj[selector];
+  function isSelectorObject(val) {
+    return typeof val === "object" && val !== null && !Array.isArray(val);
+  }
+
+  function flatten(obj, parentSelector = "") {
+    const result = {};
+
+    for (const selector in obj) {
+      const val = obj[selector];
+      const currentSelector = parentSelector
+        ? selector.includes("&")
+          ? selector.replace(/&/g, parentSelector)
+          : `${parentSelector} ${selector}`
+        : selector;
+
+      if (typeof val === "string") {
+        result[currentSelector] = val;
+      } else if (Array.isArray(val)) {
+        const flatArray = [];
+        for (const item of val) {
+          if (typeof item === "string") {
+            flatArray.push(item);
+          } else if (isSelectorObject(item)) {
+            const nested = flatten(item, currentSelector);
+            Object.assign(result, nested);
+          }
+        }
+        if (flatArray.length > 0) {
+          result[currentSelector] = result[currentSelector] || [];
+          result[currentSelector].push(...flatArray);
+        }
+      } else if (isSelectorObject(val)) {
+        const nested = flatten(val, currentSelector);
+        Object.assign(result, nested);
+      }
+    }
+
+    return result;
+  }
+
+  const flattened = flatten(obj);
+
+  for (const selector in flattened) {
+    let val = flattened[selector];
     let baseClass = "";
     let nested = {};
 
@@ -6098,8 +6140,6 @@ function twsx(obj) {
           Object.assign(nested, item);
         }
       }
-    } else if (typeof val === "object" && val !== null) {
-      nested = val;
     }
 
     walk(selector, [baseClass, nested]);
