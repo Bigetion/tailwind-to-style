@@ -6053,8 +6053,7 @@ function twsx(obj) {
           "-space-x-",
           "space-y-",
           "-space-y-",
-          "divide-x-",
-          "divide-y-",
+          "divide-",
         ].some((prefix) => className.startsWith(prefix));
 
         const targetSelector = isSpaceOrDivide
