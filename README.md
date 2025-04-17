@@ -177,6 +177,27 @@ console.log(styles);
 }
 ```
 
+#### `!important` Support
+
+You can prepend an exclamation mark (`!`) directly to the class name to make it `!important`. This feature is useful for easily overriding default styles.
+
+```javascript
+const styles = twsx({
+  ".alert": "!text-red-500 !bg-yellow-100 !p-4"
+});
+
+console.log(styles);
+```
+
+**Output**:
+```css
+.alert {
+  color: #ef4444 !important;
+  background-color: #fef3c7 !important;
+  padding: 1rem !important;
+}
+```
+
 #### Grouping Example:
 
 You can group related utilities for better readability:
@@ -189,7 +210,7 @@ const styles = twsx({
 console.log(styles);
 ```
 
-This generates:
+**Output**:
 
 ```css
 .alert:hover {

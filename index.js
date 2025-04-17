@@ -6032,11 +6032,19 @@ function twsx(obj) {
           ? [cls.split(":").slice(0, -1), cls.split(":").slice(-1)[0]]
           : [[], cls];
 
+        let isImportant = false;
+        let pureClassName = className;
+
+        if (className.startsWith("!")) {
+          isImportant = true;
+          pureClassName = className.slice(1);
+        }
+
         const { media, finalSelector } = resolveVariants(selector, rawVariants);
 
-        let declarations = cssObject[className];
-        if (!declarations && className.includes("[")) {
-          const match = className.match(/^(.+?)\[(.+)\]$/);
+        let declarations = cssObject[pureClassName];
+        if (!declarations && pureClassName.includes("[")) {
+          const match = pureClassName.match(/^(.+?)\[(.+)\]$/);
           if (match) {
             const [, prefix, dynamicValue] = match;
             const customKey = `${prefix}custom`;
@@ -6048,13 +6056,20 @@ function twsx(obj) {
         }
         if (!declarations) continue;
 
+        if (isImportant) {
+          declarations = declarations.replace(
+            /([^:;]+:[^;]+)(;?)/g,
+            (_, rule) => `${rule.trim()} !important;`
+          );
+        }
+
         const isSpaceOrDivide = [
           "space-x-",
           "-space-x-",
           "space-y-",
           "-space-y-",
           "divide-",
-        ].some((prefix) => className.startsWith(prefix));
+        ].some((prefix) => pureClassName.startsWith(prefix));
 
         const targetSelector = isSpaceOrDivide
           ? `${finalSelector} > :not([hidden]) ~ :not([hidden])`
@@ -6145,6 +6160,13 @@ function twsx(obj) {
   }
 
   let cssString = "";
+
+  for (const sel in styles) {
+    if (!sel.startsWith("@media")) {
+      cssString += `${sel}{${styles[sel].trim().replace(/\n/g, "")}}`;
+    }
+  }
+
   for (const sel in styles) {
     if (sel.startsWith("@media")) {
       cssString += `${sel}{`;
@@ -6154,8 +6176,6 @@ function twsx(obj) {
           .replace(/\n/g, "")}}`;
       }
       cssString += `}`;
-    } else {
-      cssString += `${sel}{${styles[sel].trim().replace(/\n/g, "")}}`;
     }
   }
 
