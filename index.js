@@ -6278,22 +6278,34 @@ function twsx(obj) {
 
   let cssString = "";
 
+  const baseStyles = [];
+  const mediaStyles = [];
+
   for (const sel in styles) {
     if (!sel.startsWith("@media")) {
-      cssString += `${sel}{${styles[sel].trim().replace(/\n/g, "")}}`;
+      baseStyles.push({ sel, css: styles[sel] });
+    } else {
+      mediaStyles.push({ sel, content: styles[sel] });
     }
   }
 
-  for (const sel in styles) {
-    if (sel.startsWith("@media")) {
-      cssString += `${sel}{`;
-      for (const subSel in styles[sel]) {
-        cssString += `${subSel}{${styles[sel][subSel]
-          .trim()
-          .replace(/\n/g, "")}}`;
-      }
-      cssString += `}`;
+  for (const { sel, css } of baseStyles) {
+    cssString += `${sel}{${css.trim().replace(/\n/g, "")}}`;
+  }
+
+  function mediaPriority(sel) {
+    const match = sel.match(/@media \(min-width: (\d+)px\)/);
+    return match ? parseInt(match[1], 10) : 99999;
+  }
+
+  mediaStyles.sort((a, b) => mediaPriority(a.sel) - mediaPriority(b.sel));
+
+  for (const { sel, content } of mediaStyles) {
+    cssString += `${sel}{`;
+    for (const subSel in content) {
+      cssString += `${subSel}{${content[subSel].trim().replace(/\n/g, "")}}`;
     }
+    cssString += `}`;
   }
 
   return cssString.trim();
