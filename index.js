@@ -1339,10 +1339,29 @@ function generateCssString(getCssString = () => {}) {
     return str;
   };
 
+  const isValidCssColor = (value) => {
+    if (typeof value !== "string") return false;
+
+    const hexColor = /^#(?:[0-9a-fA-F]{3}){1,2}$/;
+    const rgbColor = /^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/;
+    const rgbaColor = /^rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*(0|1|0?\.\d+)\s*\)$/;
+    const hslColor = /^hsl\(\s*\d+\s*,\s*\d+%\s*,\s*\d+%\s*\)$/;
+    const hslaColor = /^hsla\(\s*\d+\s*,\s*\d+%\s*,\s*\d+%\s*,\s*(0|1|0?\.\d+)\s*\)$/;
+
+    return [
+      hexColor.test(value),
+      rgbColor.test(value),
+      rgbaColor.test(value),
+      hslColor.test(value),
+      hslaColor.test(value),
+    ].includes(true);
+  };
+
   const cssString = getCssString({
     orientationPrefix,
     getCssByOptions,
     getCssByColors,
+    isValidCssColor,
   });
 
   return cssString;
@@ -1611,7 +1630,7 @@ function generator$2i(configOptions = {}) {
 
   const { backgroundColor = {} } = theme;
 
-  const responsiveCssString = generateCssString(({ getCssByColors }) => {
+  const responsiveCssString = generateCssString(({ getCssByColors, isValidCssColor }) => {
     const cssString = getCssByColors(
       backgroundColor,
       (key, value, rgbValue) => {
@@ -1621,13 +1640,9 @@ function generator$2i(configOptions = {}) {
         }
 
         if (value === "custom_value") {
-          const style = new Option().style;
-          style.color = "";
-          style.color = value;
-          const isColor = style.color !== "";
           return `
             ${prefix}-${key} {
-              ${isColor ? "background-color" : "background"}: ${value};
+              ${isValidCssColor(value) ? "background-color" : "background"}: ${value};
             }
           `;
         }
