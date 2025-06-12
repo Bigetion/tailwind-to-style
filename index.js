@@ -5864,20 +5864,29 @@ function generateTailwindCssString(options = {}) {
   return cssString;
 }
 
-const twString = generateTailwindCssString().replace(/\s\s+/g, " ");
-
 function convertCssToObject(cssString) {
-  const cssObject = {};
+  const obj = {};
   const regex = /([a-zA-Z0-9\-_\\/.]+)\s*{\s*([^}]+)\s*}/g;
   let match;
 
   while ((match = regex.exec(cssString)) !== null) {
     const className = match[1].replace(/\\\\/g, "\\").replace(/^_/, ""); // Perbaiki unescaping dan hapus _ di awal jika ada
     const cssRules = match[2].trim().replace(/\s+/g, " ");
-    cssObject[className] = cssRules;
+    obj[className] = cssRules;
   }
 
-  return cssObject;
+  return obj;
+}
+
+let twString = null;
+let cssObject = null;
+
+if (!twString) {
+  twString = generateTailwindCssString().replace(/\s\s+/g, " ");
+}
+
+if (!cssObject) {
+  cssObject = convertCssToObject(twString);
 }
 
 function inlineStyleToJson(styleString) {
@@ -5938,49 +5947,6 @@ function separateAndResolveCSS(arr) {
   return Object.entries(resolvedProperties)
     .map(([key, value]) => `${key}: ${value};`)
     .join(" ");
-}
-
-const cssObject = convertCssToObject(twString);
-
-function tws(classNames, convertToJson) {
-  if (
-    [
-      !classNames,
-      typeof classNames !== "string",
-      classNames.trim() === "",
-    ].includes(true)
-  ) {
-    return convertToJson ? {} : "";
-  }
-
-  const classes = classNames.match(/[\w-]+\[[^\]]+\]|[\w-]+\.\d+|[\w-]+/g);
-
-  let cssResult = classes.map((className) => {
-    if (cssObject[className]) {
-      return cssObject[className];
-    } else if (className.includes("[")) {
-      const match = className.match(/\[([^\]]+)\]/);
-      if (match) {
-        const customValue = match[1];
-        const baseKey = className.split("[")[0];
-        if (cssObject[`${baseKey}custom`]) {
-          return cssObject[`${baseKey}custom`].replace(
-            /custom_value/g,
-            customValue
-          );
-        }
-      }
-    }
-    return "";
-  });
-
-  cssResult = separateAndResolveCSS(cssResult);
-
-  if (convertToJson) {
-    cssResult = inlineStyleToJson(cssResult);
-  }
-
-  return cssResult;
 }
 
 const breakpoints = {
@@ -6068,6 +6034,47 @@ function resolveVariants(selector, variants) {
   }
 
   return { media, finalSelector };
+}
+
+function tws(classNames, convertToJson) {
+  if (
+    [
+      !classNames,
+      typeof classNames !== "string",
+      classNames.trim() === "",
+    ].includes(true)
+  ) {
+    return convertToJson ? {} : "";
+  }
+
+  const classes = classNames.match(/[\w-]+\[[^\]]+\]|[\w-]+\.\d+|[\w-]+/g);
+
+  let cssResult = classes.map((className) => {
+    if (cssObject[className]) {
+      return cssObject[className];
+    } else if (className.includes("[")) {
+      const match = className.match(/\[([^\]]+)\]/);
+      if (match) {
+        const customValue = match[1];
+        const baseKey = className.split("[")[0];
+        if (cssObject[`${baseKey}custom`]) {
+          return cssObject[`${baseKey}custom`].replace(
+            /custom_value/g,
+            customValue
+          );
+        }
+      }
+    }
+    return "";
+  });
+
+  cssResult = separateAndResolveCSS(cssResult);
+
+  if (convertToJson) {
+    cssResult = inlineStyleToJson(cssResult);
+  }
+
+  return cssResult;
 }
 
 function twsx(obj) {
@@ -6311,5 +6318,11 @@ function twsx(obj) {
   return cssString.trim();
 }
 
+const tailwindCss = {
+  raw: twString,
+  object: cssObject,
+};
+
+exports.tailwindCss = tailwindCss;
 exports.tws = tws;
 exports.twsx = twsx;
