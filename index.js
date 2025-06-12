@@ -5889,66 +5889,6 @@ if (!cssObject) {
   cssObject = convertCssToObject(twString);
 }
 
-function inlineStyleToJson(styleString) {
-  const styles = styleString.split(";").filter((style) => style.trim() !== "");
-  const styleObject = {};
-
-  styles.forEach((style) => {
-    const [key, value] = style.split(":").map((s) => s.trim());
-    if (key && value) {
-      const camelCaseKey = key.replace(/-([a-z])/g, (_, letter) =>
-        letter.toUpperCase()
-      );
-      styleObject[camelCaseKey] = value;
-    }
-  });
-
-  return styleObject;
-}
-
-function separateAndResolveCSS(arr) {
-  const cssProperties = {};
-  arr.forEach((item) => {
-    const declarations = item
-      .split(";")
-      .map((decl) => decl.trim())
-      .filter((decl) => decl);
-
-    declarations.forEach((declaration) => {
-      const [key, value] = declaration.split(":").map((part) => part.trim());
-      cssProperties[key] = value;
-    });
-  });
-
-  const resolvedProperties = { ...cssProperties };
-
-  const resolveValue = (value, variables) => {
-    return value.replace(
-      /var\((--[a-zA-Z0-9-]+)(?:,\s*([^)]+))?\)/g,
-      (match, variable, fallback) => {
-        return variables[variable] || fallback || match;
-      }
-    );
-  };
-
-  Object.keys(resolvedProperties).forEach((key) => {
-    resolvedProperties[key] = resolveValue(
-      resolvedProperties[key],
-      resolvedProperties
-    );
-  });
-
-  Object.keys(resolvedProperties).forEach((key) => {
-    if (key.startsWith("--")) {
-      delete resolvedProperties[key];
-    }
-  });
-
-  return Object.entries(resolvedProperties)
-    .map(([key, value]) => `${key}: ${value};`)
-    .join(" ");
-}
-
 const breakpoints = {
   sm: "@media (min-width: 640px)",
   md: "@media (min-width: 768px)",
@@ -6034,6 +5974,66 @@ function resolveVariants(selector, variants) {
   }
 
   return { media, finalSelector };
+}
+
+function inlineStyleToJson(styleString) {
+  const styles = styleString.split(";").filter((style) => style.trim() !== "");
+  const styleObject = {};
+
+  styles.forEach((style) => {
+    const [key, value] = style.split(":").map((s) => s.trim());
+    if (key && value) {
+      const camelCaseKey = key.replace(/-([a-z])/g, (_, letter) =>
+        letter.toUpperCase()
+      );
+      styleObject[camelCaseKey] = value;
+    }
+  });
+
+  return styleObject;
+}
+
+function separateAndResolveCSS(arr) {
+  const cssProperties = {};
+  arr.forEach((item) => {
+    const declarations = item
+      .split(";")
+      .map((decl) => decl.trim())
+      .filter((decl) => decl);
+
+    declarations.forEach((declaration) => {
+      const [key, value] = declaration.split(":").map((part) => part.trim());
+      cssProperties[key] = value;
+    });
+  });
+
+  const resolvedProperties = { ...cssProperties };
+
+  const resolveValue = (value, variables) => {
+    return value.replace(
+      /var\((--[a-zA-Z0-9-]+)(?:,\s*([^)]+))?\)/g,
+      (match, variable, fallback) => {
+        return variables[variable] || fallback || match;
+      }
+    );
+  };
+
+  Object.keys(resolvedProperties).forEach((key) => {
+    resolvedProperties[key] = resolveValue(
+      resolvedProperties[key],
+      resolvedProperties
+    );
+  });
+
+  Object.keys(resolvedProperties).forEach((key) => {
+    if (key.startsWith("--")) {
+      delete resolvedProperties[key];
+    }
+  });
+
+  return Object.entries(resolvedProperties)
+    .map(([key, value]) => `${key}: ${value};`)
+    .join(" ");
 }
 
 function tws(classNames, convertToJson) {
@@ -6156,7 +6156,8 @@ function twsx(obj) {
 
         let declarations =
           cssObject[pureClassName] ||
-          cssObject[pureClassName.replace(/(\/)/g, "\\$1")];
+          cssObject[pureClassName.replace(/(\/)/g, "\\$1")] ||
+          cssObject[pureClassName.replace(/\./g, "\\.")];
 
         if (!declarations && pureClassName.includes("[")) {
           const match = pureClassName.match(/^(.+?)\[(.+)\]$/);
