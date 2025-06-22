@@ -284,10 +284,6 @@ bg-blue-500 text-white p-4 rounded</textarea
         return beautified
           .replace(/([^:{}]+):/g, '<span class="css-property">$1</span>:')
           .replace(/:\s*([^;{}]+);/g, ': <span class="css-value">$1</span>;')
-          .replace(
-            /[{}:;]/g,
-            (match) => `<span class="css-punctuation">${match}</span>`
-          )
           .replace(/^([.#][^\s{]+)|\n([.#][^\s{]+)/g, (match, g1, g2) => {
             const selector = g1 || g2;
             return match.replace(

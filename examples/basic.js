@@ -1,4 +1,4 @@
-import { tws } from '../src/index';
+import { tws } from '../dist/index.esm.js';
 
 // Basic example
 console.log(tws('bg-blue-500 text-white p-4 rounded'));

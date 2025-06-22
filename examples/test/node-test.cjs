@@ -9,7 +9,7 @@
  * The output will be color-coded in terminals that support ANSI color codes
  */
 
-import { tws, twsx } from '../../dist/index.esm.js';
+const { tws, twsx } = require('../../index');
 
 // Check if terminal supports colors
 const supportsColor = process.stdout.isTTY && 

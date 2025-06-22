@@ -1,4 +1,4 @@
-import { tws, twsx } from '../src/index.js';
+import { tws, twsx } from '../dist/index.esm.js';
 
 describe('tws function', () => {  test('converts tailwind classes to inline CSS', () => {    const result = tws('bg-white mx-auto');
     // Add debug output here too

@@ -1,4 +1,4 @@
-import { twsx } from '../src/index';
+import { twsx } from '../dist/index.esm.js';
 
 // Complex nested styles example
 const styles = twsx({
