@@ -2,6 +2,7 @@
   "name": "tailwind-to-style",
   "version": "2.5.0",
   "description": "Convert tailwind classes to inline style",
+  "type": "module",
   "main": "index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
@@ -13,10 +14,11 @@
     "README.md",
     "LICENSE"
   ],  "scripts": {
-    "test": "jest --passWithNoTests",
-    "build": "node build-webpack.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests",
+    "build": "node --experimental-vm-modules build-esm.js",
+    "build:legacy": "node build-webpack.js",
     "build:simple": "node build.js",
-    "dev": "node build-webpack.js && nodemon --watch src -e js --exec 'npm run build'",
+    "dev": "node --experimental-vm-modules build-esm.js",
     "lint": "eslint src/**/*.js",
     "test:examples": "node examples/test/node-test.js",
     "test:browser": "start examples/test/browser-test.html",

@@ -5,11 +5,17 @@
       {
         "targets": {
           "browsers": "> 0.25%, not dead",
-          "node": "10"
+          "node": "current"
         },
-        "useBuiltIns": false,
-        "modules": false
+        "useBuiltIns": false
       }
     ]
-  ]
+  ],
+  "env": {
+    "test": {
+      "presets": [
+        ["@babel/preset-env", { "targets": { "node": "current" } }]
+      ]
+    }
+  }
 }
