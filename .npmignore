@@ -1,0 +1,37 @@
+# Development files
+.babelrc
+.eslintrc.js
+rollup.config.js
+jest.config.js
+
+# Source code (since we're publishing the dist)
+src/
+
+# Tests
+tests/
+coverage/
+
+# Development tooling
+.github/
+.vscode/
+
+# Examples (keep these accessible but not published)
+examples/
+
+# Git files
+.git/
+.gitignore
+.gitattributes
+
+# Editor files
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Dependency directories
+node_modules/

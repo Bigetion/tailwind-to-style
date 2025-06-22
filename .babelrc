@@ -1,0 +1,15 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "browsers": "> 0.25%, not dead",
+          "node": "10"
+        },
+        "useBuiltIns": false,
+        "modules": false
+      }
+    ]
+  ]
+}
