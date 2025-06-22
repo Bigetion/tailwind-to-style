@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tailwind to Style Converter</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Tailwind to Style Converter</title>    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>    <!-- Import our Tailwind to Style library -->
+    <script src="../../dist/index.browser.js"></script>
     <script>
       // Tailwind Configuration
       tailwind.config = {
@@ -50,9 +50,8 @@
       }
       .json-punctuation {
         color: #6b7280; /* gray-500 */
-      }
-    </style>
-    <script src="../../index.min.js"></script>
+      }    </style>
+    <!-- Library sudah diimport di atas, tidak perlu diimport lagi -->
   </head>
   <body
     class="p-6 md:p-10 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans transition-colors duration-200"

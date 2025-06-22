@@ -2,7 +2,7 @@ import json from '@rollup/plugin-json';
 import terser from '@rollup/plugin-terser';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import babel from '@rollup/plugin-babel';
+import { babel } from '@rollup/plugin-babel';
 
 const banner = `/**
  * tailwind-to-style v2.5.0
@@ -28,89 +28,77 @@ const babelConfig = {
   ]
 };
 
-export default [  // ESM build for modern environments
+export default [
+  // ESM build
   {
     input,
     output: {
       file: 'dist/index.esm.js',
       format: 'esm',
-      banner,
-      exports: 'named',
+      banner
     },
     plugins: [
       resolve({ extensions }),
       commonjs(),
-      json(),
-    ],
+      json()
+    ]
   },
   
-  // CommonJS build for Node.js environments
+  // CommonJS build
   {
     input,
     output: {
       file: 'index.js',
       format: 'cjs',
       banner,
-      exports: 'named',
-    },
-    plugins: [      resolve({ extensions }),
-      commonjs(),
-      json(),
-      babel.babel(babelConfig),
-    ],
-  },
-  
-  // UMD build for browsers (minified)
-  {
-    input,
-    output: {
-      file: 'dist/index.umd.min.js',
-      format: 'umd',
-      name: 'tailwindToStyle', // Global variable name when used in browser
-      banner,
-      exports: 'named',
-      sourcemap: true,
-      globals: {
-        // Add external dependencies here if needed
-      }
+      exports: 'named'
     },
     plugins: [
-      resolve({ browser: true, extensions }),
+      resolve({ extensions }),
       commonjs(),
-      json(),      babel.babel({
-        ...babelConfig,
-        presets: [
-          ['@babel/preset-env', {
-            targets: '> 0.5%, last 2 versions, Firefox ESR, not dead, not ie 11',
-            modules: false
-          }]
-        ]
-      }),
-      terser({
-        output: {
-          comments: (_, comment) => {
-            return comment.type === 'comment2' && /@preserve|@license|@author/i.test(comment.value);
-          }
-        }
-      }),
-    ],
+      json(),
+      babel(babelConfig)
+    ]
   },
   
-  // Browser-friendly IIFE version (for direct use in script tags)
+  // Minified UMD build
   {
     input,
     output: {
-      file: 'dist/index.browser.js',
-      format: 'iife',
-      name: 'tailwindToStyle', // Global variable name when used in browser
+      file: 'index.min.js',
+      format: 'umd',
+      name: 'tailwindToStyle',
       banner,
       exports: 'named',
+      sourcemap: true
     },
     plugins: [
       resolve({ browser: true, extensions }),
       commonjs(),
       json(),
       babel(babelConfig),
-    ],
+      terser({
+        output: {
+          comments: /^\/\*\*.*@preserve.*\*\/$/
+        }
+      })
+    ]
   },
+  
+  // Browser IIFE build
+  {
+    input,
+    output: {
+      file: 'dist/index.browser.js',
+      format: 'iife',
+      name: 'tailwindToStyle',
+      banner
+    },
+    plugins: [
+      resolve({ browser: true, extensions }),
+      commonjs(),
+      json(),
+      babel(babelConfig)
+    ]
+  }
 ];

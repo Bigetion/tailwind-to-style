@@ -1,6 +1,6 @@
 {
   "name": "tailwind-to-style",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "Convert tailwind classes to inline style",
   "type": "module",
   "main": "index.js",
@@ -13,12 +13,13 @@
     "preflight.css",
     "README.md",
     "LICENSE"
-  ],  "scripts": {
+  ],
+  "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests",
-    "build": "node --experimental-vm-modules build-esm.js",
+    "build": "rollup -c rollup.config.js",
     "build:legacy": "node build-webpack.js",
     "build:simple": "node build.js",
-    "dev": "node --experimental-vm-modules build-esm.js",
+    "dev": "rollup -c rollup.config.js --watch",
     "lint": "eslint src/**/*.js",
     "test:examples": "node examples/test/node-test.js",
     "test:browser": "start examples/test/browser-test.html",
@@ -47,7 +48,9 @@
     "@babel/preset-env": "^7.27.2",
     "@rollup/plugin-babel": "^5.3.1",
     "@rollup/plugin-commonjs": "^22.0.2",
+    "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^13.3.0",
+    "@rollup/plugin-terser": "^0.4.4",
     "babel-jest": "^28.1.0",
     "babel-loader": "^10.0.0",
     "eslint": "^8.16.0",
