@@ -3,22 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tailwind to Style Interactive Test</title>
+    <title>Tailwind to Style Converter</title>
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>    <script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
       // Tailwind Configuration
       tailwind.config = {
-        darkMode: 'class',
+        darkMode: "class",
         theme: {
           extend: {
             colors: {
-              primary: '#2563eb',
-              secondary: '#4b5563'
-            }
-          }
-        }
-      }
-    </script>    <style>
+              primary: "#2563eb",
+              secondary: "#4b5563",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
       /* 
        * ONLY CUSTOM CSS IN THIS FILE
        * These styles are needed for syntax highlighting only.
@@ -51,52 +53,112 @@
       }
     </style>
     <script src="../../index.min.js"></script>
-  </head>  <body class="p-6 md:p-10 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans transition-colors duration-200">    <header class="text-center mb-8">
+  </head>
+  <body
+    class="p-6 md:p-10 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans transition-colors duration-200"
+  >
+    <header class="text-center mb-8">
       <div class="absolute top-4 right-4">
-        <button id="theme-toggle" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+        <button
+          id="theme-toggle"
+          class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+        >
           <!-- Sun icon -->
-          <svg id="light-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+          <svg
+            id="light-icon"
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+            ></path>
           </svg>
           <!-- Moon icon -->
-          <svg id="dark-icon" class="hidden w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+          <svg
+            id="dark-icon"
+            class="hidden w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+            ></path>
           </svg>
         </button>
       </div>
-      <h1 class="text-2xl md:text-3xl font-bold text-primary dark:text-blue-400 mb-2">Tailwind to Style Interactive Playground</h1>
+      <h1
+        class="text-2xl md:text-3xl font-bold text-primary dark:text-blue-400 mb-2"
+      >
+        Tailwind to Style Converter
+      </h1>
       <div class="text-secondary dark:text-gray-300 text-lg mb-8">
-        Test and visualize the conversion of Tailwind CSS classes to inline
-        styles and CSS
+        Convert Tailwind CSS classes to inline styles and CSS
       </div>
     </header>
 
-    <main class="max-w-6xl mx-auto">      <div class="flex border-b-2 border-gray-200 mb-8">
-        <div class="px-6 py-3 font-medium border-b-2 border-primary -mb-0.5 cursor-pointer transition-colors duration-200 tab text-primary hover:bg-gray-100" data-tab="tws" id="tab-tws">
+    <main class="max-w-6xl mx-auto">
+      <div class="flex border-b-2 border-gray-200 mb-8">
+        <div
+          class="px-6 py-3 font-medium border-b-2 border-primary -mb-0.5 cursor-pointer transition-colors duration-200 tab text-primary hover:bg-gray-100"
+          data-tab="tws"
+          id="tab-tws"
+        >
           tws() - Inline Style Converter
         </div>
-        <div class="px-6 py-3 font-medium border-b-2 border-transparent -mb-0.5 cursor-pointer transition-colors duration-200 tab hover:bg-gray-100" data-tab="twsx" id="tab-twsx">
+        <div
+          class="px-6 py-3 font-medium border-b-2 border-transparent -mb-0.5 cursor-pointer transition-colors duration-200 tab hover:bg-gray-100"
+          data-tab="twsx"
+          id="tab-twsx"
+        >
           twsx() - CSS Style Generator
         </div>
       </div>
 
       <div class="block" id="tws-tab">
         <div class="mb-6">
-          <div class="font-medium text-gray-600 mb-2">Enter Tailwind CSS classes:</div>          <textarea
+          <div class="font-medium text-gray-600 mb-2">
+            Enter Tailwind CSS classes:
+          </div>
+          <textarea
             id="tws-input"
             class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md font-mono min-h-[100px] resize-y focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             placeholder="Example: bg-blue-500 text-white p-4 rounded"
-          >bg-blue-500 text-white p-4 rounded</textarea>
+          >
+bg-blue-500 text-white p-4 rounded</textarea
+          >
         </div>
 
         <div class="flex flex-wrap gap-4 mb-4">
           <div class="flex-1">
-            <label for="tws-format" class="mr-2 font-medium text-gray-600">Output Format:</label>            <select id="tws-format" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <label for="tws-format" class="mr-2 font-medium text-gray-600"
+              >Output Format:</label
+            >
+            <select
+              id="tws-format"
+              class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
               <option value="0">CSS String</option>
               <option value="1">JSON Object</option>
             </select>
-          </div>          <div class="flex-1">
-            <button id="tws-copy-btn" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition-colors">Copy Output</button>
+          </div>
+          <div class="flex-1">
+            <button
+              id="tws-copy-btn"
+              class="px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition-colors"
+            >
+              Copy Output
+            </button>
           </div>
         </div>
 
@@ -105,22 +167,26 @@
             <div class="flex justify-between items-center mb-2">
               <div class="font-medium text-gray-600">Output:</div>
             </div>
-            <div id="tws-output" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-md p-4 font-mono whitespace-pre-wrap min-h-[200px] max-h-[400px] overflow-auto shadow-sm"></div>
+            <div
+              id="tws-output"
+              class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-md p-4 font-mono whitespace-pre-wrap min-h-[300px] max-h-[500px] overflow-auto shadow-sm"
+            ></div>
           </div>
-        </div>
-
-        <div class="font-medium text-gray-600 mb-2 mt-4">Live Preview:</div>        <div id="tws-live-preview" class="border border-dashed border-gray-300 dark:border-gray-500 rounded-md p-4 mt-2 bg-white dark:bg-transparent">
-          This element is styled with the Tailwind classes you entered above
         </div>
       </div>
 
       <div class="hidden" id="twsx-tab">
         <div class="mb-6">
-          <div class="font-medium text-gray-600 mb-2">Enter TWSX Configuration:</div>          <textarea
+          <div class="font-medium text-gray-600 mb-2">
+            Enter TWSX Configuration:
+          </div>
+          <textarea
             id="twsx-input"
             class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md font-mono min-h-[100px] resize-y focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             placeholder="Example: { '.card': 'bg-white p-4 rounded-lg shadow' }"
-          >{
+            rows="10"
+          >
+{
   ".card": [
     "bg-white p-4 rounded-lg shadow",
     {
@@ -129,12 +195,18 @@
       ".desc": "text-sm text-gray-500"
     }
   ]
-}</textarea>
+}</textarea
+          >
         </div>
 
-        <div class="flex flex-wrap gap-4 mb-4">          <div class="flex-1">
-            <button id="twsx-copy-btn" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition-colors">Copy Output</button>
-            <button id="twsx-preview-btn" class="ml-2 px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition-colors">Generate Preview</button>
+        <div class="flex flex-wrap gap-4 mb-4">
+          <div class="flex-1">
+            <button
+              id="twsx-copy-btn"
+              class="px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition-colors"
+            >
+              Copy Output
+            </button>
           </div>
         </div>
 
@@ -143,17 +215,10 @@
             <div class="flex justify-between items-center mb-2">
               <div class="font-medium text-gray-600">Generated CSS:</div>
             </div>
-            <div id="twsx-output" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-md p-4 font-mono whitespace-pre-wrap min-h-[200px] max-h-[400px] overflow-auto shadow-sm"></div>
-          </div>
-        </div>
-
-        <div class="font-medium text-gray-600 mb-2 mt-4">Live Preview:</div>        <div id="twsx-live-preview" class="border border-dashed border-gray-300 dark:border-gray-500 rounded-md p-4 mt-2 bg-white dark:bg-transparent">
-          <div class="w-full p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 shadow-sm">
-            <div class="title">Card Title</div>
-            <div class="desc">
-              This is a description for the card. Hover over the card to see
-              shadow effect.
-            </div>
+            <div
+              id="twsx-output"
+              class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-md p-4 font-mono whitespace-pre-wrap min-h-[300px] max-h-[500px] overflow-auto shadow-sm"
+            ></div>
           </div>
         </div>
       </div>
@@ -241,42 +306,37 @@
             /[{}[\]:,]/g,
             (match) => `<span class="json-punctuation">${match}</span>`
           );
-      }      // Tab switching logic
+      } // Tab switching logic
       document.querySelectorAll(".tab").forEach((tab) => {
         tab.addEventListener("click", () => {
           const tabId = tab.dataset.tab;
-          
+
           // Reset all tabs to inactive state
           document.querySelectorAll(".tab").forEach((t) => {
             t.classList.remove("text-primary");
             t.classList.remove("border-primary");
             t.classList.add("border-transparent");
           });
-          
+
           // Hide all tab contents
           document.getElementById("tws-tab").classList.add("hidden");
           document.getElementById("tws-tab").classList.remove("block");
           document.getElementById("twsx-tab").classList.add("hidden");
           document.getElementById("twsx-tab").classList.remove("block");
-          
+
           // Set active tab styles
           tab.classList.remove("border-transparent");
           tab.classList.add("border-primary", "text-primary");
-          
+
           // Show active tab content
           document.getElementById(`${tabId}-tab`).classList.remove("hidden");
           document.getElementById(`${tabId}-tab`).classList.add("block");
         });
-      });
-
-      // TWS Tab functionality
+      }); // TWS Tab functionality
       const twsInput = document.getElementById("tws-input");
       const twsOutput = document.getElementById("tws-output");
-      const twsLivePreview = document.getElementById("tws-live-preview");
       const twsFormat = document.getElementById("tws-format");
-      const twsCopyBtn = document.getElementById("tws-copy-btn");
-
-      // Update TWS output with debounce
+      const twsCopyBtn = document.getElementById("tws-copy-btn"); // Update TWS output with debounce
       const updateTwsOutput = debounce(() => {
         try {
           const classes = twsInput.value.trim();
@@ -288,20 +348,13 @@
             if (format === 0) {
               // CSS string format
               twsOutput.innerHTML = result;
-
-              // Apply to live preview
-              twsLivePreview.setAttribute("style", result);
             } else {
               // JSON object format
               const formatted = JSON.stringify(result, null, 2);
               twsOutput.innerHTML = highlightJSON(formatted);
-
-              // Apply to live preview
-              Object.assign(twsLivePreview.style, result);
             }
           } else {
             twsOutput.textContent = "Please enter Tailwind CSS classes";
-            twsLivePreview.removeAttribute("style");
           }
         } catch (error) {
           twsOutput.textContent = `Error: ${error.message}`;
@@ -309,7 +362,7 @@
       }, 300);
 
       twsInput.addEventListener("input", updateTwsOutput);
-      twsFormat.addEventListener("change", updateTwsOutput);      // Copy TWS output
+      twsFormat.addEventListener("change", updateTwsOutput); // Copy TWS output
       twsCopyBtn.addEventListener("click", () => {
         const format = parseInt(twsFormat.value);
         const classes = twsInput.value.trim();
@@ -330,12 +383,12 @@
           navigator.clipboard.writeText(textToCopy).then(() => {
             const originalText = twsCopyBtn.textContent;
             const originalClasses = twsCopyBtn.className;
-            
+
             // Change the button text and style
             twsCopyBtn.textContent = "Copied!";
             twsCopyBtn.classList.remove("bg-primary", "hover:bg-blue-700");
             twsCopyBtn.classList.add("bg-green-600", "hover:bg-green-700");
-            
+
             // Revert after delay
             setTimeout(() => {
               twsCopyBtn.textContent = originalText;
@@ -344,14 +397,10 @@
             }, 2000);
           });
         }
-      });
-
-      // TWSX Tab functionality
+      }); // TWSX Tab functionality
       const twsxInput = document.getElementById("twsx-input");
       const twsxOutput = document.getElementById("twsx-output");
-      const twsxLivePreview = document.getElementById("twsx-live-preview");
       const twsxCopyBtn = document.getElementById("twsx-copy-btn");
-      const twsxPreviewBtn = document.getElementById("twsx-preview-btn");
       // Update TWSX output with debounce
       const updateTwsxOutput = debounce(() => {
         try {
@@ -374,7 +423,7 @@
         }
       }, 300);
 
-      twsxInput.addEventListener("input", updateTwsxOutput);      // Copy TWSX output
+      twsxInput.addEventListener("input", updateTwsxOutput); // Copy TWSX output
       twsxCopyBtn.addEventListener("click", () => {
         try {
           const configStr = twsxInput.value.trim();
@@ -385,16 +434,19 @@
 
             navigator.clipboard.writeText(css).then(() => {
               const originalText = twsxCopyBtn.textContent;
-              
+
               // Change the button text and style
               twsxCopyBtn.textContent = "Copied!";
               twsxCopyBtn.classList.remove("bg-primary", "hover:bg-blue-700");
               twsxCopyBtn.classList.add("bg-green-600", "hover:bg-green-700");
-              
+
               // Revert after delay
               setTimeout(() => {
                 twsxCopyBtn.textContent = originalText;
-                twsxCopyBtn.classList.remove("bg-green-600", "hover:bg-green-700");
+                twsxCopyBtn.classList.remove(
+                  "bg-green-600",
+                  "hover:bg-green-700"
+                );
                 twsxCopyBtn.classList.add("bg-primary", "hover:bg-blue-700");
               }, 2000);
             });
@@ -402,84 +454,49 @@
         } catch (error) {
           twsxOutput.textContent = `Error: ${error.message}`;
         }
-      });      // Generate live preview for TWSX
-      twsxPreviewBtn.addEventListener("click", () => {
-        try {
-          const configStr = twsxInput.value.trim();
-
-          if (configStr) {
-            const config = JSON.parse(configStr);
-            const css = tailwindToStyle.twsx(config);
-
-            // Create a style element and inject the CSS
-            let styleEl = document.getElementById("twsx-preview-style");
-            if (!styleEl) {
-              styleEl = document.createElement("style");
-              styleEl.id = "twsx-preview-style";
-              document.head.appendChild(styleEl);
-            }
-
-            // CSS is injected as-is for functionality (not beautified)
-            styleEl.textContent = css;
-
-            const originalText = twsxPreviewBtn.textContent;
-            
-            // Change the button text and style
-            twsxPreviewBtn.textContent = "Preview Updated!";
-            twsxPreviewBtn.classList.remove("bg-primary", "hover:bg-blue-700");
-            twsxPreviewBtn.classList.add("bg-green-600", "hover:bg-green-700");
-            
-            // Revert after delay
-            setTimeout(() => {
-              twsxPreviewBtn.textContent = originalText;
-              twsxPreviewBtn.classList.remove("bg-green-600", "hover:bg-green-700");
-              twsxPreviewBtn.classList.add("bg-primary", "hover:bg-blue-700");
-            }, 2000);
-          }
-        } catch (error) {
-          twsxOutput.textContent = `Error: ${error.message}`;
-        }
-      });// Dark mode toggler
+      }); // Dark mode toggler
       const themeToggle = document.getElementById("theme-toggle");
       const lightIcon = document.getElementById("light-icon");
       const darkIcon = document.getElementById("dark-icon");
-      
+
       // Check for saved theme preference or use system preference
-      const userTheme = localStorage.getItem('theme');
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      
+      const userTheme = localStorage.getItem("theme");
+      const systemTheme = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+
       // Function to toggle icons
       const iconToggle = () => {
-        lightIcon.classList.toggle('hidden');
-        darkIcon.classList.toggle('hidden');
+        lightIcon.classList.toggle("hidden");
+        darkIcon.classList.toggle("hidden");
       };
-      
+
       // Function to check and set theme on initial load
       const themeCheck = () => {
-        if (userTheme === 'dark' || (!userTheme && systemTheme)) {
-          document.documentElement.classList.add('dark');
-          darkIcon.classList.add('hidden');
+        if (userTheme === "dark" || (!userTheme && systemTheme)) {
+          document.documentElement.classList.add("dark");
+          darkIcon.classList.add("hidden");
           return;
         }
-        lightIcon.classList.add('hidden');
+        lightIcon.classList.add("hidden");
       };
-      
+
       // Function to switch theme manually
       const themeSwitch = () => {
-        if (document.documentElement.classList.contains('dark')) {
-          document.documentElement.classList.remove('dark');
-          localStorage.setItem('theme', 'light');
+        if (document.documentElement.classList.contains("dark")) {
+          document.documentElement.classList.remove("dark");
+          localStorage.setItem("theme", "light");
           iconToggle();
           return;
         }
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('theme', 'dark');
+        document.documentElement.classList.add("dark");
+        localStorage.setItem("theme", "dark");
         iconToggle();
       };
-      
+
       // Event listener for theme toggle button
-      themeToggle.addEventListener('click', themeSwitch);
-      
+      themeToggle.addEventListener("click", themeSwitch);
+
       // Invoke theme check on initial load
       themeCheck();
 
