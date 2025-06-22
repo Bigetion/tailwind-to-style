@@ -3,9 +3,10 @@ import terser from '@rollup/plugin-terser';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import { babel } from '@rollup/plugin-babel';
+import pkg from './package.json';
 
 const banner = `/**
- * tailwind-to-style v2.5.0
+ * tailwind-to-style v${pkg.version}
  * Convert tailwind classes to inline style
  * 
  * @author Bigetion

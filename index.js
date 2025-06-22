@@ -1,5 +1,5 @@
 /**
- * tailwind-to-style v2.5.0
+ * tailwind-to-style v2.5.1
  * Convert tailwind classes to inline style
  * 
  * @author Bigetion
