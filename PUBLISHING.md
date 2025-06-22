@@ -46,11 +46,17 @@ If you need to publish manually:
 
 To set up GitHub Actions for automated publishing:
 
-1. Generate an npm access token:
+1. Generate an npm Granular Access Token:
    - Go to npmjs.com and login
    - Go to your profile settings
    - Select "Access Tokens"
-   - Generate a new token with "Publish" permissions
+   - Click "Generate New Token"
+   - Select "Granular Access Token"
+   - Set a name like "tailwind-to-style-github-actions" 
+   - Choose an appropriate expiration (e.g., 1 year)
+   - Under Permissions, select "Read and write" for package publishing
+   - Select only the tailwind-to-style package
+   - Click "Generate Token" and copy it immediately
 
 2. Add the token to your GitHub repository:
    - Go to your repo on GitHub
