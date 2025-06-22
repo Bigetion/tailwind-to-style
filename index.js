@@ -1,1013 +1,1708 @@
-import { getConfigOptions } from "./utils/index";
-
-import generateAccentColor from "./generators/accentColor";
-import generateAccessibility from "./generators/accessibility";
-import generateAlignContent from "./generators/alignContent";
-import generateAlignItems from "./generators/alignItems";
-import generateAlignSelf from "./generators/alignSelf";
-import generateAppearance from "./generators/appearance";
-import generateAspect from "./generators/aspect";
-import generateBackgroundAttachment from "./generators/backgroundAttachment";
-import generateBackgroundClip from "./generators/backgroundClip";
-import generateBackgroundColor from "./generators/backgroundColor";
-import generateBackgroundImage from "./generators/backgroundImage";
-import generateBackgroundOpacity from "./generators/backgroundOpacity";
-import generateBackgroundOrigin from "./generators/backgroundOrigin";
-import generateBackgroundPosition from "./generators/backgroundPosition";
-import generateBackgroundRepeat from "./generators/backgroundRepeat";
-import generateBackgroundSize from "./generators/backgroundSize";
-import generateBlur from "./generators/blur";
-import generateBorderCollapse from "./generators/borderCollapse";
-import generateBorderColor from "./generators/borderColor";
-import generateBorderOpacity from "./generators/borderOpacity";
-import generateBorderRadius from "./generators/borderRadius";
-import generateBorderSpacing from "./generators/borderSpacing";
-import generateBorderStyle from "./generators/borderStyle";
-import generateBorderWidth from "./generators/borderWidth";
-import generateBoxDecorationBreak from "./generators/boxDecorationBreak";
-import generateBoxShadow from "./generators/boxShadow";
-import generateBoxSizing from "./generators/boxSizing";
-import generateBrightness from "./generators/brightness";
-import generateCaptionSide from "./generators/captionSide";
-import generateCaretColor from "./generators/caretColor";
-import generateClear from "./generators/clear";
-import generateContent from "./generators/content";
-import generateContrast from "./generators/contrast";
-import generateCursor from "./generators/cursor";
-import generateDisplay from "./generators/display";
-import generateDivideColor from "./generators/divideColor";
-import generateDivideOpacity from "./generators/divideOpacity";
-import generateDivideStyle from "./generators/divideStyle";
-import generateDivideWidth from "./generators/divideWidth";
-import generateDropShadow from "./generators/dropShadow";
-import generateFill from "./generators/fill";
-import generateFilter from "./generators/filter";
-import generateFlex from "./generators/flex";
-import generateFlexBasis from "./generators/flexBasis";
-import generateFlexDirection from "./generators/flexDirection";
-import generateFlexGrow from "./generators/flexGrow";
-import generateFlexShrink from "./generators/flexShrink";
-import generateFlexWrap from "./generators/flexWrap";
-import generateFloat from "./generators/float";
-import generateFontSize from "./generators/fontSize";
-import generateFontSmoothing from "./generators/fontSmoothing";
-import generateFontStyle from "./generators/fontStyle";
-import generateFontVariantNumeric from "./generators/fontVariantNumeric";
-import generateFontWeight from "./generators/fontWeight";
-import generateGap from "./generators/gap";
-import generateGradientColorStops from "./generators/gradientColorStops";
-import generateGrayscale from "./generators/grayscale";
-import generateGridAutoColumns from "./generators/gridAutoColumns";
-import generateGridAutoFlow from "./generators/gridAutoFlow";
-import generateGridAutoRows from "./generators/gridAutoRows";
-import generateGridColumn from "./generators/gridColumn";
-import generateGridColumnEnd from "./generators/gridColumnEnd";
-import generateGridColumnStart from "./generators/gridColumnStart";
-import generateGridRow from "./generators/gridRow";
-import generateGridRowEnd from "./generators/gridRowEnd";
-import generateGridRowStart from "./generators/gridRowStart";
-import generateGridTemplateColumns from "./generators/gridTemplateColumns";
-import generateGridTemplateRows from "./generators/gridTemplateRows";
-import generateHeight from "./generators/height";
-import generateHueRotate from "./generators/hueRotate";
-import generateHyphens from "./generators/hyphens";
-import generateInset from "./generators/inset";
-import generateInvert from "./generators/invert";
-import generateIsolation from "./generators/isolation";
-import generateJustifyContent from "./generators/justifyContent";
-import generateJustifyItems from "./generators/justifyItems";
-import generateJustifySelf from "./generators/justifySelf";
-import generateLetterSpacing from "./generators/letterSpacing";
-import generateLineClamp from "./generators/lineClamp";
-import generateLineHeight from "./generators/lineHeight";
-import generateListStylePosition from "./generators/listStylePosition";
-import generateListStyleType from "./generators/listStyleType";
-import generateMargin from "./generators/margin";
-import generateMaxHeight from "./generators/maxHeight";
-import generateMaxWidth from "./generators/maxWidth";
-import generateMinHeight from "./generators/minHeight";
-import generateMinWidth from "./generators/minWidth";
-import generateMixBlendMode from "./generators/mixBlendMode";
-import generateObjectFit from "./generators/objectFit";
-import generateObjectPosition from "./generators/objectPosition";
-import generateOpacity from "./generators/opacity";
-import generateOrder from "./generators/order";
-import generateOutlineColor from "./generators/outlineColor";
-import generateOutlineOffset from "./generators/outlineOffset";
-import generateOutlineOpacity from "./generators/outlineOpacity";
-import generateOutlineStyle from "./generators/outlineStyle";
-import generateOutlineWidth from "./generators/outlineWidth";
-import generateOverflow from "./generators/overflow";
-import generateOverscrollBehavior from "./generators/overscrollBehavior";
-import generatePadding from "./generators/padding";
-import generatePlaceContent from "./generators/placeContent";
-import generatePlaceItems from "./generators/placeItems";
-import generatePlaceSelf from "./generators/placeSelf";
-import generatePointerEvents from "./generators/pointerEvents";
-import generatePosition from "./generators/position";
-import generateResize from "./generators/resize";
-import generateRingColor from "./generators/ringColor";
-import generateRingOffsetColor from "./generators/ringOffsetColor";
-import generateRingOffsetWidth from "./generators/ringOffsetWidth";
-import generateRingOpacity from "./generators/ringOpacity";
-import generateRingWidth from "./generators/ringWidth";
-import generateSaturate from "./generators/saturate";
-import generateRotate from "./generators/rotate";
-import generateScale from "./generators/scale";
-import generateScrollBehavior from "./generators/scrollBehavior";
-import generateScrollMargin from "./generators/scrollMargin";
-import generateScrollPadding from "./generators/scrollPadding";
-import generateScrollSnapAlign from "./generators/scrollSnapAlign";
-import generateScrollSnapStop from "./generators/scrollSnapStop";
-import generateScrollSnapType from "./generators/scrollSnapType";
-import generateSepia from "./generators/sepia";
-import generateSize from "./generators/size";
-import generateSkew from "./generators/skew";
-import generateSpace from "./generators/space";
-import generateStroke from "./generators/stroke";
-import generateStrokeWidth from "./generators/strokeWidth";
-import generateTableLayout from "./generators/tableLayout";
-import generateTextAlign from "./generators/textAlign";
-import generateTextColor from "./generators/textColor";
-import generateTextDecoration from "./generators/textDecoration";
-import generateTextDecorationColor from "./generators/textDecorationColor";
-import generateTextDecorationStyle from "./generators/textDecorationStyle";
-import generateTextDecorationThickness from "./generators/textDecorationThickness";
-import generateTextIndent from "./generators/textIndent";
-import generateTextOpacity from "./generators/textOpacity";
-import generateTextOverflow from "./generators/textOverflow";
-import generateTextShadowBlur from "./generators/textShadowBlur";
-import generateTextShadowColor from "./generators/textShadowColor";
-import generateTextShadowOpacity from "./generators/textShadowOpacity";
-import generateTextShadowX from "./generators/textShadowX";
-import generateTextShadowY from "./generators/textShadowY";
-import generateTextTransform from "./generators/textTransform";
-import generateTextUnderlineOffset from "./generators/textUnderlineOffset";
-import generateTextWrap from "./generators/textWrap";
-import generateTouchAction from "./generators/touchAction";
-import generateTransform from "./generators/transform";
-import generateTransformOrigin from "./generators/transformOrigin";
-import generateTranslate from "./generators/translate";
-import generateUserSelect from "./generators/userSelect";
-import generateVerticalAlign from "./generators/verticalAlign";
-import generateVisibility from "./generators/visibility";
-import generateWhitespace from "./generators/whitespace";
-import generateWidth from "./generators/width";
-import generateWordBreak from "./generators/wordBreak";
-import generateWillChange from "./generators/willChange";
-import generateZIndex from "./generators/zIndex";
-
-import patterns from "./patterns/index";
-
-const plugins = {
-  accentColor: generateAccentColor,
-  accessibility: generateAccessibility,
-  alignContent: generateAlignContent,
-  alignItems: generateAlignItems,
-  alignSelf: generateAlignSelf,
-  appearance: generateAppearance,
-  aspect: generateAspect,
-  backgroundAttachment: generateBackgroundAttachment,
-  backgroundClip: generateBackgroundClip,
-  backgroundColor: generateBackgroundColor,
-  backgroundImage: generateBackgroundImage,
-  backgroundOpacity: generateBackgroundOpacity,
-  backgroundOrigin: generateBackgroundOrigin,
-  backgroundPosition: generateBackgroundPosition,
-  backgroundRepeat: generateBackgroundRepeat,
-  backgroundSize: generateBackgroundSize,
-  blur: generateBlur,
-  borderCollapse: generateBorderCollapse,
-  borderColor: generateBorderColor,
-  borderOpacity: generateBorderOpacity,
-  borderRadius: generateBorderRadius,
-  borderSpacing: generateBorderSpacing,
-  borderStyle: generateBorderStyle,
-  borderWidth: generateBorderWidth,
-  boxDecorationBreak: generateBoxDecorationBreak,
-  boxShadow: generateBoxShadow,
-  boxSizing: generateBoxSizing,
-  brightness: generateBrightness,
-  captionSide: generateCaptionSide,
-  caretColor: generateCaretColor,
-  clear: generateClear,
-  content: generateContent,
-  contrast: generateContrast,
-  cursor: generateCursor,
-  display: generateDisplay,
-  divideColor: generateDivideColor,
-  divideOpacity: generateDivideOpacity,
-  divideStyle: generateDivideStyle,
-  divideWidth: generateDivideWidth,
-  dropShadow: generateDropShadow,
-  fill: generateFill,
-  filter: generateFilter,
-  flex: generateFlex,
-  flexBasis: generateFlexBasis,
-  flexDirection: generateFlexDirection,
-  flexGrow: generateFlexGrow,
-  flexShrink: generateFlexShrink,
-  flexWrap: generateFlexWrap,
-  float: generateFloat,
-  fontSize: generateFontSize,
-  fontSmoothing: generateFontSmoothing,
-  fontStyle: generateFontStyle,
-  fontVariantNumeric: generateFontVariantNumeric,
-  fontWeight: generateFontWeight,
-  gap: generateGap,
-  gradientColorStops: generateGradientColorStops,
-  grayscale: generateGrayscale,
-  gridAutoColumns: generateGridAutoColumns,
-  gridAutoFlow: generateGridAutoFlow,
-  gridAutoRows: generateGridAutoRows,
-  gridColumn: generateGridColumn,
-  gridColumnEnd: generateGridColumnEnd,
-  gridColumnStart: generateGridColumnStart,
-  gridRow: generateGridRow,
-  gridRowEnd: generateGridRowEnd,
-  gridRowStart: generateGridRowStart,
-  gridTemplateColumns: generateGridTemplateColumns,
-  gridTemplateRows: generateGridTemplateRows,
-  height: generateHeight,
-  hueRotate: generateHueRotate,
-  hyphens: generateHyphens,
-  inset: generateInset,
-  invert: generateInvert,
-  isolation: generateIsolation,
-  justifyContent: generateJustifyContent,
-  justifyItems: generateJustifyItems,
-  justifySelf: generateJustifySelf,
-  letterSpacing: generateLetterSpacing,
-  lineClamp: generateLineClamp,
-  lineHeight: generateLineHeight,
-  listStylePosition: generateListStylePosition,
-  listStyleType: generateListStyleType,
-  margin: generateMargin,
-  maxHeight: generateMaxHeight,
-  maxWidth: generateMaxWidth,
-  minHeight: generateMinHeight,
-  minWidth: generateMinWidth,
-  objectFit: generateObjectFit,
-  mixBlendMode: generateMixBlendMode,
-  objectPosition: generateObjectPosition,
-  opacity: generateOpacity,
-  order: generateOrder,
-  outlineColor: generateOutlineColor,
-  outlineOffset: generateOutlineOffset,
-  outlineOpacity: generateOutlineOpacity,
-  outlineStyle: generateOutlineStyle,
-  outlineWidth: generateOutlineWidth,
-  overflow: generateOverflow,
-  overscrollBehavior: generateOverscrollBehavior,
-  padding: generatePadding,
-  placeContent: generatePlaceContent,
-  placeItems: generatePlaceItems,
-  placeSelf: generatePlaceSelf,
-  pointerEvents: generatePointerEvents,
-  position: generatePosition,
-  resize: generateResize,
-  ringColor: generateRingColor,
-  ringOffsetColor: generateRingOffsetColor,
-  ringOffsetWidth: generateRingOffsetWidth,
-  ringOpacity: generateRingOpacity,
-  ringWidth: generateRingWidth,
-  rotate: generateRotate,
-  saturate: generateSaturate,
-  scale: generateScale,
-  scrollBehavior: generateScrollBehavior,
-  scrollMargin: generateScrollMargin,
-  scrollPadding: generateScrollPadding,
-  scrollSnapAlign: generateScrollSnapAlign,
-  scrollSnapStop: generateScrollSnapStop,
-  scrollSnapType: generateScrollSnapType,
-  sepia: generateSepia,
-  size: generateSize,
-  skew: generateSkew,
-  space: generateSpace,
-  stroke: generateStroke,
-  strokeWidth: generateStrokeWidth,
-  tableLayout: generateTableLayout,
-  textAlign: generateTextAlign,
-  textColor: generateTextColor,
-  textDecoration: generateTextDecoration,
-  textDecorationColor: generateTextDecorationColor,
-  textDecorationStyle: generateTextDecorationStyle,
-  textDecorationThickness: generateTextDecorationThickness,
-  textIndent: generateTextIndent,
-  textOpacity: generateTextOpacity,
-  textOverflow: generateTextOverflow,
-  textShadowBlur: generateTextShadowBlur,
-  textShadowColor: generateTextShadowColor,
-  textShadowOpacity: generateTextShadowOpacity,
-  textShadowX: generateTextShadowX,
-  textShadowY: generateTextShadowY,
-  textTransform: generateTextTransform,
-  textUnderlineOffset: generateTextUnderlineOffset,
-  textWrap: generateTextWrap,
-  touchAction: generateTouchAction,
-  transform: generateTransform,
-  transformOrigin: generateTransformOrigin,
-  translate: generateTranslate,
-  userSelect: generateUserSelect,
-  verticalAlign: generateVerticalAlign,
-  visibility: generateVisibility,
-  whitespace: generateWhitespace,
-  width: generateWidth,
-  willChange: generateWillChange,
-  wordBreak: generateWordBreak,
-  zIndex: generateZIndex,
-};
-
-function parseCustomClassWithPatterns(className) {
-  for (const key in patterns) {
-    const { regex, cssProp, formatter } = patterns[key];
-    const match = className.match(regex);
-    if (match) {
-      const value = formatter(match[1]);
-      return `${cssProp}: ${value};`;
-    }
-  }
-  return null;
-}
-
-// Cache untuk getConfigOptions
-const configOptionsCache = new Map();
-const cacheKey = (options) => JSON.stringify(options);
-
-function generateTailwindCssString(options = {}) {
-  const pluginKeys = Object.keys(plugins);
-    // Menggunakan cache untuk mencegah pemrosesan ulang yang tidak perlu
-  const key = cacheKey(options);
-  if (!configOptionsCache.has(key)) {
-    configOptionsCache.set(key, getConfigOptions(options, pluginKeys));
-    limitCacheSize(configOptionsCache);
-  }
-  
-  const configOptions = configOptionsCache.get(key);
-  const { corePlugins = {} } = configOptions;
-  const corePluginKeys = Object.keys(corePlugins);
-
-  let cssString = ``;
-  Object.keys(plugins).forEach((key) => {
-    if (corePluginKeys.indexOf(key) >= 0 && !corePlugins[key]) {
-      cssString += "";
-    } else {
-      cssString += plugins[key](configOptions);
-    }
-  });
-  return cssString;
-}
-
-function convertCssToObject(cssString) {
-  const obj = {};
-  const regex = /([a-zA-Z0-9\-_\\/.]+)\s*{\s*([^}]+)\s*}/g;
-  let match;
-
-  while ((match = regex.exec(cssString)) !== null) {
-    const className = match[1].replace(/\\\\/g, "\\").replace(/^_/, "");
-    const cssRules = match[2].trim().replace(/\s+/g, " ");
-    obj[className] = cssRules;
-  }
-
-  return obj;
-}
-
-let twString = null;
-let cssObject = null;
-
-if (!twString) {
-  twString = generateTailwindCssString().replace(/\s\s+/g, " ");
-}
-
-if (!cssObject) {
-  cssObject = convertCssToObject(twString);
-}
-
-const breakpoints = {
-  sm: "@media (min-width: 640px)",
-  md: "@media (min-width: 768px)",
-  lg: "@media (min-width: 1024px)",
-  xl: "@media (min-width: 1280px)",
-  "2xl": "@media (min-width: 1536px)",
-};
-
-const pseudoVariants = new Set([
-  "hover",
-  "focus",
-  "focus-within",
-  "active",
-  "visited",
-  "disabled",
-  "first",
-  "last",
-  "checked",
-  "invalid",
-  "required",
-]);
-
-const specialVariants = {
-  group: (state, sel) => `.group:${state} ${sel}`,
-  peer: (state, sel) => `.peer:${state} ~ ${sel}`,
-};
-
-const selectorVariants = {
-  first: () => `> :first-child`,
-  last: () => `> :last-child`,
-  odd: () => `> :nth-child(odd)`,
-  even: () => `> :nth-child(even)`,
-  not: (arg) => `> :not(${arg})`,
-  number: (arg) => `> :nth-child(${arg})`,
-};
-
-// Mengoptimalkan encoding/decoding bracket values dengan memoization
-const encodeBracketCache = new Map();
-function encodeBracketValues(input) {
-  if (!input) return input;
-  if (encodeBracketCache.has(input)) return encodeBracketCache.get(input);
-  
-  const result = input.replace(/\[([^\]]+)\]/g, (_, content) => {
-    const encoded = encodeURIComponent(content)
-      .replace(/\(/g, "__P__")
-      .replace(/\)/g, "__C__");
-    return `[${encoded}]`;
-  });
-  
-  encodeBracketCache.set(input, result);
-  limitCacheSize(encodeBracketCache);
-  return result;
-}
-
-const decodeBracketCache = new Map();
-function decodeBracketValues(input) {
-  if (!input) return input;
-  if (decodeBracketCache.has(input)) return decodeBracketCache.get(input);
-  
-  const result = decodeURIComponent(input)
-    .replace(/__P__/g, "(")
-    .replace(/__C__/g, ")");
-    
-  decodeBracketCache.set(input, result);
-  limitCacheSize(decodeBracketCache);
-  return result;
-}
-
-function replaceSelector(selector) {
-  return selector.replace(
-    /c-(first|last|odd|even|\d+|not\([^)]+\))/g,
-    (_, raw) => {
-      if (/^\d+$/.test(raw)) return selectorVariants.number(raw);
-      const notMatch = raw.match(/^not\(([^)]+)\)$/);
-      if (notMatch) return selectorVariants.not(notMatch[1]);
-      if (selectorVariants[raw]) return selectorVariants[raw]();
-      return raw;
-    }
-  );
-}
-
-function resolveVariants(selector, variants) {
-  let media = null;
-  let finalSelector = selector;
-
-  for (const v of variants) {
-    if (breakpoints[v]) {
-      media = breakpoints[v];
-    } else if (pseudoVariants.has(v)) {
-      finalSelector += `:${v}`;
-    } else {
-      for (const key in specialVariants) {
-        if (v.startsWith(`${key}-`)) {
-          const state = v.slice(key.length + 1);
-          finalSelector = specialVariants[key](state, finalSelector);
-          break;
-        }
-      }
-    }
-  }
-
-  return { media, finalSelector };
-}
-
-function inlineStyleToJson(styleString) {
-  const styles = styleString.split(";").filter((style) => style.trim() !== "");
-  const styleObject = {};
-
-  styles.forEach((style) => {
-    const [key, value] = style.split(":").map((s) => s.trim());
-    if (key && value) {
-      const camelCaseKey = key.replace(/-([a-z])/g, (_, letter) =>
-        letter.toUpperCase()
-      );
-      styleObject[camelCaseKey] = value;
-    }
-  });
-
-  return styleObject;
-}
-
-// Cache untuk CSS resolusi
-const cssResolutionCache = new Map();
-
-function separateAndResolveCSS(arr) {
-  // Membuat kunci cache  const cacheKey = arr.join('|');
-  if (cssResolutionCache.has(cacheKey)) {
-    return cssResolutionCache.get(cacheKey);
-  }
-  
-  // Batasi ukuran cache untuk menghindari memory leak
-  limitCacheSize(cssResolutionCache);
-  
-  const cssProperties = {};
-  arr.forEach((item) => {
-    if (!item) return;
-    
-    const declarations = item
-      .split(";")
-      .map((decl) => decl.trim())
-      .filter((decl) => decl);
-
-    declarations.forEach((declaration) => {
-      const colonIndex = declaration.indexOf(':');
-      if (colonIndex === -1) return;
-      
-      const key = declaration.substring(0, colonIndex).trim();
-      const value = declaration.substring(colonIndex + 1).trim();
-      
-      if (key && value) {
-        // Prioritaskan nilai yang lebih spesifik (misalnya !important)
-        if (value.includes('!important') || !cssProperties[key]) {
-          cssProperties[key] = value;
-        }
-      }
-    });
-  });
-
-  const resolvedProperties = { ...cssProperties };
-
-  const resolveValue = (value, variables) => {
-    if (!value || !value.includes('var(')) return value;
-    
-    return value.replace(
-      /var\((--[a-zA-Z0-9-]+)(?:,\s*([^)]+))?\)/g,
-      (match, variable, fallback) => {
-        return variables[variable] || fallback || match;
-      }
-    );
-  };
-
-  // Resolve variables
-  Object.keys(resolvedProperties).forEach((key) => {
-    resolvedProperties[key] = resolveValue(
-      resolvedProperties[key],
-      resolvedProperties
-    );
-  });
-
-  // Remove CSS variables after resolution
-  Object.keys(resolvedProperties).forEach((key) => {
-    if (key.startsWith("--")) {
-      delete resolvedProperties[key];
-    }
-  });
-
-  const result = Object.entries(resolvedProperties)
-    .map(([key, value]) => `${key}: ${value};`)
-    .join(" ");
-    
-  cssResolutionCache.set(cacheKey, result);
-  return result;
-}
-
-// Fungsi untuk membatasi ukuran cache untuk mencegah memory leak
-function limitCacheSize(cache, maxSize = 1000) {
-  if (cache.size > maxSize) {
-    // Hapus 20% entri yang paling lama
-    const entriesToRemove = Math.floor(cache.size * 0.2);
-    const keys = Array.from(cache.keys()).slice(0, entriesToRemove);
-    keys.forEach(key => cache.delete(key));
-  }
-}
-
-// Implementasi fungsi debounce untuk mengoptimalkan panggilan berulang
-function debounce(func, wait = 100) {
-  let timeout;
-  return function(...args) {
-    const context = this;
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func.apply(context, args), wait);
-  };
-}
-
-/**
- * Mengkonversi string kelas Tailwind menjadi inline styles CSS atau objek JSON
- * @param {string} classNames - String berisi kelas Tailwind yang akan dikonversi
- * @param {boolean} convertToJson - Jika true, hasil akan menjadi objek JSON, jika false menjadi string CSS
- * @returns {string|Object} String CSS inline atau objek style JSON
+/*
+ * ATTENTION: The "eval" devtool has been used (maybe by default in mode: "development").
+ * This devtool is neither made for production nor for readable output files.
+ * It uses "eval()" calls to create a separate source file in the browser devtools.
+ * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
+ * or disable the default devtool with "devtool: false".
+ * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
  */
-export function tws(classNames, convertToJson) {
-  if (
-    [
-      !classNames,
-      typeof classNames !== "string",
-      classNames.trim() === "",
-    ].includes(true)
-  ) {
-    return convertToJson ? {} : "";
-  }
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["tailwindToStyle"] = factory();
+	else
+		root["tailwindToStyle"] = factory();
+})(this, () => {
+return /******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
 
-  let classes;
-  try {
-    classes = classNames.match(/[\w-]+\[[^\]]+\]|[\w-]+\.\d+|[\w-]+/g);
-    
-    // Jika tidak ada class yang valid ditemukan
-    if (!classes || classes.length === 0) {
-      console.warn(`No valid Tailwind classes found in input: "${classNames}"`);
-      return convertToJson ? {} : "";
-    }
-  } catch (error) {
-    console.error(`Error parsing Tailwind classes: ${error.message}`);
-    return convertToJson ? {} : "";
-  }
+/***/ "./src/config/index.js":
+/*!*****************************!*\
+  !*** ./src/config/index.js ***!
+  \*****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-  let cssResult = classes.map((className) => {
-    if (cssObject[className]) {
-      return cssObject[className];
-    } else if (className.includes("[")) {
-      const match = className.match(/\[([^\]]+)\]/);
-      if (match) {
-        const customValue = match[1];
-        const baseKey = className.split("[")[0];
-        if (cssObject[`${baseKey}custom`]) {
-          return cssObject[`${baseKey}custom`].replace(
-            /custom_value/g,
-            customValue
-          );
-        }
-      }
-    }
-    return "";
-  });
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _theme__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./theme */ \"./src/config/theme.js\");\n\nvar configOptions = {\n  theme: _theme__WEBPACK_IMPORTED_MODULE_0__[\"default\"]\n};\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (configOptions);\n\n//# sourceURL=webpack://tailwindToStyle/./src/config/index.js?");
 
-  cssResult = separateAndResolveCSS(cssResult);
+/***/ }),
 
-  if (convertToJson) {
-    cssResult = inlineStyleToJson(cssResult);
-  }
+/***/ "./src/config/theme.js":
+/*!*****************************!*\
+  !*** ./src/config/theme.js ***!
+  \*****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-  return cssResult;
-}
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\nfunction _typeof(o) { \"@babel/helpers - typeof\"; return _typeof = \"function\" == typeof Symbol && \"symbol\" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && \"function\" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? \"symbol\" : typeof o; }, _typeof(o); }\nfunction ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }\nfunction _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }\nfunction _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }\nfunction _toPropertyKey(t) { var i = _toPrimitive(t, \"string\"); return \"symbol\" == _typeof(i) ? i : i + \"\"; }\nfunction _toPrimitive(t, r) { if (\"object\" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || \"default\"); if (\"object\" != _typeof(i)) return i; throw new TypeError(\"@@toPrimitive must return a primitive value.\"); } return (\"string\" === r ? String : Number)(t); }\nvar theme = {\n  accentColor: function accentColor(_ref) {\n    var theme = _ref.theme;\n    return _objectSpread(_objectSpread({}, theme(\"colors\")), {}, {\n      auto: \"auto\",\n      custom: \"custom_value\"\n    });\n  },\n  aspectRatio: {\n    auto: \"auto\",\n    square: \"1 / 1\",\n    video: \"16 / 9\",\n    custom: \"custom_value\"\n  },\n  backdropBlur: function backdropBlur(_ref2) {\n    var theme = _ref2.theme;\n    return theme(\"blur\");\n  },\n  backdropBrightness: function backdropBrightness(_ref3) {\n    var theme = _ref3.theme;\n    return theme(\"brightness\");\n  },\n  backdropContrast: function backdropContrast(_ref4) {\n    var theme = _ref4.theme;\n    return theme(\"contrast\");\n  },\n  backdropGrayscale: function backdropGrayscale(_ref5) {\n    var theme = _ref5.theme;\n    return theme(\"grayscale\");\n  },\n  backdropHueRotate: function backdropHueRotate(_ref6) {\n    var theme = _ref6.theme;\n    return theme(\"hueRotate\");\n  },\n  backdropInvert: function backdropInvert(_ref7) {\n    var theme = _ref7.theme;\n    return theme(\"invert\");\n  },\n  backdropOpacity: function backdropOpacity(_ref8) {\n    var theme = _ref8.theme;\n    return theme(\"opacity\");\n  },\n  backdropSaturate: function backdropSaturate(_ref9) {\n    var theme = _ref9.theme;\n    return theme(\"saturate\");\n  },\n  backdropSepia: function backdropSepia(_ref0) {\n    var theme = _ref0.theme;\n    return theme(\"sepia\");\n  },\n  backgroundColor: function backgroundColor(_ref1) {\n    var theme = _ref1.theme;\n    return theme(\"colors\");\n  },\n  backgroundImage: {\n    none: \"none\",\n    \"gradient-to-t\": \"linear-gradient(to top, var(--gradient-color-stops))\",\n    \"gradient-to-tr\": \"linear-gradient(to top right, var(--gradient-color-stops))\",\n    \"gradient-to-r\": \"linear-gradient(to right, var(--gradient-color-stops))\",\n    \"gradient-to-br\": \"linear-gradient(to bottom right, var(--gradient-color-stops))\",\n    \"gradient-to-b\": \"linear-gradient(to bottom, var(--gradient-color-stops))\",\n    \"gradient-to-bl\": \"linear-gradient(to bottom left, var(--gradient-color-stops))\",\n    \"gradient-to-l\": \"linear-gradient(to left, var(--gradient-color-stops))\",\n    \"gradient-to-tl\": \"linear-gradient(to top left, var(--gradient-color-stops))\"\n  },\n  backgroundOpacity: function backgroundOpacity(_ref10) {\n    var theme = _ref10.theme;\n    return theme(\"opacity\");\n  },\n  backgroundPosition: {\n    bottom: \"bottom\",\n    center: \"center\",\n    left: \"left\",\n    \"left-bottom\": \"left bottom\",\n    \"left-top\": \"left top\",\n    right: \"right\",\n    \"right-bottom\": \"right bottom\",\n    \"right-top\": \"right top\",\n    top: \"top\"\n  },\n  backgroundSize: {\n    auto: \"auto\",\n    cover: \"cover\",\n    contain: \"contain\"\n  },\n  blur: {\n    0: \"0\",\n    none: \"0\",\n    sm: \"4px\",\n    DEFAULT: \"8px\",\n    md: \"12px\",\n    lg: \"16px\",\n    xl: \"24px\",\n    \"2xl\": \"40px\",\n    \"3xl\": \"64px\",\n    custom: \"custom_value\"\n  },\n  borderColor: function borderColor(_ref11) {\n    var theme = _ref11.theme;\n    return _objectSpread(_objectSpread({}, theme(\"colors\")), {}, {\n      DEFAULT: \"#e5e7eb\"\n    });\n  },\n  borderOpacity: function borderOpacity(_ref12) {\n    var theme = _ref12.theme;\n    return theme(\"opacity\");\n  },\n  borderRadius: {\n    none: \"0px\",\n    sm: \"0.125rem\",\n    DEFAULT: \"0.25rem\",\n    md: \"0.375rem\",\n    lg: \"0.5rem\",\n    xl: \"0.75rem\",\n    \"2xl\": \"1rem\",\n    \"3xl\": \"1.5rem\",\n    full: \"9999px\",\n    custom: \"custom_value\"\n  },\n  borderSpacing: function borderSpacing(_ref13) {\n    var theme = _ref13.theme;\n    return _objectSpread({}, theme(\"spacing\"));\n  },\n  borderWidth: {\n    DEFAULT: \"1px\",\n    0: \"0px\",\n    2: \"2px\",\n    4: \"4px\",\n    8: \"8px\",\n    custom: \"custom_value\"\n  },\n  boxShadow: {\n    sm: \"0 1px 2px 0 rgb(0 0 0 / 0.05)\",\n    DEFAULT: \"0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)\",\n    md: \"0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)\",\n    lg: \"0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)\",\n    xl: \"0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)\",\n    \"2xl\": \"0 25px 50px -12px rgb(0 0 0 / 0.25)\",\n    inner: \"inset 0 2px 4px 0 rgb(0 0 0 / 0.05)\",\n    none: \"none\",\n    custom: \"custom_value\"\n  },\n  boxShadowColor: function boxShadowColor(_ref14) {\n    var theme = _ref14.theme;\n    return theme(\"colors\");\n  },\n  brightness: {\n    0: \"0\",\n    50: \".5\",\n    75: \".75\",\n    90: \".9\",\n    95: \".95\",\n    100: \"1\",\n    105: \"1.05\",\n    110: \"1.1\",\n    125: \"1.25\",\n    150: \"1.5\",\n    200: \"2\",\n    custom: \"custom_value\"\n  },\n  caretColor: function caretColor(_ref15) {\n    var theme = _ref15.theme;\n    return theme(\"colors\");\n  },\n  colors: {\n    transparent: \"transparent\",\n    current: \"currentColor\",\n    black: \"#000000\",\n    white: \"#ffffff\",\n    slate: {\n      50: \"#f8fafc\",\n      100: \"#f1f5f9\",\n      200: \"#e2e8f0\",\n      300: \"#cbd5e1\",\n      400: \"#94a3b8\",\n      500: \"#64748b\",\n      600: \"#475569\",\n      700: \"#334155\",\n      800: \"#1e293b\",\n      900: \"#0f172a\"\n    },\n    gray: {\n      50: \"#f9fafb\",\n      100: \"#f3f4f6\",\n      200: \"#e5e7eb\",\n      300: \"#d1d5db\",\n      400: \"#9ca3af\",\n      500: \"#6b7280\",\n      600: \"#4b5563\",\n      700: \"#374151\",\n      800: \"#1f2937\",\n      900: \"#111827\"\n    },\n    zinc: {\n      50: \"#fafafa\",\n      100: \"#f4f4f5\",\n      200: \"#e4e4e7\",\n      300: \"#d4d4d8\",\n      400: \"#a1a1aa\",\n      500: \"#71717a\",\n      600: \"#52525b\",\n      700: \"#3f3f46\",\n      800: \"#27272a\",\n      900: \"#18181b\"\n    },\n    neutral: {\n      50: \"#fafafa\",\n      100: \"#f5f5f5\",\n      200: \"#e5e5e5\",\n      300: \"#d4d4d4\",\n      400: \"#a3a3a3\",\n      500: \"#737373\",\n      600: \"#525252\",\n      700: \"#404040\",\n      800: \"#262626\",\n      900: \"#171717\"\n    },\n    stone: {\n      50: \"#fafaf9\",\n      100: \"#f5f5f4\",\n      200: \"#e7e5e4\",\n      300: \"#d6d3d1\",\n      400: \"#a8a29e\",\n      500: \"#78716c\",\n      600: \"#57534e\",\n      700: \"#44403c\",\n      800: \"#292524\",\n      900: \"#1c1917\"\n    },\n    red: {\n      50: \"#fef2f2\",\n      100: \"#fee2e2\",\n      200: \"#fecaca\",\n      300: \"#fca5a5\",\n      400: \"#f87171\",\n      500: \"#ef4444\",\n      600: \"#dc2626\",\n      700: \"#b91c1c\",\n      800: \"#991b1b\",\n      900: \"#7f1d1d\"\n    },\n    orange: {\n      50: \"#fff7ed\",\n      100: \"#ffedd5\",\n      200: \"#fed7aa\",\n      300: \"#fdba74\",\n      400: \"#fb923c\",\n      500: \"#f97316\",\n      600: \"#ea580c\",\n      700: \"#c2410c\",\n      800: \"#9a3412\",\n      900: \"#7c2d12\"\n    },\n    amber: {\n      50: \"#fffbeb\",\n      100: \"#fef3c7\",\n      200: \"#fde68a\",\n      300: \"#fcd34d\",\n      400: \"#fbbf24\",\n      500: \"#f59e0b\",\n      600: \"#d97706\",\n      700: \"#b45309\",\n      800: \"#92400e\",\n      900: \"#78350f\"\n    },\n    yellow: {\n      50: \"#fefce8\",\n      100: \"#fef9c3\",\n      200: \"#fef08a\",\n      300: \"#fde047\",\n      400: \"#facc15\",\n      500: \"#eab308\",\n      600: \"#ca8a04\",\n      700: \"#a16207\",\n      800: \"#854d0e\",\n      900: \"#713f12\"\n    },\n    lime: {\n      50: \"#f7fee7\",\n      100: \"#ecfccb\",\n      200: \"#d9f99d\",\n      300: \"#bef264\",\n      400: \"#a3e635\",\n      500: \"#84cc16\",\n      600: \"#65a30d\",\n      700: \"#4d7c0f\",\n      800: \"#3f6212\",\n      900: \"#365314\"\n    },\n    green: {\n      50: \"#f0fdf4\",\n      100: \"#dcfce7\",\n      200: \"#bbf7d0\",\n      300: \"#86efac\",\n      400: \"#4ade80\",\n      500: \"#22c55e\",\n      600: \"#16a34a\",\n      700: \"#15803d\",\n      800: \"#166534\",\n      900: \"#14532d\"\n    },\n    emerald: {\n      50: \"#ecfdf5\",\n      100: \"#d1fae5\",\n      200: \"#a7f3d0\",\n      300: \"#6ee7b7\",\n      400: \"#34d399\",\n      500: \"#10b981\",\n      600: \"#059669\",\n      700: \"#047857\",\n      800: \"#065f46\",\n      900: \"#064e3b\"\n    },\n    teal: {\n      50: \"#f0fdfa\",\n      100: \"#ccfbf1\",\n      200: \"#99f6e4\",\n      300: \"#5eead4\",\n      400: \"#2dd4bf\",\n      500: \"#14b8a6\",\n      600: \"#0d9488\",\n      700: \"#0f766e\",\n      800: \"#115e59\",\n      900: \"#134e4a\"\n    },\n    cyan: {\n      50: \"#ecfeff\",\n      100: \"#cffafe\",\n      200: \"#a5f3fc\",\n      300: \"#67e8f9\",\n      400: \"#22d3ee\",\n      500: \"#06b6d4\",\n      600: \"#0891b2\",\n      700: \"#0e7490\",\n      800: \"#155e75\",\n      900: \"#164e63\"\n    },\n    sky: {\n      50: \"#f0f9ff\",\n      100: \"#e0f2fe\",\n      200: \"#bae6fd\",\n      300: \"#7dd3fc\",\n      400: \"#38bdf8\",\n      500: \"#0ea5e9\",\n      600: \"#0284c7\",\n      700: \"#0369a1\",\n      800: \"#075985\",\n      900: \"#0c4a6e\"\n    },\n    blue: {\n      50: \"#eff6ff\",\n      100: \"#dbeafe\",\n      200: \"#bfdbfe\",\n      300: \"#93c5fd\",\n      400: \"#60a5fa\",\n      500: \"#3b82f6\",\n      600: \"#2563eb\",\n      700: \"#1d4ed8\",\n      800: \"#1e40af\",\n      900: \"#1e3a8a\"\n    },\n    indigo: {\n      50: \"#eef2ff\",\n      100: \"#e0e7ff\",\n      200: \"#c7d2fe\",\n      300: \"#a5b4fc\",\n      400: \"#818cf8\",\n      500: \"#6366f1\",\n      600: \"#4f46e5\",\n      700: \"#4338ca\",\n      800: \"#3730a3\",\n      900: \"#312e81\"\n    },\n    violet: {\n      50: \"#f5f3ff\",\n      100: \"#ede9fe\",\n      200: \"#ddd6fe\",\n      300: \"#c4b5fd\",\n      400: \"#a78bfa\",\n      500: \"#8b5cf6\",\n      600: \"#7c3aed\",\n      700: \"#6d28d9\",\n      800: \"#5b21b6\",\n      900: \"#4c1d95\"\n    },\n    purple: {\n      50: \"#faf5ff\",\n      100: \"#f3e8ff\",\n      200: \"#e9d5ff\",\n      300: \"#d8b4fe\",\n      400: \"#c084fc\",\n      500: \"#a855f7\",\n      600: \"#9333ea\",\n      700: \"#7e22ce\",\n      800: \"#6b21a8\",\n      900: \"#581c87\"\n    },\n    fuchsia: {\n      50: \"#fdf4ff\",\n      100: \"#fae8ff\",\n      200: \"#f5d0fe\",\n      300: \"#f0abfc\",\n      400: \"#e879f9\",\n      500: \"#d946ef\",\n      600: \"#c026d3\",\n      700: \"#a21caf\",\n      800: \"#86198f\",\n      900: \"#701a75\"\n    },\n    pink: {\n      50: \"#fdf2f8\",\n      100: \"#fce7f3\",\n      200: \"#fbcfe8\",\n      300: \"#f9a8d4\",\n      400: \"#f472b6\",\n      500: \"#ec4899\",\n      600: \"#db2777\",\n      700: \"#be185d\",\n      800: \"#9d174d\",\n      900: \"#831843\"\n    },\n    rose: {\n      50: \"#fff1f2\",\n      100: \"#ffe4e6\",\n      200: \"#fecdd3\",\n      300: \"#fda4af\",\n      400: \"#fb7185\",\n      500: \"#f43f5e\",\n      600: \"#e11d48\",\n      700: \"#be123c\",\n      800: \"#9f1239\",\n      900: \"#881337\"\n    },\n    custom: \"custom_value\"\n  },\n  columns: {\n    auto: \"auto\",\n    1: \"1\",\n    2: \"2\",\n    3: \"3\",\n    4: \"4\",\n    5: \"5\",\n    6: \"6\",\n    7: \"7\",\n    8: \"8\",\n    9: \"9\",\n    10: \"10\",\n    11: \"11\",\n    12: \"12\",\n    \"3xs\": \"16rem\",\n    \"2xs\": \"18rem\",\n    xs: \"20rem\",\n    sm: \"24rem\",\n    md: \"28rem\",\n    lg: \"32rem\",\n    xl: \"36rem\",\n    \"2xl\": \"42rem\",\n    \"3xl\": \"48rem\",\n    \"4xl\": \"56rem\",\n    \"5xl\": \"64rem\",\n    \"6xl\": \"72rem\",\n    \"7xl\": \"80rem\",\n    custom: \"custom_value\"\n  },\n  content: {\n    none: \"none\",\n    custom: \"custom_value\"\n  },\n  contrast: {\n    0: \"0\",\n    50: \".5\",\n    75: \".75\",\n    100: \"1\",\n    125: \"1.25\",\n    150: \"1.5\",\n    200: \"2\",\n    custom: \"custom_value\"\n  },\n  cursor: {\n    auto: \"auto\",\n    \"default\": \"default\",\n    pointer: \"pointer\",\n    wait: \"wait\",\n    text: \"text\",\n    move: \"move\",\n    help: \"help\",\n    \"not-allowed\": \"not-allowed\",\n    none: \"none\",\n    \"context-menu\": \"context-menu\",\n    progress: \"progress\",\n    cell: \"cell\",\n    crosshair: \"crosshair\",\n    \"vertical-text\": \"vertical-text\",\n    alias: \"alias\",\n    copy: \"copy\",\n    \"no-drop\": \"no-drop\",\n    grab: \"grab\",\n    grabbing: \"grabbing\",\n    \"all-scroll\": \"all-scroll\",\n    \"col-resize\": \"col-resize\",\n    \"row-resize\": \"row-resize\",\n    \"n-resize\": \"n-resize\",\n    \"e-resize\": \"e-resize\",\n    \"s-resize\": \"s-resize\",\n    \"w-resize\": \"w-resize\",\n    \"ne-resize\": \"ne-resize\",\n    \"nw-resize\": \"nw-resize\",\n    \"se-resize\": \"se-resize\",\n    \"sw-resize\": \"sw-resize\",\n    \"ew-resize\": \"ew-resize\",\n    \"ns-resize\": \"ns-resize\",\n    \"nesw-resize\": \"nesw-resize\",\n    \"nwse-resize\": \"nwse-resize\",\n    \"zoom-in\": \"zoom-in\",\n    \"zoom-out\": \"zoom-out\"\n  },\n  divideColor: function divideColor(_ref16) {\n    var theme = _ref16.theme;\n    return theme(\"borderColor\");\n  },\n  divideOpacity: function divideOpacity(_ref17) {\n    var theme = _ref17.theme;\n    return theme(\"borderOpacity\");\n  },\n  divideWidth: function divideWidth(_ref18) {\n    var theme = _ref18.theme;\n    return theme(\"borderWidth\");\n  },\n  dropShadow: {\n    sm: \"0 1px 1px rgb(0 0 0 / 0.05)\",\n    DEFAULT: \"0 1px 2px rgb(0 0 0 / 0.1) , 0 1px 1px rgb(0 0 0 / 0.06)\",\n    md: \"0 4px 3px rgb(0 0 0 / 0.07) , 0 2px 2px rgb(0 0 0 / 0.06)\",\n    lg: \"0 10px 8px rgb(0 0 0 / 0.04) , 0 4px 3px rgb(0 0 0 / 0.1)\",\n    xl: \"0 20px 13px rgb(0 0 0 / 0.03) , 0 8px 5px rgb(0 0 0 / 0.08)\",\n    \"2xl\": \"0 25px 25px rgb(0 0 0 / 0.15)\",\n    none: \"0 0 #0000\"\n  },\n  fill: function fill(_ref19) {\n    var theme = _ref19.theme;\n    return _objectSpread({\n      none: \"none\"\n    }, theme(\"colors\"));\n  },\n  flex: {\n    1: \"1 1 0%\",\n    auto: \"1 1 auto\",\n    initial: \"0 1 auto\",\n    none: \"none\"\n  },\n  flexBasis: function flexBasis(_ref20) {\n    var theme = _ref20.theme;\n    return _objectSpread(_objectSpread({\n      auto: \"auto\"\n    }, theme(\"spacing\")), {}, {\n      \"1/2\": \"50%\",\n      \"1/3\": \"33.333333%\",\n      \"2/3\": \"66.666667%\",\n      \"1/4\": \"25%\",\n      \"2/4\": \"50%\",\n      \"3/4\": \"75%\",\n      \"1/5\": \"20%\",\n      \"2/5\": \"40%\",\n      \"3/5\": \"60%\",\n      \"4/5\": \"80%\",\n      \"1/6\": \"16.666667%\",\n      \"2/6\": \"33.333333%\",\n      \"3/6\": \"50%\",\n      \"4/6\": \"66.666667%\",\n      \"5/6\": \"83.333333%\",\n      \"1/12\": \"8.333333%\",\n      \"2/12\": \"16.666667%\",\n      \"3/12\": \"25%\",\n      \"4/12\": \"33.333333%\",\n      \"5/12\": \"41.666667%\",\n      \"6/12\": \"50%\",\n      \"7/12\": \"58.333333%\",\n      \"8/12\": \"66.666667%\",\n      \"9/12\": \"75%\",\n      \"10/12\": \"83.333333%\",\n      \"11/12\": \"91.666667%\",\n      full: \"100%\"\n    });\n  },\n  flexGrow: {\n    0: \"0\",\n    DEFAULT: \"1\"\n  },\n  flexShrink: {\n    0: \"0\",\n    DEFAULT: \"1\"\n  },\n  fontSize: {\n    xs: \"0.75rem\",\n    sm: \"0.875rem\",\n    base: \"1rem\",\n    lg: \"1.125rem\",\n    xl: \"1.25rem\",\n    \"2xl\": \"1.5rem\",\n    \"3xl\": \"1.875rem\",\n    \"4xl\": \"2.25rem\",\n    \"5xl\": \"3rem\",\n    \"6xl\": \"3.75rem\",\n    \"7xl\": \"4.5rem\",\n    \"8xl\": \"6rem\",\n    \"9xl\": \"8rem\",\n    custom: \"custom_value\"\n  },\n  fontWeight: {\n    thin: \"100\",\n    extralight: \"200\",\n    light: \"300\",\n    normal: \"400\",\n    medium: \"500\",\n    semibold: \"600\",\n    bold: \"700\",\n    extrabold: \"800\",\n    black: \"900\",\n    custom: \"custom_value\"\n  },\n  gap: function gap(_ref21) {\n    var theme = _ref21.theme;\n    return theme(\"spacing\");\n  },\n  gradientColorStops: function gradientColorStops(_ref22) {\n    var theme = _ref22.theme;\n    return theme(\"colors\");\n  },\n  gradientColorStopPositions: {\n    \"0%\": \"0%\",\n    \"5%\": \"5%\",\n    \"10%\": \"10%\",\n    \"15%\": \"15%\",\n    \"20%\": \"20%\",\n    \"25%\": \"25%\",\n    \"30%\": \"30%\",\n    \"35%\": \"35%\",\n    \"40%\": \"40%\",\n    \"45%\": \"45%\",\n    \"50%\": \"50%\",\n    \"55%\": \"55%\",\n    \"60%\": \"60%\",\n    \"65%\": \"65%\",\n    \"70%\": \"70%\",\n    \"75%\": \"75%\",\n    \"80%\": \"80%\",\n    \"85%\": \"85%\",\n    \"90%\": \"90%\",\n    \"95%\": \"95%\",\n    \"100%\": \"100%\"\n  },\n  grayscale: {\n    0: \"0\",\n    DEFAULT: \"100%\"\n  },\n  gridAutoColumns: {\n    auto: \"auto\",\n    min: \"min-content\",\n    max: \"max-content\",\n    fr: \"minmax(0, 1fr)\"\n  },\n  gridAutoRows: {\n    auto: \"auto\",\n    min: \"min-content\",\n    max: \"max-content\",\n    fr: \"minmax(0, 1fr)\"\n  },\n  gridColumn: {\n    auto: \"auto\",\n    \"span-1\": \"span 1 / span 1\",\n    \"span-2\": \"span 2 / span 2\",\n    \"span-3\": \"span 3 / span 3\",\n    \"span-4\": \"span 4 / span 4\",\n    \"span-5\": \"span 5 / span 5\",\n    \"span-6\": \"span 6 / span 6\",\n    \"span-7\": \"span 7 / span 7\",\n    \"span-8\": \"span 8 / span 8\",\n    \"span-9\": \"span 9 / span 9\",\n    \"span-10\": \"span 10 / span 10\",\n    \"span-11\": \"span 11 / span 11\",\n    \"span-12\": \"span 12 / span 12\",\n    \"span-full\": \"1 / -1\"\n  },\n  gridColumnEnd: {\n    auto: \"auto\",\n    1: \"1\",\n    2: \"2\",\n    3: \"3\",\n    4: \"4\",\n    5: \"5\",\n    6: \"6\",\n    7: \"7\",\n    8: \"8\",\n    9: \"9\",\n    10: \"10\",\n    11: \"11\",\n    12: \"12\",\n    13: \"13\"\n  },\n  gridColumnStart: {\n    auto: \"auto\",\n    1: \"1\",\n    2: \"2\",\n    3: \"3\",\n    4: \"4\",\n    5: \"5\",\n    6: \"6\",\n    7: \"7\",\n    8: \"8\",\n    9: \"9\",\n    10: \"10\",\n    11: \"11\",\n    12: \"12\",\n    13: \"13\"\n  },\n  gridRow: {\n    auto: \"auto\",\n    \"span-1\": \"span 1 / span 1\",\n    \"span-2\": \"span 2 / span 2\",\n    \"span-3\": \"span 3 / span 3\",\n    \"span-4\": \"span 4 / span 4\",\n    \"span-5\": \"span 5 / span 5\",\n    \"span-6\": \"span 6 / span 6\",\n    \"span-7\": \"span 7 / span 7\",\n    \"span-8\": \"span 8 / span 8\",\n    \"span-9\": \"span 9 / span 9\",\n    \"span-10\": \"span 10 / span 10\",\n    \"span-11\": \"span 11 / span 11\",\n    \"span-12\": \"span 12 / span 12\",\n    \"span-full\": \"1 / -1\"\n  },\n  gridRowEnd: {\n    auto: \"auto\",\n    1: \"1\",\n    2: \"2\",\n    3: \"3\",\n    4: \"4\",\n    5: \"5\",\n    6: \"6\",\n    7: \"7\",\n    8: \"8\",\n    9: \"9\",\n    10: \"10\",\n    11: \"11\",\n    12: \"12\",\n    13: \"13\"\n  },\n  gridRowStart: {\n    auto: \"auto\",\n    1: \"1\",\n    2: \"2\",\n    3: \"3\",\n    4: \"4\",\n    5: \"5\",\n    6: \"6\",\n    7: \"7\",\n    8: \"8\",\n    9: \"9\",\n    10: \"10\",\n    11: \"11\",\n    12: \"12\",\n    13: \"13\"\n  },\n  gridTemplateColumns: {\n    none: \"none\",\n    subgrid: \"subgrid\",\n    1: \"repeat(1, minmax(0, 1fr))\",\n    2: \"repeat(2, minmax(0, 1fr))\",\n    3: \"repeat(3, minmax(0, 1fr))\",\n    4: \"repeat(4, minmax(0, 1fr))\",\n    5: \"repeat(5, minmax(0, 1fr))\",\n    6: \"repeat(6, minmax(0, 1fr))\",\n    7: \"repeat(7, minmax(0, 1fr))\",\n    8: \"repeat(8, minmax(0, 1fr))\",\n    9: \"repeat(9, minmax(0, 1fr))\",\n    10: \"repeat(10, minmax(0, 1fr))\",\n    11: \"repeat(11, minmax(0, 1fr))\",\n    12: \"repeat(12, minmax(0, 1fr))\"\n  },\n  gridTemplateRows: {\n    none: \"none\",\n    subgrid: \"subgrid\",\n    1: \"repeat(1, minmax(0, 1fr))\",\n    2: \"repeat(2, minmax(0, 1fr))\",\n    3: \"repeat(3, minmax(0, 1fr))\",\n    4: \"repeat(4, minmax(0, 1fr))\",\n    5: \"repeat(5, minmax(0, 1fr))\",\n    6: \"repeat(6, minmax(0, 1fr))\",\n    7: \"repeat(7, minmax(0, 1fr))\",\n    8: \"repeat(8, minmax(0, 1fr))\",\n    9: \"repeat(9, minmax(0, 1fr))\",\n    10: \"repeat(10, minmax(0, 1fr))\",\n    11: \"repeat(11, minmax(0, 1fr))\",\n    12: \"repeat(12, minmax(0, 1fr))\"\n  },\n  height: function height(_ref23) {\n    var theme = _ref23.theme;\n    return _objectSpread(_objectSpread({\n      auto: \"auto\"\n    }, theme(\"spacing\")), {}, {\n      \"1/2\": \"50%\",\n      \"1/3\": \"33.333333%\",\n      \"2/3\": \"66.666667%\",\n      \"1/4\": \"25%\",\n      \"2/4\": \"50%\",\n      \"3/4\": \"75%\",\n      \"1/5\": \"20%\",\n      \"2/5\": \"40%\",\n      \"3/5\": \"60%\",\n      \"4/5\": \"80%\",\n      \"1/6\": \"16.666667%\",\n      \"2/6\": \"33.333333%\",\n      \"3/6\": \"50%\",\n      \"4/6\": \"66.666667%\",\n      \"5/6\": \"83.333333%\",\n      full: \"100%\",\n      screen: \"100vh\",\n      svh: \"100svh\",\n      lvh: \"100lvh\",\n      dvh: \"100dvh\",\n      min: \"min-content\",\n      max: \"max-content\",\n      fit: \"fit-content\",\n      custom: \"custom_value\"\n    });\n  },\n  hueRotate: {\n    0: \"0deg\",\n    15: \"15deg\",\n    30: \"30deg\",\n    60: \"60deg\",\n    90: \"90deg\",\n    180: \"180deg\"\n  },\n  inset: function inset(_ref24) {\n    var theme = _ref24.theme;\n    return _objectSpread(_objectSpread({\n      auto: \"auto\"\n    }, theme(\"spacing\")), {}, {\n      \"1/2\": \"50%\",\n      \"1/3\": \"33.333333%\",\n      \"2/3\": \"66.666667%\",\n      \"1/4\": \"25%\",\n      \"2/4\": \"50%\",\n      \"3/4\": \"75%\",\n      full: \"100%\"\n    });\n  },\n  invert: {\n    0: \"0\",\n    DEFAULT: \"100%\"\n  },\n  letterSpacing: {\n    tighter: \"-0.05em\",\n    tight: \"-0.025em\",\n    normal: \"0em\",\n    wide: \"0.025em\",\n    wider: \"0.05em\",\n    widest: \"0.1em\",\n    custom: \"custom_value\"\n  },\n  lineClamp: {\n    1: \"1\",\n    2: \"2\",\n    3: \"3\",\n    4: \"4\",\n    5: \"5\",\n    6: \"6\",\n    custom: \"custom_value\"\n  },\n  lineHeight: {\n    none: \"1\",\n    tight: \"1.25\",\n    snug: \"1.375\",\n    normal: \"1.5\",\n    relaxed: \"1.625\",\n    loose: \"2\",\n    3: \".75rem\",\n    4: \"1rem\",\n    5: \"1.25rem\",\n    6: \"1.5rem\",\n    7: \"1.75rem\",\n    8: \"2rem\",\n    9: \"2.25rem\",\n    10: \"2.5rem\",\n    custom: \"custom_value\"\n  },\n  listStyleType: {\n    none: \"none\",\n    disc: \"disc\",\n    decimal: \"decimal\"\n  },\n  margin: function margin(_ref25) {\n    var theme = _ref25.theme;\n    return _objectSpread({\n      auto: \"auto\"\n    }, theme(\"spacing\"));\n  },\n  maxHeight: function maxHeight(_ref26) {\n    var theme = _ref26.theme;\n    return _objectSpread(_objectSpread({}, theme(\"spacing\")), {}, {\n      none: \"none\",\n      full: \"100%\",\n      screen: \"100vh\",\n      svh: \"100svh\",\n      lvh: \"100lvh\",\n      dvh: \"100dvh\",\n      min: \"min-content\",\n      max: \"max-content\",\n      fit: \"fit-content\"\n    });\n  },\n  maxWidth: function maxWidth(_ref27) {\n    var theme = _ref27.theme;\n    return _objectSpread(_objectSpread({}, theme(\"spacing\")), {}, {\n      none: \"none\",\n      xs: \"20rem\",\n      sm: \"24rem\",\n      md: \"28rem\",\n      lg: \"32rem\",\n      xl: \"36rem\",\n      \"2xl\": \"42rem\",\n      \"3xl\": \"48rem\",\n      \"4xl\": \"56rem\",\n      \"5xl\": \"64rem\",\n      \"6xl\": \"72rem\",\n      \"7xl\": \"80rem\",\n      full: \"100%\",\n      min: \"min-content\",\n      max: \"max-content\",\n      fit: \"fit-content\",\n      prose: \"65ch\"\n    });\n  },\n  minHeight: function minHeight(_ref28) {\n    var theme = _ref28.theme;\n    return _objectSpread(_objectSpread({}, theme(\"spacing\")), {}, {\n      full: \"100%\",\n      screen: \"100vh\",\n      svh: \"100svh\",\n      lvh: \"100lvh\",\n      dvh: \"100dvh\",\n      min: \"min-content\",\n      max: \"max-content\",\n      fit: \"fit-content\"\n    });\n  },\n  minWidth: function minWidth(_ref29) {\n    var theme = _ref29.theme;\n    return _objectSpread(_objectSpread({}, theme(\"spacing\")), {}, {\n      full: \"100%\",\n      min: \"min-content\",\n      max: \"max-content\",\n      fit: \"fit-content\"\n    });\n  },\n  objectPosition: {\n    bottom: \"bottom\",\n    center: \"center\",\n    left: \"left\",\n    \"left-bottom\": \"left bottom\",\n    \"left-top\": \"left top\",\n    right: \"right\",\n    \"right-bottom\": \"right bottom\",\n    \"right-top\": \"right top\",\n    top: \"top\"\n  },\n  opacity: {\n    0: \"0\",\n    5: \"0.05\",\n    10: \"0.1\",\n    15: \"0.15\",\n    20: \"0.2\",\n    25: \"0.25\",\n    30: \"0.3\",\n    35: \"0.35\",\n    40: \"0.4\",\n    45: \"0.45\",\n    50: \"0.5\",\n    55: \"0.55\",\n    60: \"0.6\",\n    65: \"0.65\",\n    70: \"0.7\",\n    75: \"0.75\",\n    80: \"0.8\",\n    85: \"0.85\",\n    90: \"0.9\",\n    95: \"0.95\",\n    100: \"1\",\n    custom: \"custom_value\"\n  },\n  order: {\n    first: \"-9999\",\n    last: \"9999\",\n    none: \"0\",\n    1: \"1\",\n    2: \"2\",\n    3: \"3\",\n    4: \"4\",\n    5: \"5\",\n    6: \"6\",\n    7: \"7\",\n    8: \"8\",\n    9: \"9\",\n    10: \"10\",\n    11: \"11\",\n    12: \"12\",\n    custom: \"custom_value\"\n  },\n  outlineColor: function outlineColor(_ref30) {\n    var theme = _ref30.theme;\n    return theme(\"colors\");\n  },\n  outlineOffset: {\n    0: \"0px\",\n    1: \"1px\",\n    2: \"2px\",\n    4: \"4px\",\n    8: \"8px\",\n    custom: \"custom_value\"\n  },\n  outlineOpacity: function outlineOpacity(_ref31) {\n    var theme = _ref31.theme;\n    return theme(\"opacity\");\n  },\n  outlineWidth: {\n    0: \"0px\",\n    1: \"1px\",\n    2: \"2px\",\n    4: \"4px\",\n    8: \"8px\",\n    custom: \"custom_value\"\n  },\n  padding: function padding(_ref32) {\n    var theme = _ref32.theme;\n    return theme(\"spacing\");\n  },\n  ringColor: function ringColor(_ref33) {\n    var theme = _ref33.theme;\n    return _objectSpread({\n      DEFAULT: \"#3b82f6\"\n    }, theme(\"colors\"));\n  },\n  ringOffsetColor: function ringOffsetColor(_ref34) {\n    var theme = _ref34.theme;\n    return theme(\"colors\");\n  },\n  ringOffsetWidth: {\n    0: \"0px\",\n    1: \"1px\",\n    2: \"2px\",\n    4: \"4px\",\n    8: \"8px\",\n    custom: \"custom_value\"\n  },\n  ringOpacity: function ringOpacity(_ref35) {\n    var theme = _ref35.theme;\n    return _objectSpread({\n      DEFAULT: \"0.5\"\n    }, theme(\"opacity\"));\n  },\n  ringWidth: {\n    DEFAULT: \"3px\",\n    0: \"0px\",\n    1: \"1px\",\n    2: \"2px\",\n    4: \"4px\",\n    8: \"8px\",\n    custom: \"custom_value\"\n  },\n  rotate: {\n    0: \"0deg\",\n    1: \"1deg\",\n    2: \"2deg\",\n    3: \"3deg\",\n    6: \"6deg\",\n    12: \"12deg\",\n    45: \"45deg\",\n    90: \"90deg\",\n    180: \"180deg\",\n    custom: \"custom_value\"\n  },\n  saturate: {\n    0: \"0\",\n    50: \".5\",\n    100: \"1\",\n    150: \"1.5\",\n    200: \"2\",\n    custom: \"custom_value\"\n  },\n  scale: {\n    0: \"0\",\n    50: \".5\",\n    75: \".75\",\n    90: \".9\",\n    95: \".95\",\n    100: \"1\",\n    105: \"1.05\",\n    110: \"1.1\",\n    125: \"1.25\",\n    150: \"1.5\",\n    custom: \"custom_value\"\n  },\n  scrollMargin: function scrollMargin(_ref36) {\n    var theme = _ref36.theme;\n    return _objectSpread({}, theme(\"spacing\"));\n  },\n  scrollPadding: function scrollPadding(_ref37) {\n    var theme = _ref37.theme;\n    return theme(\"spacing\");\n  },\n  sepia: {\n    0: \"0\",\n    DEFAULT: \"100%\"\n  },\n  skew: {\n    0: \"0deg\",\n    1: \"1deg\",\n    2: \"2deg\",\n    3: \"3deg\",\n    6: \"6deg\",\n    12: \"12deg\",\n    custom: \"custom_value\"\n  },\n  space: function space(_ref38) {\n    var theme = _ref38.theme;\n    return _objectSpread({}, theme(\"spacing\"));\n  },\n  spacing: {\n    px: \"1px\",\n    0: \"0px\",\n    0.5: \"0.125rem\",\n    1: \"0.25rem\",\n    1.5: \"0.375rem\",\n    2: \"0.5rem\",\n    2.5: \"0.625rem\",\n    3: \"0.75rem\",\n    3.5: \"0.875rem\",\n    4: \"1rem\",\n    5: \"1.25rem\",\n    6: \"1.5rem\",\n    7: \"1.75rem\",\n    8: \"2rem\",\n    9: \"2.25rem\",\n    10: \"2.5rem\",\n    11: \"2.75rem\",\n    12: \"3rem\",\n    14: \"3.5rem\",\n    16: \"4rem\",\n    20: \"5rem\",\n    24: \"6rem\",\n    28: \"7rem\",\n    32: \"8rem\",\n    36: \"9rem\",\n    40: \"10rem\",\n    44: \"11rem\",\n    48: \"12rem\",\n    52: \"13rem\",\n    56: \"14rem\",\n    60: \"15rem\",\n    64: \"16rem\",\n    72: \"18rem\",\n    80: \"20rem\",\n    96: \"24rem\",\n    \"screen-sm\": \"640px\",\n    \"screen-md\": \"768px\",\n    \"screen-lg\": \"1024px\",\n    \"screen-xl\": \"1280px\",\n    \"screen-2xl\": \"1536px\",\n    custom: \"custom_value\"\n  },\n  stroke: function stroke(_ref39) {\n    var theme = _ref39.theme;\n    return _objectSpread({\n      none: \"none\"\n    }, theme(\"colors\"));\n  },\n  strokeWidth: {\n    0: \"0\",\n    1: \"1\",\n    2: \"2\",\n    custom: \"custom_value\"\n  },\n  textColor: function textColor(_ref40) {\n    var theme = _ref40.theme;\n    return theme(\"colors\");\n  },\n  textDecorationColor: function textDecorationColor(_ref41) {\n    var theme = _ref41.theme;\n    return theme(\"colors\");\n  },\n  textDecorationThickness: {\n    auto: \"auto\",\n    \"from-font\": \"from-font\",\n    0: \"0px\",\n    1: \"1px\",\n    2: \"2px\",\n    4: \"4px\",\n    8: \"8px\",\n    custom: \"custom_value\"\n  },\n  textIndent: function textIndent(_ref42) {\n    var theme = _ref42.theme;\n    return _objectSpread({}, theme(\"spacing\"));\n  },\n  textOpacity: function textOpacity(_ref43) {\n    var theme = _ref43.theme;\n    return theme(\"opacity\");\n  },\n  textShadowBlur: function textShadowBlur(_ref44) {\n    var theme = _ref44.theme;\n    return theme(\"blur\");\n  },\n  textShadowColor: function textShadowColor(_ref45) {\n    var theme = _ref45.theme;\n    return _objectSpread(_objectSpread({}, theme(\"colors\")), {}, {\n      DEFAULT: \"#e5e7eb\"\n    });\n  },\n  textShadowOpacity: function textShadowOpacity(_ref46) {\n    var theme = _ref46.theme;\n    return theme(\"opacity\");\n  },\n  textShadowX: {\n    0: \"0px\",\n    1: \"1px\",\n    2: \"2px\",\n    3: \"3px\",\n    4: \"4px\",\n    5: \"5px\",\n    6: \"6px\",\n    7: \"7px\",\n    8: \"8px\",\n    9: \"9px\",\n    10: \"10px\",\n    custom: \"custom_value\"\n  },\n  textShadowY: function textShadowY(_ref47) {\n    var theme = _ref47.theme;\n    return theme(\"textShadowX\");\n  },\n  textUnderlineOffset: {\n    auto: \"auto\",\n    0: \"0px\",\n    1: \"1px\",\n    2: \"2px\",\n    4: \"4px\",\n    8: \"8px\",\n    custom: \"custom_value\"\n  },\n  transformOrigin: {\n    center: \"center\",\n    top: \"top\",\n    \"top-right\": \"top right\",\n    right: \"right\",\n    \"bottom-right\": \"bottom right\",\n    bottom: \"bottom\",\n    \"bottom-left\": \"bottom left\",\n    left: \"left\",\n    \"top-left\": \"top left\"\n  },\n  translate: function translate(_ref48) {\n    var theme = _ref48.theme;\n    return _objectSpread(_objectSpread({}, theme(\"spacing\")), {}, {\n      \"1/2\": \"50%\",\n      \"1/3\": \"33.333333%\",\n      \"2/3\": \"66.666667%\",\n      \"1/4\": \"25%\",\n      \"2/4\": \"50%\",\n      \"3/4\": \"75%\",\n      full: \"100%\"\n    });\n  },\n  size: function size(_ref49) {\n    var theme = _ref49.theme;\n    return _objectSpread(_objectSpread({\n      auto: \"auto\"\n    }, theme(\"spacing\")), {}, {\n      \"1/2\": \"50%\",\n      \"1/3\": \"33.333333%\",\n      \"2/3\": \"66.666667%\",\n      \"1/4\": \"25%\",\n      \"2/4\": \"50%\",\n      \"3/4\": \"75%\",\n      \"1/5\": \"20%\",\n      \"2/5\": \"40%\",\n      \"3/5\": \"60%\",\n      \"4/5\": \"80%\",\n      \"1/6\": \"16.666667%\",\n      \"2/6\": \"33.333333%\",\n      \"3/6\": \"50%\",\n      \"4/6\": \"66.666667%\",\n      \"5/6\": \"83.333333%\",\n      \"1/12\": \"8.333333%\",\n      \"2/12\": \"16.666667%\",\n      \"3/12\": \"25%\",\n      \"4/12\": \"33.333333%\",\n      \"5/12\": \"41.666667%\",\n      \"6/12\": \"50%\",\n      \"7/12\": \"58.333333%\",\n      \"8/12\": \"66.666667%\",\n      \"9/12\": \"75%\",\n      \"10/12\": \"83.333333%\",\n      \"11/12\": \"91.666667%\",\n      full: \"100%\",\n      min: \"min-content\",\n      max: \"max-content\",\n      fit: \"fit-content\"\n    });\n  },\n  width: function width(_ref50) {\n    var theme = _ref50.theme;\n    return _objectSpread(_objectSpread({\n      auto: \"auto\"\n    }, theme(\"spacing\")), {}, {\n      \"1/2\": \"50%\",\n      \"1/3\": \"33.333333%\",\n      \"2/3\": \"66.666667%\",\n      \"1/4\": \"25%\",\n      \"2/4\": \"50%\",\n      \"3/4\": \"75%\",\n      \"1/5\": \"20%\",\n      \"2/5\": \"40%\",\n      \"3/5\": \"60%\",\n      \"4/5\": \"80%\",\n      \"1/6\": \"16.666667%\",\n      \"2/6\": \"33.333333%\",\n      \"3/6\": \"50%\",\n      \"4/6\": \"66.666667%\",\n      \"5/6\": \"83.333333%\",\n      \"1/12\": \"8.333333%\",\n      \"2/12\": \"16.666667%\",\n      \"3/12\": \"25%\",\n      \"4/12\": \"33.333333%\",\n      \"5/12\": \"41.666667%\",\n      \"6/12\": \"50%\",\n      \"7/12\": \"58.333333%\",\n      \"8/12\": \"66.666667%\",\n      \"9/12\": \"75%\",\n      \"10/12\": \"83.333333%\",\n      \"11/12\": \"91.666667%\",\n      full: \"100%\",\n      screen: \"100vw\",\n      svw: \"100svw\",\n      lvw: \"100lvw\",\n      dvw: \"100dvw\",\n      min: \"min-content\",\n      max: \"max-content\",\n      fit: \"fit-content\"\n    });\n  },\n  willChange: {\n    auto: \"auto\",\n    scroll: \"scroll-position\",\n    contents: \"contents\",\n    transform: \"transform\"\n  },\n  zIndex: {\n    0: \"0\",\n    10: \"10\",\n    20: \"20\",\n    30: \"30\",\n    40: \"40\",\n    50: \"50\",\n    60: \"60\",\n    70: \"70\",\n    80: \"80\",\n    90: \"90\",\n    100: \"100\",\n    auto: \"auto\",\n    custom: \"custom_value\"\n  }\n};\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (theme);\n\n//# sourceURL=webpack://tailwindToStyle/./src/config/theme.js?");
 
-/**
- * Menghasilkan string CSS dari objek style dengan sintaks mirip SCSS
- * Mendukung nested selectors, state variants, responsive variants, dan @css directives
- * @param {Object} obj - Objek dengan format style mirip SCSS
- * @returns {string} String CSS yang dihasilkan
- */
-export function twsx(obj) {
-  if (!obj || typeof obj !== 'object') {
-    console.warn('twsx: Expected an object but received:', obj);
-    return '';
-  }
-  
-  const styles = {};
+/***/ }),
 
-  function expandGroupedClass(input) {
-    function expandDirectiveGroups(str) {
-      return str.replace(/(\w+)\(([^()]+)\)/g, (_, directive, content) => {
-        return content
-          .trim()
-          .split(/\s+/)
-          .map((val) => {
-            if (val.includes(":")) {
-              const [variant, v] = val.split(":");
-              const prefix = v.startsWith("-") ? "-" : "";
-              const value = v.startsWith("-") ? v.slice(1) : v;
-              return `${variant}:${prefix}${directive}-${value}`;
-            }
-            const prefix = val.startsWith("-") ? "-" : "";
-            const value = val.startsWith("-") ? val.slice(1) : val;
-            return `${prefix}${directive}-${value}`;
-          })
-          .join(" ");
-      });
-    }
+/***/ "./src/generators/accentColor.js":
+/*!***************************************!*\
+  !*** ./src/generators/accentColor.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-    function expandVariants(str, parent = "") {
-      return str.replace(
-        /(\w+):\(([^()]+(?:\((?:[^()]+)\))?[^()]*)\)/g,
-        (_, variant, content) => {
-          return content
-            .trim()
-            .split(/\s+/)
-            .map((c) => {
-              if (/\w+:\(.*\)/.test(c)) {
-                return expandVariants(
-                  c,
-                  parent ? `${parent}:${variant}` : variant
-                );
-              }
-              return `${parent ? `${parent}:${variant}` : variant}:${c}`;
-            })
-            .join(" ");
-        }
-      );
-    }
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"accent\");\n  var accentColor = theme.accentColor,\n    _theme$opacity = theme.opacity,\n    opacity = _theme$opacity === void 0 ? {} : _theme$opacity;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByColors = _ref.getCssByColors,\n      getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByColors(accentColor, function (key, value, rgbValue) {\n      var rgbPropertyValue = \"\";\n      if (rgbValue) {\n        rgbPropertyValue = \"accent-color: rgba(\".concat(rgbValue, \", var(--accent-opacity));\");\n      }\n      return \"\\n            \".concat(prefix, \"-\").concat(key, \" {\\n              --accent-opacity: 1;\\n              accent-color: \").concat(value, \";\\n              \").concat(rgbPropertyValue, \"\\n            }\\n          \");\n    });\n    cssString += getCssByOptions(opacity, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            --accent-opacity: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/accentColor.js?");
 
-    let result = encodeBracketValues(input);
-    let prev;
+/***/ }),
 
-    do {
-      prev = result;
-      result = expandVariants(result);
-      result = expandDirectiveGroups(result);
-    } while (result !== prev);
+/***/ "./src/generators/accessibility.js":
+/*!*****************************************!*\
+  !*** ./src/generators/accessibility.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-    return result;
-  }  function walk(selector, val) {
-    if (!selector || typeof selector !== 'string') {
-      console.warn('Invalid selector in walk function:', selector);
-      return;
-    }
-    
-    const { baseSelector, cssProperty } = parseSelector(selector);
-      if (
-        cssProperty &&
-        typeof val === "object" &&
-        Array.isArray(val) &&
-        val.length > 0
-      ) {
-        const cssValue = val[0];
-        if (typeof cssValue === "string") {
-          styles[baseSelector] = styles[baseSelector] || "";
-          styles[baseSelector] += `${cssProperty}: ${cssValue};\n`;
-          return;
-        }
-      }
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var prefix = configOptions.prefix;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function () {\n    return \"\\n        \".concat(prefix, \"sr-only {\\n          position: absolute;\\n          width: 1px;\\n          height: 1px;\\n          padding: 0;\\n          margin: -1px;\\n          overflow: hidden;\\n          clip: rect(0, 0, 0, 0);\\n          white-space: nowrap;\\n          border-width: 0;\\n        }\\n        \").concat(prefix, \"not-sr-only {\\n          position: static;\\n          width: auto;\\n          height: auto;\\n          padding: 0;\\n          margin: 0;\\n          overflow: visible;\\n          clip: auto;\\n          white-space: normal;\\n        }\\n        \").concat(prefix, \"forced-color-adjust-auto {\\n          forced-color-adjust: auto;\\n        }\\n        \").concat(prefix, \"forced-color-adjust-none {\\n          forced-color-adjust: none;\\n        }\\n      \");\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/accessibility.js?");
 
-    if (Array.isArray(val)) {
-      const [base, nested] = val;
+/***/ }),
 
-      if (typeof base !== "string") {
-        return;
-      }
+/***/ "./src/generators/alignContent.js":
+/*!****************************************!*\
+  !*** ./src/generators/alignContent.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-      for (const cls of base.split(" ")) {
-        if (cls.trim() === "") continue;
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"content\");\n  var propertyOptions = {\n    start: \"flex-start\",\n    end: \"flex-end\",\n    center: \"center\",\n    between: \"space-between\",\n    around: \"space-around\",\n    evenly: \"space-evenly\"\n  };\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            align-content: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/alignContent.js?");
 
-        const [rawVariants, className] = cls.includes(":")
-          ? [cls.split(":").slice(0, -1), cls.split(":").slice(-1)[0]]
-          : [[], cls];
+/***/ }),
 
-        let isImportant = false;
-        let pureClassName = className;
+/***/ "./src/generators/alignItems.js":
+/*!**************************************!*\
+  !*** ./src/generators/alignItems.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-        if (className.startsWith("!")) {
-          isImportant = true;
-          pureClassName = className.slice(1);
-        }
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"items\");\n  var propertyOptions = {\n    start: \"flex-start\",\n    end: \"flex-end\",\n    center: \"center\",\n    baseline: \"baseline\",\n    stretch: \"stretch\"\n  };\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            align-items: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/alignItems.js?");
 
-        const { media, finalSelector } = resolveVariants(selector, rawVariants);
+/***/ }),
 
-        let declarations =
-          cssObject[pureClassName] ||
-          cssObject[pureClassName.replace(/(\/)/g, "\\$1")] ||
-          cssObject[pureClassName.replace(/\./g, "\\.")];
+/***/ "./src/generators/alignSelf.js":
+/*!*************************************!*\
+  !*** ./src/generators/alignSelf.js ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-        if (!declarations && pureClassName.includes("[")) {
-          const match = pureClassName.match(/^(.+?)\[(.+)\]$/);
-          if (match) {
-            const [, prefix, dynamicValue] = match;
-            const customKey = `${prefix}custom`;
-            const template = cssObject[customKey];
-            if (template) {
-              declarations = template.replace(
-                /custom_value/g,
-                decodeBracketValues(dynamicValue)
-              );
-            }
-          }
-        }
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"self\");\n  var propertyOptions = {\n    auto: \"auto\",\n    start: \"flex-start\",\n    end: \"flex-end\",\n    center: \"center\",\n    stretch: \"stretch\"\n  };\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            align-self: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/alignSelf.js?");
 
-        if (!declarations) {
-          declarations = parseCustomClassWithPatterns(pureClassName);
-        }
+/***/ }),
 
-        if (!declarations) {
-          continue;
-        }
+/***/ "./src/generators/appearance.js":
+/*!**************************************!*\
+  !*** ./src/generators/appearance.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-        if (isImportant) {
-          declarations = declarations.replace(
-            /([^:;]+):([^;]+)(;?)/g,
-            (_, prop, value) => {
-              return prop.trim().startsWith("--")
-                ? `${prop}:${value};`
-                : `${prop}:${value.trim()} !important;`;
-            }
-          );
-        }
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var prefix = configOptions.prefix;\n  var propertyOptions = [\"auto\", \"none\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"appearance-\").concat(key, \" {\\n            appearance: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/appearance.js?");
 
-        const isSpaceOrDivide = [
-          "space-x-",
-          "-space-x-",
-          "space-y-",
-          "-space-y-",
-          "divide-",
-        ].some((prefix) => pureClassName.startsWith(prefix));
+/***/ }),
 
-        const expandedSelector = replaceSelector(finalSelector);
-        const targetSelector = isSpaceOrDivide
-          ? `${expandedSelector} > :not([hidden]) ~ :not([hidden])`
-          : expandedSelector;
+/***/ "./src/generators/aspect.js":
+/*!**********************************!*\
+  !*** ./src/generators/aspect.js ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-        if (media) {
-          styles[media] = styles[media] || {};
-          styles[media][targetSelector] = styles[media][targetSelector] || "";
-          styles[media][targetSelector] += declarations + "\n";
-        } else {
-          styles[targetSelector] = styles[targetSelector] || "";
-          styles[targetSelector] += declarations + "\n";
-        }
-      }
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"aspect\");\n  var _theme$spacing = theme.spacing,\n    spacing = _theme$spacing === void 0 ? {} : _theme$spacing;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(spacing, function (key) {\n      return \"\\n          \".concat(prefix, \"-h-\").concat(key, \" {\\n            --aspect-h: \").concat(key, \";\\n          }\\n          \").concat(prefix, \"-w-\").concat(key, \" {\\n            position: relative;\\n            padding-bottom: calc(var(--aspect-h) / var(--aspect-w) * 100%);\\n            --aspect-w: \").concat(key, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/aspect.js?");
 
-      for (const nestedSel in nested) {
-        const nestedVal = nested[nestedSel];
-        if (nestedSel === "@css" && typeof nestedVal === "object") {
-          const cssDeclarations = Object.entries(nestedVal)
-            .map(([key, value]) => `${key}: ${value};`)
-            .join(" ");
+/***/ }),
 
-          if (selector in styles) {
-            styles[selector] += cssDeclarations + "\n";
-          } else {
-            styles[selector] = cssDeclarations + "\n";
-          }
-          continue;
-        }
+/***/ "./src/generators/backgroundAttachment.js":
+/*!************************************************!*\
+  !*** ./src/generators/backgroundAttachment.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-        const combinedSel = nestedSel.includes("&")
-          ? nestedSel.replace(/&/g, selector)
-          : `${selector} ${nestedSel}`;
-        walk(combinedSel, nestedVal);
-      }
-    } else if (typeof val === "string") {
-      if (val.trim() === "") return;
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"bg\");\n  var propertyOptions = [\"fixed\", \"local\", \"scroll\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            background-attachment: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/backgroundAttachment.js?");
 
-      walk(selector, [expandGroupedClass(val)]);
-    } else if (typeof val === "object" && val !== null) {
-      const { baseSelector, cssProperty } = parseSelector(selector);
-      if (cssProperty) {
-        const cssValue = Object.values(val).join(" ");
-        styles[baseSelector] = styles[baseSelector] || "";
-        styles[baseSelector] += `${cssProperty}: ${cssValue};\n`;
-        return;
-      }
+/***/ }),
 
-      const cssDeclarations = Object.entries(val)
-        .map(([key, value]) => `${key}: ${value};`)
-        .join(" ");
+/***/ "./src/generators/backgroundClip.js":
+/*!******************************************!*\
+  !*** ./src/generators/backgroundClip.js ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-      if (selector in styles) {
-        styles[selector] += cssDeclarations + "\n";
-      } else {
-        styles[selector] = cssDeclarations + "\n";
-      }
-    }
-  }
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"bg-clip\");\n  var propertyOptions = {\n    border: \"border-box\",\n    padding: \"padding-box\",\n    content: \"content-box\",\n    text: \"text\"\n  };\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            -webkit-background-clip: \").concat(value, \";\\n            background-clip: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/backgroundClip.js?");
 
-  // Menambahkan memoization untuk parseSelector
-  const parseSelectorCache = new Map();
-  function parseSelector(selector) {
-    if (parseSelectorCache.has(selector)) {
-      return parseSelectorCache.get(selector);
-    }
-    
-    let result;
-    if (selector.includes('@css')) {
-      const parts = selector.split('@css');
-      const baseSelector = parts[0].trim();
-      const cssProperty = parts[1]?.trim();
-      result = { baseSelector, cssProperty };
-    } else {
-      result = { baseSelector: selector, cssProperty: null };
-    }
-    
-    parseSelectorCache.set(selector, result);
-    limitCacheSize(parseSelectorCache);
-    return result;
-  }
+/***/ }),
 
-  function isSelectorObject(val) {
-    return typeof val === "object" && val !== null && !Array.isArray(val);
-  }
+/***/ "./src/generators/backgroundColor.js":
+/*!*******************************************!*\
+  !*** ./src/generators/backgroundColor.js ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-  function flatten(obj, parentSelector = "") {
-    const result = {};
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"bg\");\n  var _theme$backgroundColo = theme.backgroundColor,\n    backgroundColor = _theme$backgroundColo === void 0 ? {} : _theme$backgroundColo;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByColors = _ref.getCssByColors,\n      isValidCssColor = _ref.isValidCssColor;\n    var cssString = getCssByColors(backgroundColor, function (key, value, rgbValue) {\n      var rgbPropertyValue = \"\";\n      if (rgbValue) {\n        rgbPropertyValue = \"background-color: rgba(\".concat(rgbValue, \", var(--bg-opacity));\");\n      }\n      if (value === \"custom_value\") {\n        return \"\\n            \".concat(prefix, \"-\").concat(key, \" {\\n              \").concat(isValidCssColor(value) ? \"background-color\" : \"background\", \": \").concat(value, \";\\n            }\\n          \");\n      }\n      return \"\\n            \".concat(prefix, \"-\").concat(key, \" {\\n              --bg-opacity: 1;\\n              background-color: \").concat(value, \";\\n              \").concat(rgbPropertyValue, \"\\n            }\\n          \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/backgroundColor.js?");
 
-    for (const selector in obj) {
-      const val = obj[selector];
-      const currentSelector = parentSelector
-        ? selector.includes("&")
-          ? selector.replace(/&/g, parentSelector)
-          : `${parentSelector} ${selector}`
-        : selector;
+/***/ }),
 
-      if (typeof val === "string") {
-        result[currentSelector] = val;
-      } else if (Array.isArray(val)) {
-        const flatArray = [];
-        for (const item of val) {
-          if (typeof item === "string") {
-            flatArray.push(item);
-          } else if (isSelectorObject(item)) {
-            const nested = flatten(item, currentSelector);
-            Object.assign(result, nested);
-          }
-        }
-        if (flatArray.length > 0) {
-          result[currentSelector] = result[currentSelector] || [];
-          result[currentSelector].push(...flatArray);
-        }
-      } else if (isSelectorObject(val)) {
-        const nested = flatten(val, currentSelector);
-        Object.assign(result, nested);
-      }
-    }
+/***/ "./src/generators/backgroundImage.js":
+/*!*******************************************!*\
+  !*** ./src/generators/backgroundImage.js ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-    return result;
-  }
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"bg\");\n  var _theme$backgroundImag = theme.backgroundImage,\n    backgroundImage = _theme$backgroundImag === void 0 ? {} : _theme$backgroundImag;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(backgroundImage, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            background-image: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/backgroundImage.js?");
 
-  const flattened = flatten(obj);
+/***/ }),
 
-  for (const selector in flattened) {
-    let val = flattened[selector];
-    let baseClass = "";
-    let nested = {};
+/***/ "./src/generators/backgroundOpacity.js":
+/*!*********************************************!*\
+  !*** ./src/generators/backgroundOpacity.js ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-    if (typeof val === "string") {
-      baseClass = expandGroupedClass(val);
-    } else if (Array.isArray(val)) {
-      for (const item of val) {
-        if (typeof item === "string") {
-          baseClass += (baseClass ? " " : "") + expandGroupedClass(item);
-        } else if (typeof item === "object" && item !== null) {
-          Object.assign(nested, item);
-        }
-      }
-    }
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"bg-opacity\");\n  var _theme$backgroundOpac = theme.backgroundOpacity,\n    backgroundOpacity = _theme$backgroundOpac === void 0 ? {} : _theme$backgroundOpac;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(backgroundOpacity, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            --bg-opacity: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/backgroundOpacity.js?");
 
-    walk(selector, [baseClass, nested]);
-  }
+/***/ }),
 
-  let cssString = "";
+/***/ "./src/generators/backgroundOrigin.js":
+/*!********************************************!*\
+  !*** ./src/generators/backgroundOrigin.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-  const baseStyles = [];
-  const mediaStyles = [];
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"bg-origin\");\n  var propertyOptions = {\n    border: \"border-box\",\n    padding: \"padding-box\",\n    content: \"content-box\"\n  };\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            -webkit-background-origin: \").concat(value, \";\\n            background-origin: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/backgroundOrigin.js?");
 
-  for (const sel in styles) {
-    if (!sel.startsWith("@media")) {
-      baseStyles.push({ sel, css: styles[sel] });
-    } else {
-      mediaStyles.push({ sel, content: styles[sel] });
-    }
-  }
+/***/ }),
 
-  for (const { sel, css } of baseStyles) {
-    cssString += `${sel}{${css.trim().replace(/\n/g, "")}}`;
-  }
+/***/ "./src/generators/backgroundPosition.js":
+/*!**********************************************!*\
+  !*** ./src/generators/backgroundPosition.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-  function mediaPriority(sel) {
-    const match = sel.match(/@media \(min-width: (\d+)px\)/);
-    return match ? parseInt(match[1], 10) : 99999;
-  }
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"bg\");\n  var _theme$backgroundPosi = theme.backgroundPosition,\n    backgroundPosition = _theme$backgroundPosi === void 0 ? {} : _theme$backgroundPosi;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(backgroundPosition, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            background-position: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/backgroundPosition.js?");
 
-  mediaStyles.sort((a, b) => mediaPriority(a.sel) - mediaPriority(b.sel));
+/***/ }),
 
-  for (const { sel, content } of mediaStyles) {
-    cssString += `${sel}{`;
-    for (const subSel in content) {
-      cssString += `${subSel}{${content[subSel].trim().replace(/\n/g, "")}}`;
-    }
-    cssString += `}`;
-  }
-  return cssString.trim();
-}
+/***/ "./src/generators/backgroundRepeat.js":
+/*!********************************************!*\
+  !*** ./src/generators/backgroundRepeat.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-// Daftarkan versi debounced dari fungsi-fungsi export
-/**
- * Versi debounced dari fungsi tws
- * Membantu mengoptimalkan performa ketika memanggil tws berulang kali
- * @param {string} classNames - String berisi kelas Tailwind yang akan dikonversi
- * @param {boolean} convertToJson - Jika true, hasil akan menjadi objek JSON, jika false menjadi string CSS
- * @returns {string|Object} String CSS inline atau objek style JSON
- */
-export const debouncedTws = debounce(tws);
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"bg\");\n  var propertyOptions = {\n    repeat: \"repeat\",\n    \"no-repeat\": \"no-repeat\",\n    \"repeat-x\": \"repeat-x\",\n    \"repeat-y\": \"repeat-y\",\n    \"repeat-round\": \"round\",\n    \"repeat-space\": \"space\"\n  };\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            background-repeat: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/backgroundRepeat.js?");
 
-/**
- * Versi debounced dari fungsi twsx
- * Membantu mengoptimalkan performa ketika memanggil twsx berulang kali
- * @param {Object} obj - Objek dengan format style mirip SCSS
- * @returns {string} String CSS yang dihasilkan
- */
-export const debouncedTwsx = debounce(twsx);
+/***/ }),
 
+/***/ "./src/generators/backgroundSize.js":
+/*!******************************************!*\
+  !*** ./src/generators/backgroundSize.js ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"bg\");\n  var _theme$backgroundSize = theme.backgroundSize,\n    backgroundSize = _theme$backgroundSize === void 0 ? {} : _theme$backgroundSize;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(backgroundSize, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            background-size: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/backgroundSize.js?");
+
+/***/ }),
+
+/***/ "./src/generators/blur.js":
+/*!********************************!*\
+  !*** ./src/generators/blur.js ***!
+  \********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"blur\");\n  var basePrefix = prefix.replace(globalPrefix, \"\");\n  var _theme$blur = theme.blur,\n    blur = _theme$blur === void 0 ? {} : _theme$blur;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(blur, function (keyTmp, value) {\n      var key = keyTmp.toLowerCase() !== \"default\" ? \"-\".concat(keyTmp) : \"\";\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            --blur: blur(\").concat(value, \") !important;\\n          }\\n          \").concat(prefix.replace(basePrefix, \"backdrop-\".concat(basePrefix))).concat(key, \" {\\n            --backdrop-blur: blur(\").concat(value, \") !important;\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/blur.js?");
+
+/***/ }),
+
+/***/ "./src/generators/borderCollapse.js":
+/*!******************************************!*\
+  !*** ./src/generators/borderCollapse.js ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"border\");\n  var propertyOptions = [\"collapse\", \"separate\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            border-collapse: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/borderCollapse.js?");
+
+/***/ }),
+
+/***/ "./src/generators/borderColor.js":
+/*!***************************************!*\
+  !*** ./src/generators/borderColor.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"border\");\n  var _theme$borderColor = theme.borderColor,\n    borderColor = _theme$borderColor === void 0 ? {} : _theme$borderColor;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByColors = _ref.getCssByColors;\n    var cssString = getCssByColors(borderColor, function (keyTmp, value, rgbValue) {\n      if (keyTmp.toLowerCase() === \"default\") {\n        return \"\";\n      }\n      var key = keyTmp.toLowerCase() !== \"default\" ? \"-\".concat(keyTmp) : \"\";\n      var rgbPropertyValue = \"\";\n      if (rgbValue) {\n        rgbPropertyValue = \"border-color: rgba(\".concat(rgbValue, \", var(--border-opacity));\");\n      }\n      return \"\\n            \".concat(prefix).concat(key, \" {\\n              --border-opacity: 1;\\n              border-color: \").concat(value, \";\\n              \").concat(rgbPropertyValue, \"\\n            }\\n            \").concat(prefix, \"-x\").concat(key, \" {\\n              --border-opacity: 1;\\n              border-left-color: \").concat(value, \";\\n              \").concat(rgbPropertyValue, \"\\n              border-right-color: \").concat(value, \";\\n              \").concat(rgbPropertyValue, \"\\n            }\\n            \").concat(prefix, \"-y\").concat(key, \" {\\n              --border-opacity: 1;\\n              border-top-color: \").concat(value, \";\\n              \").concat(rgbPropertyValue, \"\\n              border-bottom-color: \").concat(value, \";\\n              \").concat(rgbPropertyValue, \"\\n            }\\n            \").concat(prefix, \"-s\").concat(key, \" {\\n              --border-opacity: 1;\\n              border-inline-start-color: \").concat(value, \";\\n              \").concat(rgbPropertyValue, \"\\n            }\\n            \").concat(prefix, \"-e\").concat(key, \" {\\n              --border-opacity: 1;\\n              border-inline-end-color: \").concat(value, \";\\n              \").concat(rgbPropertyValue, \"\\n            }\\n            \").concat(prefix, \"-t\").concat(key, \" {\\n              --border-opacity: 1;\\n              border-top-color: \").concat(value, \";\\n              \").concat(rgbPropertyValue, \"\\n            }\\n            \").concat(prefix, \"-r\").concat(key, \" {\\n              --border-opacity: 1;\\n              border-right-color: \").concat(value, \";\\n              \").concat(rgbPropertyValue, \"\\n            }\\n            \").concat(prefix, \"-b\").concat(key, \" {\\n              --border-opacity: 1;\\n              border-bottom-color: \").concat(value, \";\\n              \").concat(rgbPropertyValue, \"\\n            }\\n            \").concat(prefix, \"-l\").concat(key, \" {\\n              --border-opacity: 1;\\n              border-left-color: \").concat(value, \";\\n              \").concat(rgbPropertyValue, \"\\n            }\\n          \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/borderColor.js?");
+
+/***/ }),
+
+/***/ "./src/generators/borderOpacity.js":
+/*!*****************************************!*\
+  !*** ./src/generators/borderOpacity.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"border-opacity\");\n  var _theme$borderOpacity = theme.borderOpacity,\n    borderOpacity = _theme$borderOpacity === void 0 ? {} : _theme$borderOpacity;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(borderOpacity, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            --border-opacity: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/borderOpacity.js?");
+
+/***/ }),
+
+/***/ "./src/generators/borderRadius.js":
+/*!****************************************!*\
+  !*** ./src/generators/borderRadius.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"rounded\");\n  var _theme$borderRadius = theme.borderRadius,\n    borderRadius = _theme$borderRadius === void 0 ? {} : _theme$borderRadius;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(borderRadius, function (keyTmp, value) {\n      var key = keyTmp.toLowerCase() !== \"default\" ? \"-\".concat(keyTmp) : \"\";\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            border-radius: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-s\").concat(key, \" {\\n            border-start-start-radius: \").concat(value, \";\\n            border-end-start-radius: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-e\").concat(key, \" {\\n            border-start-end-radius: \").concat(value, \";\\n            border-end-end-radius: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-t\").concat(key, \" {\\n            border-top-left-radius: \").concat(value, \";\\n            border-top-right-radius: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-r\").concat(key, \" {\\n            border-top-right-radius: \").concat(value, \";\\n            border-bottom-right-radius: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-b\").concat(key, \" {\\n            border-bottom-right-radius: \").concat(value, \";\\n            border-bottom-left-radius: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-l\").concat(key, \" {\\n            border-top-left-radius: \").concat(value, \";\\n            border-bottom-left-radius: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-ss\").concat(key, \" {\\n            border-start-start-radius: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-se\").concat(key, \" {\\n            border-start-end-radius: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-ee\").concat(key, \" {\\n            border-end-end-radius: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-es\").concat(key, \" {\\n            border-end-start-radius: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-tl\").concat(key, \" {\\n            border-top-left-radius: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-tr\").concat(key, \" {\\n            border-top-right-radius: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-br\").concat(key, \" {\\n            border-bottom-right-radius: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-bl\").concat(key, \" {\\n            border-bottom-left-radius: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/borderRadius.js?");
+
+/***/ }),
+
+/***/ "./src/generators/borderSpacing.js":
+/*!*****************************************!*\
+  !*** ./src/generators/borderSpacing.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"border-spacing\");\n  var _theme$borderSpacing = theme.borderSpacing,\n    borderSpacing = _theme$borderSpacing === void 0 ? {} : _theme$borderSpacing;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(borderSpacing, function (keyTmp, value) {\n      var key = keyTmp.toLowerCase() !== \"default\" ? \"-\".concat(keyTmp) : \"\";\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            border-spacing: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-x\").concat(key, \" {\\n            --border-spacing-x: \").concat(value, \";\\n            border-spacing: var(--border-spacing-x) var(--border-spacing-y, 0);\\n          }\\n          \").concat(prefix, \"-y\").concat(key, \" {\\n            --border-spacing-y: \").concat(value, \";\\n            border-spacing: var(--border-spacing-x, 0) var(--border-spacing-y);\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/borderSpacing.js?");
+
+/***/ }),
+
+/***/ "./src/generators/borderStyle.js":
+/*!***************************************!*\
+  !*** ./src/generators/borderStyle.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"border\");\n  var propertyOptions = [\"solid\", \"dashed\", \"dotted\", \"double\", \"none\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            border-style: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/borderStyle.js?");
+
+/***/ }),
+
+/***/ "./src/generators/borderWidth.js":
+/*!***************************************!*\
+  !*** ./src/generators/borderWidth.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"border\");\n  var _theme$borderWidth = theme.borderWidth,\n    borderWidth = _theme$borderWidth === void 0 ? {} : _theme$borderWidth;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(borderWidth, function (keyTmp, value) {\n      var key = keyTmp.toLowerCase() !== \"default\" ? \"-\".concat(keyTmp) : \"\";\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            border-style: solid;\\n            border-top-width: \").concat(value, \";\\n            border-bottom-width: \").concat(value, \";\\n            border-left-width: \").concat(value, \";\\n            border-right-width: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-x\").concat(key, \" {\\n            border-left-width: \").concat(value, \";\\n            border-right-width: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-y\").concat(key, \" {\\n            border-top-width: \").concat(value, \";\\n            border-bottom-width: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-s\").concat(key, \" {\\n            border-inline-start-width: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-e\").concat(key, \" {\\n            border-inline-end-width: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-t\").concat(key, \" {\\n            border-top-width: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-r\").concat(key, \" {\\n            border-right-width: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-b\").concat(key, \" {\\n            border-bottom-width: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-l\").concat(key, \" {\\n            border-left-width: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/borderWidth.js?");
+
+/***/ }),
+
+/***/ "./src/generators/boxDecorationBreak.js":
+/*!**********************************************!*\
+  !*** ./src/generators/boxDecorationBreak.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"box-decoration\");\n  var propertyOptions = [\"slice\", \"clone\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            box-decoration-break: \").concat(value, \";\\n            -webkit-box-decoration-break: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/boxDecorationBreak.js?");
+
+/***/ }),
+
+/***/ "./src/generators/boxShadow.js":
+/*!*************************************!*\
+  !*** ./src/generators/boxShadow.js ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"shadow\");\n  var boxShadowColor = theme.boxShadowColor,\n    _theme$boxShadow = theme.boxShadow,\n    boxShadow = _theme$boxShadow === void 0 ? {} : _theme$boxShadow;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions,\n      getCssByColors = _ref.getCssByColors;\n    var cssString = getCssByOptions(boxShadow, function (keyTmp, value) {\n      var key = keyTmp.toLowerCase() !== \"default\" ? \"-\".concat(keyTmp) : \"\";\n      var valueSplit = value.split(\" \");\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            --shadow: \").concat(value, \";\\n            --shadow-colored: \").concat(valueSplit.slice(0, 4).join(\" \"), \" var(--shadow-color);\\n            box-shadow: var(--ring-offset-shadow, 0 0 #0000),var(--ring-shadow, 0 0 #0000),var(--shadow);\\n          }\\n        \");\n    });\n    cssString += getCssByColors(boxShadowColor, function () {\n      var key = arguments.length <= 0 ? undefined : arguments[0];\n      var rgbValue = arguments.length <= 2 ? undefined : arguments[2];\n      var str = \"\";\n      if (rgbValue) {\n        str += \"\\n            \".concat(prefix, \"-\").concat(key, \" {\\n              --shadow-color: rgba(\").concat(rgbValue, \", 0.5) !important;\\n              --shadow: var(--shadow-colored);\\n            }\\n          \");\n      }\n      return str;\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/boxShadow.js?");
+
+/***/ }),
+
+/***/ "./src/generators/boxSizing.js":
+/*!*************************************!*\
+  !*** ./src/generators/boxSizing.js ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"box\");\n  var propertyOptions = {\n    border: \"border-box\",\n    content: \"content-box\"\n  };\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            box-sizing: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/boxSizing.js?");
+
+/***/ }),
+
+/***/ "./src/generators/brightness.js":
+/*!**************************************!*\
+  !*** ./src/generators/brightness.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"brightness\");\n  var basePrefix = prefix.replace(globalPrefix, \"\");\n  var _theme$brightness = theme.brightness,\n    brightness = _theme$brightness === void 0 ? {} : _theme$brightness;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(brightness, function (keyTmp, value) {\n      var key = keyTmp.toLowerCase() !== \"default\" ? \"-\".concat(keyTmp) : \"\";\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            --brightness: brightness(\").concat(value, \") !important;\\n          }\\n          \").concat(prefix.replace(basePrefix, \"backdrop-\".concat(basePrefix))).concat(key, \" {\\n            --backdrop-brightness: brightness(\").concat(value, \") !important;\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/brightness.js?");
+
+/***/ }),
+
+/***/ "./src/generators/captionSide.js":
+/*!***************************************!*\
+  !*** ./src/generators/captionSide.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"caption\");\n  var propertyOptions = [\"top\", \"bottom\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            caption-side: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/captionSide.js?");
+
+/***/ }),
+
+/***/ "./src/generators/caretColor.js":
+/*!**************************************!*\
+  !*** ./src/generators/caretColor.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"caret\");\n  var caretColor = theme.caretColor,\n    _theme$opacity = theme.opacity,\n    opacity = _theme$opacity === void 0 ? {} : _theme$opacity;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByColors = _ref.getCssByColors,\n      getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByColors(caretColor, function (key, value, rgbValue) {\n      var rgbPropertyValue = \"\";\n      if (rgbValue) {\n        rgbPropertyValue = \"caret-color: rgba(\".concat(rgbValue, \", var(--caret-opacity));\");\n      }\n      return \"\\n            \".concat(prefix, \"-\").concat(key, \" {\\n              --caret-opacity: 1;\\n              caret-color: \").concat(value, \";\\n              \").concat(rgbPropertyValue, \"\\n            }\\n          \");\n    });\n    cssString += getCssByOptions(opacity, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            --caret-opacity: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/caretColor.js?");
+
+/***/ }),
+
+/***/ "./src/generators/clear.js":
+/*!*********************************!*\
+  !*** ./src/generators/clear.js ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"clear\");\n  var propertyOptions = [\"left\", \"right\", \"both\", \"none\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            clear: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/clear.js?");
+
+/***/ }),
+
+/***/ "./src/generators/content.js":
+/*!***********************************!*\
+  !*** ./src/generators/content.js ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"content\");\n  var _theme$content = theme.content,\n    content = _theme$content === void 0 ? {} : _theme$content;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(content, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            content: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/content.js?");
+
+/***/ }),
+
+/***/ "./src/generators/contrast.js":
+/*!************************************!*\
+  !*** ./src/generators/contrast.js ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"contrast\");\n  var basePrefix = prefix.replace(globalPrefix, \"\");\n  var _theme$contrast = theme.contrast,\n    contrast = _theme$contrast === void 0 ? {} : _theme$contrast;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(contrast, function (keyTmp, value) {\n      var key = keyTmp.toLowerCase() !== \"default\" ? \"-\".concat(keyTmp) : \"\";\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            --contrast: contrast(\").concat(value, \") !important;\\n          }\\n          \").concat(prefix.replace(basePrefix, \"backdrop-\".concat(basePrefix))).concat(key, \" {\\n            --backdrop-contrast: contrast(\").concat(value, \") !important;\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/contrast.js?");
+
+/***/ }),
+
+/***/ "./src/generators/cursor.js":
+/*!**********************************!*\
+  !*** ./src/generators/cursor.js ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"cursor\");\n  var propertyOptions = [\"auto\", \"default\", \"pointer\", \"wait\", \"text\", \"move\", \"help\", \"not-allowed\", \"none\", \"context-menu\", \"progress\", \"cell\", \"crosshair\", \"vertical-text\", \"alias\", \"copy\", \"no-drop\", \"grab\", \"grabbing\", \"all-scroll\", \"col-resize\", \"row-resize\", \"n-resize\", \"e-resize\", \"s-resize\", \"w-resize\", \"ne-resize\", \"nw-resize\", \"se-resize\", \"sw-resize\", \"ew-resize\", \"ns-resize\", \"nesw-resize\", \"nwse-resize\", \"zoom-in\", \"zoom-out\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            cursor: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/cursor.js?");
+
+/***/ }),
+
+/***/ "./src/generators/display.js":
+/*!***********************************!*\
+  !*** ./src/generators/display.js ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var prefix = configOptions.prefix;\n  var propertyOptions = [\"block\", \"inline-block\", \"inline\", \"flex\", \"inline-flex\", \"table\", \"table-caption\", \"table-cell\", \"table-column\", \"table-column-group\", \"table-header-group\", \"table-footer-group\", \"table-row-group\", \"table-row\", \"flow-root\", \"grid\", \"inline-grid\", \"contents\", \"none\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(key === \"none\" ? \"\".concat(prefix, \"hidden\") : \"\".concat(prefix).concat(key), \" {\\n            display: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/display.js?");
+
+/***/ }),
+
+/***/ "./src/generators/divideColor.js":
+/*!***************************************!*\
+  !*** ./src/generators/divideColor.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"divide\");\n  var _theme$divideColor = theme.divideColor,\n    divideColor = _theme$divideColor === void 0 ? {} : _theme$divideColor;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByColors = _ref.getCssByColors;\n    var cssString = getCssByColors(divideColor, function (key, value, rgbValue) {\n      var rgbPropertyValue = \"\";\n      if (rgbValue) {\n        rgbPropertyValue = \"border-color: rgba(\".concat(rgbValue, \", var(--divide-opacity));\");\n      }\n      return \"\\n            \".concat(prefix, \"-\").concat(key, \" {\\n              --divide-opacity: 1;\\n              border-color: \").concat(value, \";\").concat(rgbPropertyValue, \"\\n            }\\n          \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/divideColor.js?");
+
+/***/ }),
+
+/***/ "./src/generators/divideOpacity.js":
+/*!*****************************************!*\
+  !*** ./src/generators/divideOpacity.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"divide-opacity\");\n  var _theme$divideOpacity = theme.divideOpacity,\n    divideOpacity = _theme$divideOpacity === void 0 ? {} : _theme$divideOpacity;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(divideOpacity, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            --divide-opacity: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/divideOpacity.js?");
+
+/***/ }),
+
+/***/ "./src/generators/divideStyle.js":
+/*!***************************************!*\
+  !*** ./src/generators/divideStyle.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"divide\");\n  var propertyOptions = [\"solid\", \"dashed\", \"dotted\", \"double\", \"none\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            border-style: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/divideStyle.js?");
+
+/***/ }),
+
+/***/ "./src/generators/divideWidth.js":
+/*!***************************************!*\
+  !*** ./src/generators/divideWidth.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\nfunction _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }\nfunction _nonIterableRest() { throw new TypeError(\"Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\"); }\nfunction _unsupportedIterableToArray(r, a) { if (r) { if (\"string\" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return \"Object\" === t && r.constructor && (t = r.constructor.name), \"Map\" === t || \"Set\" === t ? Array.from(r) : \"Arguments\" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }\nfunction _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }\nfunction _iterableToArrayLimit(r, l) { var t = null == r ? null : \"undefined\" != typeof Symbol && r[Symbol.iterator] || r[\"@@iterator\"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t[\"return\"] && (u = t[\"return\"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }\nfunction _arrayWithHoles(r) { if (Array.isArray(r)) return r; }\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"divide\");\n  var _theme$divideWidth = theme.divideWidth,\n    divideWidth = _theme$divideWidth === void 0 ? {} : _theme$divideWidth;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function () {\n    var generateDivideWidth = function generateDivideWidth(position, keyTmp, value) {\n      var dividePosition = \"x\";\n      var borderPosition1 = \"left\";\n      var borderPosition2 = \"right\";\n      if (position === \"y\") {\n        dividePosition = \"y\";\n        borderPosition1 = \"top\";\n        borderPosition2 = \"bottom\";\n      }\n      var key = keyTmp.toLowerCase() !== \"default\" ? \"-\".concat(keyTmp) : \"\";\n      return \"\\n          \".concat(prefix, \"-\").concat(dividePosition).concat(key, \" {\\n            --divide-\").concat(dividePosition, \"-reverse: 0;\\n            border-\").concat(borderPosition1, \"-width: calc(\").concat(value, \" * calc(1 - var(--divide-\").concat(dividePosition, \"-reverse)));\\n            border-\").concat(borderPosition2, \"-width: calc(\").concat(value, \" * var(--divide-\").concat(dividePosition, \"-reverse));\\n          }\\n        \");\n    };\n    var cssString = \"\";\n    Object.entries(divideWidth).forEach(function (_ref) {\n      var _ref2 = _slicedToArray(_ref, 2),\n        key = _ref2[0],\n        value = _ref2[1];\n      cssString += generateDivideWidth(\"y\", key, value);\n      cssString += generateDivideWidth(\"x\", key, value);\n    });\n    cssString += \"\\n        \".concat(prefix, \"-y-reverse$ {\\n          --divide-y-reverse: 1;\\n        }\\n        \").concat(prefix, \"-x-reverse {\\n          --divide-x-reverse: 1;\\n        }\\n      \");\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/divideWidth.js?");
+
+/***/ }),
+
+/***/ "./src/generators/dropShadow.js":
+/*!**************************************!*\
+  !*** ./src/generators/dropShadow.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"drop-shadow\");\n  var _theme$dropShadow = theme.dropShadow,\n    dropShadow = _theme$dropShadow === void 0 ? {} : _theme$dropShadow;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(dropShadow, function (keyTmp, value) {\n      var key = keyTmp.toLowerCase() !== \"default\" ? \"-\".concat(keyTmp) : \"\";\n      var values = value.split(\",\").map(function (o) {\n        return \"drop-shadow(\".concat(o.trim(), \")\");\n      });\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            --drop-shadow:  \").concat(values.join(\" \"), \" !important;\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/dropShadow.js?");
+
+/***/ }),
+
+/***/ "./src/generators/fill.js":
+/*!********************************!*\
+  !*** ./src/generators/fill.js ***!
+  \********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"fill\");\n  var _theme$fill = theme.fill,\n    fill = _theme$fill === void 0 ? {} : _theme$fill;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByColors = _ref.getCssByColors;\n    var cssString = getCssByColors(fill, function (key, value) {\n      return \"\\n            \".concat(prefix, \"-\").concat(key, \" {\\n              fill: \").concat(value, \";\\n            }\\n          \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/fill.js?");
+
+/***/ }),
+
+/***/ "./src/generators/filter.js":
+/*!**********************************!*\
+  !*** ./src/generators/filter.js ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\nfunction generator(_ref) {\n  var prefix = _ref.prefix;\n  return \"    \\n  \".concat(prefix, \"filter {\\n    --blur: ;\\n    --brightness: ;\\n    --contrast: ;\\n    --grayscale: ;\\n    --hue-rotate: ;\\n    --invert: ;\\n    --saturate: ;\\n    --sepia: ;\\n    --drop-shadow: ;\\n    filter: var(--blur) var(--brightness) var(--contrast) var(--grayscale) var(--hue-rotate) var(--invert) var(--saturate) var(--sepia) var(--drop-shadow);\\n\\n    --backdrop-blur: ;\\n    --backdrop-brightness: ;\\n    --backdrop-contrast: ;\\n    --backdrop-grayscale: ;\\n    --backdrop-hue-rotate: ;\\n    --backdrop-invert: ;\\n    --backdrop-opacity: ;\\n    --backdrop-saturate: ;\\n    --backdrop-sepia: ;\\n    -webkit-backdrop-filter: var(--backdrop-blur) var(--backdrop-brightness) var(--backdrop-contrast) var(--backdrop-grayscale) var(--backdrop-hue-rotate) var(--backdrop-invert) var(--backdrop-opacity) var(--backdrop-saturate) var(--backdrop-sepia);\\n    backdrop-filter: var(--backdrop-blur) var(--backdrop-brightness) var(--backdrop-contrast) var(--backdrop-grayscale) var(--backdrop-hue-rotate) var(--backdrop-invert) var(--backdrop-opacity) var(--backdrop-saturate) var(--backdrop-sepia);\\n  }\\n  \").concat(prefix, \"filter-none {\\n    filter: none;\\n    backdrop-filter: none;\\n  }\\n\");\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/filter.js?");
+
+/***/ }),
+
+/***/ "./src/generators/flex.js":
+/*!********************************!*\
+  !*** ./src/generators/flex.js ***!
+  \********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"flex\");\n  var _theme$flex = theme.flex,\n    flex = _theme$flex === void 0 ? {} : _theme$flex;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(flex, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            flex: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/flex.js?");
+
+/***/ }),
+
+/***/ "./src/generators/flexBasis.js":
+/*!*************************************!*\
+  !*** ./src/generators/flexBasis.js ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"basis\");\n  var _theme$flexBasis = theme.flexBasis,\n    flexBasis = _theme$flexBasis === void 0 ? {} : _theme$flexBasis;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(flexBasis, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            flex-basis: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/flexBasis.js?");
+
+/***/ }),
+
+/***/ "./src/generators/flexDirection.js":
+/*!*****************************************!*\
+  !*** ./src/generators/flexDirection.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"flex\");\n  var propertyOptions = {\n    row: \"row\",\n    \"row-reverse\": \"row-reverse\",\n    col: \"column\",\n    \"col-reverse\": \"column-reverse\"\n  };\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            flex-direction: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/flexDirection.js?");
+
+/***/ }),
+
+/***/ "./src/generators/flexGrow.js":
+/*!************************************!*\
+  !*** ./src/generators/flexGrow.js ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"grow\");\n  var _theme$flexGrow = theme.flexGrow,\n    flexGrow = _theme$flexGrow === void 0 ? {} : _theme$flexGrow;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(flexGrow, function (key, value) {\n      return \"\\n          \".concat(key.toLowerCase() === \"default\" ? prefix : \"\".concat(prefix, \"-\").concat(key), \" {\\n            flex-grow: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/flexGrow.js?");
+
+/***/ }),
+
+/***/ "./src/generators/flexShrink.js":
+/*!**************************************!*\
+  !*** ./src/generators/flexShrink.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"shrink\");\n  var _theme$flexShrink = theme.flexShrink,\n    flexShrink = _theme$flexShrink === void 0 ? {} : _theme$flexShrink;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(flexShrink, function (key, value) {\n      return \"\\n          \".concat(key.toLowerCase() === \"default\" ? prefix : \"\".concat(prefix, \"-\").concat(key), \" {\\n            flex-shrink: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/flexShrink.js?");
+
+/***/ }),
+
+/***/ "./src/generators/flexWrap.js":
+/*!************************************!*\
+  !*** ./src/generators/flexWrap.js ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"flex\");\n  var propertyOptions = {\n    wrap: \"wrap\",\n    \"wrap-reverse\": \"wrap-reverse\",\n    \"no-wrap\": \"nowrap\",\n    nowrap: \"nowrap\"\n  };\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            flex-wrap: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/flexWrap.js?");
+
+/***/ }),
+
+/***/ "./src/generators/float.js":
+/*!*********************************!*\
+  !*** ./src/generators/float.js ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"float\");\n  var propertyOptions = [\"left\", \"right\", \"none\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            float: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/float.js?");
+
+/***/ }),
+
+/***/ "./src/generators/fontSize.js":
+/*!************************************!*\
+  !*** ./src/generators/fontSize.js ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"text\");\n  var _theme$fontSize = theme.fontSize,\n    fontSize = _theme$fontSize === void 0 ? {} : _theme$fontSize;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(fontSize, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            font-size: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/fontSize.js?");
+
+/***/ }),
+
+/***/ "./src/generators/fontSmoothing.js":
+/*!*****************************************!*\
+  !*** ./src/generators/fontSmoothing.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var prefix = configOptions.prefix;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function () {\n    return \"\\n        \".concat(prefix, \" {\\n          -webkit-font-smoothing: antialiased;\\n          -moz-osx-font-smoothing: grayscale;\\n        }\\n        \").concat(prefix, \"subpixel-antialiased {\\n          -webkit-font-smoothing: auto;\\n          -moz-osx-font-smoothing: auto;\\n        }\\n      \");\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/fontSmoothing.js?");
+
+/***/ }),
+
+/***/ "./src/generators/fontStyle.js":
+/*!*************************************!*\
+  !*** ./src/generators/fontStyle.js ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var prefix = configOptions.prefix;\n  var propertyOptions = {\n    italic: \"italic\",\n    \"not-italic\": \"normal\"\n  };\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            font-style: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/fontStyle.js?");
+
+/***/ }),
+
+/***/ "./src/generators/fontVariantNumeric.js":
+/*!**********************************************!*\
+  !*** ./src/generators/fontVariantNumeric.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var prefix = configOptions.prefix;\n  var propertyOptions = {\n    \"normal-nums\": \"normal\",\n    ordinal: \"ordinal\",\n    \"slashed-zero\": \"slashed-zero\",\n    \"lining-nums\": \"lining-nums\",\n    \"oldstyle-nums\": \"oldstyle-nums\",\n    \"proportional-nums\": \"proportional-nums\",\n    \"tabular-nums\": \"tabular-nums\",\n    \"diagonal-fractions\": \"diagonal-fractions\",\n    \"stacked-fractions\": \"stacked-fractions\"\n  };\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            font-variant-numeric: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/fontVariantNumeric.js?");
+
+/***/ }),
+
+/***/ "./src/generators/fontWeight.js":
+/*!**************************************!*\
+  !*** ./src/generators/fontWeight.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"font\");\n  var _theme$fontWeight = theme.fontWeight,\n    fontWeight = _theme$fontWeight === void 0 ? {} : _theme$fontWeight;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(fontWeight, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            font-weight: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/fontWeight.js?");
+
+/***/ }),
+
+/***/ "./src/generators/gap.js":
+/*!*******************************!*\
+  !*** ./src/generators/gap.js ***!
+  \*******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"gap\");\n  var _theme$gap = theme.gap,\n    gap = _theme$gap === void 0 ? {} : _theme$gap;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(gap, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            gap: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-x-\").concat(key, \" {\\n            column-gap: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-y-\").concat(key, \" {\\n            row-gap: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/gap.js?");
+
+/***/ }),
+
+/***/ "./src/generators/gradientColorStops.js":
+/*!**********************************************!*\
+  !*** ./src/generators/gradientColorStops.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var prefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var _theme$gradientColorS = theme.gradientColorStops,\n    gradientColorStops = _theme$gradientColorS === void 0 ? {} : _theme$gradientColorS;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByColors = _ref.getCssByColors;\n    var cssString = getCssByColors(gradientColorStops, function (key, value, rgbValue) {\n      var rgbFromPropertyValue = \"--gradient-color-stops: var(--gradient-from-color),var(--gradient-to-color,rgba(255,255,255,0));\";\n      var rgbViaPropertyValue = \"--gradient-color-stops: var(--gradient-from-color),var(--gradient-via-color),var(--gradient-to-color,rgba(255,255,255,0));\";\n      var rgbToPropertyValue = \"--gradient-color-stops: var(--gradient-from-color),var(--gradient-to-color,rgba(255,255,255,0));\";\n      if (rgbValue) {\n        rgbFromPropertyValue = \"--gradient-color-stops: var(--gradient-from-color),var(--gradient-to-color,rgba(\".concat(rgbValue, \",0));\");\n        rgbViaPropertyValue = \"--gradient-color-stops: var(--gradient-from-color),var(--gradient-via-color),var(--gradient-to-color,rgba(\".concat(rgbValue, \",0));\");\n        rgbToPropertyValue = \"--gradient-color-stops: var(--gradient-from-color),var(--gradient-to-color,rgba(\".concat(rgbValue, \",0));\");\n      }\n      return \"\\n            \".concat(prefix, \"from-\").concat(key, \" {\\n              --gradient-from-color: \").concat(value, \";\").concat(rgbFromPropertyValue, \"\\n            }\\n            \").concat(prefix, \"via-\").concat(key, \" {\\n              --gradient-via-color: \").concat(value, \";\").concat(rgbViaPropertyValue, \"\\n            }\\n            \").concat(prefix, \"to-\").concat(key, \" {\\n              --gradient-to-color: \").concat(value, \";\").concat(rgbToPropertyValue, \"\\n            }\\n          \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/gradientColorStops.js?");
+
+/***/ }),
+
+/***/ "./src/generators/grayscale.js":
+/*!*************************************!*\
+  !*** ./src/generators/grayscale.js ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"grayscale\");\n  var basePrefix = prefix.replace(globalPrefix, \"\");\n  var _theme$grayscale = theme.grayscale,\n    grayscale = _theme$grayscale === void 0 ? {} : _theme$grayscale;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(grayscale, function (keyTmp, value) {\n      var key = keyTmp.toLowerCase() !== \"default\" ? \"-\".concat(keyTmp) : \"\";\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            --grayscale: grayscale(\").concat(value, \") !important;\\n          }\\n          \").concat(prefix.replace(basePrefix, \"backdrop-\".concat(basePrefix))).concat(key, \" {\\n            --backdrop-grayscale: grayscale(\").concat(value, \") !important;\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/grayscale.js?");
+
+/***/ }),
+
+/***/ "./src/generators/gridAutoColumns.js":
+/*!*******************************************!*\
+  !*** ./src/generators/gridAutoColumns.js ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"auto-cols\");\n  var _theme$gridAutoColumn = theme.gridAutoColumns,\n    gridAutoColumns = _theme$gridAutoColumn === void 0 ? {} : _theme$gridAutoColumn;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(gridAutoColumns, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            grid-auto-columns: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/gridAutoColumns.js?");
+
+/***/ }),
+
+/***/ "./src/generators/gridAutoFlow.js":
+/*!****************************************!*\
+  !*** ./src/generators/gridAutoFlow.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"grid-flow\");\n  var propertyOptions = {\n    row: \"row\",\n    col: \"column\",\n    \"row-dense\": \"row dense\",\n    \"col-dense\": \"column dense\"\n  };\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            grid-auto-flow: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/gridAutoFlow.js?");
+
+/***/ }),
+
+/***/ "./src/generators/gridAutoRows.js":
+/*!****************************************!*\
+  !*** ./src/generators/gridAutoRows.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"auto-rows\");\n  var _theme$gridAutoRows = theme.gridAutoRows,\n    gridAutoRows = _theme$gridAutoRows === void 0 ? {} : _theme$gridAutoRows;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(gridAutoRows, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            grid-auto-rows: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/gridAutoRows.js?");
+
+/***/ }),
+
+/***/ "./src/generators/gridColumn.js":
+/*!**************************************!*\
+  !*** ./src/generators/gridColumn.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"col\");\n  var _theme$gridColumn = theme.gridColumn,\n    gridColumn = _theme$gridColumn === void 0 ? {} : _theme$gridColumn;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(gridColumn, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            grid-column: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/gridColumn.js?");
+
+/***/ }),
+
+/***/ "./src/generators/gridColumnEnd.js":
+/*!*****************************************!*\
+  !*** ./src/generators/gridColumnEnd.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"col-end\");\n  var _theme$gridColumnEnd = theme.gridColumnEnd,\n    gridColumnEnd = _theme$gridColumnEnd === void 0 ? {} : _theme$gridColumnEnd;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(gridColumnEnd, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            grid-column-end: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/gridColumnEnd.js?");
+
+/***/ }),
+
+/***/ "./src/generators/gridColumnStart.js":
+/*!*******************************************!*\
+  !*** ./src/generators/gridColumnStart.js ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"col-start\");\n  var _theme$gridColumnStar = theme.gridColumnStart,\n    gridColumnStart = _theme$gridColumnStar === void 0 ? {} : _theme$gridColumnStar;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(gridColumnStart, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            grid-column-start: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/gridColumnStart.js?");
+
+/***/ }),
+
+/***/ "./src/generators/gridRow.js":
+/*!***********************************!*\
+  !*** ./src/generators/gridRow.js ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"row\");\n  var _theme$gridRow = theme.gridRow,\n    gridRow = _theme$gridRow === void 0 ? {} : _theme$gridRow;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(gridRow, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            grid-row: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/gridRow.js?");
+
+/***/ }),
+
+/***/ "./src/generators/gridRowEnd.js":
+/*!**************************************!*\
+  !*** ./src/generators/gridRowEnd.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"row-end\");\n  var _theme$gridRowEnd = theme.gridRowEnd,\n    gridRowEnd = _theme$gridRowEnd === void 0 ? {} : _theme$gridRowEnd;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(gridRowEnd, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            grid-row-end: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/gridRowEnd.js?");
+
+/***/ }),
+
+/***/ "./src/generators/gridRowStart.js":
+/*!****************************************!*\
+  !*** ./src/generators/gridRowStart.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"row-start\");\n  var _theme$gridRowStart = theme.gridRowStart,\n    gridRowStart = _theme$gridRowStart === void 0 ? {} : _theme$gridRowStart;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(gridRowStart, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            grid-row-start: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/gridRowStart.js?");
+
+/***/ }),
+
+/***/ "./src/generators/gridTemplateColumns.js":
+/*!***********************************************!*\
+  !*** ./src/generators/gridTemplateColumns.js ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"grid-cols\");\n  var _theme$gridTemplateCo = theme.gridTemplateColumns,\n    gridTemplateColumns = _theme$gridTemplateCo === void 0 ? {} : _theme$gridTemplateCo;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(gridTemplateColumns, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            grid-template-columns: \").concat(isNaN(value) ? value : \"repeat(\".concat(value, \", minmax(0, 1fr))\"), \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/gridTemplateColumns.js?");
+
+/***/ }),
+
+/***/ "./src/generators/gridTemplateRows.js":
+/*!********************************************!*\
+  !*** ./src/generators/gridTemplateRows.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"grid-rows\");\n  var _theme$gridTemplateRo = theme.gridTemplateRows,\n    gridTemplateRows = _theme$gridTemplateRo === void 0 ? {} : _theme$gridTemplateRo;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(gridTemplateRows, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            grid-template-rows: \").concat(isNaN(value) ? value : \"repeat(\".concat(value, \", minmax(0, 1fr));\"), \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/gridTemplateRows.js?");
+
+/***/ }),
+
+/***/ "./src/generators/height.js":
+/*!**********************************!*\
+  !*** ./src/generators/height.js ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"h\");\n  var _theme$height = theme.height,\n    height = _theme$height === void 0 ? {} : _theme$height;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(height, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            height: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/height.js?");
+
+/***/ }),
+
+/***/ "./src/generators/hueRotate.js":
+/*!*************************************!*\
+  !*** ./src/generators/hueRotate.js ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var _theme$hueRotate = theme.hueRotate,\n    hueRotate = _theme$hueRotate === void 0 ? {} : _theme$hueRotate;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(hueRotate, function (keyTmp, value) {\n      var prefix = \"\".concat(globalPrefix, \"hue-rotate\");\n      var basePrefix = prefix.replace(globalPrefix, \"\");\n      var key = keyTmp;\n      if (\"\".concat(key).indexOf(\"-\") >= 0) {\n        key = key.split(\"-\").join(\"\");\n        prefix = \"\".concat(globalPrefix, \"-hue-rotate\");\n      }\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            --hue-rotate: hue-rotate(\").concat(value, \") !important;\\n          }\\n          \").concat(prefix.replace(basePrefix, \"backdrop-\".concat(basePrefix)), \"-\").concat(key, \" {\\n            --backdrop-hue-rotate: hue-rotate(\").concat(value, \") !important;\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/hueRotate.js?");
+
+/***/ }),
+
+/***/ "./src/generators/hyphens.js":
+/*!***********************************!*\
+  !*** ./src/generators/hyphens.js ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"hyphens\");\n  var propertyOptions = [\"none\", \"manual\", \"auto\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            -webkit-hyphens: \").concat(value, \";\\n            hyphens: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/hyphens.js?");
+
+/***/ }),
+
+/***/ "./src/generators/inset.js":
+/*!*********************************!*\
+  !*** ./src/generators/inset.js ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\nfunction _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }\nfunction _nonIterableRest() { throw new TypeError(\"Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\"); }\nfunction _unsupportedIterableToArray(r, a) { if (r) { if (\"string\" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return \"Object\" === t && r.constructor && (t = r.constructor.name), \"Map\" === t || \"Set\" === t ? Array.from(r) : \"Arguments\" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }\nfunction _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }\nfunction _iterableToArrayLimit(r, l) { var t = null == r ? null : \"undefined\" != typeof Symbol && r[Symbol.iterator] || r[\"@@iterator\"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t[\"return\"] && (u = t[\"return\"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }\nfunction _arrayWithHoles(r) { if (Array.isArray(r)) return r; }\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var _theme$inset = theme.inset,\n    inset = _theme$inset === void 0 ? {} : _theme$inset;\n  Object.entries(inset).forEach(function (_ref) {\n    var _ref2 = _slicedToArray(_ref, 2),\n      key = _ref2[0],\n      value = _ref2[1];\n    inset[\"-\".concat(key)] = \"-\".concat(value).replace(\"--\", \"-\");\n  });\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref3) {\n    var getCssByOptions = _ref3.getCssByOptions;\n    var cssString = getCssByOptions(inset, function (keyTmp, value) {\n      var prefix = globalPrefix;\n      var key = keyTmp;\n      if (\"\".concat(key).indexOf(\"-\") >= 0) {\n        key = key.split(\"-\").join(\"\");\n        prefix += \"-\";\n      }\n      return \"\\n          \".concat(prefix, \"inset-\").concat(key, \" {\\n            right: \").concat(value, \";\\n            left: \").concat(value, \";\\n            top: \").concat(value, \";\\n            bottom: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"inset-x-\").concat(key, \" {\\n            right: \").concat(value, \";\\n            left: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"inset-y-\").concat(key, \" {\\n            top: \").concat(value, \";\\n            bottom: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"right-\").concat(key, \" {\\n            right: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"left-\").concat(key, \" {\\n            left: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"top-\").concat(key, \" {\\n            top: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"bottom-\").concat(key, \" {\\n            bottom: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/inset.js?");
+
+/***/ }),
+
+/***/ "./src/generators/invert.js":
+/*!**********************************!*\
+  !*** ./src/generators/invert.js ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"invert\");\n  var basePrefix = prefix.replace(globalPrefix, \"\");\n  var _theme$invert = theme.invert,\n    invert = _theme$invert === void 0 ? {} : _theme$invert;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(invert, function (keyTmp, value) {\n      var key = keyTmp.toLowerCase() !== \"default\" ? \"-\".concat(keyTmp) : \"\";\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            --invert: invert(\").concat(value, \") !important;\\n          }\\n          \").concat(prefix.replace(basePrefix, \"backdrop-\".concat(basePrefix))).concat(key, \" {\\n            --backdrop-invert: invert(\").concat(value, \") !important;\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/invert.js?");
+
+/***/ }),
+
+/***/ "./src/generators/isolation.js":
+/*!*************************************!*\
+  !*** ./src/generators/isolation.js ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix);\n  var propertyOptions = {\n    isolate: \"isolate\",\n    \"isolation-auto\": \"no-repeat\"\n  };\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            isolation: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/isolation.js?");
+
+/***/ }),
+
+/***/ "./src/generators/justifyContent.js":
+/*!******************************************!*\
+  !*** ./src/generators/justifyContent.js ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"justify\");\n  var propertyOptions = {\n    start: \"flex-start\",\n    end: \"flex-end\",\n    center: \"center\",\n    between: \"space-between\",\n    around: \"space-around\",\n    evenly: \"space-evenly\"\n  };\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            justify-content: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/justifyContent.js?");
+
+/***/ }),
+
+/***/ "./src/generators/justifyItems.js":
+/*!****************************************!*\
+  !*** ./src/generators/justifyItems.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"justify-items\");\n  var propertyOptions = [\"auto\", \"start\", \"end\", \"center\", \"stretch\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            justify-items: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/justifyItems.js?");
+
+/***/ }),
+
+/***/ "./src/generators/justifySelf.js":
+/*!***************************************!*\
+  !*** ./src/generators/justifySelf.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"justify-self\");\n  var propertyOptions = [\"auto\", \"start\", \"end\", \"center\", \"stretch\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            justify-self: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/justifySelf.js?");
+
+/***/ }),
+
+/***/ "./src/generators/letterSpacing.js":
+/*!*****************************************!*\
+  !*** ./src/generators/letterSpacing.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"tracking\");\n  var _theme$letterSpacing = theme.letterSpacing,\n    letterSpacing = _theme$letterSpacing === void 0 ? {} : _theme$letterSpacing;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(letterSpacing, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            letter-spacing: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/letterSpacing.js?");
+
+/***/ }),
+
+/***/ "./src/generators/lineClamp.js":
+/*!*************************************!*\
+  !*** ./src/generators/lineClamp.js ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"line-clamp\");\n  var _theme$lineClamp = theme.lineClamp,\n    lineClamp = _theme$lineClamp === void 0 ? {} : _theme$lineClamp;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(lineClamp, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            overflow: hidden;\\n            display: -webkit-box;\\n            -webkit-box-orient: \").concat(value === \"none\" ? \"horizontal\" : \"vertical\", \";\\n            -webkit-line-clamp: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/lineClamp.js?");
+
+/***/ }),
+
+/***/ "./src/generators/lineHeight.js":
+/*!**************************************!*\
+  !*** ./src/generators/lineHeight.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"leading\");\n  var _theme$lineHeight = theme.lineHeight,\n    lineHeight = _theme$lineHeight === void 0 ? {} : _theme$lineHeight;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(lineHeight, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            line-height: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/lineHeight.js?");
+
+/***/ }),
+
+/***/ "./src/generators/listStylePosition.js":
+/*!*********************************************!*\
+  !*** ./src/generators/listStylePosition.js ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"list\");\n  var propertyOptions = [\"inside\", \"outside\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            list-style-position: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/listStylePosition.js?");
+
+/***/ }),
+
+/***/ "./src/generators/listStyleType.js":
+/*!*****************************************!*\
+  !*** ./src/generators/listStyleType.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"list\");\n  var _theme$listStyleType = theme.listStyleType,\n    listStyleType = _theme$listStyleType === void 0 ? {} : _theme$listStyleType;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(listStyleType, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            list-style-type: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/listStyleType.js?");
+
+/***/ }),
+
+/***/ "./src/generators/margin.js":
+/*!**********************************!*\
+  !*** ./src/generators/margin.js ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\nfunction _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }\nfunction _nonIterableRest() { throw new TypeError(\"Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\"); }\nfunction _unsupportedIterableToArray(r, a) { if (r) { if (\"string\" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return \"Object\" === t && r.constructor && (t = r.constructor.name), \"Map\" === t || \"Set\" === t ? Array.from(r) : \"Arguments\" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }\nfunction _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }\nfunction _iterableToArrayLimit(r, l) { var t = null == r ? null : \"undefined\" != typeof Symbol && r[Symbol.iterator] || r[\"@@iterator\"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t[\"return\"] && (u = t[\"return\"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }\nfunction _arrayWithHoles(r) { if (Array.isArray(r)) return r; }\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var _theme$margin = theme.margin,\n    margin = _theme$margin === void 0 ? {} : _theme$margin;\n  Object.entries(margin).forEach(function (_ref) {\n    var _ref2 = _slicedToArray(_ref, 2),\n      key = _ref2[0],\n      value = _ref2[1];\n    margin[\"-\".concat(key)] = \"-\".concat(value).replace(\"--\", \"-\");\n  });\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref3) {\n    var getCssByOptions = _ref3.getCssByOptions;\n    var cssString = getCssByOptions(margin, function (keyTmp, value) {\n      var prefix = \"\".concat(globalPrefix, \"m\");\n      var key = keyTmp;\n      if (\"\".concat(key).indexOf(\"-\") >= 0) {\n        key = key.split(\"-\").join(\"\");\n        prefix = \"\".concat(globalPrefix, \"-m\");\n      }\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            margin: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"y-\").concat(key, \" {\\n            margin-top: \").concat(value, \";\\n            margin-bottom: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"x-\").concat(key, \" {\\n            margin-left: \").concat(value, \";\\n            margin-right: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"t-\").concat(key, \" {\\n            margin-top: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"r-\").concat(key, \" {\\n            margin-right: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"b-\").concat(key, \" {\\n            margin-bottom: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"l-\").concat(key, \" {\\n            margin-left: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"s-\").concat(key, \" {\\n            margin-inline-start: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"e-\").concat(key, \" {\\n            margin-inline-end: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/margin.js?");
+
+/***/ }),
+
+/***/ "./src/generators/maxHeight.js":
+/*!*************************************!*\
+  !*** ./src/generators/maxHeight.js ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"max-h\");\n  var _theme$maxHeight = theme.maxHeight,\n    maxHeight = _theme$maxHeight === void 0 ? {} : _theme$maxHeight;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(maxHeight, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            max-height: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/maxHeight.js?");
+
+/***/ }),
+
+/***/ "./src/generators/maxWidth.js":
+/*!************************************!*\
+  !*** ./src/generators/maxWidth.js ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"max-w\");\n  var _theme$maxWidth = theme.maxWidth,\n    maxWidth = _theme$maxWidth === void 0 ? {} : _theme$maxWidth;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(maxWidth, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            max-width: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/maxWidth.js?");
+
+/***/ }),
+
+/***/ "./src/generators/minHeight.js":
+/*!*************************************!*\
+  !*** ./src/generators/minHeight.js ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"min-h\");\n  var _theme$minHeight = theme.minHeight,\n    minHeight = _theme$minHeight === void 0 ? {} : _theme$minHeight;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(minHeight, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            min-height: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/minHeight.js?");
+
+/***/ }),
+
+/***/ "./src/generators/minWidth.js":
+/*!************************************!*\
+  !*** ./src/generators/minWidth.js ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"min-w\");\n  var _theme$minWidth = theme.minWidth,\n    minWidth = _theme$minWidth === void 0 ? {} : _theme$minWidth;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(minWidth, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            min-width: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/minWidth.js?");
+
+/***/ }),
+
+/***/ "./src/generators/mixBlendMode.js":
+/*!****************************************!*\
+  !*** ./src/generators/mixBlendMode.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"mix-blend\");\n  var propertyOptions = [\"normal\", \"multiply\", \"screen\", \"overlay\", \"darken\", \"lighten\", \"color-dodge\", \"color-burn\", \"hard-light\", \"soft-light\", \"difference\", \"exclusion\", \"hue\", \"saturation\", \"color\", \"luminosity\", \"plus-lighter\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            mix-blend-mode: \").concat(value, \";\\n          }\\n        \");\n    });\n    cssString += getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix.replace(\"mix\", \"bg\"), \"-\").concat(key, \" {\\n            background-blend-mode: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/mixBlendMode.js?");
+
+/***/ }),
+
+/***/ "./src/generators/objectFit.js":
+/*!*************************************!*\
+  !*** ./src/generators/objectFit.js ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"object\");\n  var propertyOptions = [\"contain\", \"cover\", \"fill\", \"none\", \"scale-down\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            object-fit: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/objectFit.js?");
+
+/***/ }),
+
+/***/ "./src/generators/objectPosition.js":
+/*!******************************************!*\
+  !*** ./src/generators/objectPosition.js ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"object\");\n  var propertyOptions = [\"bottom\", \"center\", \"left\", \"left-bottom\", \"left-top\", \"right\", \"right-bottom\", \"right-top\", \"top\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            object-position: \").concat(value.split(\"-\").join(\" \"), \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/objectPosition.js?");
+
+/***/ }),
+
+/***/ "./src/generators/opacity.js":
+/*!***********************************!*\
+  !*** ./src/generators/opacity.js ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"opacity\");\n  var basePrefix = prefix.replace(globalPrefix, \"\");\n  var _theme$opacity = theme.opacity,\n    opacity = _theme$opacity === void 0 ? {} : _theme$opacity;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(opacity, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            opacity: \").concat(value, \";\\n          }\\n          \").concat(prefix.replace(basePrefix, \"backdrop-\".concat(basePrefix)), \"-\").concat(key, \" {\\n            --backdrop-opacity: opacity(\").concat(value, \");\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/opacity.js?");
+
+/***/ }),
+
+/***/ "./src/generators/order.js":
+/*!*********************************!*\
+  !*** ./src/generators/order.js ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"order\");\n  var _theme$order = theme.order,\n    order = _theme$order === void 0 ? {} : _theme$order;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(order, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            order: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/order.js?");
+
+/***/ }),
+
+/***/ "./src/generators/outlineColor.js":
+/*!****************************************!*\
+  !*** ./src/generators/outlineColor.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"outline\");\n  var _theme$outlineColor = theme.outlineColor,\n    outlineColor = _theme$outlineColor === void 0 ? {} : _theme$outlineColor;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByColors = _ref.getCssByColors;\n    var cssString = getCssByColors(outlineColor, function (keyTmp, value, rgbValue) {\n      if (keyTmp.toLowerCase() === \"default\") {\n        return \"\";\n      }\n      var key = keyTmp.toLowerCase() !== \"default\" ? \"-\".concat(keyTmp) : \"\";\n      var rgbPropertyValue = \"\";\n      if (rgbValue) {\n        rgbPropertyValue = \"outline-color: rgba(\".concat(rgbValue, \", var(--outline-opacity));\");\n      }\n      return \"\\n            \".concat(prefix).concat(key, \" {\\n              --outline-opacity: 1;\\n              outline-color: \").concat(value, \";\\n              \").concat(rgbPropertyValue, \"\\n            }\\n          \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/outlineColor.js?");
+
+/***/ }),
+
+/***/ "./src/generators/outlineOffset.js":
+/*!*****************************************!*\
+  !*** ./src/generators/outlineOffset.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"outline-offset\");\n  var _theme$outlineOffset = theme.outlineOffset,\n    outlineOffset = _theme$outlineOffset === void 0 ? {} : _theme$outlineOffset;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(outlineOffset, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            outline-offset: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/outlineOffset.js?");
+
+/***/ }),
+
+/***/ "./src/generators/outlineOpacity.js":
+/*!******************************************!*\
+  !*** ./src/generators/outlineOpacity.js ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"outline-opacity\");\n  var _theme$outlineOpacity = theme.outlineOpacity,\n    outlineOpacity = _theme$outlineOpacity === void 0 ? {} : _theme$outlineOpacity;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(outlineOpacity, function (keyTmp, value) {\n      var key = keyTmp.toLowerCase() !== \"default\" ? \"-\".concat(keyTmp) : \"\";\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            --outline-opacity: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/outlineOpacity.js?");
+
+/***/ }),
+
+/***/ "./src/generators/outlineStyle.js":
+/*!****************************************!*\
+  !*** ./src/generators/outlineStyle.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"outline\");\n  var propertyOptions = [\"none\", \"solid\", \"dashed\", \"dotted\", \"double\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (keyTmp, value) {\n      var key = keyTmp !== \"solid\" ? \"-\".concat(keyTmp) : \"\";\n      if (key === \"none\") {\n        return \"\\n            \".concat(prefix, \"-\").concat(key, \" {\\n              outline: 2px solid transparent;\\n              outline-offset: 2px;\\n            }\\n          \");\n      }\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            outline-style: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/outlineStyle.js?");
+
+/***/ }),
+
+/***/ "./src/generators/outlineWidth.js":
+/*!****************************************!*\
+  !*** ./src/generators/outlineWidth.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"outline\");\n  var _theme$outlineWidth = theme.outlineWidth,\n    outlineWidth = _theme$outlineWidth === void 0 ? {} : _theme$outlineWidth;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(outlineWidth, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            outline-width: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/outlineWidth.js?");
+
+/***/ }),
+
+/***/ "./src/generators/overflow.js":
+/*!************************************!*\
+  !*** ./src/generators/overflow.js ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"overflow\");\n  var propertyOptions = [\"auto\", \"hidden\", \"visible\", \"scroll\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            overflow: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-x-\").concat(key, \" {\\n            overflow-x: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-y-\").concat(key, \" {\\n            overflow-y: \").concat(value, \";\\n          }\\n        \");\n    });\n    cssString += \"\\n        \".concat(globalPrefix, \"scrolling-touch {\\n          -webkit-overflow-scrolling: touch;\\n        }\\n        \").concat(globalPrefix, \"scrolling-auto {\\n          -webkit-overflow-scrolling: auto;\\n        }\\n      \");\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/overflow.js?");
+
+/***/ }),
+
+/***/ "./src/generators/overscrollBehavior.js":
+/*!**********************************************!*\
+  !*** ./src/generators/overscrollBehavior.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"overscroll\");\n  var propertyOptions = [\"auto\", \"contain\", \"none\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            overscroll-behavior: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-x-\").concat(key, \" {\\n            overscroll-behavior-x: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-y-\").concat(key, \" {\\n            overscroll-behavior-y: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/overscrollBehavior.js?");
+
+/***/ }),
+
+/***/ "./src/generators/padding.js":
+/*!***********************************!*\
+  !*** ./src/generators/padding.js ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"p\");\n  var _theme$padding = theme.padding,\n    padding = _theme$padding === void 0 ? {} : _theme$padding;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(padding, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            padding: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"y-\").concat(key, \" {\\n            padding-top: \").concat(value, \";\\n            padding-bottom: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"x-\").concat(key, \" {\\n            padding-left: \").concat(value, \";\\n            padding-right: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"t-\").concat(key, \" {\\n            padding-top: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"r-\").concat(key, \" {\\n            padding-right: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"b-\").concat(key, \" {\\n            padding-bottom: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"l-\").concat(key, \" {\\n            padding-left: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"s-\").concat(key, \" {\\n            padding-inline-start: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"e-\").concat(key, \" {\\n            padding-inline-end: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/padding.js?");
+
+/***/ }),
+
+/***/ "./src/generators/placeContent.js":
+/*!****************************************!*\
+  !*** ./src/generators/placeContent.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"place-content\");\n  var propertyOptions = {\n    start: \"start\",\n    end: \"end\",\n    center: \"center\",\n    between: \"space-between\",\n    around: \"space-around\",\n    evenly: \"space-evenly\",\n    stretch: \"stretch\"\n  };\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            place-content: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/placeContent.js?");
+
+/***/ }),
+
+/***/ "./src/generators/placeItems.js":
+/*!**************************************!*\
+  !*** ./src/generators/placeItems.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"place-items\");\n  var propertyOptions = [\"auto\", \"start\", \"end\", \"center\", \"stretch\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            place-items: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/placeItems.js?");
+
+/***/ }),
+
+/***/ "./src/generators/placeSelf.js":
+/*!*************************************!*\
+  !*** ./src/generators/placeSelf.js ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"place-self\");\n  var propertyOptions = [\"auto\", \"start\", \"end\", \"center\", \"stretch\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            place-self: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/placeSelf.js?");
+
+/***/ }),
+
+/***/ "./src/generators/pointerEvents.js":
+/*!*****************************************!*\
+  !*** ./src/generators/pointerEvents.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var prefix = configOptions.prefix;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function () {\n    return \"\\n        \".concat(prefix, \"pointer-events-none {\\n          pointer-events: none;\\n        }\\n        \").concat(prefix, \"pointer-events-auto {\\n          pointer-events: auto;\\n        }\\n      \");\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/pointerEvents.js?");
+
+/***/ }),
+
+/***/ "./src/generators/position.js":
+/*!************************************!*\
+  !*** ./src/generators/position.js ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var prefix = configOptions.prefix;\n  var propertyOptions = [\"static\", \"fixed\", \"absolute\", \"relative\", \"sticky\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            position: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/position.js?");
+
+/***/ }),
+
+/***/ "./src/generators/resize.js":
+/*!**********************************!*\
+  !*** ./src/generators/resize.js ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"resize\");\n  var propertyOptions = {\n    none: \"none\",\n    y: \"vertical\",\n    x: \"horizontal\",\n    \"default\": \"both\"\n  };\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (keyTmp, value) {\n      var key = keyTmp.toLowerCase() !== \"default\" ? \"-\".concat(keyTmp) : \"\";\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            resize: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/resize.js?");
+
+/***/ }),
+
+/***/ "./src/generators/ringColor.js":
+/*!*************************************!*\
+  !*** ./src/generators/ringColor.js ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"ring\");\n  var _theme$ringColor = theme.ringColor,\n    ringColor = _theme$ringColor === void 0 ? {} : _theme$ringColor;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByColors = _ref.getCssByColors;\n    var cssString = getCssByColors(ringColor, function (keyTmp, value, rgbValue) {\n      var key = keyTmp.toLowerCase() !== \"default\" ? \"-\".concat(keyTmp) : \"\";\n      var rgbPropertyValue = \"\";\n      if (rgbValue) {\n        rgbPropertyValue = \"--ring-color: rgba(\".concat(rgbValue, \", var(--ring-opacity));\");\n      }\n      return \"\\n            \".concat(prefix).concat(key, \" {\\n              --ring-opacity: 1;\\n              --ring-color: \").concat(value, \";\\n              \").concat(rgbPropertyValue, \"\\n            }\\n          \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/ringColor.js?");
+
+/***/ }),
+
+/***/ "./src/generators/ringOffsetColor.js":
+/*!*******************************************!*\
+  !*** ./src/generators/ringOffsetColor.js ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"ring-offset\");\n  var _theme$ringOffsetColo = theme.ringOffsetColor,\n    ringOffsetColor = _theme$ringOffsetColo === void 0 ? {} : _theme$ringOffsetColo;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByColors = _ref.getCssByColors;\n    var cssString = getCssByColors(ringOffsetColor, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            --ring-offset-color: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/ringOffsetColor.js?");
+
+/***/ }),
+
+/***/ "./src/generators/ringOffsetWidth.js":
+/*!*******************************************!*\
+  !*** ./src/generators/ringOffsetWidth.js ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"ring-offset\");\n  var _theme$ringOffsetWidt = theme.ringOffsetWidth,\n    ringOffsetWidth = _theme$ringOffsetWidt === void 0 ? {} : _theme$ringOffsetWidt;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(ringOffsetWidth, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            --ring-offset-width: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/ringOffsetWidth.js?");
+
+/***/ }),
+
+/***/ "./src/generators/ringOpacity.js":
+/*!***************************************!*\
+  !*** ./src/generators/ringOpacity.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"ring-opacity\");\n  var _theme$ringOpacity = theme.ringOpacity,\n    ringOpacity = _theme$ringOpacity === void 0 ? {} : _theme$ringOpacity;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(ringOpacity, function (keyTmp, value) {\n      var key = keyTmp.toLowerCase() !== \"default\" ? \"-\".concat(keyTmp) : \"\";\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            --ring-opacity: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/ringOpacity.js?");
+
+/***/ }),
+
+/***/ "./src/generators/ringWidth.js":
+/*!*************************************!*\
+  !*** ./src/generators/ringWidth.js ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"ring\");\n  var _theme$ringWidth = theme.ringWidth,\n    ringWidth = _theme$ringWidth === void 0 ? {} : _theme$ringWidth;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(ringWidth, function (keyTmp, value) {\n      var key = keyTmp.toLowerCase() !== \"default\" ? \"-\".concat(keyTmp) : \"\";\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            --ring-inset: var(--empty,/*!*/ /*!*/);\\n            --ring-offset-width: 0px;\\n            --ring-offset-color: #fff;\\n            --ring-color: rgba(59, 130, 246, 0.5);\\n            --ring-offset-shadow: var(--ring-inset) 0 0 0 var(--ring-offset-width) var(--ring-offset-color);\\n            --ring-shadow: var(--ring-inset) 0 0 0 calc(\").concat(value, \" + var(--ring-offset-width)) var(--ring-color);\\n            box-shadow: var(--ring-offset-shadow), var(--ring-shadow);\\n          }\\n        \");\n    });\n    cssString += \"  \\n        \".concat(prefix, \"-inset {\\n          --ring-inset: inset;\\n        }\\n      \");\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/ringWidth.js?");
+
+/***/ }),
+
+/***/ "./src/generators/rotate.js":
+/*!**********************************!*\
+  !*** ./src/generators/rotate.js ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\nfunction _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }\nfunction _nonIterableRest() { throw new TypeError(\"Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\"); }\nfunction _unsupportedIterableToArray(r, a) { if (r) { if (\"string\" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return \"Object\" === t && r.constructor && (t = r.constructor.name), \"Map\" === t || \"Set\" === t ? Array.from(r) : \"Arguments\" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }\nfunction _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }\nfunction _iterableToArrayLimit(r, l) { var t = null == r ? null : \"undefined\" != typeof Symbol && r[Symbol.iterator] || r[\"@@iterator\"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t[\"return\"] && (u = t[\"return\"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }\nfunction _arrayWithHoles(r) { if (Array.isArray(r)) return r; }\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var _theme$rotate = theme.rotate,\n    rotate = _theme$rotate === void 0 ? {} : _theme$rotate;\n  Object.entries(rotate).forEach(function (_ref) {\n    var _ref2 = _slicedToArray(_ref, 2),\n      key = _ref2[0],\n      value = _ref2[1];\n    rotate[\"-\".concat(key)] = \"-\".concat(value).replace(\"--\", \"-\");\n  });\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref3) {\n    var getCssByOptions = _ref3.getCssByOptions;\n    var cssString = getCssByOptions(rotate, function (keyTmp, value) {\n      var prefix = \"\".concat(globalPrefix, \"rotate\");\n      var key = keyTmp;\n      if (\"\".concat(key).indexOf(\"-\") >= 0) {\n        key = key.split(\"-\").join(\"\");\n        prefix = \"\".concat(globalPrefix, \"-rotate\");\n      }\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            --transform-rotate: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/rotate.js?");
+
+/***/ }),
+
+/***/ "./src/generators/saturate.js":
+/*!************************************!*\
+  !*** ./src/generators/saturate.js ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"saturate\");\n  var basePrefix = prefix.replace(globalPrefix, \"\");\n  var _theme$saturate = theme.saturate,\n    saturate = _theme$saturate === void 0 ? {} : _theme$saturate;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(saturate, function (keyTmp, value) {\n      var key = keyTmp.toLowerCase() !== \"default\" ? \"-\".concat(keyTmp) : \"\";\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            --saturate: saturate(\").concat(value, \") !important;\\n          }\\n          \").concat(prefix.replace(basePrefix, \"backdrop-\".concat(basePrefix))).concat(key, \" {\\n            --backdrop-saturate: saturate(\").concat(value, \") !important;\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/saturate.js?");
+
+/***/ }),
+
+/***/ "./src/generators/scale.js":
+/*!*********************************!*\
+  !*** ./src/generators/scale.js ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"scale\");\n  var _theme$scale = theme.scale,\n    scale = _theme$scale === void 0 ? {} : _theme$scale;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(scale, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            --transform-scale-x: \").concat(value, \";\\n            --transform-scale-y: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-x-\").concat(key, \" {\\n            --transform-scale-x: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-y-\").concat(key, \" {\\n            --transform-scale-y: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/scale.js?");
+
+/***/ }),
+
+/***/ "./src/generators/scrollBehavior.js":
+/*!******************************************!*\
+  !*** ./src/generators/scrollBehavior.js ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var prefix = configOptions.prefix;\n  var propertyOptions = [\"auto\", \"smooth\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"scroll-\").concat(key, \" {\\n            scroll-behavior: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/scrollBehavior.js?");
+
+/***/ }),
+
+/***/ "./src/generators/scrollMargin.js":
+/*!****************************************!*\
+  !*** ./src/generators/scrollMargin.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\nfunction _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }\nfunction _nonIterableRest() { throw new TypeError(\"Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\"); }\nfunction _unsupportedIterableToArray(r, a) { if (r) { if (\"string\" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return \"Object\" === t && r.constructor && (t = r.constructor.name), \"Map\" === t || \"Set\" === t ? Array.from(r) : \"Arguments\" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }\nfunction _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }\nfunction _iterableToArrayLimit(r, l) { var t = null == r ? null : \"undefined\" != typeof Symbol && r[Symbol.iterator] || r[\"@@iterator\"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t[\"return\"] && (u = t[\"return\"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }\nfunction _arrayWithHoles(r) { if (Array.isArray(r)) return r; }\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var _theme$scrollMargin = theme.scrollMargin,\n    scrollMargin = _theme$scrollMargin === void 0 ? {} : _theme$scrollMargin;\n  Object.entries(scrollMargin).forEach(function (_ref) {\n    var _ref2 = _slicedToArray(_ref, 2),\n      key = _ref2[0],\n      value = _ref2[1];\n    scrollMargin[\"-\".concat(key)] = \"-\".concat(value).replace(\"--\", \"-\");\n  });\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref3) {\n    var getCssByOptions = _ref3.getCssByOptions;\n    var cssString = getCssByOptions(scrollMargin, function (keyTmp, value) {\n      var prefix = \"\".concat(globalPrefix, \"scroll-m\");\n      var key = keyTmp;\n      if (\"\".concat(key).indexOf(\"-\") >= 0) {\n        key = key.split(\"-\").join(\"\");\n        prefix = \"\".concat(globalPrefix, \"-scroll-m\");\n      }\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            scroll-margin: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"y-\").concat(key, \" {\\n            scroll-margin-top: \").concat(value, \";\\n            scroll-margin-bottom: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"x-\").concat(key, \" {\\n            scroll-margin-left: \").concat(value, \";\\n            scroll-margin-right: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"t-\").concat(key, \" {\\n            scroll-margin-top: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"r-\").concat(key, \" {\\n            scroll-margin-right: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"b-\").concat(key, \" {\\n            scroll-margin-bottom: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"l-\").concat(key, \" {\\n            scroll-margin-left: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"s-\").concat(key, \" {\\n            scroll-margin-inline-start: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"e-\").concat(key, \" {\\n            scroll-margin-inline-end: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/scrollMargin.js?");
+
+/***/ }),
+
+/***/ "./src/generators/scrollPadding.js":
+/*!*****************************************!*\
+  !*** ./src/generators/scrollPadding.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\nfunction _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }\nfunction _nonIterableRest() { throw new TypeError(\"Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\"); }\nfunction _unsupportedIterableToArray(r, a) { if (r) { if (\"string\" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return \"Object\" === t && r.constructor && (t = r.constructor.name), \"Map\" === t || \"Set\" === t ? Array.from(r) : \"Arguments\" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }\nfunction _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }\nfunction _iterableToArrayLimit(r, l) { var t = null == r ? null : \"undefined\" != typeof Symbol && r[Symbol.iterator] || r[\"@@iterator\"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t[\"return\"] && (u = t[\"return\"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }\nfunction _arrayWithHoles(r) { if (Array.isArray(r)) return r; }\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var _theme$scrollPadding = theme.scrollPadding,\n    scrollPadding = _theme$scrollPadding === void 0 ? {} : _theme$scrollPadding;\n  Object.entries(scrollPadding).forEach(function (_ref) {\n    var _ref2 = _slicedToArray(_ref, 2),\n      key = _ref2[0],\n      value = _ref2[1];\n    scrollPadding[\"-\".concat(key)] = \"-\".concat(value).replace(\"--\", \"-\");\n  });\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref3) {\n    var getCssByOptions = _ref3.getCssByOptions;\n    var cssString = getCssByOptions(scrollPadding, function (keyTmp, value) {\n      var prefix = \"\".concat(globalPrefix, \"scroll-p\");\n      var key = keyTmp;\n      if (\"\".concat(key).indexOf(\"-\") >= 0) {\n        key = key.split(\"-\").join(\"\");\n        prefix = \"\".concat(globalPrefix, \"-p\");\n      }\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            scroll-padding: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"y-\").concat(key, \" {\\n            scroll-padding-top: \").concat(value, \";\\n            scroll-padding-bottom: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"x-\").concat(key, \" {\\n            scroll-padding-left: \").concat(value, \";\\n            scroll-padding-right: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"t-\").concat(key, \" {\\n            scroll-padding-top: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"r-\").concat(key, \" {\\n            scroll-padding-right: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"b-\").concat(key, \" {\\n            scroll-padding-bottom: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"l-\").concat(key, \" {\\n            scroll-padding-left: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"s-\").concat(key, \" {\\n            scroll-padding-inline-start: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"e-\").concat(key, \" {\\n            scroll-padding-inline-end: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/scrollPadding.js?");
+
+/***/ }),
+
+/***/ "./src/generators/scrollSnapAlign.js":
+/*!*******************************************!*\
+  !*** ./src/generators/scrollSnapAlign.js ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"snap\");\n  var propertyOptions = {\n    start: \"start\",\n    end: \"end\",\n    center: \"center\",\n    \"align-none\": \"none\"\n  };\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            scroll-snap-align: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/scrollSnapAlign.js?");
+
+/***/ }),
+
+/***/ "./src/generators/scrollSnapStop.js":
+/*!******************************************!*\
+  !*** ./src/generators/scrollSnapStop.js ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"snap\");\n  var propertyOptions = [\"normal\", \"always\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            scroll-snap-stop: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/scrollSnapStop.js?");
+
+/***/ }),
+
+/***/ "./src/generators/scrollSnapType.js":
+/*!******************************************!*\
+  !*** ./src/generators/scrollSnapType.js ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"snap\");\n  var propertyOptions = {\n    none: \"none\",\n    x: \"x var(--scroll-snap-strictness)\",\n    y: \"y var(--scroll-snap-strictness)\",\n    both: \"both var(--scroll-snap-strictness)\"\n  };\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            --scroll-snap-strictness: proximity;\\n            scroll-snap-type: \").concat(value, \";\\n          }\\n        \");\n    });\n    cssString += getCssByOptions([\"mandatory\", \"proximity\"], function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            --scroll-snap-strictness: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/scrollSnapType.js?");
+
+/***/ }),
+
+/***/ "./src/generators/sepia.js":
+/*!*********************************!*\
+  !*** ./src/generators/sepia.js ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"sepia\");\n  var basePrefix = prefix.replace(globalPrefix, \"\");\n  var _theme$sepia = theme.sepia,\n    sepia = _theme$sepia === void 0 ? {} : _theme$sepia;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(sepia, function (keyTmp, value) {\n      var key = keyTmp.toLowerCase() !== \"default\" ? \"-\".concat(keyTmp) : \"\";\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            --sepia: sepia(\").concat(value, \") !important;\\n          }\\n          \").concat(prefix.replace(basePrefix, \"backdrop-\".concat(basePrefix))).concat(key, \" {\\n            --backdrop-sepia: sepia(\").concat(value, \") !important;\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/sepia.js?");
+
+/***/ }),
+
+/***/ "./src/generators/size.js":
+/*!********************************!*\
+  !*** ./src/generators/size.js ***!
+  \********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"size\");\n  var _theme$size = theme.size,\n    size = _theme$size === void 0 ? {} : _theme$size;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(size, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            width: \").concat(value, \";\\n            height: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/size.js?");
+
+/***/ }),
+
+/***/ "./src/generators/skew.js":
+/*!********************************!*\
+  !*** ./src/generators/skew.js ***!
+  \********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\nfunction _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }\nfunction _nonIterableRest() { throw new TypeError(\"Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\"); }\nfunction _unsupportedIterableToArray(r, a) { if (r) { if (\"string\" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return \"Object\" === t && r.constructor && (t = r.constructor.name), \"Map\" === t || \"Set\" === t ? Array.from(r) : \"Arguments\" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }\nfunction _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }\nfunction _iterableToArrayLimit(r, l) { var t = null == r ? null : \"undefined\" != typeof Symbol && r[Symbol.iterator] || r[\"@@iterator\"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t[\"return\"] && (u = t[\"return\"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }\nfunction _arrayWithHoles(r) { if (Array.isArray(r)) return r; }\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var _theme$skew = theme.skew,\n    skew = _theme$skew === void 0 ? {} : _theme$skew;\n  Object.entries(skew).forEach(function (_ref) {\n    var _ref2 = _slicedToArray(_ref, 2),\n      key = _ref2[0],\n      value = _ref2[1];\n    skew[\"-\".concat(key)] = \"-\".concat(value).replace(\"--\", \"-\");\n  });\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref3) {\n    var getCssByOptions = _ref3.getCssByOptions;\n    var cssString = getCssByOptions(skew, function (keyTmp, value) {\n      var prefix = \"\".concat(globalPrefix, \"skew\");\n      var key = keyTmp;\n      if (\"\".concat(key).indexOf(\"-\") >= 0) {\n        key = key.split(\"-\").join(\"\");\n        prefix = \"\".concat(globalPrefix, \"-skew\");\n      }\n      return \"\\n          \".concat(prefix, \"-x-\").concat(key, \" {\\n            --transform-skew-x: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-y-\").concat(key, \" {\\n            --transform-skew-y: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/skew.js?");
+
+/***/ }),
+
+/***/ "./src/generators/space.js":
+/*!*********************************!*\
+  !*** ./src/generators/space.js ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\nfunction _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }\nfunction _nonIterableRest() { throw new TypeError(\"Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\"); }\nfunction _unsupportedIterableToArray(r, a) { if (r) { if (\"string\" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return \"Object\" === t && r.constructor && (t = r.constructor.name), \"Map\" === t || \"Set\" === t ? Array.from(r) : \"Arguments\" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }\nfunction _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }\nfunction _iterableToArrayLimit(r, l) { var t = null == r ? null : \"undefined\" != typeof Symbol && r[Symbol.iterator] || r[\"@@iterator\"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t[\"return\"] && (u = t[\"return\"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }\nfunction _arrayWithHoles(r) { if (Array.isArray(r)) return r; }\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"space\");\n  var _theme$space = theme.space,\n    space = _theme$space === void 0 ? {} : _theme$space;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function () {\n    var generateSpace = function generateSpace(position, key, value) {\n      var spacePosition = \"x\";\n      var margin1 = \"left\";\n      var margin2 = \"right\";\n      if (position === \"y\") {\n        spacePosition = \"y\";\n        margin1 = \"top\";\n        margin2 = \"bottom\";\n      }\n      return \"\\n        \".concat(prefix, \"-\").concat(spacePosition, \"-\").concat(key, \" {\\n          --space-\").concat(spacePosition, \"-reverse: 0;\\n          margin-\").concat(margin1, \": calc(\").concat(value, \" * calc(1 - var(--space-\").concat(spacePosition, \"-reverse)));\\n          margin-\").concat(margin2, \": calc(\").concat(value, \" * var(--space-\").concat(spacePosition, \"-reverse));\\n        }\\n        -\").concat(prefix, \"-\").concat(spacePosition, \"-\").concat(key, \" {\\n          --space-\").concat(spacePosition, \"-reverse: 0;\\n          margin-\").concat(margin1, \": calc(-\").concat(value, \" * calc(1 - var(--space-\").concat(spacePosition, \"-reverse)));\\n          margin-\").concat(margin2, \": calc(-\").concat(value, \" * var(--space-\").concat(spacePosition, \"-reverse));\\n        }\\n      \");\n    };\n    var cssString = \"\";\n    Object.entries(space).forEach(function (_ref) {\n      var _ref2 = _slicedToArray(_ref, 2),\n        space = _ref2[0],\n        spaceValue = _ref2[1];\n      cssString += generateSpace(\"y\", space, spaceValue);\n      cssString += generateSpace(\"x\", space, spaceValue);\n    });\n    cssString += \"\\n      \".concat(prefix, \"-x-reverse {\\n        --space-x-reverse: 1;\\n      }\\n      \").concat(prefix, \"-y-reverse {\\n        --space-y-reverse: 1;\\n      }\\n    \");\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/space.js?");
+
+/***/ }),
+
+/***/ "./src/generators/stroke.js":
+/*!**********************************!*\
+  !*** ./src/generators/stroke.js ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"stroke\");\n  var stroke = theme.stroke;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByColors = _ref.getCssByColors;\n    var cssString = getCssByColors(stroke, function (key, value) {\n      return \"\\n            \".concat(prefix, \"-\").concat(key, \" {\\n              stroke: \").concat(value, \";\\n            }\\n          \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/stroke.js?");
+
+/***/ }),
+
+/***/ "./src/generators/strokeWidth.js":
+/*!***************************************!*\
+  !*** ./src/generators/strokeWidth.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"stroke\");\n  var _theme$strokeWidth = theme.strokeWidth,\n    strokeWidth = _theme$strokeWidth === void 0 ? {} : _theme$strokeWidth;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(strokeWidth, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            stroke-width: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/strokeWidth.js?");
+
+/***/ }),
+
+/***/ "./src/generators/tableLayout.js":
+/*!***************************************!*\
+  !*** ./src/generators/tableLayout.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"table\");\n  var propertyOptions = [\"auto\", \"fixed\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            table-layout: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/tableLayout.js?");
+
+/***/ }),
+
+/***/ "./src/generators/textAlign.js":
+/*!*************************************!*\
+  !*** ./src/generators/textAlign.js ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"text\");\n  var propertyOptions = [\"left\", \"center\", \"right\", \"justify\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            text-align: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/textAlign.js?");
+
+/***/ }),
+
+/***/ "./src/generators/textColor.js":
+/*!*************************************!*\
+  !*** ./src/generators/textColor.js ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"text\");\n  var textColor = theme.textColor;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByColors = _ref.getCssByColors;\n    var cssString = getCssByColors(textColor, function (key, value, rgbValue) {\n      var rgbPropertyValue = \"\";\n      if (rgbValue) {\n        rgbPropertyValue = \"color: rgba(\".concat(rgbValue, \", var(--text-opacity));\");\n      }\n      return \"\\n            \".concat(prefix, \"-\").concat(key, \" {\\n              --text-opacity: 1;\\n              color: \").concat(value, \";\\n              \").concat(rgbPropertyValue, \"\\n            }\\n          \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/textColor.js?");
+
+/***/ }),
+
+/***/ "./src/generators/textDecoration.js":
+/*!******************************************!*\
+  !*** ./src/generators/textDecoration.js ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var prefix = configOptions.prefix;\n  var propertyOptions = {\n    underline: \"underline\",\n    overline: \"overline\",\n    \"line-through\": \"line-through\",\n    \"no-underline\": \"none\"\n  };\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            text-decoration: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/textDecoration.js?");
+
+/***/ }),
+
+/***/ "./src/generators/textDecorationColor.js":
+/*!***********************************************!*\
+  !*** ./src/generators/textDecorationColor.js ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"decoration\");\n  var _theme$textDecoration = theme.textDecorationColor,\n    textDecorationColor = _theme$textDecoration === void 0 ? {} : _theme$textDecoration,\n    _theme$opacity = theme.opacity,\n    opacity = _theme$opacity === void 0 ? {} : _theme$opacity;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByColors = _ref.getCssByColors,\n      getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByColors(textDecorationColor, function (key, value, rgbValue) {\n      var rgbPropertyValue = \"\";\n      if (rgbValue) {\n        rgbPropertyValue = \"text-decoration-color: rgba(\".concat(rgbValue, \", var(--text-decoration-opacity));\");\n      }\n      return \"\\n            \".concat(prefix, \"-\").concat(key, \" {\\n              --text-decoration-opacity: 1;\\n              text-decoration-color: \").concat(value, \";\\n              \").concat(rgbPropertyValue, \"\\n            }\\n          \");\n    });\n    cssString += getCssByOptions(opacity, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-opacity-\").concat(key, \" {\\n            --text-decoration-opacity: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/textDecorationColor.js?");
+
+/***/ }),
+
+/***/ "./src/generators/textDecorationStyle.js":
+/*!***********************************************!*\
+  !*** ./src/generators/textDecorationStyle.js ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"decoration\");\n  var propertyOptions = [\"solid\", \"double\", \"dotted\", \"dashed\", \"wavy\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            text-decoration-style: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/textDecorationStyle.js?");
+
+/***/ }),
+
+/***/ "./src/generators/textDecorationThickness.js":
+/*!***************************************************!*\
+  !*** ./src/generators/textDecorationThickness.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"decoration\");\n  var _theme$textDecoration = theme.textDecorationThickness,\n    textDecorationThickness = _theme$textDecoration === void 0 ? {} : _theme$textDecoration;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(textDecorationThickness, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            text-decoration-thickness: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/textDecorationThickness.js?");
+
+/***/ }),
+
+/***/ "./src/generators/textIndent.js":
+/*!**************************************!*\
+  !*** ./src/generators/textIndent.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\nfunction _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }\nfunction _nonIterableRest() { throw new TypeError(\"Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\"); }\nfunction _unsupportedIterableToArray(r, a) { if (r) { if (\"string\" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return \"Object\" === t && r.constructor && (t = r.constructor.name), \"Map\" === t || \"Set\" === t ? Array.from(r) : \"Arguments\" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }\nfunction _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }\nfunction _iterableToArrayLimit(r, l) { var t = null == r ? null : \"undefined\" != typeof Symbol && r[Symbol.iterator] || r[\"@@iterator\"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t[\"return\"] && (u = t[\"return\"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }\nfunction _arrayWithHoles(r) { if (Array.isArray(r)) return r; }\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var _theme$textIndent = theme.textIndent,\n    textIndent = _theme$textIndent === void 0 ? {} : _theme$textIndent;\n  Object.entries(textIndent).forEach(function (_ref) {\n    var _ref2 = _slicedToArray(_ref, 2),\n      key = _ref2[0],\n      value = _ref2[1];\n    textIndent[\"-\".concat(key)] = \"-\".concat(value).replace(\"--\", \"-\");\n  });\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref3) {\n    var getCssByOptions = _ref3.getCssByOptions;\n    var cssString = getCssByOptions(textIndent, function (keyTmp, value) {\n      var prefix = \"\".concat(globalPrefix, \"indent\");\n      var key = keyTmp;\n      if (\"\".concat(key).indexOf(\"-\") >= 0) {\n        key = key.split(\"-\").join(\"\");\n        prefix = \"\".concat(globalPrefix, \"-indent\");\n      }\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            text-indent: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/textIndent.js?");
+
+/***/ }),
+
+/***/ "./src/generators/textOpacity.js":
+/*!***************************************!*\
+  !*** ./src/generators/textOpacity.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"text-opacity\");\n  var _theme$textOpacity = theme.textOpacity,\n    textOpacity = _theme$textOpacity === void 0 ? {} : _theme$textOpacity;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(textOpacity, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            --text-opacity: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/textOpacity.js?");
+
+/***/ }),
+
+/***/ "./src/generators/textOverflow.js":
+/*!****************************************!*\
+  !*** ./src/generators/textOverflow.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var prefix = configOptions.prefix;\n  var propertyOptions = [\"ellipsis\", \"clip\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"truncate {\\n            overflow: hidden;\\n            text-overflow: ellipsis;\\n            white-space: nowrap;\\n          }\\n          \").concat(prefix, \"text-\").concat(key, \" {\\n            text-overflow: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/textOverflow.js?");
+
+/***/ }),
+
+/***/ "./src/generators/textShadowBlur.js":
+/*!******************************************!*\
+  !*** ./src/generators/textShadowBlur.js ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"text-shadow-blur\");\n  var _theme$textShadowBlur = theme.textShadowBlur,\n    textShadowBlur = _theme$textShadowBlur === void 0 ? {} : _theme$textShadowBlur;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(textShadowBlur, function (keyTmp, value) {\n      var key = keyTmp.toLowerCase() !== \"default\" ? \"-\".concat(keyTmp) : \"\";\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            --text-shadow-blur: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/textShadowBlur.js?");
+
+/***/ }),
+
+/***/ "./src/generators/textShadowColor.js":
+/*!*******************************************!*\
+  !*** ./src/generators/textShadowColor.js ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"text-shadow\");\n  var _theme$textShadowColo = theme.textShadowColor,\n    textShadowColor = _theme$textShadowColo === void 0 ? {} : _theme$textShadowColo;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByColors = _ref.getCssByColors;\n    var cssString = getCssByColors(textShadowColor, function (keyTmp, value, rgbValue) {\n      if (keyTmp.toLowerCase() === \"default\") {\n        return \"\";\n      }\n      var key = keyTmp.toLowerCase() !== \"default\" ? \"-\".concat(keyTmp) : \"\";\n      var rgbPropertyValue = \"\";\n      if (rgbValue) {\n        rgbPropertyValue = \"text-shadow: var(--text-shadow-x) var(--text-shadow-y) var(--text-shadow-blur, 0) rgba(\".concat(rgbValue, \", var(--text-shadow-opacity));\");\n      }\n      return \"\\n            \".concat(prefix).concat(key, \" {\\n              --text-shadow-opacity: 1;\\n              --text-shadow-x: 1px;\\n              --text-shadow-y: 1px;\\n              text-shadow: var(--text-shadow-x) var(--text-shadow-y) var(--text-shadow-blur, 0) \").concat(value, \";\\n              \").concat(rgbPropertyValue, \"\\n            }\\n          \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/textShadowColor.js?");
+
+/***/ }),
+
+/***/ "./src/generators/textShadowOpacity.js":
+/*!*********************************************!*\
+  !*** ./src/generators/textShadowOpacity.js ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"text-shadow-opacity\");\n  var _theme$textShadowOpac = theme.textShadowOpacity,\n    textShadowOpacity = _theme$textShadowOpac === void 0 ? {} : _theme$textShadowOpac;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(textShadowOpacity, function (keyTmp, value) {\n      var key = keyTmp.toLowerCase() !== \"default\" ? \"-\".concat(keyTmp) : \"\";\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            --text-shadow-opacity: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/textShadowOpacity.js?");
+
+/***/ }),
+
+/***/ "./src/generators/textShadowX.js":
+/*!***************************************!*\
+  !*** ./src/generators/textShadowX.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"text-shadow-x\");\n  var _theme$textShadowX = theme.textShadowX,\n    textShadowX = _theme$textShadowX === void 0 ? {} : _theme$textShadowX;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(textShadowX, function (keyTmp, value) {\n      var key = keyTmp.toLowerCase() !== \"default\" ? \"-\".concat(keyTmp) : \"\";\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            --text-shadow-x: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/textShadowX.js?");
+
+/***/ }),
+
+/***/ "./src/generators/textShadowY.js":
+/*!***************************************!*\
+  !*** ./src/generators/textShadowY.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"text-shadow-y\");\n  var _theme$textShadowY = theme.textShadowY,\n    textShadowY = _theme$textShadowY === void 0 ? {} : _theme$textShadowY;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(textShadowY, function (keyTmp, value) {\n      var key = keyTmp.toLowerCase() !== \"default\" ? \"-\".concat(keyTmp) : \"\";\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            --text-shadow-y: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/textShadowY.js?");
+
+/***/ }),
+
+/***/ "./src/generators/textTransform.js":
+/*!*****************************************!*\
+  !*** ./src/generators/textTransform.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var prefix = configOptions.prefix;\n  var propertyOptions = {\n    uppercase: \"uppercase\",\n    lowercase: \"lowercase\",\n    capitalize: \"capitalize\",\n    \"normal-case\": \"none\"\n  };\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            text-transform: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/textTransform.js?");
+
+/***/ }),
+
+/***/ "./src/generators/textUnderlineOffset.js":
+/*!***********************************************!*\
+  !*** ./src/generators/textUnderlineOffset.js ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"underline-offset\");\n  var _theme$textUnderlineO = theme.textUnderlineOffset,\n    textUnderlineOffset = _theme$textUnderlineO === void 0 ? {} : _theme$textUnderlineO;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(textUnderlineOffset, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            text-underline-offset: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/textUnderlineOffset.js?");
+
+/***/ }),
+
+/***/ "./src/generators/textWrap.js":
+/*!************************************!*\
+  !*** ./src/generators/textWrap.js ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var prefix = configOptions.prefix;\n  var propertyOptions = [\"wrap\", \"nowrap\", \"balance\", \"pretty\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"text-\").concat(key, \" {\\n            text-wrap: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/textWrap.js?");
+
+/***/ }),
+
+/***/ "./src/generators/touchAction.js":
+/*!***************************************!*\
+  !*** ./src/generators/touchAction.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"touch\");\n  var propertyOptions = [\"auto\", \"none\", \"pan-x\", \"pan-left\", \"pan-right\", \"pan-y\", \"pan-up\", \"pan-down\", \"pinch-zoom\", \"manipulation\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            touch-action: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/touchAction.js?");
+
+/***/ }),
+
+/***/ "./src/generators/transform.js":
+/*!*************************************!*\
+  !*** ./src/generators/transform.js ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\nfunction generator(_ref) {\n  var prefix = _ref.prefix;\n  return \"    \\n  \".concat(prefix, \"transform {\\n    --transform-translate-x: 0;\\n    --transform-translate-y: 0;\\n    --transform-rotate: 0;\\n    --transform-skew-x: 0;\\n    --transform-skew-y: 0;\\n    --transform-scale-x: 1;\\n    --transform-scale-y: 1;\\n    transform: translateX(var(--transform-translate-x)) translateY(var(--transform-translate-y)) rotate(var(--transform-rotate)) skewX(var(--transform-skew-x)) skewY(var(--transform-skew-y)) scaleX(var(--transform-scale-x)) scaleY(var(--transform-scale-y));\\n  }\\n  \").concat(prefix, \"transform-none {\\n    transform: none;\\n  }\\n\");\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/transform.js?");
+
+/***/ }),
+
+/***/ "./src/generators/transformOrigin.js":
+/*!*******************************************!*\
+  !*** ./src/generators/transformOrigin.js ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"origin\");\n  var propertyOptions = [\"center\", \"top\", \"top-right\", \"right\", \"bottom-right\", \"bottom\", \"bottom-left\", \"left\", \"top-left\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            transform-origin: \").concat(value.replace(\"-\", \" \"), \" !important;\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/transformOrigin.js?");
+
+/***/ }),
+
+/***/ "./src/generators/translate.js":
+/*!*************************************!*\
+  !*** ./src/generators/translate.js ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\nfunction _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }\nfunction _nonIterableRest() { throw new TypeError(\"Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\"); }\nfunction _unsupportedIterableToArray(r, a) { if (r) { if (\"string\" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return \"Object\" === t && r.constructor && (t = r.constructor.name), \"Map\" === t || \"Set\" === t ? Array.from(r) : \"Arguments\" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }\nfunction _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }\nfunction _iterableToArrayLimit(r, l) { var t = null == r ? null : \"undefined\" != typeof Symbol && r[Symbol.iterator] || r[\"@@iterator\"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t[\"return\"] && (u = t[\"return\"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }\nfunction _arrayWithHoles(r) { if (Array.isArray(r)) return r; }\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var _theme$translate = theme.translate,\n    translate = _theme$translate === void 0 ? {} : _theme$translate;\n  Object.entries(translate).forEach(function (_ref) {\n    var _ref2 = _slicedToArray(_ref, 2),\n      key = _ref2[0],\n      value = _ref2[1];\n    translate[\"-\".concat(key)] = \"-\".concat(value).replace(\"--\", \"-\");\n  });\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref3) {\n    var getCssByOptions = _ref3.getCssByOptions;\n    var cssString = getCssByOptions(translate, function (keyTmp, value) {\n      var prefix = \"\".concat(globalPrefix, \"translate\");\n      var key = keyTmp;\n      if (\"\".concat(key).indexOf(\"-\") >= 0) {\n        key = key.split(\"-\").join(\"\");\n        prefix = \"\".concat(globalPrefix, \"-translate\");\n      }\n      return \"\\n          \".concat(prefix, \"-x-\").concat(key, \" {\\n            --transform-translate-x: \").concat(value, \";\\n          }\\n          \").concat(prefix, \"-y-\").concat(key, \" {\\n            --transform-translate-y: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/translate.js?");
+
+/***/ }),
+
+/***/ "./src/generators/userSelect.js":
+/*!**************************************!*\
+  !*** ./src/generators/userSelect.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"select\");\n  var propertyOptions = [\"none\", \"text\", \"all\", \"auto\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            -webkit-user-select: \").concat(value, \";\\n            -moz-user-select: \").concat(value, \";\\n            -ms-user-select: \").concat(value, \";\\n            user-select: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/userSelect.js?");
+
+/***/ }),
+
+/***/ "./src/generators/verticalAlign.js":
+/*!*****************************************!*\
+  !*** ./src/generators/verticalAlign.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"align\");\n  var propertyOptions = [\"baseline\", \"top\", \"middle\", \"bottom\", \"text-top\", \"text-bottom\", \"text-sub\", \"text-super\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            vertical-align: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/verticalAlign.js?");
+
+/***/ }),
+
+/***/ "./src/generators/visibility.js":
+/*!**************************************!*\
+  !*** ./src/generators/visibility.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var prefix = configOptions.prefix;\n  var propertyOptions = {\n    visible: \"visible\",\n    collapse: \"collapse\",\n    invisible: \"hidden\"\n  };\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix).concat(key, \" {\\n            visibility: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/visibility.js?");
+
+/***/ }),
+
+/***/ "./src/generators/whitespace.js":
+/*!**************************************!*\
+  !*** ./src/generators/whitespace.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"whitespace\");\n  var propertyOptions = [\"normal\", \"nowrap\", \"nowrap\", \"pre\", \"pre-line\", \"pre-wrap\", \"break-spaces\"];\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            white-space: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/whitespace.js?");
+
+/***/ }),
+
+/***/ "./src/generators/width.js":
+/*!*********************************!*\
+  !*** ./src/generators/width.js ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var prefix = \"\".concat(globalPrefix, \"w\");\n  var _theme$width = theme.width,\n    width = _theme$width === void 0 ? {} : _theme$width;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(width, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            width: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/width.js?");
+
+/***/ }),
+
+/***/ "./src/generators/willChange.js":
+/*!**************************************!*\
+  !*** ./src/generators/willChange.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix;\n  var prefix = \"\".concat(globalPrefix, \"will-change\");\n  var propertyOptions = {\n    auto: \"auto\",\n    scroll: \"scroll-position\",\n    contents: \"contents\",\n    transform: \"transform\"\n  };\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(propertyOptions, function (key, value) {\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            will-change: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/willChange.js?");
+
+/***/ }),
+
+/***/ "./src/generators/wordBreak.js":
+/*!*************************************!*\
+  !*** ./src/generators/wordBreak.js ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var prefix = configOptions.prefix;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function () {\n    var cssString = \"\\n\\t\\t\\t\\t\".concat(prefix, \"break-normal {\\n\\t\\t\\t\\t\\toverflow-wrap: normal;\\n\\t\\t\\t\\t\\tword-break: normal;\\n\\t\\t\\t\\t}\\n\\t\\t\\t\\t\").concat(prefix, \"break-words {\\n\\t\\t\\t\\t\\toverflow-wrap: break-word;\\n\\t\\t\\t\\t}\\n\\t\\t\\t\\t\").concat(prefix, \"break-all {\\n\\t\\t\\t\\t\\tword-break: break-all;\\n\\t\\t\\t\\t}\\n\\t\\t\\t\\t\").concat(prefix, \"break-keep {\\n\\t\\t\\t\\t\\tword-break: keep-all;\\n\\t\\t\\t\\t}\\n\\t\\t\\t\");\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/wordBreak.js?");
+
+/***/ }),
+
+/***/ "./src/generators/zIndex.js":
+/*!**********************************!*\
+  !*** ./src/generators/zIndex.js ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ generator)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/index */ \"./src/utils/index.js\");\n\nfunction generator() {\n  var configOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var globalPrefix = configOptions.prefix,\n    _configOptions$theme = configOptions.theme,\n    theme = _configOptions$theme === void 0 ? {} : _configOptions$theme;\n  var _theme$zIndex = theme.zIndex,\n    zIndex = _theme$zIndex === void 0 ? {} : _theme$zIndex;\n  var responsiveCssString = (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.generateCssString)(function (_ref) {\n    var getCssByOptions = _ref.getCssByOptions;\n    var cssString = getCssByOptions(zIndex, function (keyTmp, value) {\n      var prefix = \"\".concat(globalPrefix, \"z\");\n      var key = keyTmp;\n      if (\"\".concat(key).indexOf(\"-\") >= 0) {\n        key = key.split(\"-\").join(\"\");\n        prefix = \"\".concat(globalPrefix, \"-z\");\n      }\n      return \"\\n          \".concat(prefix, \"-\").concat(key, \" {\\n            z-index: \").concat(value, \";\\n          }\\n        \");\n    });\n    return cssString;\n  }, configOptions);\n  return responsiveCssString;\n}\n\n//# sourceURL=webpack://tailwindToStyle/./src/generators/zIndex.js?");
+
+/***/ }),
+
+/***/ "./src/index.js":
+/*!**********************!*\
+  !*** ./src/index.js ***!
+  \**********************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   debouncedTws: () => (/* binding */ debouncedTws),\n/* harmony export */   debouncedTwsx: () => (/* binding */ debouncedTwsx),\n/* harmony export */   tws: () => (/* binding */ tws),\n/* harmony export */   twsx: () => (/* binding */ twsx)\n/* harmony export */ });\n/* harmony import */ var _utils_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils/index */ \"./src/utils/index.js\");\n/* harmony import */ var _generators_accentColor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./generators/accentColor */ \"./src/generators/accentColor.js\");\n/* harmony import */ var _generators_accessibility__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./generators/accessibility */ \"./src/generators/accessibility.js\");\n/* harmony import */ var _generators_alignContent__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./generators/alignContent */ \"./src/generators/alignContent.js\");\n/* harmony import */ var _generators_alignItems__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./generators/alignItems */ \"./src/generators/alignItems.js\");\n/* harmony import */ var _generators_alignSelf__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./generators/alignSelf */ \"./src/generators/alignSelf.js\");\n/* harmony import */ var _generators_appearance__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./generators/appearance */ \"./src/generators/appearance.js\");\n/* harmony import */ var _generators_aspect__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./generators/aspect */ \"./src/generators/aspect.js\");\n/* harmony import */ var _generators_backgroundAttachment__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./generators/backgroundAttachment */ \"./src/generators/backgroundAttachment.js\");\n/* harmony import */ var _generators_backgroundClip__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./generators/backgroundClip */ \"./src/generators/backgroundClip.js\");\n/* harmony import */ var _generators_backgroundColor__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./generators/backgroundColor */ \"./src/generators/backgroundColor.js\");\n/* harmony import */ var _generators_backgroundImage__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./generators/backgroundImage */ \"./src/generators/backgroundImage.js\");\n/* harmony import */ var _generators_backgroundOpacity__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./generators/backgroundOpacity */ \"./src/generators/backgroundOpacity.js\");\n/* harmony import */ var _generators_backgroundOrigin__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./generators/backgroundOrigin */ \"./src/generators/backgroundOrigin.js\");\n/* harmony import */ var _generators_backgroundPosition__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./generators/backgroundPosition */ \"./src/generators/backgroundPosition.js\");\n/* harmony import */ var _generators_backgroundRepeat__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./generators/backgroundRepeat */ \"./src/generators/backgroundRepeat.js\");\n/* harmony import */ var _generators_backgroundSize__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./generators/backgroundSize */ \"./src/generators/backgroundSize.js\");\n/* harmony import */ var _generators_blur__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./generators/blur */ \"./src/generators/blur.js\");\n/* harmony import */ var _generators_borderCollapse__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./generators/borderCollapse */ \"./src/generators/borderCollapse.js\");\n/* harmony import */ var _generators_borderColor__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./generators/borderColor */ \"./src/generators/borderColor.js\");\n/* harmony import */ var _generators_borderOpacity__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./generators/borderOpacity */ \"./src/generators/borderOpacity.js\");\n/* harmony import */ var _generators_borderRadius__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./generators/borderRadius */ \"./src/generators/borderRadius.js\");\n/* harmony import */ var _generators_borderSpacing__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./generators/borderSpacing */ \"./src/generators/borderSpacing.js\");\n/* harmony import */ var _generators_borderStyle__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./generators/borderStyle */ \"./src/generators/borderStyle.js\");\n/* harmony import */ var _generators_borderWidth__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./generators/borderWidth */ \"./src/generators/borderWidth.js\");\n/* harmony import */ var _generators_boxDecorationBreak__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./generators/boxDecorationBreak */ \"./src/generators/boxDecorationBreak.js\");\n/* harmony import */ var _generators_boxShadow__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./generators/boxShadow */ \"./src/generators/boxShadow.js\");\n/* harmony import */ var _generators_boxSizing__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./generators/boxSizing */ \"./src/generators/boxSizing.js\");\n/* harmony import */ var _generators_brightness__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./generators/brightness */ \"./src/generators/brightness.js\");\n/* harmony import */ var _generators_captionSide__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./generators/captionSide */ \"./src/generators/captionSide.js\");\n/* harmony import */ var _generators_caretColor__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./generators/caretColor */ \"./src/generators/caretColor.js\");\n/* harmony import */ var _generators_clear__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./generators/clear */ \"./src/generators/clear.js\");\n/* harmony import */ var _generators_content__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./generators/content */ \"./src/generators/content.js\");\n/* harmony import */ var _generators_contrast__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./generators/contrast */ \"./src/generators/contrast.js\");\n/* harmony import */ var _generators_cursor__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./generators/cursor */ \"./src/generators/cursor.js\");\n/* harmony import */ var _generators_display__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./generators/display */ \"./src/generators/display.js\");\n/* harmony import */ var _generators_divideColor__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./generators/divideColor */ \"./src/generators/divideColor.js\");\n/* harmony import */ var _generators_divideOpacity__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./generators/divideOpacity */ \"./src/generators/divideOpacity.js\");\n/* harmony import */ var _generators_divideStyle__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./generators/divideStyle */ \"./src/generators/divideStyle.js\");\n/* harmony import */ var _generators_divideWidth__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./generators/divideWidth */ \"./src/generators/divideWidth.js\");\n/* harmony import */ var _generators_dropShadow__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./generators/dropShadow */ \"./src/generators/dropShadow.js\");\n/* harmony import */ var _generators_fill__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./generators/fill */ \"./src/generators/fill.js\");\n/* harmony import */ var _generators_filter__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./generators/filter */ \"./src/generators/filter.js\");\n/* harmony import */ var _generators_flex__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./generators/flex */ \"./src/generators/flex.js\");\n/* harmony import */ var _generators_flexBasis__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./generators/flexBasis */ \"./src/generators/flexBasis.js\");\n/* harmony import */ var _generators_flexDirection__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./generators/flexDirection */ \"./src/generators/flexDirection.js\");\n/* harmony import */ var _generators_flexGrow__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./generators/flexGrow */ \"./src/generators/flexGrow.js\");\n/* harmony import */ var _generators_flexShrink__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./generators/flexShrink */ \"./src/generators/flexShrink.js\");\n/* harmony import */ var _generators_flexWrap__WEBPACK_IMPORTED_MODULE_48__ = __webpack_require__(/*! ./generators/flexWrap */ \"./src/generators/flexWrap.js\");\n/* harmony import */ var _generators_float__WEBPACK_IMPORTED_MODULE_49__ = __webpack_require__(/*! ./generators/float */ \"./src/generators/float.js\");\n/* harmony import */ var _generators_fontSize__WEBPACK_IMPORTED_MODULE_50__ = __webpack_require__(/*! ./generators/fontSize */ \"./src/generators/fontSize.js\");\n/* harmony import */ var _generators_fontSmoothing__WEBPACK_IMPORTED_MODULE_51__ = __webpack_require__(/*! ./generators/fontSmoothing */ \"./src/generators/fontSmoothing.js\");\n/* harmony import */ var _generators_fontStyle__WEBPACK_IMPORTED_MODULE_52__ = __webpack_require__(/*! ./generators/fontStyle */ \"./src/generators/fontStyle.js\");\n/* harmony import */ var _generators_fontVariantNumeric__WEBPACK_IMPORTED_MODULE_53__ = __webpack_require__(/*! ./generators/fontVariantNumeric */ \"./src/generators/fontVariantNumeric.js\");\n/* harmony import */ var _generators_fontWeight__WEBPACK_IMPORTED_MODULE_54__ = __webpack_require__(/*! ./generators/fontWeight */ \"./src/generators/fontWeight.js\");\n/* harmony import */ var _generators_gap__WEBPACK_IMPORTED_MODULE_55__ = __webpack_require__(/*! ./generators/gap */ \"./src/generators/gap.js\");\n/* harmony import */ var _generators_gradientColorStops__WEBPACK_IMPORTED_MODULE_56__ = __webpack_require__(/*! ./generators/gradientColorStops */ \"./src/generators/gradientColorStops.js\");\n/* harmony import */ var _generators_grayscale__WEBPACK_IMPORTED_MODULE_57__ = __webpack_require__(/*! ./generators/grayscale */ \"./src/generators/grayscale.js\");\n/* harmony import */ var _generators_gridAutoColumns__WEBPACK_IMPORTED_MODULE_58__ = __webpack_require__(/*! ./generators/gridAutoColumns */ \"./src/generators/gridAutoColumns.js\");\n/* harmony import */ var _generators_gridAutoFlow__WEBPACK_IMPORTED_MODULE_59__ = __webpack_require__(/*! ./generators/gridAutoFlow */ \"./src/generators/gridAutoFlow.js\");\n/* harmony import */ var _generators_gridAutoRows__WEBPACK_IMPORTED_MODULE_60__ = __webpack_require__(/*! ./generators/gridAutoRows */ \"./src/generators/gridAutoRows.js\");\n/* harmony import */ var _generators_gridColumn__WEBPACK_IMPORTED_MODULE_61__ = __webpack_require__(/*! ./generators/gridColumn */ \"./src/generators/gridColumn.js\");\n/* harmony import */ var _generators_gridColumnEnd__WEBPACK_IMPORTED_MODULE_62__ = __webpack_require__(/*! ./generators/gridColumnEnd */ \"./src/generators/gridColumnEnd.js\");\n/* harmony import */ var _generators_gridColumnStart__WEBPACK_IMPORTED_MODULE_63__ = __webpack_require__(/*! ./generators/gridColumnStart */ \"./src/generators/gridColumnStart.js\");\n/* harmony import */ var _generators_gridRow__WEBPACK_IMPORTED_MODULE_64__ = __webpack_require__(/*! ./generators/gridRow */ \"./src/generators/gridRow.js\");\n/* harmony import */ var _generators_gridRowEnd__WEBPACK_IMPORTED_MODULE_65__ = __webpack_require__(/*! ./generators/gridRowEnd */ \"./src/generators/gridRowEnd.js\");\n/* harmony import */ var _generators_gridRowStart__WEBPACK_IMPORTED_MODULE_66__ = __webpack_require__(/*! ./generators/gridRowStart */ \"./src/generators/gridRowStart.js\");\n/* harmony import */ var _generators_gridTemplateColumns__WEBPACK_IMPORTED_MODULE_67__ = __webpack_require__(/*! ./generators/gridTemplateColumns */ \"./src/generators/gridTemplateColumns.js\");\n/* harmony import */ var _generators_gridTemplateRows__WEBPACK_IMPORTED_MODULE_68__ = __webpack_require__(/*! ./generators/gridTemplateRows */ \"./src/generators/gridTemplateRows.js\");\n/* harmony import */ var _generators_height__WEBPACK_IMPORTED_MODULE_69__ = __webpack_require__(/*! ./generators/height */ \"./src/generators/height.js\");\n/* harmony import */ var _generators_hueRotate__WEBPACK_IMPORTED_MODULE_70__ = __webpack_require__(/*! ./generators/hueRotate */ \"./src/generators/hueRotate.js\");\n/* harmony import */ var _generators_hyphens__WEBPACK_IMPORTED_MODULE_71__ = __webpack_require__(/*! ./generators/hyphens */ \"./src/generators/hyphens.js\");\n/* harmony import */ var _generators_inset__WEBPACK_IMPORTED_MODULE_72__ = __webpack_require__(/*! ./generators/inset */ \"./src/generators/inset.js\");\n/* harmony import */ var _generators_invert__WEBPACK_IMPORTED_MODULE_73__ = __webpack_require__(/*! ./generators/invert */ \"./src/generators/invert.js\");\n/* harmony import */ var _generators_isolation__WEBPACK_IMPORTED_MODULE_74__ = __webpack_require__(/*! ./generators/isolation */ \"./src/generators/isolation.js\");\n/* harmony import */ var _generators_justifyContent__WEBPACK_IMPORTED_MODULE_75__ = __webpack_require__(/*! ./generators/justifyContent */ \"./src/generators/justifyContent.js\");\n/* harmony import */ var _generators_justifyItems__WEBPACK_IMPORTED_MODULE_76__ = __webpack_require__(/*! ./generators/justifyItems */ \"./src/generators/justifyItems.js\");\n/* harmony import */ var _generators_justifySelf__WEBPACK_IMPORTED_MODULE_77__ = __webpack_require__(/*! ./generators/justifySelf */ \"./src/generators/justifySelf.js\");\n/* harmony import */ var _generators_letterSpacing__WEBPACK_IMPORTED_MODULE_78__ = __webpack_require__(/*! ./generators/letterSpacing */ \"./src/generators/letterSpacing.js\");\n/* harmony import */ var _generators_lineClamp__WEBPACK_IMPORTED_MODULE_79__ = __webpack_require__(/*! ./generators/lineClamp */ \"./src/generators/lineClamp.js\");\n/* harmony import */ var _generators_lineHeight__WEBPACK_IMPORTED_MODULE_80__ = __webpack_require__(/*! ./generators/lineHeight */ \"./src/generators/lineHeight.js\");\n/* harmony import */ var _generators_listStylePosition__WEBPACK_IMPORTED_MODULE_81__ = __webpack_require__(/*! ./generators/listStylePosition */ \"./src/generators/listStylePosition.js\");\n/* harmony import */ var _generators_listStyleType__WEBPACK_IMPORTED_MODULE_82__ = __webpack_require__(/*! ./generators/listStyleType */ \"./src/generators/listStyleType.js\");\n/* harmony import */ var _generators_margin__WEBPACK_IMPORTED_MODULE_83__ = __webpack_require__(/*! ./generators/margin */ \"./src/generators/margin.js\");\n/* harmony import */ var _generators_maxHeight__WEBPACK_IMPORTED_MODULE_84__ = __webpack_require__(/*! ./generators/maxHeight */ \"./src/generators/maxHeight.js\");\n/* harmony import */ var _generators_maxWidth__WEBPACK_IMPORTED_MODULE_85__ = __webpack_require__(/*! ./generators/maxWidth */ \"./src/generators/maxWidth.js\");\n/* harmony import */ var _generators_minHeight__WEBPACK_IMPORTED_MODULE_86__ = __webpack_require__(/*! ./generators/minHeight */ \"./src/generators/minHeight.js\");\n/* harmony import */ var _generators_minWidth__WEBPACK_IMPORTED_MODULE_87__ = __webpack_require__(/*! ./generators/minWidth */ \"./src/generators/minWidth.js\");\n/* harmony import */ var _generators_mixBlendMode__WEBPACK_IMPORTED_MODULE_88__ = __webpack_require__(/*! ./generators/mixBlendMode */ \"./src/generators/mixBlendMode.js\");\n/* harmony import */ var _generators_objectFit__WEBPACK_IMPORTED_MODULE_89__ = __webpack_require__(/*! ./generators/objectFit */ \"./src/generators/objectFit.js\");\n/* harmony import */ var _generators_objectPosition__WEBPACK_IMPORTED_MODULE_90__ = __webpack_require__(/*! ./generators/objectPosition */ \"./src/generators/objectPosition.js\");\n/* harmony import */ var _generators_opacity__WEBPACK_IMPORTED_MODULE_91__ = __webpack_require__(/*! ./generators/opacity */ \"./src/generators/opacity.js\");\n/* harmony import */ var _generators_order__WEBPACK_IMPORTED_MODULE_92__ = __webpack_require__(/*! ./generators/order */ \"./src/generators/order.js\");\n/* harmony import */ var _generators_outlineColor__WEBPACK_IMPORTED_MODULE_93__ = __webpack_require__(/*! ./generators/outlineColor */ \"./src/generators/outlineColor.js\");\n/* harmony import */ var _generators_outlineOffset__WEBPACK_IMPORTED_MODULE_94__ = __webpack_require__(/*! ./generators/outlineOffset */ \"./src/generators/outlineOffset.js\");\n/* harmony import */ var _generators_outlineOpacity__WEBPACK_IMPORTED_MODULE_95__ = __webpack_require__(/*! ./generators/outlineOpacity */ \"./src/generators/outlineOpacity.js\");\n/* harmony import */ var _generators_outlineStyle__WEBPACK_IMPORTED_MODULE_96__ = __webpack_require__(/*! ./generators/outlineStyle */ \"./src/generators/outlineStyle.js\");\n/* harmony import */ var _generators_outlineWidth__WEBPACK_IMPORTED_MODULE_97__ = __webpack_require__(/*! ./generators/outlineWidth */ \"./src/generators/outlineWidth.js\");\n/* harmony import */ var _generators_overflow__WEBPACK_IMPORTED_MODULE_98__ = __webpack_require__(/*! ./generators/overflow */ \"./src/generators/overflow.js\");\n/* harmony import */ var _generators_overscrollBehavior__WEBPACK_IMPORTED_MODULE_99__ = __webpack_require__(/*! ./generators/overscrollBehavior */ \"./src/generators/overscrollBehavior.js\");\n/* harmony import */ var _generators_padding__WEBPACK_IMPORTED_MODULE_100__ = __webpack_require__(/*! ./generators/padding */ \"./src/generators/padding.js\");\n/* harmony import */ var _generators_placeContent__WEBPACK_IMPORTED_MODULE_101__ = __webpack_require__(/*! ./generators/placeContent */ \"./src/generators/placeContent.js\");\n/* harmony import */ var _generators_placeItems__WEBPACK_IMPORTED_MODULE_102__ = __webpack_require__(/*! ./generators/placeItems */ \"./src/generators/placeItems.js\");\n/* harmony import */ var _generators_placeSelf__WEBPACK_IMPORTED_MODULE_103__ = __webpack_require__(/*! ./generators/placeSelf */ \"./src/generators/placeSelf.js\");\n/* harmony import */ var _generators_pointerEvents__WEBPACK_IMPORTED_MODULE_104__ = __webpack_require__(/*! ./generators/pointerEvents */ \"./src/generators/pointerEvents.js\");\n/* harmony import */ var _generators_position__WEBPACK_IMPORTED_MODULE_105__ = __webpack_require__(/*! ./generators/position */ \"./src/generators/position.js\");\n/* harmony import */ var _generators_resize__WEBPACK_IMPORTED_MODULE_106__ = __webpack_require__(/*! ./generators/resize */ \"./src/generators/resize.js\");\n/* harmony import */ var _generators_ringColor__WEBPACK_IMPORTED_MODULE_107__ = __webpack_require__(/*! ./generators/ringColor */ \"./src/generators/ringColor.js\");\n/* harmony import */ var _generators_ringOffsetColor__WEBPACK_IMPORTED_MODULE_108__ = __webpack_require__(/*! ./generators/ringOffsetColor */ \"./src/generators/ringOffsetColor.js\");\n/* harmony import */ var _generators_ringOffsetWidth__WEBPACK_IMPORTED_MODULE_109__ = __webpack_require__(/*! ./generators/ringOffsetWidth */ \"./src/generators/ringOffsetWidth.js\");\n/* harmony import */ var _generators_ringOpacity__WEBPACK_IMPORTED_MODULE_110__ = __webpack_require__(/*! ./generators/ringOpacity */ \"./src/generators/ringOpacity.js\");\n/* harmony import */ var _generators_ringWidth__WEBPACK_IMPORTED_MODULE_111__ = __webpack_require__(/*! ./generators/ringWidth */ \"./src/generators/ringWidth.js\");\n/* harmony import */ var _generators_saturate__WEBPACK_IMPORTED_MODULE_112__ = __webpack_require__(/*! ./generators/saturate */ \"./src/generators/saturate.js\");\n/* harmony import */ var _generators_rotate__WEBPACK_IMPORTED_MODULE_113__ = __webpack_require__(/*! ./generators/rotate */ \"./src/generators/rotate.js\");\n/* harmony import */ var _generators_scale__WEBPACK_IMPORTED_MODULE_114__ = __webpack_require__(/*! ./generators/scale */ \"./src/generators/scale.js\");\n/* harmony import */ var _generators_scrollBehavior__WEBPACK_IMPORTED_MODULE_115__ = __webpack_require__(/*! ./generators/scrollBehavior */ \"./src/generators/scrollBehavior.js\");\n/* harmony import */ var _generators_scrollMargin__WEBPACK_IMPORTED_MODULE_116__ = __webpack_require__(/*! ./generators/scrollMargin */ \"./src/generators/scrollMargin.js\");\n/* harmony import */ var _generators_scrollPadding__WEBPACK_IMPORTED_MODULE_117__ = __webpack_require__(/*! ./generators/scrollPadding */ \"./src/generators/scrollPadding.js\");\n/* harmony import */ var _generators_scrollSnapAlign__WEBPACK_IMPORTED_MODULE_118__ = __webpack_require__(/*! ./generators/scrollSnapAlign */ \"./src/generators/scrollSnapAlign.js\");\n/* harmony import */ var _generators_scrollSnapStop__WEBPACK_IMPORTED_MODULE_119__ = __webpack_require__(/*! ./generators/scrollSnapStop */ \"./src/generators/scrollSnapStop.js\");\n/* harmony import */ var _generators_scrollSnapType__WEBPACK_IMPORTED_MODULE_120__ = __webpack_require__(/*! ./generators/scrollSnapType */ \"./src/generators/scrollSnapType.js\");\n/* harmony import */ var _generators_sepia__WEBPACK_IMPORTED_MODULE_121__ = __webpack_require__(/*! ./generators/sepia */ \"./src/generators/sepia.js\");\n/* harmony import */ var _generators_size__WEBPACK_IMPORTED_MODULE_122__ = __webpack_require__(/*! ./generators/size */ \"./src/generators/size.js\");\n/* harmony import */ var _generators_skew__WEBPACK_IMPORTED_MODULE_123__ = __webpack_require__(/*! ./generators/skew */ \"./src/generators/skew.js\");\n/* harmony import */ var _generators_space__WEBPACK_IMPORTED_MODULE_124__ = __webpack_require__(/*! ./generators/space */ \"./src/generators/space.js\");\n/* harmony import */ var _generators_stroke__WEBPACK_IMPORTED_MODULE_125__ = __webpack_require__(/*! ./generators/stroke */ \"./src/generators/stroke.js\");\n/* harmony import */ var _generators_strokeWidth__WEBPACK_IMPORTED_MODULE_126__ = __webpack_require__(/*! ./generators/strokeWidth */ \"./src/generators/strokeWidth.js\");\n/* harmony import */ var _generators_tableLayout__WEBPACK_IMPORTED_MODULE_127__ = __webpack_require__(/*! ./generators/tableLayout */ \"./src/generators/tableLayout.js\");\n/* harmony import */ var _generators_textAlign__WEBPACK_IMPORTED_MODULE_128__ = __webpack_require__(/*! ./generators/textAlign */ \"./src/generators/textAlign.js\");\n/* harmony import */ var _generators_textColor__WEBPACK_IMPORTED_MODULE_129__ = __webpack_require__(/*! ./generators/textColor */ \"./src/generators/textColor.js\");\n/* harmony import */ var _generators_textDecoration__WEBPACK_IMPORTED_MODULE_130__ = __webpack_require__(/*! ./generators/textDecoration */ \"./src/generators/textDecoration.js\");\n/* harmony import */ var _generators_textDecorationColor__WEBPACK_IMPORTED_MODULE_131__ = __webpack_require__(/*! ./generators/textDecorationColor */ \"./src/generators/textDecorationColor.js\");\n/* harmony import */ var _generators_textDecorationStyle__WEBPACK_IMPORTED_MODULE_132__ = __webpack_require__(/*! ./generators/textDecorationStyle */ \"./src/generators/textDecorationStyle.js\");\n/* harmony import */ var _generators_textDecorationThickness__WEBPACK_IMPORTED_MODULE_133__ = __webpack_require__(/*! ./generators/textDecorationThickness */ \"./src/generators/textDecorationThickness.js\");\n/* harmony import */ var _generators_textIndent__WEBPACK_IMPORTED_MODULE_134__ = __webpack_require__(/*! ./generators/textIndent */ \"./src/generators/textIndent.js\");\n/* harmony import */ var _generators_textOpacity__WEBPACK_IMPORTED_MODULE_135__ = __webpack_require__(/*! ./generators/textOpacity */ \"./src/generators/textOpacity.js\");\n/* harmony import */ var _generators_textOverflow__WEBPACK_IMPORTED_MODULE_136__ = __webpack_require__(/*! ./generators/textOverflow */ \"./src/generators/textOverflow.js\");\n/* harmony import */ var _generators_textShadowBlur__WEBPACK_IMPORTED_MODULE_137__ = __webpack_require__(/*! ./generators/textShadowBlur */ \"./src/generators/textShadowBlur.js\");\n/* harmony import */ var _generators_textShadowColor__WEBPACK_IMPORTED_MODULE_138__ = __webpack_require__(/*! ./generators/textShadowColor */ \"./src/generators/textShadowColor.js\");\n/* harmony import */ var _generators_textShadowOpacity__WEBPACK_IMPORTED_MODULE_139__ = __webpack_require__(/*! ./generators/textShadowOpacity */ \"./src/generators/textShadowOpacity.js\");\n/* harmony import */ var _generators_textShadowX__WEBPACK_IMPORTED_MODULE_140__ = __webpack_require__(/*! ./generators/textShadowX */ \"./src/generators/textShadowX.js\");\n/* harmony import */ var _generators_textShadowY__WEBPACK_IMPORTED_MODULE_141__ = __webpack_require__(/*! ./generators/textShadowY */ \"./src/generators/textShadowY.js\");\n/* harmony import */ var _generators_textTransform__WEBPACK_IMPORTED_MODULE_142__ = __webpack_require__(/*! ./generators/textTransform */ \"./src/generators/textTransform.js\");\n/* harmony import */ var _generators_textUnderlineOffset__WEBPACK_IMPORTED_MODULE_143__ = __webpack_require__(/*! ./generators/textUnderlineOffset */ \"./src/generators/textUnderlineOffset.js\");\n/* harmony import */ var _generators_textWrap__WEBPACK_IMPORTED_MODULE_144__ = __webpack_require__(/*! ./generators/textWrap */ \"./src/generators/textWrap.js\");\n/* harmony import */ var _generators_touchAction__WEBPACK_IMPORTED_MODULE_145__ = __webpack_require__(/*! ./generators/touchAction */ \"./src/generators/touchAction.js\");\n/* harmony import */ var _generators_transform__WEBPACK_IMPORTED_MODULE_146__ = __webpack_require__(/*! ./generators/transform */ \"./src/generators/transform.js\");\n/* harmony import */ var _generators_transformOrigin__WEBPACK_IMPORTED_MODULE_147__ = __webpack_require__(/*! ./generators/transformOrigin */ \"./src/generators/transformOrigin.js\");\n/* harmony import */ var _generators_translate__WEBPACK_IMPORTED_MODULE_148__ = __webpack_require__(/*! ./generators/translate */ \"./src/generators/translate.js\");\n/* harmony import */ var _generators_userSelect__WEBPACK_IMPORTED_MODULE_149__ = __webpack_require__(/*! ./generators/userSelect */ \"./src/generators/userSelect.js\");\n/* harmony import */ var _generators_verticalAlign__WEBPACK_IMPORTED_MODULE_150__ = __webpack_require__(/*! ./generators/verticalAlign */ \"./src/generators/verticalAlign.js\");\n/* harmony import */ var _generators_visibility__WEBPACK_IMPORTED_MODULE_151__ = __webpack_require__(/*! ./generators/visibility */ \"./src/generators/visibility.js\");\n/* harmony import */ var _generators_whitespace__WEBPACK_IMPORTED_MODULE_152__ = __webpack_require__(/*! ./generators/whitespace */ \"./src/generators/whitespace.js\");\n/* harmony import */ var _generators_width__WEBPACK_IMPORTED_MODULE_153__ = __webpack_require__(/*! ./generators/width */ \"./src/generators/width.js\");\n/* harmony import */ var _generators_wordBreak__WEBPACK_IMPORTED_MODULE_154__ = __webpack_require__(/*! ./generators/wordBreak */ \"./src/generators/wordBreak.js\");\n/* harmony import */ var _generators_willChange__WEBPACK_IMPORTED_MODULE_155__ = __webpack_require__(/*! ./generators/willChange */ \"./src/generators/willChange.js\");\n/* harmony import */ var _generators_zIndex__WEBPACK_IMPORTED_MODULE_156__ = __webpack_require__(/*! ./generators/zIndex */ \"./src/generators/zIndex.js\");\n/* harmony import */ var _patterns_index__WEBPACK_IMPORTED_MODULE_157__ = __webpack_require__(/*! ./patterns/index */ \"./src/patterns/index.js\");\nfunction _typeof(o) { \"@babel/helpers - typeof\"; return _typeof = \"function\" == typeof Symbol && \"symbol\" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && \"function\" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? \"symbol\" : typeof o; }, _typeof(o); }\nfunction ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }\nfunction _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }\nfunction _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }\nfunction _toPropertyKey(t) { var i = _toPrimitive(t, \"string\"); return \"symbol\" == _typeof(i) ? i : i + \"\"; }\nfunction _toPrimitive(t, r) { if (\"object\" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || \"default\"); if (\"object\" != _typeof(i)) return i; throw new TypeError(\"@@toPrimitive must return a primitive value.\"); } return (\"string\" === r ? String : Number)(t); }\nfunction _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }\nfunction _nonIterableRest() { throw new TypeError(\"Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\"); }\nfunction _iterableToArrayLimit(r, l) { var t = null == r ? null : \"undefined\" != typeof Symbol && r[Symbol.iterator] || r[\"@@iterator\"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t[\"return\"] && (u = t[\"return\"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }\nfunction _arrayWithHoles(r) { if (Array.isArray(r)) return r; }\nfunction _createForOfIteratorHelper(r, e) { var t = \"undefined\" != typeof Symbol && r[Symbol.iterator] || r[\"@@iterator\"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && \"number\" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError(\"Invalid attempt to iterate non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\"); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t[\"return\"] || t[\"return\"](); } finally { if (u) throw o; } } }; }\nfunction _unsupportedIterableToArray(r, a) { if (r) { if (\"string\" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return \"Object\" === t && r.constructor && (t = r.constructor.name), \"Map\" === t || \"Set\" === t ? Array.from(r) : \"Arguments\" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }\nfunction _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nvar plugins = {\n  accentColor: _generators_accentColor__WEBPACK_IMPORTED_MODULE_1__[\"default\"],\n  accessibility: _generators_accessibility__WEBPACK_IMPORTED_MODULE_2__[\"default\"],\n  alignContent: _generators_alignContent__WEBPACK_IMPORTED_MODULE_3__[\"default\"],\n  alignItems: _generators_alignItems__WEBPACK_IMPORTED_MODULE_4__[\"default\"],\n  alignSelf: _generators_alignSelf__WEBPACK_IMPORTED_MODULE_5__[\"default\"],\n  appearance: _generators_appearance__WEBPACK_IMPORTED_MODULE_6__[\"default\"],\n  aspect: _generators_aspect__WEBPACK_IMPORTED_MODULE_7__[\"default\"],\n  backgroundAttachment: _generators_backgroundAttachment__WEBPACK_IMPORTED_MODULE_8__[\"default\"],\n  backgroundClip: _generators_backgroundClip__WEBPACK_IMPORTED_MODULE_9__[\"default\"],\n  backgroundColor: _generators_backgroundColor__WEBPACK_IMPORTED_MODULE_10__[\"default\"],\n  backgroundImage: _generators_backgroundImage__WEBPACK_IMPORTED_MODULE_11__[\"default\"],\n  backgroundOpacity: _generators_backgroundOpacity__WEBPACK_IMPORTED_MODULE_12__[\"default\"],\n  backgroundOrigin: _generators_backgroundOrigin__WEBPACK_IMPORTED_MODULE_13__[\"default\"],\n  backgroundPosition: _generators_backgroundPosition__WEBPACK_IMPORTED_MODULE_14__[\"default\"],\n  backgroundRepeat: _generators_backgroundRepeat__WEBPACK_IMPORTED_MODULE_15__[\"default\"],\n  backgroundSize: _generators_backgroundSize__WEBPACK_IMPORTED_MODULE_16__[\"default\"],\n  blur: _generators_blur__WEBPACK_IMPORTED_MODULE_17__[\"default\"],\n  borderCollapse: _generators_borderCollapse__WEBPACK_IMPORTED_MODULE_18__[\"default\"],\n  borderColor: _generators_borderColor__WEBPACK_IMPORTED_MODULE_19__[\"default\"],\n  borderOpacity: _generators_borderOpacity__WEBPACK_IMPORTED_MODULE_20__[\"default\"],\n  borderRadius: _generators_borderRadius__WEBPACK_IMPORTED_MODULE_21__[\"default\"],\n  borderSpacing: _generators_borderSpacing__WEBPACK_IMPORTED_MODULE_22__[\"default\"],\n  borderStyle: _generators_borderStyle__WEBPACK_IMPORTED_MODULE_23__[\"default\"],\n  borderWidth: _generators_borderWidth__WEBPACK_IMPORTED_MODULE_24__[\"default\"],\n  boxDecorationBreak: _generators_boxDecorationBreak__WEBPACK_IMPORTED_MODULE_25__[\"default\"],\n  boxShadow: _generators_boxShadow__WEBPACK_IMPORTED_MODULE_26__[\"default\"],\n  boxSizing: _generators_boxSizing__WEBPACK_IMPORTED_MODULE_27__[\"default\"],\n  brightness: _generators_brightness__WEBPACK_IMPORTED_MODULE_28__[\"default\"],\n  captionSide: _generators_captionSide__WEBPACK_IMPORTED_MODULE_29__[\"default\"],\n  caretColor: _generators_caretColor__WEBPACK_IMPORTED_MODULE_30__[\"default\"],\n  clear: _generators_clear__WEBPACK_IMPORTED_MODULE_31__[\"default\"],\n  content: _generators_content__WEBPACK_IMPORTED_MODULE_32__[\"default\"],\n  contrast: _generators_contrast__WEBPACK_IMPORTED_MODULE_33__[\"default\"],\n  cursor: _generators_cursor__WEBPACK_IMPORTED_MODULE_34__[\"default\"],\n  display: _generators_display__WEBPACK_IMPORTED_MODULE_35__[\"default\"],\n  divideColor: _generators_divideColor__WEBPACK_IMPORTED_MODULE_36__[\"default\"],\n  divideOpacity: _generators_divideOpacity__WEBPACK_IMPORTED_MODULE_37__[\"default\"],\n  divideStyle: _generators_divideStyle__WEBPACK_IMPORTED_MODULE_38__[\"default\"],\n  divideWidth: _generators_divideWidth__WEBPACK_IMPORTED_MODULE_39__[\"default\"],\n  dropShadow: _generators_dropShadow__WEBPACK_IMPORTED_MODULE_40__[\"default\"],\n  fill: _generators_fill__WEBPACK_IMPORTED_MODULE_41__[\"default\"],\n  filter: _generators_filter__WEBPACK_IMPORTED_MODULE_42__[\"default\"],\n  flex: _generators_flex__WEBPACK_IMPORTED_MODULE_43__[\"default\"],\n  flexBasis: _generators_flexBasis__WEBPACK_IMPORTED_MODULE_44__[\"default\"],\n  flexDirection: _generators_flexDirection__WEBPACK_IMPORTED_MODULE_45__[\"default\"],\n  flexGrow: _generators_flexGrow__WEBPACK_IMPORTED_MODULE_46__[\"default\"],\n  flexShrink: _generators_flexShrink__WEBPACK_IMPORTED_MODULE_47__[\"default\"],\n  flexWrap: _generators_flexWrap__WEBPACK_IMPORTED_MODULE_48__[\"default\"],\n  \"float\": _generators_float__WEBPACK_IMPORTED_MODULE_49__[\"default\"],\n  fontSize: _generators_fontSize__WEBPACK_IMPORTED_MODULE_50__[\"default\"],\n  fontSmoothing: _generators_fontSmoothing__WEBPACK_IMPORTED_MODULE_51__[\"default\"],\n  fontStyle: _generators_fontStyle__WEBPACK_IMPORTED_MODULE_52__[\"default\"],\n  fontVariantNumeric: _generators_fontVariantNumeric__WEBPACK_IMPORTED_MODULE_53__[\"default\"],\n  fontWeight: _generators_fontWeight__WEBPACK_IMPORTED_MODULE_54__[\"default\"],\n  gap: _generators_gap__WEBPACK_IMPORTED_MODULE_55__[\"default\"],\n  gradientColorStops: _generators_gradientColorStops__WEBPACK_IMPORTED_MODULE_56__[\"default\"],\n  grayscale: _generators_grayscale__WEBPACK_IMPORTED_MODULE_57__[\"default\"],\n  gridAutoColumns: _generators_gridAutoColumns__WEBPACK_IMPORTED_MODULE_58__[\"default\"],\n  gridAutoFlow: _generators_gridAutoFlow__WEBPACK_IMPORTED_MODULE_59__[\"default\"],\n  gridAutoRows: _generators_gridAutoRows__WEBPACK_IMPORTED_MODULE_60__[\"default\"],\n  gridColumn: _generators_gridColumn__WEBPACK_IMPORTED_MODULE_61__[\"default\"],\n  gridColumnEnd: _generators_gridColumnEnd__WEBPACK_IMPORTED_MODULE_62__[\"default\"],\n  gridColumnStart: _generators_gridColumnStart__WEBPACK_IMPORTED_MODULE_63__[\"default\"],\n  gridRow: _generators_gridRow__WEBPACK_IMPORTED_MODULE_64__[\"default\"],\n  gridRowEnd: _generators_gridRowEnd__WEBPACK_IMPORTED_MODULE_65__[\"default\"],\n  gridRowStart: _generators_gridRowStart__WEBPACK_IMPORTED_MODULE_66__[\"default\"],\n  gridTemplateColumns: _generators_gridTemplateColumns__WEBPACK_IMPORTED_MODULE_67__[\"default\"],\n  gridTemplateRows: _generators_gridTemplateRows__WEBPACK_IMPORTED_MODULE_68__[\"default\"],\n  height: _generators_height__WEBPACK_IMPORTED_MODULE_69__[\"default\"],\n  hueRotate: _generators_hueRotate__WEBPACK_IMPORTED_MODULE_70__[\"default\"],\n  hyphens: _generators_hyphens__WEBPACK_IMPORTED_MODULE_71__[\"default\"],\n  inset: _generators_inset__WEBPACK_IMPORTED_MODULE_72__[\"default\"],\n  invert: _generators_invert__WEBPACK_IMPORTED_MODULE_73__[\"default\"],\n  isolation: _generators_isolation__WEBPACK_IMPORTED_MODULE_74__[\"default\"],\n  justifyContent: _generators_justifyContent__WEBPACK_IMPORTED_MODULE_75__[\"default\"],\n  justifyItems: _generators_justifyItems__WEBPACK_IMPORTED_MODULE_76__[\"default\"],\n  justifySelf: _generators_justifySelf__WEBPACK_IMPORTED_MODULE_77__[\"default\"],\n  letterSpacing: _generators_letterSpacing__WEBPACK_IMPORTED_MODULE_78__[\"default\"],\n  lineClamp: _generators_lineClamp__WEBPACK_IMPORTED_MODULE_79__[\"default\"],\n  lineHeight: _generators_lineHeight__WEBPACK_IMPORTED_MODULE_80__[\"default\"],\n  listStylePosition: _generators_listStylePosition__WEBPACK_IMPORTED_MODULE_81__[\"default\"],\n  listStyleType: _generators_listStyleType__WEBPACK_IMPORTED_MODULE_82__[\"default\"],\n  margin: _generators_margin__WEBPACK_IMPORTED_MODULE_83__[\"default\"],\n  maxHeight: _generators_maxHeight__WEBPACK_IMPORTED_MODULE_84__[\"default\"],\n  maxWidth: _generators_maxWidth__WEBPACK_IMPORTED_MODULE_85__[\"default\"],\n  minHeight: _generators_minHeight__WEBPACK_IMPORTED_MODULE_86__[\"default\"],\n  minWidth: _generators_minWidth__WEBPACK_IMPORTED_MODULE_87__[\"default\"],\n  objectFit: _generators_objectFit__WEBPACK_IMPORTED_MODULE_89__[\"default\"],\n  mixBlendMode: _generators_mixBlendMode__WEBPACK_IMPORTED_MODULE_88__[\"default\"],\n  objectPosition: _generators_objectPosition__WEBPACK_IMPORTED_MODULE_90__[\"default\"],\n  opacity: _generators_opacity__WEBPACK_IMPORTED_MODULE_91__[\"default\"],\n  order: _generators_order__WEBPACK_IMPORTED_MODULE_92__[\"default\"],\n  outlineColor: _generators_outlineColor__WEBPACK_IMPORTED_MODULE_93__[\"default\"],\n  outlineOffset: _generators_outlineOffset__WEBPACK_IMPORTED_MODULE_94__[\"default\"],\n  outlineOpacity: _generators_outlineOpacity__WEBPACK_IMPORTED_MODULE_95__[\"default\"],\n  outlineStyle: _generators_outlineStyle__WEBPACK_IMPORTED_MODULE_96__[\"default\"],\n  outlineWidth: _generators_outlineWidth__WEBPACK_IMPORTED_MODULE_97__[\"default\"],\n  overflow: _generators_overflow__WEBPACK_IMPORTED_MODULE_98__[\"default\"],\n  overscrollBehavior: _generators_overscrollBehavior__WEBPACK_IMPORTED_MODULE_99__[\"default\"],\n  padding: _generators_padding__WEBPACK_IMPORTED_MODULE_100__[\"default\"],\n  placeContent: _generators_placeContent__WEBPACK_IMPORTED_MODULE_101__[\"default\"],\n  placeItems: _generators_placeItems__WEBPACK_IMPORTED_MODULE_102__[\"default\"],\n  placeSelf: _generators_placeSelf__WEBPACK_IMPORTED_MODULE_103__[\"default\"],\n  pointerEvents: _generators_pointerEvents__WEBPACK_IMPORTED_MODULE_104__[\"default\"],\n  position: _generators_position__WEBPACK_IMPORTED_MODULE_105__[\"default\"],\n  resize: _generators_resize__WEBPACK_IMPORTED_MODULE_106__[\"default\"],\n  ringColor: _generators_ringColor__WEBPACK_IMPORTED_MODULE_107__[\"default\"],\n  ringOffsetColor: _generators_ringOffsetColor__WEBPACK_IMPORTED_MODULE_108__[\"default\"],\n  ringOffsetWidth: _generators_ringOffsetWidth__WEBPACK_IMPORTED_MODULE_109__[\"default\"],\n  ringOpacity: _generators_ringOpacity__WEBPACK_IMPORTED_MODULE_110__[\"default\"],\n  ringWidth: _generators_ringWidth__WEBPACK_IMPORTED_MODULE_111__[\"default\"],\n  rotate: _generators_rotate__WEBPACK_IMPORTED_MODULE_113__[\"default\"],\n  saturate: _generators_saturate__WEBPACK_IMPORTED_MODULE_112__[\"default\"],\n  scale: _generators_scale__WEBPACK_IMPORTED_MODULE_114__[\"default\"],\n  scrollBehavior: _generators_scrollBehavior__WEBPACK_IMPORTED_MODULE_115__[\"default\"],\n  scrollMargin: _generators_scrollMargin__WEBPACK_IMPORTED_MODULE_116__[\"default\"],\n  scrollPadding: _generators_scrollPadding__WEBPACK_IMPORTED_MODULE_117__[\"default\"],\n  scrollSnapAlign: _generators_scrollSnapAlign__WEBPACK_IMPORTED_MODULE_118__[\"default\"],\n  scrollSnapStop: _generators_scrollSnapStop__WEBPACK_IMPORTED_MODULE_119__[\"default\"],\n  scrollSnapType: _generators_scrollSnapType__WEBPACK_IMPORTED_MODULE_120__[\"default\"],\n  sepia: _generators_sepia__WEBPACK_IMPORTED_MODULE_121__[\"default\"],\n  size: _generators_size__WEBPACK_IMPORTED_MODULE_122__[\"default\"],\n  skew: _generators_skew__WEBPACK_IMPORTED_MODULE_123__[\"default\"],\n  space: _generators_space__WEBPACK_IMPORTED_MODULE_124__[\"default\"],\n  stroke: _generators_stroke__WEBPACK_IMPORTED_MODULE_125__[\"default\"],\n  strokeWidth: _generators_strokeWidth__WEBPACK_IMPORTED_MODULE_126__[\"default\"],\n  tableLayout: _generators_tableLayout__WEBPACK_IMPORTED_MODULE_127__[\"default\"],\n  textAlign: _generators_textAlign__WEBPACK_IMPORTED_MODULE_128__[\"default\"],\n  textColor: _generators_textColor__WEBPACK_IMPORTED_MODULE_129__[\"default\"],\n  textDecoration: _generators_textDecoration__WEBPACK_IMPORTED_MODULE_130__[\"default\"],\n  textDecorationColor: _generators_textDecorationColor__WEBPACK_IMPORTED_MODULE_131__[\"default\"],\n  textDecorationStyle: _generators_textDecorationStyle__WEBPACK_IMPORTED_MODULE_132__[\"default\"],\n  textDecorationThickness: _generators_textDecorationThickness__WEBPACK_IMPORTED_MODULE_133__[\"default\"],\n  textIndent: _generators_textIndent__WEBPACK_IMPORTED_MODULE_134__[\"default\"],\n  textOpacity: _generators_textOpacity__WEBPACK_IMPORTED_MODULE_135__[\"default\"],\n  textOverflow: _generators_textOverflow__WEBPACK_IMPORTED_MODULE_136__[\"default\"],\n  textShadowBlur: _generators_textShadowBlur__WEBPACK_IMPORTED_MODULE_137__[\"default\"],\n  textShadowColor: _generators_textShadowColor__WEBPACK_IMPORTED_MODULE_138__[\"default\"],\n  textShadowOpacity: _generators_textShadowOpacity__WEBPACK_IMPORTED_MODULE_139__[\"default\"],\n  textShadowX: _generators_textShadowX__WEBPACK_IMPORTED_MODULE_140__[\"default\"],\n  textShadowY: _generators_textShadowY__WEBPACK_IMPORTED_MODULE_141__[\"default\"],\n  textTransform: _generators_textTransform__WEBPACK_IMPORTED_MODULE_142__[\"default\"],\n  textUnderlineOffset: _generators_textUnderlineOffset__WEBPACK_IMPORTED_MODULE_143__[\"default\"],\n  textWrap: _generators_textWrap__WEBPACK_IMPORTED_MODULE_144__[\"default\"],\n  touchAction: _generators_touchAction__WEBPACK_IMPORTED_MODULE_145__[\"default\"],\n  transform: _generators_transform__WEBPACK_IMPORTED_MODULE_146__[\"default\"],\n  transformOrigin: _generators_transformOrigin__WEBPACK_IMPORTED_MODULE_147__[\"default\"],\n  translate: _generators_translate__WEBPACK_IMPORTED_MODULE_148__[\"default\"],\n  userSelect: _generators_userSelect__WEBPACK_IMPORTED_MODULE_149__[\"default\"],\n  verticalAlign: _generators_verticalAlign__WEBPACK_IMPORTED_MODULE_150__[\"default\"],\n  visibility: _generators_visibility__WEBPACK_IMPORTED_MODULE_151__[\"default\"],\n  whitespace: _generators_whitespace__WEBPACK_IMPORTED_MODULE_152__[\"default\"],\n  width: _generators_width__WEBPACK_IMPORTED_MODULE_153__[\"default\"],\n  willChange: _generators_willChange__WEBPACK_IMPORTED_MODULE_155__[\"default\"],\n  wordBreak: _generators_wordBreak__WEBPACK_IMPORTED_MODULE_154__[\"default\"],\n  zIndex: _generators_zIndex__WEBPACK_IMPORTED_MODULE_156__[\"default\"]\n};\nfunction parseCustomClassWithPatterns(className) {\n  for (var key in _patterns_index__WEBPACK_IMPORTED_MODULE_157__[\"default\"]) {\n    var _patterns$key = _patterns_index__WEBPACK_IMPORTED_MODULE_157__[\"default\"][key],\n      regex = _patterns$key.regex,\n      cssProp = _patterns$key.cssProp,\n      formatter = _patterns$key.formatter;\n    var match = className.match(regex);\n    if (match) {\n      var value = formatter(match[1]);\n      return \"\".concat(cssProp, \": \").concat(value, \";\");\n    }\n  }\n  return null;\n}\n\n// Cache untuk getConfigOptions\nvar configOptionsCache = new Map();\nvar cacheKey = function cacheKey(options) {\n  return JSON.stringify(options);\n};\nfunction generateTailwindCssString() {\n  var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var pluginKeys = Object.keys(plugins);\n  // Menggunakan cache untuk mencegah pemrosesan ulang yang tidak perlu\n  var key = cacheKey(options);\n  if (!configOptionsCache.has(key)) {\n    configOptionsCache.set(key, (0,_utils_index__WEBPACK_IMPORTED_MODULE_0__.getConfigOptions)(options, pluginKeys));\n    limitCacheSize(configOptionsCache);\n  }\n  var configOptions = configOptionsCache.get(key);\n  var _configOptions$corePl = configOptions.corePlugins,\n    corePlugins = _configOptions$corePl === void 0 ? {} : _configOptions$corePl;\n  var corePluginKeys = Object.keys(corePlugins);\n  var cssString = \"\";\n  Object.keys(plugins).forEach(function (key) {\n    if (corePluginKeys.indexOf(key) >= 0 && !corePlugins[key]) {\n      cssString += \"\";\n    } else {\n      cssString += plugins[key](configOptions);\n    }\n  });\n  return cssString;\n}\nfunction convertCssToObject(cssString) {\n  var obj = {};\n  var regex = /([a-zA-Z0-9\\-_\\\\/.]+)\\s*{\\s*([^}]+)\\s*}/g;\n  var match;\n  while ((match = regex.exec(cssString)) !== null) {\n    var className = match[1].replace(/\\\\\\\\/g, \"\\\\\").replace(/^_/, \"\");\n    var cssRules = match[2].trim().replace(/\\s+/g, \" \");\n    obj[className] = cssRules;\n  }\n  return obj;\n}\nvar twString = null;\nvar cssObject = null;\nif (!twString) {\n  twString = generateTailwindCssString().replace(/\\s\\s+/g, \" \");\n}\nif (!cssObject) {\n  cssObject = convertCssToObject(twString);\n}\nvar breakpoints = {\n  sm: \"@media (min-width: 640px)\",\n  md: \"@media (min-width: 768px)\",\n  lg: \"@media (min-width: 1024px)\",\n  xl: \"@media (min-width: 1280px)\",\n  \"2xl\": \"@media (min-width: 1536px)\"\n};\nvar pseudoVariants = new Set([\"hover\", \"focus\", \"focus-within\", \"active\", \"visited\", \"disabled\", \"first\", \"last\", \"checked\", \"invalid\", \"required\"]);\nvar specialVariants = {\n  group: function group(state, sel) {\n    return \".group:\".concat(state, \" \").concat(sel);\n  },\n  peer: function peer(state, sel) {\n    return \".peer:\".concat(state, \" ~ \").concat(sel);\n  }\n};\nvar selectorVariants = {\n  first: function first() {\n    return \"> :first-child\";\n  },\n  last: function last() {\n    return \"> :last-child\";\n  },\n  odd: function odd() {\n    return \"> :nth-child(odd)\";\n  },\n  even: function even() {\n    return \"> :nth-child(even)\";\n  },\n  not: function not(arg) {\n    return \"> :not(\".concat(arg, \")\");\n  },\n  number: function number(arg) {\n    return \"> :nth-child(\".concat(arg, \")\");\n  }\n};\n\n// Mengoptimalkan encoding/decoding bracket values dengan memoization\nvar encodeBracketCache = new Map();\nfunction encodeBracketValues(input) {\n  if (!input) return input;\n  if (encodeBracketCache.has(input)) return encodeBracketCache.get(input);\n  var result = input.replace(/\\[([^\\]]+)\\]/g, function (_, content) {\n    var encoded = encodeURIComponent(content).replace(/\\(/g, \"__P__\").replace(/\\)/g, \"__C__\");\n    return \"[\".concat(encoded, \"]\");\n  });\n  encodeBracketCache.set(input, result);\n  limitCacheSize(encodeBracketCache);\n  return result;\n}\nvar decodeBracketCache = new Map();\nfunction decodeBracketValues(input) {\n  if (!input) return input;\n  if (decodeBracketCache.has(input)) return decodeBracketCache.get(input);\n  var result = decodeURIComponent(input).replace(/__P__/g, \"(\").replace(/__C__/g, \")\");\n  decodeBracketCache.set(input, result);\n  limitCacheSize(decodeBracketCache);\n  return result;\n}\nfunction replaceSelector(selector) {\n  return selector.replace(/c-(first|last|odd|even|\\d+|not\\([^)]+\\))/g, function (_, raw) {\n    if (/^\\d+$/.test(raw)) return selectorVariants.number(raw);\n    var notMatch = raw.match(/^not\\(([^)]+)\\)$/);\n    if (notMatch) return selectorVariants.not(notMatch[1]);\n    if (selectorVariants[raw]) return selectorVariants[raw]();\n    return raw;\n  });\n}\nfunction resolveVariants(selector, variants) {\n  var media = null;\n  var finalSelector = selector;\n  var _iterator = _createForOfIteratorHelper(variants),\n    _step;\n  try {\n    for (_iterator.s(); !(_step = _iterator.n()).done;) {\n      var v = _step.value;\n      if (breakpoints[v]) {\n        media = breakpoints[v];\n      } else if (pseudoVariants.has(v)) {\n        finalSelector += \":\".concat(v);\n      } else {\n        for (var key in specialVariants) {\n          if (v.startsWith(\"\".concat(key, \"-\"))) {\n            var state = v.slice(key.length + 1);\n            finalSelector = specialVariants[key](state, finalSelector);\n            break;\n          }\n        }\n      }\n    }\n  } catch (err) {\n    _iterator.e(err);\n  } finally {\n    _iterator.f();\n  }\n  return {\n    media: media,\n    finalSelector: finalSelector\n  };\n}\nfunction inlineStyleToJson(styleString) {\n  var styles = styleString.split(\";\").filter(function (style) {\n    return style.trim() !== \"\";\n  });\n  var styleObject = {};\n  styles.forEach(function (style) {\n    var _style$split$map = style.split(\":\").map(function (s) {\n        return s.trim();\n      }),\n      _style$split$map2 = _slicedToArray(_style$split$map, 2),\n      key = _style$split$map2[0],\n      value = _style$split$map2[1];\n    if (key && value) {\n      var camelCaseKey = key.replace(/-([a-z])/g, function (_, letter) {\n        return letter.toUpperCase();\n      });\n      styleObject[camelCaseKey] = value;\n    }\n  });\n  return styleObject;\n}\n\n// Cache untuk CSS resolusi\nvar cssResolutionCache = new Map();\nfunction separateAndResolveCSS(arr) {\n  // Membuat kunci cache  const cacheKey = arr.join('|');\n  if (cssResolutionCache.has(cacheKey)) {\n    return cssResolutionCache.get(cacheKey);\n  }\n\n  // Batasi ukuran cache untuk menghindari memory leak\n  limitCacheSize(cssResolutionCache);\n  var cssProperties = {};\n  arr.forEach(function (item) {\n    if (!item) return;\n    var declarations = item.split(\";\").map(function (decl) {\n      return decl.trim();\n    }).filter(function (decl) {\n      return decl;\n    });\n    declarations.forEach(function (declaration) {\n      var colonIndex = declaration.indexOf(':');\n      if (colonIndex === -1) return;\n      var key = declaration.substring(0, colonIndex).trim();\n      var value = declaration.substring(colonIndex + 1).trim();\n      if (key && value) {\n        // Prioritaskan nilai yang lebih spesifik (misalnya !important)\n        if (value.includes('!important') || !cssProperties[key]) {\n          cssProperties[key] = value;\n        }\n      }\n    });\n  });\n  var resolvedProperties = _objectSpread({}, cssProperties);\n  var resolveValue = function resolveValue(value, variables) {\n    if (!value || !value.includes('var(')) return value;\n    return value.replace(/var\\((--[a-zA-Z0-9-]+)(?:,\\s*([^)]+))?\\)/g, function (match, variable, fallback) {\n      return variables[variable] || fallback || match;\n    });\n  };\n\n  // Resolve variables\n  Object.keys(resolvedProperties).forEach(function (key) {\n    resolvedProperties[key] = resolveValue(resolvedProperties[key], resolvedProperties);\n  });\n\n  // Remove CSS variables after resolution\n  Object.keys(resolvedProperties).forEach(function (key) {\n    if (key.startsWith(\"--\")) {\n      delete resolvedProperties[key];\n    }\n  });\n  var result = Object.entries(resolvedProperties).map(function (_ref) {\n    var _ref2 = _slicedToArray(_ref, 2),\n      key = _ref2[0],\n      value = _ref2[1];\n    return \"\".concat(key, \": \").concat(value, \";\");\n  }).join(\" \");\n  cssResolutionCache.set(cacheKey, result);\n  return result;\n}\n\n// Fungsi untuk membatasi ukuran cache untuk mencegah memory leak\nfunction limitCacheSize(cache) {\n  var maxSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1000;\n  if (cache.size > maxSize) {\n    // Hapus 20% entri yang paling lama\n    var entriesToRemove = Math.floor(cache.size * 0.2);\n    var keys = Array.from(cache.keys()).slice(0, entriesToRemove);\n    keys.forEach(function (key) {\n      return cache[\"delete\"](key);\n    });\n  }\n}\n\n// Implementasi fungsi debounce untuk mengoptimalkan panggilan berulang\nfunction debounce(func) {\n  var wait = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 100;\n  var timeout;\n  return function () {\n    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {\n      args[_key] = arguments[_key];\n    }\n    var context = this;\n    clearTimeout(timeout);\n    timeout = setTimeout(function () {\n      return func.apply(context, args);\n    }, wait);\n  };\n}\n\n/**\r\n * Mengkonversi string kelas Tailwind menjadi inline styles CSS atau objek JSON\r\n * @param {string} classNames - String berisi kelas Tailwind yang akan dikonversi\r\n * @param {boolean} convertToJson - Jika true, hasil akan menjadi objek JSON, jika false menjadi string CSS\r\n * @returns {string|Object} String CSS inline atau objek style JSON\r\n */\nfunction tws(classNames, convertToJson) {\n  if ([!classNames, typeof classNames !== \"string\", classNames.trim() === \"\"].includes(true)) {\n    return convertToJson ? {} : \"\";\n  }\n  var classes;\n  try {\n    classes = classNames.match(/[\\w-]+\\[[^\\]]+\\]|[\\w-]+\\.\\d+|[\\w-]+/g);\n\n    // Jika tidak ada class yang valid ditemukan\n    if (!classes || classes.length === 0) {\n      console.warn(\"No valid Tailwind classes found in input: \\\"\".concat(classNames, \"\\\"\"));\n      return convertToJson ? {} : \"\";\n    }\n  } catch (error) {\n    console.error(\"Error parsing Tailwind classes: \".concat(error.message));\n    return convertToJson ? {} : \"\";\n  }\n  var cssResult = classes.map(function (className) {\n    if (cssObject[className]) {\n      return cssObject[className];\n    } else if (className.includes(\"[\")) {\n      var match = className.match(/\\[([^\\]]+)\\]/);\n      if (match) {\n        var customValue = match[1];\n        var baseKey = className.split(\"[\")[0];\n        if (cssObject[\"\".concat(baseKey, \"custom\")]) {\n          return cssObject[\"\".concat(baseKey, \"custom\")].replace(/custom_value/g, customValue);\n        }\n      }\n    }\n    return \"\";\n  });\n  cssResult = separateAndResolveCSS(cssResult);\n  if (convertToJson) {\n    cssResult = inlineStyleToJson(cssResult);\n  }\n  return cssResult;\n}\n\n/**\r\n * Menghasilkan string CSS dari objek style dengan sintaks mirip SCSS\r\n * Mendukung nested selectors, state variants, responsive variants, dan @css directives\r\n * @param {Object} obj - Objek dengan format style mirip SCSS\r\n * @returns {string} String CSS yang dihasilkan\r\n */\nfunction twsx(obj) {\n  if (!obj || _typeof(obj) !== 'object') {\n    console.warn('twsx: Expected an object but received:', obj);\n    return '';\n  }\n  var styles = {};\n  function expandGroupedClass(input) {\n    function expandDirectiveGroups(str) {\n      return str.replace(/(\\w+)\\(([^()]+)\\)/g, function (_, directive, content) {\n        return content.trim().split(/\\s+/).map(function (val) {\n          if (val.includes(\":\")) {\n            var _val$split = val.split(\":\"),\n              _val$split2 = _slicedToArray(_val$split, 2),\n              variant = _val$split2[0],\n              v = _val$split2[1];\n            var _prefix = v.startsWith(\"-\") ? \"-\" : \"\";\n            var _value = v.startsWith(\"-\") ? v.slice(1) : v;\n            return \"\".concat(variant, \":\").concat(_prefix).concat(directive, \"-\").concat(_value);\n          }\n          var prefix = val.startsWith(\"-\") ? \"-\" : \"\";\n          var value = val.startsWith(\"-\") ? val.slice(1) : val;\n          return \"\".concat(prefix).concat(directive, \"-\").concat(value);\n        }).join(\" \");\n      });\n    }\n    function expandVariants(str) {\n      var parent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : \"\";\n      return str.replace(/(\\w+):\\(([^()]+(?:\\((?:[^()]+)\\))?[^()]*)\\)/g, function (_, variant, content) {\n        return content.trim().split(/\\s+/).map(function (c) {\n          if (/\\w+:\\(.*\\)/.test(c)) {\n            return expandVariants(c, parent ? \"\".concat(parent, \":\").concat(variant) : variant);\n          }\n          return \"\".concat(parent ? \"\".concat(parent, \":\").concat(variant) : variant, \":\").concat(c);\n        }).join(\" \");\n      });\n    }\n    var result = encodeBracketValues(input);\n    var prev;\n    do {\n      prev = result;\n      result = expandVariants(result);\n      result = expandDirectiveGroups(result);\n    } while (result !== prev);\n    return result;\n  }\n  function walk(selector, val) {\n    if (!selector || typeof selector !== 'string') {\n      console.warn('Invalid selector in walk function:', selector);\n      return;\n    }\n    var _parseSelector = parseSelector(selector),\n      baseSelector = _parseSelector.baseSelector,\n      cssProperty = _parseSelector.cssProperty;\n    if (cssProperty && _typeof(val) === \"object\" && Array.isArray(val) && val.length > 0) {\n      var cssValue = val[0];\n      if (typeof cssValue === \"string\") {\n        styles[baseSelector] = styles[baseSelector] || \"\";\n        styles[baseSelector] += \"\".concat(cssProperty, \": \").concat(cssValue, \";\\n\");\n        return;\n      }\n    }\n    if (Array.isArray(val)) {\n      var _val = _slicedToArray(val, 2),\n        base = _val[0],\n        nested = _val[1];\n      if (typeof base !== \"string\") {\n        return;\n      }\n      var _iterator2 = _createForOfIteratorHelper(base.split(\" \")),\n        _step2;\n      try {\n        var _loop = function _loop() {\n            var cls = _step2.value;\n            if (cls.trim() === \"\") return 0; // continue\n            var _ref5 = cls.includes(\":\") ? [cls.split(\":\").slice(0, -1), cls.split(\":\").slice(-1)[0]] : [[], cls],\n              _ref6 = _slicedToArray(_ref5, 2),\n              rawVariants = _ref6[0],\n              className = _ref6[1];\n            var isImportant = false;\n            var pureClassName = className;\n            if (className.startsWith(\"!\")) {\n              isImportant = true;\n              pureClassName = className.slice(1);\n            }\n            var _resolveVariants = resolveVariants(selector, rawVariants),\n              media = _resolveVariants.media,\n              finalSelector = _resolveVariants.finalSelector;\n            var declarations = cssObject[pureClassName] || cssObject[pureClassName.replace(/(\\/)/g, \"\\\\$1\")] || cssObject[pureClassName.replace(/\\./g, \"\\\\.\")];\n            if (!declarations && pureClassName.includes(\"[\")) {\n              var match = pureClassName.match(/^(.+?)\\[(.+)\\]$/);\n              if (match) {\n                var _match = _slicedToArray(match, 3),\n                  prefix = _match[1],\n                  dynamicValue = _match[2];\n                var customKey = \"\".concat(prefix, \"custom\");\n                var template = cssObject[customKey];\n                if (template) {\n                  declarations = template.replace(/custom_value/g, decodeBracketValues(dynamicValue));\n                }\n              }\n            }\n            if (!declarations) {\n              declarations = parseCustomClassWithPatterns(pureClassName);\n            }\n            if (!declarations) {\n              return 0; // continue\n            }\n            if (isImportant) {\n              declarations = declarations.replace(/([^:;]+):([^;]+)(;?)/g, function (_, prop, value) {\n                return prop.trim().startsWith(\"--\") ? \"\".concat(prop, \":\").concat(value, \";\") : \"\".concat(prop, \":\").concat(value.trim(), \" !important;\");\n              });\n            }\n            var isSpaceOrDivide = [\"space-x-\", \"-space-x-\", \"space-y-\", \"-space-y-\", \"divide-\"].some(function (prefix) {\n              return pureClassName.startsWith(prefix);\n            });\n            var expandedSelector = replaceSelector(finalSelector);\n            var targetSelector = isSpaceOrDivide ? \"\".concat(expandedSelector, \" > :not([hidden]) ~ :not([hidden])\") : expandedSelector;\n            if (media) {\n              styles[media] = styles[media] || {};\n              styles[media][targetSelector] = styles[media][targetSelector] || \"\";\n              styles[media][targetSelector] += declarations + \"\\n\";\n            } else {\n              styles[targetSelector] = styles[targetSelector] || \"\";\n              styles[targetSelector] += declarations + \"\\n\";\n            }\n          },\n          _ret;\n        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {\n          _ret = _loop();\n          if (_ret === 0) continue;\n        }\n      } catch (err) {\n        _iterator2.e(err);\n      } finally {\n        _iterator2.f();\n      }\n      for (var nestedSel in nested) {\n        var nestedVal = nested[nestedSel];\n        if (nestedSel === \"@css\" && _typeof(nestedVal) === \"object\") {\n          var cssDeclarations = Object.entries(nestedVal).map(function (_ref3) {\n            var _ref4 = _slicedToArray(_ref3, 2),\n              key = _ref4[0],\n              value = _ref4[1];\n            return \"\".concat(key, \": \").concat(value, \";\");\n          }).join(\" \");\n          if (selector in styles) {\n            styles[selector] += cssDeclarations + \"\\n\";\n          } else {\n            styles[selector] = cssDeclarations + \"\\n\";\n          }\n          continue;\n        }\n        var combinedSel = nestedSel.includes(\"&\") ? nestedSel.replace(/&/g, selector) : \"\".concat(selector, \" \").concat(nestedSel);\n        walk(combinedSel, nestedVal);\n      }\n    } else if (typeof val === \"string\") {\n      if (val.trim() === \"\") return;\n      walk(selector, [expandGroupedClass(val)]);\n    } else if (_typeof(val) === \"object\" && val !== null) {\n      var _parseSelector2 = parseSelector(selector),\n        _baseSelector = _parseSelector2.baseSelector,\n        _cssProperty = _parseSelector2.cssProperty;\n      if (_cssProperty) {\n        var _cssValue = Object.values(val).join(\" \");\n        styles[_baseSelector] = styles[_baseSelector] || \"\";\n        styles[_baseSelector] += \"\".concat(_cssProperty, \": \").concat(_cssValue, \";\\n\");\n        return;\n      }\n      var _cssDeclarations = Object.entries(val).map(function (_ref7) {\n        var _ref8 = _slicedToArray(_ref7, 2),\n          key = _ref8[0],\n          value = _ref8[1];\n        return \"\".concat(key, \": \").concat(value, \";\");\n      }).join(\" \");\n      if (selector in styles) {\n        styles[selector] += _cssDeclarations + \"\\n\";\n      } else {\n        styles[selector] = _cssDeclarations + \"\\n\";\n      }\n    }\n  }\n\n  // Menambahkan memoization untuk parseSelector\n  var parseSelectorCache = new Map();\n  function parseSelector(selector) {\n    if (parseSelectorCache.has(selector)) {\n      return parseSelectorCache.get(selector);\n    }\n    var result;\n    if (selector.includes('@css')) {\n      var _parts$;\n      var parts = selector.split('@css');\n      var baseSelector = parts[0].trim();\n      var cssProperty = (_parts$ = parts[1]) === null || _parts$ === void 0 ? void 0 : _parts$.trim();\n      result = {\n        baseSelector: baseSelector,\n        cssProperty: cssProperty\n      };\n    } else {\n      result = {\n        baseSelector: selector,\n        cssProperty: null\n      };\n    }\n    parseSelectorCache.set(selector, result);\n    limitCacheSize(parseSelectorCache);\n    return result;\n  }\n  function isSelectorObject(val) {\n    return _typeof(val) === \"object\" && val !== null && !Array.isArray(val);\n  }\n  function flatten(obj) {\n    var parentSelector = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : \"\";\n    var result = {};\n    for (var selector in obj) {\n      var val = obj[selector];\n      var currentSelector = parentSelector ? selector.includes(\"&\") ? selector.replace(/&/g, parentSelector) : \"\".concat(parentSelector, \" \").concat(selector) : selector;\n      if (typeof val === \"string\") {\n        result[currentSelector] = val;\n      } else if (Array.isArray(val)) {\n        var flatArray = [];\n        var _iterator3 = _createForOfIteratorHelper(val),\n          _step3;\n        try {\n          for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {\n            var item = _step3.value;\n            if (typeof item === \"string\") {\n              flatArray.push(item);\n            } else if (isSelectorObject(item)) {\n              var nested = flatten(item, currentSelector);\n              Object.assign(result, nested);\n            }\n          }\n        } catch (err) {\n          _iterator3.e(err);\n        } finally {\n          _iterator3.f();\n        }\n        if (flatArray.length > 0) {\n          var _result$currentSelect;\n          result[currentSelector] = result[currentSelector] || [];\n          (_result$currentSelect = result[currentSelector]).push.apply(_result$currentSelect, flatArray);\n        }\n      } else if (isSelectorObject(val)) {\n        var _nested = flatten(val, currentSelector);\n        Object.assign(result, _nested);\n      }\n    }\n    return result;\n  }\n  var flattened = flatten(obj);\n  for (var selector in flattened) {\n    var val = flattened[selector];\n    var baseClass = \"\";\n    var nested = {};\n    if (typeof val === \"string\") {\n      baseClass = expandGroupedClass(val);\n    } else if (Array.isArray(val)) {\n      var _iterator4 = _createForOfIteratorHelper(val),\n        _step4;\n      try {\n        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {\n          var item = _step4.value;\n          if (typeof item === \"string\") {\n            baseClass += (baseClass ? \" \" : \"\") + expandGroupedClass(item);\n          } else if (_typeof(item) === \"object\" && item !== null) {\n            Object.assign(nested, item);\n          }\n        }\n      } catch (err) {\n        _iterator4.e(err);\n      } finally {\n        _iterator4.f();\n      }\n    }\n    walk(selector, [baseClass, nested]);\n  }\n  var cssString = \"\";\n  var baseStyles = [];\n  var mediaStyles = [];\n  for (var sel in styles) {\n    if (!sel.startsWith(\"@media\")) {\n      baseStyles.push({\n        sel: sel,\n        css: styles[sel]\n      });\n    } else {\n      mediaStyles.push({\n        sel: sel,\n        content: styles[sel]\n      });\n    }\n  }\n  for (var _i = 0, _baseStyles = baseStyles; _i < _baseStyles.length; _i++) {\n    var _baseStyles$_i = _baseStyles[_i],\n      _sel = _baseStyles$_i.sel,\n      css = _baseStyles$_i.css;\n    cssString += \"\".concat(_sel, \"{\").concat(css.trim().replace(/\\n/g, \"\"), \"}\");\n  }\n  function mediaPriority(sel) {\n    var match = sel.match(/@media \\(min-width: (\\d+)px\\)/);\n    return match ? parseInt(match[1], 10) : 99999;\n  }\n  mediaStyles.sort(function (a, b) {\n    return mediaPriority(a.sel) - mediaPriority(b.sel);\n  });\n  for (var _i2 = 0, _mediaStyles = mediaStyles; _i2 < _mediaStyles.length; _i2++) {\n    var _mediaStyles$_i = _mediaStyles[_i2],\n      _sel2 = _mediaStyles$_i.sel,\n      content = _mediaStyles$_i.content;\n    cssString += \"\".concat(_sel2, \"{\");\n    for (var subSel in content) {\n      cssString += \"\".concat(subSel, \"{\").concat(content[subSel].trim().replace(/\\n/g, \"\"), \"}\");\n    }\n    cssString += \"}\";\n  }\n  return cssString.trim();\n}\n\n// Daftarkan versi debounced dari fungsi-fungsi export\n/**\r\n * Versi debounced dari fungsi tws\r\n * Membantu mengoptimalkan performa ketika memanggil tws berulang kali\r\n * @param {string} classNames - String berisi kelas Tailwind yang akan dikonversi\r\n * @param {boolean} convertToJson - Jika true, hasil akan menjadi objek JSON, jika false menjadi string CSS\r\n * @returns {string|Object} String CSS inline atau objek style JSON\r\n */\nvar debouncedTws = debounce(tws);\n\n/**\r\n * Versi debounced dari fungsi twsx\r\n * Membantu mengoptimalkan performa ketika memanggil twsx berulang kali\r\n * @param {Object} obj - Objek dengan format style mirip SCSS\r\n * @returns {string} String CSS yang dihasilkan\r\n */\nvar debouncedTwsx = debounce(twsx);\n\n//# sourceURL=webpack://tailwindToStyle/./src/index.js?");
+
+/***/ }),
+
+/***/ "./src/patterns/animation.js":
+/*!***********************************!*\
+  !*** ./src/patterns/animation.js ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\nvar patterns = {\n  transitionNone: {\n    regex: /^transition-none$/,\n    cssProp: \"transition-property\",\n    formatter: function formatter() {\n      return \"none\";\n    }\n  },\n  transitionAll: {\n    regex: /^transition$/,\n    cssProp: \"transition-property\",\n    formatter: function formatter() {\n      return \"all\";\n    }\n  },\n  transitionProp: {\n    regex: /^transition-(opacity|colors|color|background|background-color|transform|shadow|opacity|all|none)$/,\n    cssProp: \"transition-property\",\n    formatter: function formatter(value) {\n      if (value === \"colors\") return \"color, background-color, border-color, text-decoration-color, fill, stroke\";\n      if (value === \"color\") return \"color\";\n      if (value === \"background\") return \"background-color\";\n      return value;\n    }\n  },\n  duration: {\n    regex: /^duration-(\\d+)$/,\n    cssProp: \"transition-duration\",\n    formatter: function formatter(value) {\n      return \"\".concat(value, \"ms\");\n    }\n  },\n  delay: {\n    regex: /^delay-(\\d+)$/,\n    cssProp: \"transition-delay\",\n    formatter: function formatter(value) {\n      return \"\".concat(value, \"ms\");\n    }\n  },\n  ease: {\n    regex: /^ease-(linear|in|out|in-out)$/,\n    cssProp: \"transition-timing-function\",\n    formatter: function formatter(value) {\n      switch (value) {\n        case \"in\":\n          return \"cubic-bezier(0.4, 0, 1, 1)\";\n        case \"out\":\n          return \"cubic-bezier(0, 0, 0.2, 1)\";\n        case \"in-out\":\n          return \"cubic-bezier(0.4, 0, 0.2, 1)\";\n        case \"linear\":\n        default:\n          return \"linear\";\n      }\n    }\n  }\n};\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (patterns);\n\n//# sourceURL=webpack://tailwindToStyle/./src/patterns/animation.js?");
+
+/***/ }),
+
+/***/ "./src/patterns/index.js":
+/*!*******************************!*\
+  !*** ./src/patterns/index.js ***!
+  \*******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _animation__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./animation */ \"./src/patterns/animation.js\");\nfunction _typeof(o) { \"@babel/helpers - typeof\"; return _typeof = \"function\" == typeof Symbol && \"symbol\" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && \"function\" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? \"symbol\" : typeof o; }, _typeof(o); }\nfunction ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }\nfunction _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }\nfunction _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }\nfunction _toPropertyKey(t) { var i = _toPrimitive(t, \"string\"); return \"symbol\" == _typeof(i) ? i : i + \"\"; }\nfunction _toPrimitive(t, r) { if (\"object\" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || \"default\"); if (\"object\" != _typeof(i)) return i; throw new TypeError(\"@@toPrimitive must return a primitive value.\"); } return (\"string\" === r ? String : Number)(t); }\n\nvar patterns = _objectSpread({}, _animation__WEBPACK_IMPORTED_MODULE_0__[\"default\"]);\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (patterns);\n\n//# sourceURL=webpack://tailwindToStyle/./src/patterns/index.js?");
+
+/***/ }),
+
+/***/ "./src/utils/index.js":
+/*!****************************!*\
+  !*** ./src/utils/index.js ***!
+  \****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   generateCssString: () => (/* binding */ generateCssString),\n/* harmony export */   getConfigOptions: () => (/* binding */ getConfigOptions)\n/* harmony export */ });\n/* harmony import */ var _config_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../config/index */ \"./src/config/index.js\");\nfunction _typeof(o) { \"@babel/helpers - typeof\"; return _typeof = \"function\" == typeof Symbol && \"symbol\" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && \"function\" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? \"symbol\" : typeof o; }, _typeof(o); }\nfunction _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }\nfunction _nonIterableRest() { throw new TypeError(\"Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\"); }\nfunction _unsupportedIterableToArray(r, a) { if (r) { if (\"string\" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return \"Object\" === t && r.constructor && (t = r.constructor.name), \"Map\" === t || \"Set\" === t ? Array.from(r) : \"Arguments\" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }\nfunction _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }\nfunction _iterableToArrayLimit(r, l) { var t = null == r ? null : \"undefined\" != typeof Symbol && r[Symbol.iterator] || r[\"@@iterator\"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t[\"return\"] && (u = t[\"return\"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }\nfunction _arrayWithHoles(r) { if (Array.isArray(r)) return r; }\nfunction ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }\nfunction _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }\nfunction _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }\nfunction _toPropertyKey(t) { var i = _toPrimitive(t, \"string\"); return \"symbol\" == _typeof(i) ? i : i + \"\"; }\nfunction _toPrimitive(t, r) { if (\"object\" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || \"default\"); if (\"object\" != _typeof(i)) return i; throw new TypeError(\"@@toPrimitive must return a primitive value.\"); } return (\"string\" === r ? String : Number)(t); }\n\nfunction isFunction(functionToCheck) {\n  return functionToCheck && {}.toString.call(functionToCheck) === \"[object Function]\";\n}\nfunction getConfigOptions() {\n  var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n  var _options$theme = options.theme,\n    theme = _options$theme === void 0 ? {} : _options$theme;\n  var _theme$extend = theme.extend,\n    themeExtend = _theme$extend === void 0 ? {} : _theme$extend;\n  var newTheme = {};\n  var themeKeys = Object.keys(_config_index__WEBPACK_IMPORTED_MODULE_0__[\"default\"].theme);\n  themeKeys.forEach(function (key) {\n    newTheme[key] = theme[key] || _config_index__WEBPACK_IMPORTED_MODULE_0__[\"default\"].theme[key];\n    if (isFunction(newTheme[key])) {\n      newTheme[key] = newTheme[key]({\n        theme: function theme(keyRef) {\n          return _config_index__WEBPACK_IMPORTED_MODULE_0__[\"default\"].theme[keyRef];\n        }\n      });\n    }\n  });\n  themeKeys.forEach(function (key) {\n    if (isFunction(newTheme[key])) {\n      newTheme[key] = newTheme[key]({\n        theme: function theme(keyRef) {\n          return newTheme[keyRef];\n        }\n      });\n    }\n    if (themeExtend[key]) {\n      newTheme[key] = Object.assign({}, newTheme[key], themeExtend[key]);\n    }\n  });\n  return _objectSpread(_objectSpread({\n    prefix: \"\"\n  }, options), {}, {\n    theme: newTheme\n  });\n}\nfunction generateCssString() {\n  var getCssString = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};\n  var orientationPrefix = \"\";\n  var hexToRgb = function hexToRgb(hex) {\n    var rgba = hex.replace(/^#?([a-f\\d])([a-f\\d])([a-f\\d])$/i, function () {\n      return \"#\" + (arguments.length <= 1 ? undefined : arguments[1]) + (arguments.length <= 1 ? undefined : arguments[1]) + (arguments.length <= 2 ? undefined : arguments[2]) + (arguments.length <= 2 ? undefined : arguments[2]) + (arguments.length <= 3 ? undefined : arguments[3]) + (arguments.length <= 3 ? undefined : arguments[3]);\n    }).substring(1).match(/.{2}/g).map(function (x) {\n      return parseInt(x, 16);\n    }).join(\",\");\n    if (rgba.indexOf(\"NaN\") >= 0) return \"\";\n    return rgba;\n  };\n  var getCssByOptions = function getCssByOptions() {\n    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};\n    var getStr = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};\n    var nOptions = Object.assign({}, options);\n    if (Array.isArray(options)) {\n      nOptions = options.reduce(function (currentObj, value) {\n        return Object.assign({}, currentObj, _defineProperty({}, value, value));\n      }, {});\n    }\n    var str = \"\";\n    Object.entries(nOptions).forEach(function (_ref) {\n      var _ref2 = _slicedToArray(_ref, 2),\n        key = _ref2[0],\n        value = _ref2[1];\n      str += getStr(key.replace(\"/\", \"\\\\/\").replace(\".\", \"\\\\.\"), value);\n    });\n    return str;\n  };\n  var getCssByColors = function getCssByColors(colors) {\n    var getStr = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};\n    var str = \"\";\n    Object.entries(colors).forEach(function (_ref3) {\n      var _ref4 = _slicedToArray(_ref3, 2),\n        key1 = _ref4[0],\n        value1 = _ref4[1];\n      if (typeof value1 === \"string\") {\n        str += \"\".concat(getStr(key1, value1, hexToRgb(value1)), \" \");\n      } else if (_typeof(value1) === \"object\") {\n        Object.entries(value1).forEach(function (_ref5) {\n          var _ref6 = _slicedToArray(_ref5, 2),\n            key2 = _ref6[0],\n            value2 = _ref6[1];\n          str += \"\".concat(getStr(\"\".concat(key1, \"-\").concat(key2), value2, hexToRgb(value2)), \" \");\n        });\n      }\n    });\n    return str;\n  };\n  var isValidCssColor = function isValidCssColor(value) {\n    if (typeof value !== \"string\") return false;\n    var hexColor = /^#(?:[0-9a-fA-F]{3}){1,2}$/;\n    var rgbColor = /^rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)$/;\n    var rgbaColor = /^rgba\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*(0|1|0?\\.\\d+)\\s*\\)$/;\n    var hslColor = /^hsl\\(\\s*\\d+\\s*,\\s*\\d+%\\s*,\\s*\\d+%\\s*\\)$/;\n    var hslaColor = /^hsla\\(\\s*\\d+\\s*,\\s*\\d+%\\s*,\\s*\\d+%\\s*,\\s*(0|1|0?\\.\\d+)\\s*\\)$/;\n    return [hexColor.test(value), rgbColor.test(value), rgbaColor.test(value), hslColor.test(value), hslaColor.test(value)].includes(true);\n  };\n  var cssString = getCssString({\n    orientationPrefix: orientationPrefix,\n    getCssByOptions: getCssByOptions,\n    getCssByColors: getCssByColors,\n    isValidCssColor: isValidCssColor\n  });\n  return cssString;\n}\n\n\n//# sourceURL=webpack://tailwindToStyle/./src/utils/index.js?");
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module can't be inlined because the eval devtool is used.
+/******/ 	var __webpack_exports__ = __webpack_require__("./src/index.js");
+/******/ 	
+/******/ 	return __webpack_exports__;
+/******/ })()
+;
+});

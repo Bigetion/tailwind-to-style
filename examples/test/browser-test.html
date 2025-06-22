@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tailwind to Style Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        .result {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: #f7f7f7;
+            border-radius: 0.5rem;
+            border: 1px solid #e5e5e5;
+        }
+        .output {
+            padding: 0.5rem;
+            background-color: #f0f0f0;
+            border-radius: 0.25rem;
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin-top: 0.5rem;
+        }
+    </style>
+    <script src="../../index.js"></script>
+</head>
+<body>
+    <h1>Tailwind to Style Test Examples</h1>
+    
+    <div class="result">
+        <h2>Basic Test - tws() function</h2>
+        <p>Converting <code>bg-blue-500 text-white p-4 rounded</code> to CSS</p>
+        <div class="output" id="basic-output"></div>
+    </div>
+    
+    <div class="result">
+        <h2>JSON Format - tws() with JSON flag</h2>
+        <p>Converting <code>bg-blue-500 text-white p-4 rounded</code> to JSON</p>
+        <div class="output" id="json-output"></div>
+    </div>
+    
+    <div class="result">
+        <h2>Responsive Test</h2>
+        <p>Converting <code>text-sm md:text-base lg:text-lg</code> to CSS</p>
+        <div class="output" id="responsive-output"></div>
+    </div>
+    
+    <div class="result">
+        <h2>State Variants Test</h2>
+        <p>Converting <code>bg-gray-200 hover:bg-blue-500 focus:bg-green-500</code> to CSS</p>
+        <div class="output" id="state-output"></div>
+    </div>
+    
+    <div class="result">
+        <h2>Complex Test - twsx() function</h2>
+        <p>Nested styles with twsx</p>
+        <div class="output" id="complex-output"></div>
+    </div>
+
+    <div class="result">
+        <h2>Live Demo</h2>
+        <p>This div is styled using the inline styles generated from Tailwind classes:</p>
+        <div id="live-demo">
+            This element is styled with Tailwind-to-Style
+        </div>
+    </div>
+    
+    <script>
+        // Basic test
+        document.getElementById('basic-output').textContent = tailwindToStyle.tws('bg-blue-500 text-white p-4 rounded');
+        
+        // JSON format test
+        document.getElementById('json-output').textContent = 
+            JSON.stringify(tailwindToStyle.tws('bg-blue-500 text-white p-4 rounded', 1), null, 2);
+        
+        // Responsive test
+        document.getElementById('responsive-output').textContent = 
+            tailwindToStyle.tws('text-sm md:text-base lg:text-lg');
+        
+        // State variants test
+        document.getElementById('state-output').textContent = 
+            tailwindToStyle.tws('bg-gray-200 hover:bg-blue-500 focus:bg-green-500');
+        
+        // Complex test with twsx
+        const complexStyles = tailwindToStyle.twsx({
+            '.card': [
+                'bg-white p-4 rounded-lg shadow',
+                {
+                    '&:hover': 'shadow-lg',
+                    '.title': 'text-lg font-bold text-gray-800',
+                    '.desc': 'text-sm text-gray-500'
+                }
+            ]
+        });
+        
+        document.getElementById('complex-output').textContent = complexStyles;
+        
+        // Live demo
+        const liveElement = document.getElementById('live-demo');
+        const liveStyles = tailwindToStyle.tws('bg-blue-500 text-white p-4 rounded-lg text-center font-bold my-4', 1);
+        
+        // Apply styles to element
+        Object.assign(liveElement.style, liveStyles);
+    </script>
+</body>
+</html>
