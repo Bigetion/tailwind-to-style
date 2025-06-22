@@ -1,6 +1,6 @@
 {
   "name": "tailwind-to-style",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "Convert tailwind classes to inline style",
   "main": "index.js",
   "module": "dist/index.esm.js",
@@ -12,7 +12,8 @@
     "preflight.css",
     "README.md",
     "LICENSE"
-  ],  "scripts": {
+  ],
+  "scripts": {
     "test": "jest --passWithNoTests",
     "build": "node build.js",
     "dev": "node build.js && nodemon --watch src -e js --exec 'npm run build'",
