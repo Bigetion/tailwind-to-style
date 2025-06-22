@@ -1,4 +1,4 @@
-const patterns = {
+const transition = {
   transitionNone: {
     regex: /^transition-none$/,
     cssProp: "transition-property",
@@ -10,7 +10,8 @@ const patterns = {
     formatter: () => "all",
   },
   transitionProp: {
-    regex: /^transition-(opacity|colors|color|background|background-color|transform|shadow|opacity|all|none)$/,
+    regex:
+      /^transition-(opacity|colors|color|background|background-color|transform|shadow|opacity|all|none)$/,
     cssProp: "transition-property",
     formatter: (value) => {
       if (value === "colors")
@@ -49,4 +50,4 @@ const patterns = {
   },
 };
 
-export default patterns;
+export default transition;

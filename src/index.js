@@ -336,13 +336,13 @@ const cacheKey = (options) => JSON.stringify(options);
 
 function generateTailwindCssString(options = {}) {
   const pluginKeys = Object.keys(plugins);
-    // Menggunakan cache untuk mencegah pemrosesan ulang yang tidak perlu
+  // Menggunakan cache untuk mencegah pemrosesan ulang yang tidak perlu
   const key = cacheKey(options);
   if (!configOptionsCache.has(key)) {
     configOptionsCache.set(key, getConfigOptions(options, pluginKeys));
     limitCacheSize(configOptionsCache);
   }
-  
+
   const configOptions = configOptionsCache.get(key);
   const { corePlugins = {} } = configOptions;
   const corePluginKeys = Object.keys(corePlugins);
@@ -424,14 +424,14 @@ const encodeBracketCache = new Map();
 function encodeBracketValues(input) {
   if (!input) return input;
   if (encodeBracketCache.has(input)) return encodeBracketCache.get(input);
-  
+
   const result = input.replace(/\[([^\]]+)\]/g, (_, content) => {
     const encoded = encodeURIComponent(content)
       .replace(/\(/g, "__P__")
       .replace(/\)/g, "__C__");
     return `[${encoded}]`;
   });
-  
+
   encodeBracketCache.set(input, result);
   limitCacheSize(encodeBracketCache);
   return result;
@@ -441,11 +441,11 @@ const decodeBracketCache = new Map();
 function decodeBracketValues(input) {
   if (!input) return input;
   if (decodeBracketCache.has(input)) return decodeBracketCache.get(input);
-  
+
   const result = decodeURIComponent(input)
     .replace(/__P__/g, "(")
     .replace(/__C__/g, ")");
-    
+
   decodeBracketCache.set(input, result);
   limitCacheSize(decodeBracketCache);
   return result;
@@ -512,29 +512,29 @@ function separateAndResolveCSS(arr) {
   if (cssResolutionCache.has(cacheKey)) {
     return cssResolutionCache.get(cacheKey);
   }
-  
+
   // Batasi ukuran cache untuk menghindari memory leak
   limitCacheSize(cssResolutionCache);
-  
+
   const cssProperties = {};
   arr.forEach((item) => {
     if (!item) return;
-    
+
     const declarations = item
       .split(";")
       .map((decl) => decl.trim())
       .filter((decl) => decl);
 
     declarations.forEach((declaration) => {
-      const colonIndex = declaration.indexOf(':');
+      const colonIndex = declaration.indexOf(":");
       if (colonIndex === -1) return;
-      
+
       const key = declaration.substring(0, colonIndex).trim();
       const value = declaration.substring(colonIndex + 1).trim();
-      
+
       if (key && value) {
         // Prioritaskan nilai yang lebih spesifik (misalnya !important)
-        if (value.includes('!important') || !cssProperties[key]) {
+        if (value.includes("!important") || !cssProperties[key]) {
           cssProperties[key] = value;
         }
       }
@@ -544,8 +544,8 @@ function separateAndResolveCSS(arr) {
   const resolvedProperties = { ...cssProperties };
 
   const resolveValue = (value, variables) => {
-    if (!value || !value.includes('var(')) return value;
-    
+    if (!value || !value.includes("var(")) return value;
+
     return value.replace(
       /var\((--[a-zA-Z0-9-]+)(?:,\s*([^)]+))?\)/g,
       (match, variable, fallback) => {
@@ -572,7 +572,7 @@ function separateAndResolveCSS(arr) {
   const result = Object.entries(resolvedProperties)
     .map(([key, value]) => `${key}: ${value};`)
     .join(" ");
-    
+
   cssResolutionCache.set(cacheKey, result);
   return result;
 }
@@ -583,14 +583,14 @@ function limitCacheSize(cache, maxSize = 1000) {
     // Hapus 20% entri yang paling lama
     const entriesToRemove = Math.floor(cache.size * 0.2);
     const keys = Array.from(cache.keys()).slice(0, entriesToRemove);
-    keys.forEach(key => cache.delete(key));
+    keys.forEach((key) => cache.delete(key));
   }
 }
 
 // Implementasi fungsi debounce untuk mengoptimalkan panggilan berulang
 function debounce(func, wait = 100) {
   let timeout;
-  return function(...args) {
+  return function (...args) {
     const context = this;
     clearTimeout(timeout);
     timeout = setTimeout(() => func.apply(context, args), wait);
@@ -617,7 +617,7 @@ export function tws(classNames, convertToJson) {
   let classes;
   try {
     classes = classNames.match(/[\w-]+\[[^\]]+\]|[\w-]+\.\d+|[\w-]+/g);
-    
+
     // Jika tidak ada class yang valid ditemukan
     if (!classes || classes.length === 0) {
       console.warn(`No valid Tailwind classes found in input: "${classNames}"`);
@@ -663,11 +663,11 @@ export function tws(classNames, convertToJson) {
  * @returns {string} String CSS yang dihasilkan
  */
 export function twsx(obj) {
-  if (!obj || typeof obj !== 'object') {
-    console.warn('twsx: Expected an object but received:', obj);
-    return '';
+  if (!obj || typeof obj !== "object") {
+    console.warn("twsx: Expected an object but received:", obj);
+    return "";
   }
-  
+
   const styles = {};
 
   function expandGroupedClass(input) {
@@ -722,26 +722,27 @@ export function twsx(obj) {
     } while (result !== prev);
 
     return result;
-  }  function walk(selector, val) {
-    if (!selector || typeof selector !== 'string') {
-      console.warn('Invalid selector in walk function:', selector);
+  }
+  function walk(selector, val) {
+    if (!selector || typeof selector !== "string") {
+      console.warn("Invalid selector in walk function:", selector);
       return;
     }
-    
+
     const { baseSelector, cssProperty } = parseSelector(selector);
-      if (
-        cssProperty &&
-        typeof val === "object" &&
-        Array.isArray(val) &&
-        val.length > 0
-      ) {
-        const cssValue = val[0];
-        if (typeof cssValue === "string") {
-          styles[baseSelector] = styles[baseSelector] || "";
-          styles[baseSelector] += `${cssProperty}: ${cssValue};\n`;
-          return;
-        }
+    if (
+      cssProperty &&
+      typeof val === "object" &&
+      Array.isArray(val) &&
+      val.length > 0
+    ) {
+      const cssValue = val[0];
+      if (typeof cssValue === "string") {
+        styles[baseSelector] = styles[baseSelector] || "";
+        styles[baseSelector] += `${cssProperty}: ${cssValue};\n`;
+        return;
       }
+    }
 
     if (Array.isArray(val)) {
       const [base, nested] = val;
@@ -880,17 +881,17 @@ export function twsx(obj) {
     if (parseSelectorCache.has(selector)) {
       return parseSelectorCache.get(selector);
     }
-    
+
     let result;
-    if (selector.includes('@css')) {
-      const parts = selector.split('@css');
+    if (selector.includes("@css")) {
+      const parts = selector.split("@css");
       const baseSelector = parts[0].trim();
       const cssProperty = parts[1]?.trim();
       result = { baseSelector, cssProperty };
     } else {
       result = { baseSelector: selector, cssProperty: null };
     }
-    
+
     parseSelectorCache.set(selector, result);
     limitCacheSize(parseSelectorCache);
     return result;
@@ -1009,5 +1010,3 @@ export const debouncedTws = debounce(tws);
  * @returns {string} String CSS yang dihasilkan
  */
 export const debouncedTwsx = debounce(twsx);
-
-

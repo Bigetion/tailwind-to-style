@@ -1,7 +1,9 @@
-import animation from "./animation";
+import transition from "./transition";
+import transform from "./transform";
 
 const patterns = {
-  ...animation,
+  ...transition,
+  ...transform,
 };
 
 export default patterns;
