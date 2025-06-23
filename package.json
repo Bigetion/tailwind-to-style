@@ -26,7 +26,8 @@
     "prepublishOnly": "npm run test && npm run build",
     "version": "git add -A",
     "postversion": "git push && git push --tags",
-    "prettify:src": "prettier --write \"src/**/*.js\""
+    "prettify:src": "prettier --write \"src/**/*.js\"",
+    "prettify:examples": "prettier --write \"examples/**/*.js\""
   },
   "repository": {
     "type": "git",
