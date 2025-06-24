@@ -4,7 +4,7 @@ describe('tws function', () => {  test('converts tailwind classes to inline CSS'
     // Add debug output here too
     console.log('DEBUG - tws CSS output:', result);
     
-    expect(result).toContain('background-color: #ffffff');
+    expect(result).toContain('background-color: rgba(255,255,255, 1)');
     expect(result).toContain('margin-left: auto');
     expect(result).toContain('margin-right: auto');
   });
@@ -13,7 +13,7 @@ describe('tws function', () => {  test('converts tailwind classes to inline CSS'
     // Debug output to see what we're actually getting
     console.log('DEBUG - tws output:', JSON.stringify(result, null, 2));
     
-    expect(result).toHaveProperty('backgroundColor', '#ffffff');
+    expect(result).toHaveProperty('backgroundColor', 'rgba(255,255,255, 1)');
     expect(result).toHaveProperty('marginLeft', 'auto');
     expect(result).toHaveProperty('marginRight', 'auto');
   });

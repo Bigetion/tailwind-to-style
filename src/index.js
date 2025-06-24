@@ -540,7 +540,7 @@ const cssResolutionCache = new Map();
 
 function separateAndResolveCSS(arr) {
   // Perbaiki: cacheKey harus unik untuk setiap input array
-  const cacheKey = Array.isArray(arr) ? arr.join('|') : String(arr);
+  const cacheKey = Array.isArray(arr) ? arr.join("|") : String(arr);
   if (cssResolutionCache.has(cacheKey)) {
     return cssResolutionCache.get(cacheKey);
   }

@@ -15,7 +15,9 @@ console.log(basicCssJson);
 
 // More complex combinations
 console.log("\nMore complex tws example:");
-const responsiveClasses = tws("text-sm md:text-base lg:text-lg font-medium text-gray-800 hover:text-blue-600");
+const responsiveClasses = tws(
+  "text-sm md:text-base lg:text-lg font-medium text-gray-800 hover:text-blue-600"
+);
 console.log(responsiveClasses);
 
 // With arbitrary values
@@ -38,15 +40,18 @@ console.log(simpleStyles);
 console.log("\nComplex nested twsx example:");
 const complexStyles = twsx({
   ".card": [
-    "w-full bg-white shadow-md rounded-lg p-6", 
+    "w-full bg-white shadow-md rounded-lg p-6",
     {
       "&:hover": "shadow-lg",
       ".card-title": "text-xl font-bold mb-2 text-gray-900",
-      ".card-body": ["text-gray-600", {
-        "p": "mb-4",
-        "a": "text-blue-500 hover:underline"
-      }]
-    }
+      ".card-body": [
+        "text-gray-600",
+        {
+          p: "mb-4",
+          a: "text-blue-500 hover:underline",
+        },
+      ],
+    },
   ],
 });
 console.log(complexStyles);
@@ -55,19 +60,22 @@ console.log(complexStyles);
 console.log("\nResponsive and variant twsx example:");
 const responsiveStyles = twsx({
   ".responsive-container": [
-    "flex flex-col items-center p-4", 
+    "flex flex-col items-center p-4",
     {
       "@media (min-width: 640px)": [
         "flex-row justify-between",
         {
-          ".item": "w-auto"
-        }
+          ".item": "w-auto",
+        },
       ],
-      ".item": ["w-full mb-4 md:w-auto md:mb-0", {
-        "&:hover": "bg-gray-100"
-      }]
-    }
-  ]
+      ".item": [
+        "w-full mb-4 md:w-auto md:mb-0",
+        {
+          "&:hover": "bg-gray-100",
+        },
+      ],
+    },
+  ],
 });
 console.log(responsiveStyles);
 
