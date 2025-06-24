@@ -5591,7 +5591,7 @@ function generator(configOptions = {}) {
   return responsiveCssString;
 }
 
-const patterns$1 = {
+const transition = {
   transitionNone: {
     regex: /^transition-none$/,
     cssProp: "transition-property",
@@ -5642,7 +5642,7 @@ const patterns$1 = {
 };
 
 const patterns = {
-  ...patterns$1
+  ...transition
 };
 
 const plugins = {
@@ -5819,6 +5819,33 @@ function parseCustomClassWithPatterns(className) {
   return null;
 }
 
+/**
+ * Resolve all CSS custom properties (var) in a CSS string and output only clear CSS (no custom property)
+ * @param {string} cssString
+ * @returns {string} e.g. 'color: rgba(255,255,255,1); background: #fff;'
+ */
+function resolveCssToClearCss(cssString) {
+  const customVars = {};
+  const props = {};
+  cssString.split(";").forEach(decl => {
+    const [key, value] = decl.split(":").map(s => s && s.trim());
+    if (!key || !value) return;
+    if (key.startsWith("--")) {
+      customVars[key] = value;
+    } else {
+      props[key] = value;
+    }
+  });
+  // Replace var(--foo) in all values
+  Object.keys(props).forEach(key => {
+    let val = props[key];
+    val = val.replace(/var\((--[a-zA-Z0-9-_]+)\)/g, (m, v) => customVars[v] !== undefined ? customVars[v] : m);
+    props[key] = val;
+  });
+  // Build CSS string
+  return Object.entries(props).map(([k, v]) => `${k}: ${v};`).join(" ");
+}
+
 // Cache untuk getConfigOptions
 const configOptionsCache = new Map();
 const cacheKey = options => JSON.stringify(options);
@@ -5954,7 +5981,8 @@ function inlineStyleToJson(styleString) {
 // Cache untuk CSS resolusi
 const cssResolutionCache = new Map();
 function separateAndResolveCSS(arr) {
-  // Membuat kunci cache  const cacheKey = arr.join('|');
+  // Perbaiki: cacheKey harus unik untuk setiap input array
+  const cacheKey = Array.isArray(arr) ? arr.join('|') : String(arr);
   if (cssResolutionCache.has(cacheKey)) {
     return cssResolutionCache.get(cacheKey);
   }
@@ -5966,13 +5994,13 @@ function separateAndResolveCSS(arr) {
     if (!item) return;
     const declarations = item.split(";").map(decl => decl.trim()).filter(decl => decl);
     declarations.forEach(declaration => {
-      const colonIndex = declaration.indexOf(':');
+      const colonIndex = declaration.indexOf(":");
       if (colonIndex === -1) return;
       const key = declaration.substring(0, colonIndex).trim();
       const value = declaration.substring(colonIndex + 1).trim();
       if (key && value) {
         // Prioritaskan nilai yang lebih spesifik (misalnya !important)
-        if (value.includes('!important') || !cssProperties[key]) {
+        if (value.includes("!important") || !cssProperties[key]) {
           cssProperties[key] = value;
         }
       }
@@ -5982,7 +6010,7 @@ function separateAndResolveCSS(arr) {
     ...cssProperties
   };
   const resolveValue = (value, variables) => {
-    if (!value || !value.includes('var(')) return value;
+    if (!value || !value.includes("var(")) return value;
     return value.replace(/var\((--[a-zA-Z0-9-]+)(?:,\s*([^)]+))?\)/g, (match, variable, fallback) => {
       return variables[variable] || fallback || match;
     });
@@ -6036,7 +6064,7 @@ function tws(classNames, convertToJson) {
   }
   let classes;
   try {
-    classes = classNames.match(/[\w-]+\[[^\]]+\]|[\w-]+\.\d+|[\w-]+/g);
+    classes = classNames.match(/[\w-\/]+(?:\[[^\]]+\])?/g);
 
     // Jika tidak ada class yang valid ditemukan
     if (!classes || classes.length === 0) {
@@ -6048,8 +6076,9 @@ function tws(classNames, convertToJson) {
     return convertToJson ? {} : "";
   }
   let cssResult = classes.map(className => {
-    if (cssObject[className]) {
-      return cssObject[className];
+    let result = cssObject[className] || cssObject[className.replace(/(\/)/g, "\\$1")] || cssObject[className.replace(/\./g, "\\.")];
+    if (result) {
+      return resolveCssToClearCss(result);
     } else if (className.includes("[")) {
       const match = className.match(/\[([^\]]+)\]/);
       if (match) {
@@ -6076,9 +6105,9 @@ function tws(classNames, convertToJson) {
  * @returns {string} String CSS yang dihasilkan
  */
 function twsx(obj) {
-  if (!obj || typeof obj !== 'object') {
-    console.warn('twsx: Expected an object but received:', obj);
-    return '';
+  if (!obj || typeof obj !== "object") {
+    console.warn("twsx: Expected an object but received:", obj);
+    return "";
   }
   const styles = {};
   function expandGroupedClass(input) {
@@ -6117,8 +6146,8 @@ function twsx(obj) {
     return result;
   }
   function walk(selector, val) {
-    if (!selector || typeof selector !== 'string') {
-      console.warn('Invalid selector in walk function:', selector);
+    if (!selector || typeof selector !== "string") {
+      console.warn("Invalid selector in walk function:", selector);
       return;
     }
     const {
@@ -6230,8 +6259,8 @@ function twsx(obj) {
       return parseSelectorCache.get(selector);
     }
     let result;
-    if (selector.includes('@css')) {
-      const parts = selector.split('@css');
+    if (selector.includes("@css")) {
+      const parts = selector.split("@css");
       const baseSelector = parts[0].trim();
       const cssProperty = parts[1]?.trim();
       result = {

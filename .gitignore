@@ -9,6 +9,7 @@ yarn.lock
 # Build / Distribution
 /dist
 /coverage
+/react-test
 
 # Editor directories and files
 .idea/

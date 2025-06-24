@@ -330,6 +330,37 @@ function parseCustomClassWithPatterns(className) {
   return null;
 }
 
+/**
+ * Resolve all CSS custom properties (var) in a CSS string and output only clear CSS (no custom property)
+ * @param {string} cssString
+ * @returns {string} e.g. 'color: rgba(255,255,255,1); background: #fff;'
+ */
+function resolveCssToClearCss(cssString) {
+  const customVars = {};
+  const props = {};
+  cssString.split(";").forEach((decl) => {
+    const [key, value] = decl.split(":").map((s) => s && s.trim());
+    if (!key || !value) return;
+    if (key.startsWith("--")) {
+      customVars[key] = value;
+    } else {
+      props[key] = value;
+    }
+  });
+  // Replace var(--foo) in all values
+  Object.keys(props).forEach((key) => {
+    let val = props[key];
+    val = val.replace(/var\((--[a-zA-Z0-9-_]+)\)/g, (m, v) =>
+      customVars[v] !== undefined ? customVars[v] : m
+    );
+    props[key] = val;
+  });
+  // Build CSS string
+  return Object.entries(props)
+    .map(([k, v]) => `${k}: ${v};`)
+    .join(" ");
+}
+
 // Cache untuk getConfigOptions
 const configOptionsCache = new Map();
 const cacheKey = (options) => JSON.stringify(options);
@@ -508,7 +539,8 @@ function inlineStyleToJson(styleString) {
 const cssResolutionCache = new Map();
 
 function separateAndResolveCSS(arr) {
-  // Membuat kunci cache  const cacheKey = arr.join('|');
+  // Perbaiki: cacheKey harus unik untuk setiap input array
+  const cacheKey = Array.isArray(arr) ? arr.join('|') : String(arr);
   if (cssResolutionCache.has(cacheKey)) {
     return cssResolutionCache.get(cacheKey);
   }
@@ -616,7 +648,7 @@ export function tws(classNames, convertToJson) {
 
   let classes;
   try {
-    classes = classNames.match(/[\w-]+\[[^\]]+\]|[\w-]+\.\d+|[\w-]+/g);
+    classes = classNames.match(/[\w-\/]+(?:\[[^\]]+\])?/g);
 
     // Jika tidak ada class yang valid ditemukan
     if (!classes || classes.length === 0) {
@@ -629,8 +661,13 @@ export function tws(classNames, convertToJson) {
   }
 
   let cssResult = classes.map((className) => {
-    if (cssObject[className]) {
-      return cssObject[className];
+    let result =
+      cssObject[className] ||
+      cssObject[className.replace(/(\/)/g, "\\$1")] ||
+      cssObject[className.replace(/\./g, "\\.")];
+
+    if (result) {
+      return resolveCssToClearCss(result);
     } else if (className.includes("[")) {
       const match = className.match(/\[([^\]]+)\]/);
       if (match) {
