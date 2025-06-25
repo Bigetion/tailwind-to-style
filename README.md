@@ -340,6 +340,25 @@ const styles = twsx({
 
 The `@css` feature provides a powerful way to bridge the gap between Tailwind's utility classes and custom CSS when needed, without leaving the `twsx` syntax.
 
+### Inject Option (Browser Only)
+
+By default, every call to `twsx` in the browser will automatically inject the generated CSS into a `<style id="twsx-auto-style">` tag in the document `<head>`. This makes it easy to use dynamic styles in browser or CDN scenarios without manual CSS management.
+
+You can control this behavior with the `inject` option:
+
+```js
+// Auto-inject (default)
+twsx({ ... }) // CSS is injected automatically
+
+// Disable auto-inject
+twsx({ ... }, { inject: false }) // CSS is NOT injected, just returned as string
+```
+
+- **inject: true** (default): CSS is injected into the page (browser only).
+- **inject: false**: CSS is only returned as a string, not injected. Useful for SSR, testing, or custom handling.
+
+> Note: This option only affects browser usage. In Node.js or SSR, no injection occurs.
+
 ## License
 
 ## Contributing

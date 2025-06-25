@@ -697,13 +697,15 @@ export function tws(classNames, convertToJson) {
  * Menghasilkan string CSS dari objek style dengan sintaks mirip SCSS
  * Mendukung nested selectors, state variants, responsive variants, dan @css directives
  * @param {Object} obj - Objek dengan format style mirip SCSS
+ * @param {Object} [options] - Opsi tambahan, misal { inject: true/false }
  * @returns {string} String CSS yang dihasilkan
  */
-export function twsx(obj) {
+export function twsx(obj, options = {}) {
   if (!obj || typeof obj !== "object") {
     console.warn("twsx: Expected an object but received:", obj);
     return "";
   }
+  const { inject = true } = options;
 
   const styles = {};
 
@@ -1027,7 +1029,40 @@ export function twsx(obj) {
     }
     cssString += `}`;
   }
-  return cssString.trim();
+  cssString = cssString.trim();
+  if (inject && typeof window !== "undefined" && typeof document !== "undefined") {
+    autoInjectCss(cssString);
+  }
+  return cssString;
+}
+
+// Fungsi hashCode sederhana untuk deduplikasi CSS
+function getCssHash(str) {
+  let hash = 0, i, chr;
+  if (str.length === 0) return hash;
+  for (i = 0; i < str.length; i++) {
+    chr = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+}
+
+// Cache untuk deduplikasi auto-inject CSS pakai hash
+const injectedCssHashSet = new Set();
+function autoInjectCss(cssString) {
+  if (typeof window !== "undefined" && typeof document !== "undefined") {
+    const cssHash = getCssHash(cssString);
+    if (injectedCssHashSet.has(cssHash)) return;
+    injectedCssHashSet.add(cssHash);
+    let styleTag = document.getElementById("twsx-auto-style");
+    if (!styleTag) {
+      styleTag = document.createElement("style");
+      styleTag.id = "twsx-auto-style";
+      document.head.appendChild(styleTag);
+    }
+    styleTag.textContent += `\n${cssString}`;
+  }
 }
 
 // Daftarkan versi debounced dari fungsi-fungsi export
