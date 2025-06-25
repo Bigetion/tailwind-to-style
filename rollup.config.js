@@ -49,7 +49,7 @@ export default [
   {
     input,
     output: {
-      file: 'index.js',
+      file: 'dist/index.cjs.js',
       format: 'cjs',
       banner,
       exports: 'named'
@@ -66,7 +66,7 @@ export default [
   {
     input,
     output: {
-      file: 'index.min.js',
+      file: 'dist/index.min.js',
       format: 'umd',
       name: 'tailwindToStyle',
       banner,

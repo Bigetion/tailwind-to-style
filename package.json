@@ -3,13 +3,11 @@
   "version": "2.5.2",
   "description": "Convert tailwind classes to inline style",
   "type": "module",
-  "main": "index.js",
+  "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist",
-    "index.js",
-    "index.min.js",
     "preflight.css",
     "README.md",
     "LICENSE"
