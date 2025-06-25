@@ -1,6 +1,6 @@
 {
   "name": "tailwind-to-style",
-  "version": "2.5.2",
+  "version": "2.5.3",
   "description": "Convert tailwind classes to inline style",
   "type": "module",
   "main": "dist/index.cjs.js",
@@ -15,12 +15,9 @@
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests",
     "build": "rollup -c rollup.config.js",
-    "build:legacy": "node build-webpack.js",
-    "build:simple": "node build.js",
     "dev": "rollup -c rollup.config.js --watch",
     "lint": "eslint src/**/*.js",
     "test:examples": "node examples/test/node-test.js",
-    "test:browser": "start examples/test/browser-test.html",
     "prepublishOnly": "npm run test && npm run build",
     "version": "git add -A",
     "postversion": "git push && git push --tags",
