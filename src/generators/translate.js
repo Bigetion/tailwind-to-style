@@ -1,7 +1,7 @@
 import { generateCssString } from "../utils/index";
 
 export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix, theme = {} } = configOptions;
+  const { prefix: globalPrefix, theme = {}, vars = {} } = configOptions;
 
   const { translate = {} } = theme;
 
@@ -20,9 +20,11 @@ export default function generator(configOptions = {}) {
       return `
           ${prefix}-x-${key} {
             --transform-translate-x: ${value};
+            ${vars.transform}
           }
           ${prefix}-y-${key} {
             --transform-translate-y: ${value};
+            ${vars.transform}
           }
         `;
     });

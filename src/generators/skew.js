@@ -1,7 +1,7 @@
 import { generateCssString } from "../utils/index";
 
 export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix, theme = {} } = configOptions;
+  const { prefix: globalPrefix, theme = {}, vars = {} } = configOptions;
 
   const { skew = {} } = theme;
 
@@ -20,9 +20,11 @@ export default function generator(configOptions = {}) {
       return `
           ${prefix}-x-${key} {
             --transform-skew-x: ${value};
+            ${vars.transform}
           }
           ${prefix}-y-${key} {
             --transform-skew-y: ${value};
+            ${vars.transform}
           }
         `;
     });

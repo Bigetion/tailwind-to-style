@@ -22,7 +22,7 @@ export default function generator(configOptions = {}) {
       propertyOptions,
       (key, value) => `
           ${prefix}-${key} {
-            transform-origin: ${value.replace("-", " ")} !important;
+            transform-origin: ${value.replace("-", " ")};
           }
         `
     );

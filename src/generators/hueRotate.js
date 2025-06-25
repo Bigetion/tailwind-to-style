@@ -1,7 +1,7 @@
 import { generateCssString } from "../utils/index";
 
 export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix, theme = {} } = configOptions;
+  const { prefix: globalPrefix, theme = {}, vars = {} } = configOptions;
 
   const { hueRotate = {} } = theme;
 
@@ -16,10 +16,12 @@ export default function generator(configOptions = {}) {
       }
       return `
           ${prefix}-${key} {
-            --hue-rotate: hue-rotate(${value}) !important;
+            --hue-rotate: ${value};
+            ${vars.filter}
           }
           ${prefix.replace(basePrefix, `backdrop-${basePrefix}`)}-${key} {
-            --backdrop-hue-rotate: hue-rotate(${value}) !important;
+            --backdrop-hue-rotate: ${value};
+            ${vars.backdropFilter}
           }
         `;
     });

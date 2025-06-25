@@ -1,7 +1,7 @@
 import { generateCssString } from "../utils/index";
 
 export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix, theme = {} } = configOptions;
+  const { prefix: globalPrefix, theme = {}, vars = {} } = configOptions;
 
   const { rotate = {} } = theme;
 
@@ -20,6 +20,7 @@ export default function generator(configOptions = {}) {
       return `
           ${prefix}-${key} {
             --transform-rotate: ${value};
+            ${vars.transform}
           }
         `;
     });

@@ -39,6 +39,7 @@ function getConfigOptions(options = {}) {
 
   return {
     prefix: "",
+    ...defaultConfigOptions,
     ...options,
     theme: newTheme,
   };
