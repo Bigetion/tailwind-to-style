@@ -20,13 +20,7 @@ const extensions = ['.js'];
 const babelConfig = {
   babelHelpers: 'bundled',
   exclude: 'node_modules/**',
-  extensions,
-  presets: [
-    ['@babel/preset-env', {
-      targets: '> 1%, not dead, not ie 11',
-      modules: false
-    }]
-  ]
+  extensions
 };
 
 export default [
