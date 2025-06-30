@@ -41,7 +41,8 @@ export default [
     plugins: [
       resolve({ extensions }),
       commonjs(),
-      json()
+      json(),
+      babel(babelConfig)
     ]
   },
   

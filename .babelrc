@@ -3,13 +3,14 @@
     [
       "@babel/preset-env",
       {
-        "targets": {
-          "browsers": "> 0.25%, not dead",
-          "node": "current"
-        },
+        "targets": "> 0.25%, not dead",
+        "modules": false,
         "useBuiltIns": false
       }
     ]
+  ],
+  "plugins": [
+    "@babel/plugin-proposal-optional-chaining"
   ],
   "env": {
     "test": {
