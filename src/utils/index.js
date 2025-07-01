@@ -1,4 +1,4 @@
-import defaultConfigOptions from "../config/index";
+import defaultConfigOptions from "../config/index.js";
 
 function isFunction(functionToCheck) {
   return (

@@ -1,5 +1,5 @@
-import theme from "./theme";
-import vars from "./vars";
+import theme from "./theme.js";
+import vars from "./vars.js";
 
 const configOptions = {
   theme,

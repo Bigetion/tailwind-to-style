@@ -359,6 +359,91 @@ twsx({ ... }, { inject: false }) // CSS is NOT injected, just returned as string
 
 > Note: This option only affects browser usage. In Node.js or SSR, no injection occurs.
 
+## Performance Monitoring & Debugging (v2.7.0+)
+
+Starting from version 2.7.0, `tailwind-to-style` includes built-in performance monitoring and debugging utilities to help you optimize your application and troubleshoot issues.
+
+### Performance Utils
+
+```javascript
+import { performanceUtils } from "tailwind-to-style";
+
+// Enable performance logging (logs operations > 5ms as warnings)
+performanceUtils.enablePerformanceLogging(true);
+
+// Get cache and injection statistics
+const stats = performanceUtils.getStats();
+console.log(stats);
+// Output:
+// {
+//   cacheStats: {
+//     cssResolution: 45,
+//     configOptions: 2,
+//     parseSelector: 23,
+//     encodeBracket: 12,
+//     decodeBracket: 8
+//   },
+//   injectionStats: {
+//     uniqueStylesheets: 15
+//   }
+// }
+
+// Clear all caches (useful for memory management)
+performanceUtils.clearCaches();
+```
+
+### Performance Metrics
+
+The library automatically tracks performance for key operations:
+
+- **tws:total** - Total execution time for `tws()`
+- **tws:parse** - Time spent parsing classes  
+- **tws:process** - Time spent processing classes
+- **twsx:total** - Total execution time for `twsx()`
+- **twsx:flatten** - Time spent flattening objects
+- **twsx:generate** - Time spent generating CSS
+- **css:inject** - Time spent injecting CSS to DOM
+
+### Debounced Functions
+
+For high-frequency usage, use the debounced versions:
+
+```javascript
+import { debouncedTws, debouncedTwsx } from "tailwind-to-style";
+
+// Debounced versions (50ms for tws, 100ms for twsx)
+const styles = debouncedTws("bg-red-500 p-4");
+const complexStyles = debouncedTwsx({ ".card": "bg-white p-6" });
+```
+
+### Example: Performance Monitoring
+
+```javascript
+import { tws, twsx, performanceUtils } from "tailwind-to-style";
+
+// Enable monitoring
+performanceUtils.enablePerformanceLogging(true);
+
+// Your code that uses tws/twsx
+const styles = tws("bg-gradient-to-r from-purple-400 to-pink-500 p-8");
+const complexStyles = twsx({
+  ".hero": [
+    "bg-gradient-to-br from-indigo-900 to-purple-900 min-h-screen",
+    {
+      "h1": "text-6xl font-bold text-white",
+      "@media (max-width: 768px)": {
+        "h1": "text-4xl"
+      }
+    }
+  ]
+});
+
+// Check performance stats
+console.log(performanceUtils.getStats());
+```
+
+This will automatically log warnings for operations taking longer than 5ms and provide insights into cache usage and performance bottlenecks.
+
 ## License
 
 ## Contributing

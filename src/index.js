@@ -1,163 +1,163 @@
-import { getConfigOptions } from "./utils/index";
+import { getConfigOptions } from "./utils/index.js";
 
-import generateAccentColor from "./generators/accentColor";
-import generateAccessibility from "./generators/accessibility";
-import generateAlignContent from "./generators/alignContent";
-import generateAlignItems from "./generators/alignItems";
-import generateAlignSelf from "./generators/alignSelf";
-import generateAppearance from "./generators/appearance";
-import generateAspect from "./generators/aspect";
-import generateBackgroundAttachment from "./generators/backgroundAttachment";
-import generateBackgroundClip from "./generators/backgroundClip";
-import generateBackgroundColor from "./generators/backgroundColor";
-import generateBackgroundImage from "./generators/backgroundImage";
-import generateBackgroundOpacity from "./generators/backgroundOpacity";
-import generateBackgroundOrigin from "./generators/backgroundOrigin";
-import generateBackgroundPosition from "./generators/backgroundPosition";
-import generateBackgroundRepeat from "./generators/backgroundRepeat";
-import generateBackgroundSize from "./generators/backgroundSize";
-import generateBlur from "./generators/blur";
-import generateBorderCollapse from "./generators/borderCollapse";
-import generateBorderColor from "./generators/borderColor";
-import generateBorderOpacity from "./generators/borderOpacity";
-import generateBorderRadius from "./generators/borderRadius";
-import generateBorderSpacing from "./generators/borderSpacing";
-import generateBorderStyle from "./generators/borderStyle";
-import generateBorderWidth from "./generators/borderWidth";
-import generateBoxDecorationBreak from "./generators/boxDecorationBreak";
-import generateBoxShadow from "./generators/boxShadow";
-import generateBoxSizing from "./generators/boxSizing";
-import generateBrightness from "./generators/brightness";
-import generateCaptionSide from "./generators/captionSide";
-import generateCaretColor from "./generators/caretColor";
-import generateClear from "./generators/clear";
-import generateContent from "./generators/content";
-import generateContrast from "./generators/contrast";
-import generateCursor from "./generators/cursor";
-import generateDisplay from "./generators/display";
-import generateDivideColor from "./generators/divideColor";
-import generateDivideOpacity from "./generators/divideOpacity";
-import generateDivideStyle from "./generators/divideStyle";
-import generateDivideWidth from "./generators/divideWidth";
-import generateDropShadow from "./generators/dropShadow";
-import generateFill from "./generators/fill";
-import generateFilter from "./generators/filter";
-import generateFlex from "./generators/flex";
-import generateFlexBasis from "./generators/flexBasis";
-import generateFlexDirection from "./generators/flexDirection";
-import generateFlexGrow from "./generators/flexGrow";
-import generateFlexShrink from "./generators/flexShrink";
-import generateFlexWrap from "./generators/flexWrap";
-import generateFloat from "./generators/float";
-import generateFontSize from "./generators/fontSize";
-import generateFontSmoothing from "./generators/fontSmoothing";
-import generateFontStyle from "./generators/fontStyle";
-import generateFontVariantNumeric from "./generators/fontVariantNumeric";
-import generateFontWeight from "./generators/fontWeight";
-import generateGap from "./generators/gap";
-import generateGradientColorStops from "./generators/gradientColorStops";
-import generateGrayscale from "./generators/grayscale";
-import generateGridAutoColumns from "./generators/gridAutoColumns";
-import generateGridAutoFlow from "./generators/gridAutoFlow";
-import generateGridAutoRows from "./generators/gridAutoRows";
-import generateGridColumn from "./generators/gridColumn";
-import generateGridColumnEnd from "./generators/gridColumnEnd";
-import generateGridColumnStart from "./generators/gridColumnStart";
-import generateGridRow from "./generators/gridRow";
-import generateGridRowEnd from "./generators/gridRowEnd";
-import generateGridRowStart from "./generators/gridRowStart";
-import generateGridTemplateColumns from "./generators/gridTemplateColumns";
-import generateGridTemplateRows from "./generators/gridTemplateRows";
-import generateHeight from "./generators/height";
-import generateHueRotate from "./generators/hueRotate";
-import generateHyphens from "./generators/hyphens";
-import generateInset from "./generators/inset";
-import generateInvert from "./generators/invert";
-import generateIsolation from "./generators/isolation";
-import generateJustifyContent from "./generators/justifyContent";
-import generateJustifyItems from "./generators/justifyItems";
-import generateJustifySelf from "./generators/justifySelf";
-import generateLetterSpacing from "./generators/letterSpacing";
-import generateLineClamp from "./generators/lineClamp";
-import generateLineHeight from "./generators/lineHeight";
-import generateListStylePosition from "./generators/listStylePosition";
-import generateListStyleType from "./generators/listStyleType";
-import generateMargin from "./generators/margin";
-import generateMaxHeight from "./generators/maxHeight";
-import generateMaxWidth from "./generators/maxWidth";
-import generateMinHeight from "./generators/minHeight";
-import generateMinWidth from "./generators/minWidth";
-import generateMixBlendMode from "./generators/mixBlendMode";
-import generateObjectFit from "./generators/objectFit";
-import generateObjectPosition from "./generators/objectPosition";
-import generateOpacity from "./generators/opacity";
-import generateOrder from "./generators/order";
-import generateOutlineColor from "./generators/outlineColor";
-import generateOutlineOffset from "./generators/outlineOffset";
-import generateOutlineOpacity from "./generators/outlineOpacity";
-import generateOutlineStyle from "./generators/outlineStyle";
-import generateOutlineWidth from "./generators/outlineWidth";
-import generateOverflow from "./generators/overflow";
-import generateOverscrollBehavior from "./generators/overscrollBehavior";
-import generatePadding from "./generators/padding";
-import generatePlaceContent from "./generators/placeContent";
-import generatePlaceItems from "./generators/placeItems";
-import generatePlaceSelf from "./generators/placeSelf";
-import generatePointerEvents from "./generators/pointerEvents";
-import generatePosition from "./generators/position";
-import generateResize from "./generators/resize";
-import generateRingColor from "./generators/ringColor";
-import generateRingOffsetColor from "./generators/ringOffsetColor";
-import generateRingOffsetWidth from "./generators/ringOffsetWidth";
-import generateRingOpacity from "./generators/ringOpacity";
-import generateRingWidth from "./generators/ringWidth";
-import generateSaturate from "./generators/saturate";
-import generateRotate from "./generators/rotate";
-import generateScale from "./generators/scale";
-import generateScrollBehavior from "./generators/scrollBehavior";
-import generateScrollMargin from "./generators/scrollMargin";
-import generateScrollPadding from "./generators/scrollPadding";
-import generateScrollSnapAlign from "./generators/scrollSnapAlign";
-import generateScrollSnapStop from "./generators/scrollSnapStop";
-import generateScrollSnapType from "./generators/scrollSnapType";
-import generateSepia from "./generators/sepia";
-import generateSize from "./generators/size";
-import generateSkew from "./generators/skew";
-import generateSpace from "./generators/space";
-import generateStroke from "./generators/stroke";
-import generateStrokeWidth from "./generators/strokeWidth";
-import generateTableLayout from "./generators/tableLayout";
-import generateTextAlign from "./generators/textAlign";
-import generateTextColor from "./generators/textColor";
-import generateTextDecoration from "./generators/textDecoration";
-import generateTextDecorationColor from "./generators/textDecorationColor";
-import generateTextDecorationStyle from "./generators/textDecorationStyle";
-import generateTextDecorationThickness from "./generators/textDecorationThickness";
-import generateTextIndent from "./generators/textIndent";
-import generateTextOpacity from "./generators/textOpacity";
-import generateTextOverflow from "./generators/textOverflow";
-import generateTextShadowBlur from "./generators/textShadowBlur";
-import generateTextShadowColor from "./generators/textShadowColor";
-import generateTextShadowOpacity from "./generators/textShadowOpacity";
-import generateTextShadowX from "./generators/textShadowX";
-import generateTextShadowY from "./generators/textShadowY";
-import generateTextTransform from "./generators/textTransform";
-import generateTextUnderlineOffset from "./generators/textUnderlineOffset";
-import generateTextWrap from "./generators/textWrap";
-import generateTouchAction from "./generators/touchAction";
-import generateTransform from "./generators/transform";
-import generateTransformOrigin from "./generators/transformOrigin";
-import generateTranslate from "./generators/translate";
-import generateUserSelect from "./generators/userSelect";
-import generateVerticalAlign from "./generators/verticalAlign";
-import generateVisibility from "./generators/visibility";
-import generateWhitespace from "./generators/whitespace";
-import generateWidth from "./generators/width";
-import generateWordBreak from "./generators/wordBreak";
-import generateWillChange from "./generators/willChange";
-import generateZIndex from "./generators/zIndex";
+import generateAccentColor from "./generators/accentColor.js";
+import generateAccessibility from "./generators/accessibility.js";
+import generateAlignContent from "./generators/alignContent.js";
+import generateAlignItems from "./generators/alignItems.js";
+import generateAlignSelf from "./generators/alignSelf.js";
+import generateAppearance from "./generators/appearance.js";
+import generateAspect from "./generators/aspect.js";
+import generateBackgroundAttachment from "./generators/backgroundAttachment.js";
+import generateBackgroundClip from "./generators/backgroundClip.js";
+import generateBackgroundColor from "./generators/backgroundColor.js";
+import generateBackgroundImage from "./generators/backgroundImage.js";
+import generateBackgroundOpacity from "./generators/backgroundOpacity.js";
+import generateBackgroundOrigin from "./generators/backgroundOrigin.js";
+import generateBackgroundPosition from "./generators/backgroundPosition.js";
+import generateBackgroundRepeat from "./generators/backgroundRepeat.js";
+import generateBackgroundSize from "./generators/backgroundSize.js";
+import generateBlur from "./generators/blur.js";
+import generateBorderCollapse from "./generators/borderCollapse.js";
+import generateBorderColor from "./generators/borderColor.js";
+import generateBorderOpacity from "./generators/borderOpacity.js";
+import generateBorderRadius from "./generators/borderRadius.js";
+import generateBorderSpacing from "./generators/borderSpacing.js";
+import generateBorderStyle from "./generators/borderStyle.js";
+import generateBorderWidth from "./generators/borderWidth.js";
+import generateBoxDecorationBreak from "./generators/boxDecorationBreak.js";
+import generateBoxShadow from "./generators/boxShadow.js";
+import generateBoxSizing from "./generators/boxSizing.js";
+import generateBrightness from "./generators/brightness.js";
+import generateCaptionSide from "./generators/captionSide.js";
+import generateCaretColor from "./generators/caretColor.js";
+import generateClear from "./generators/clear.js";
+import generateContent from "./generators/content.js";
+import generateContrast from "./generators/contrast.js";
+import generateCursor from "./generators/cursor.js";
+import generateDisplay from "./generators/display.js";
+import generateDivideColor from "./generators/divideColor.js";
+import generateDivideOpacity from "./generators/divideOpacity.js";
+import generateDivideStyle from "./generators/divideStyle.js";
+import generateDivideWidth from "./generators/divideWidth.js";
+import generateDropShadow from "./generators/dropShadow.js";
+import generateFill from "./generators/fill.js";
+import generateFilter from "./generators/filter.js";
+import generateFlex from "./generators/flex.js";
+import generateFlexBasis from "./generators/flexBasis.js";
+import generateFlexDirection from "./generators/flexDirection.js";
+import generateFlexGrow from "./generators/flexGrow.js";
+import generateFlexShrink from "./generators/flexShrink.js";
+import generateFlexWrap from "./generators/flexWrap.js";
+import generateFloat from "./generators/float.js";
+import generateFontSize from "./generators/fontSize.js";
+import generateFontSmoothing from "./generators/fontSmoothing.js";
+import generateFontStyle from "./generators/fontStyle.js";
+import generateFontVariantNumeric from "./generators/fontVariantNumeric.js";
+import generateFontWeight from "./generators/fontWeight.js";
+import generateGap from "./generators/gap.js";
+import generateGradientColorStops from "./generators/gradientColorStops.js";
+import generateGrayscale from "./generators/grayscale.js";
+import generateGridAutoColumns from "./generators/gridAutoColumns.js";
+import generateGridAutoFlow from "./generators/gridAutoFlow.js";
+import generateGridAutoRows from "./generators/gridAutoRows.js";
+import generateGridColumn from "./generators/gridColumn.js";
+import generateGridColumnEnd from "./generators/gridColumnEnd.js";
+import generateGridColumnStart from "./generators/gridColumnStart.js";
+import generateGridRow from "./generators/gridRow.js";
+import generateGridRowEnd from "./generators/gridRowEnd.js";
+import generateGridRowStart from "./generators/gridRowStart.js";
+import generateGridTemplateColumns from "./generators/gridTemplateColumns.js";
+import generateGridTemplateRows from "./generators/gridTemplateRows.js";
+import generateHeight from "./generators/height.js";
+import generateHueRotate from "./generators/hueRotate.js";
+import generateHyphens from "./generators/hyphens.js";
+import generateInset from "./generators/inset.js";
+import generateInvert from "./generators/invert.js";
+import generateIsolation from "./generators/isolation.js";
+import generateJustifyContent from "./generators/justifyContent.js";
+import generateJustifyItems from "./generators/justifyItems.js";
+import generateJustifySelf from "./generators/justifySelf.js";
+import generateLetterSpacing from "./generators/letterSpacing.js";
+import generateLineClamp from "./generators/lineClamp.js";
+import generateLineHeight from "./generators/lineHeight.js";
+import generateListStylePosition from "./generators/listStylePosition.js";
+import generateListStyleType from "./generators/listStyleType.js";
+import generateMargin from "./generators/margin.js";
+import generateMaxHeight from "./generators/maxHeight.js";
+import generateMaxWidth from "./generators/maxWidth.js";
+import generateMinHeight from "./generators/minHeight.js";
+import generateMinWidth from "./generators/minWidth.js";
+import generateMixBlendMode from "./generators/mixBlendMode.js";
+import generateObjectFit from "./generators/objectFit.js";
+import generateObjectPosition from "./generators/objectPosition.js";
+import generateOpacity from "./generators/opacity.js";
+import generateOrder from "./generators/order.js";
+import generateOutlineColor from "./generators/outlineColor.js";
+import generateOutlineOffset from "./generators/outlineOffset.js";
+import generateOutlineOpacity from "./generators/outlineOpacity.js";
+import generateOutlineStyle from "./generators/outlineStyle.js";
+import generateOutlineWidth from "./generators/outlineWidth.js";
+import generateOverflow from "./generators/overflow.js";
+import generateOverscrollBehavior from "./generators/overscrollBehavior.js";
+import generatePadding from "./generators/padding.js";
+import generatePlaceContent from "./generators/placeContent.js";
+import generatePlaceItems from "./generators/placeItems.js";
+import generatePlaceSelf from "./generators/placeSelf.js";
+import generatePointerEvents from "./generators/pointerEvents.js";
+import generatePosition from "./generators/position.js";
+import generateResize from "./generators/resize.js";
+import generateRingColor from "./generators/ringColor.js";
+import generateRingOffsetColor from "./generators/ringOffsetColor.js";
+import generateRingOffsetWidth from "./generators/ringOffsetWidth.js";
+import generateRingOpacity from "./generators/ringOpacity.js";
+import generateRingWidth from "./generators/ringWidth.js";
+import generateSaturate from "./generators/saturate.js";
+import generateRotate from "./generators/rotate.js";
+import generateScale from "./generators/scale.js";
+import generateScrollBehavior from "./generators/scrollBehavior.js";
+import generateScrollMargin from "./generators/scrollMargin.js";
+import generateScrollPadding from "./generators/scrollPadding.js";
+import generateScrollSnapAlign from "./generators/scrollSnapAlign.js";
+import generateScrollSnapStop from "./generators/scrollSnapStop.js";
+import generateScrollSnapType from "./generators/scrollSnapType.js";
+import generateSepia from "./generators/sepia.js";
+import generateSize from "./generators/size.js";
+import generateSkew from "./generators/skew.js";
+import generateSpace from "./generators/space.js";
+import generateStroke from "./generators/stroke.js";
+import generateStrokeWidth from "./generators/strokeWidth.js";
+import generateTableLayout from "./generators/tableLayout.js";
+import generateTextAlign from "./generators/textAlign.js";
+import generateTextColor from "./generators/textColor.js";
+import generateTextDecoration from "./generators/textDecoration.js";
+import generateTextDecorationColor from "./generators/textDecorationColor.js";
+import generateTextDecorationStyle from "./generators/textDecorationStyle.js";
+import generateTextDecorationThickness from "./generators/textDecorationThickness.js";
+import generateTextIndent from "./generators/textIndent.js";
+import generateTextOpacity from "./generators/textOpacity.js";
+import generateTextOverflow from "./generators/textOverflow.js";
+import generateTextShadowBlur from "./generators/textShadowBlur.js";
+import generateTextShadowColor from "./generators/textShadowColor.js";
+import generateTextShadowOpacity from "./generators/textShadowOpacity.js";
+import generateTextShadowX from "./generators/textShadowX.js";
+import generateTextShadowY from "./generators/textShadowY.js";
+import generateTextTransform from "./generators/textTransform.js";
+import generateTextUnderlineOffset from "./generators/textUnderlineOffset.js";
+import generateTextWrap from "./generators/textWrap.js";
+import generateTouchAction from "./generators/touchAction.js";
+import generateTransform from "./generators/transform.js";
+import generateTransformOrigin from "./generators/transformOrigin.js";
+import generateTranslate from "./generators/translate.js";
+import generateUserSelect from "./generators/userSelect.js";
+import generateVerticalAlign from "./generators/verticalAlign.js";
+import generateVisibility from "./generators/visibility.js";
+import generateWhitespace from "./generators/whitespace.js";
+import generateWidth from "./generators/width.js";
+import generateWordBreak from "./generators/wordBreak.js";
+import generateWillChange from "./generators/willChange.js";
+import generateZIndex from "./generators/zIndex.js";
 
-import patterns from "./patterns/index";
+import patterns from "./patterns/index.js";
 
 const plugins = {
   accentColor: generateAccentColor,
@@ -538,95 +538,133 @@ function inlineStyleToJson(styleString) {
 // Cache untuk CSS resolusi
 const cssResolutionCache = new Map();
 
-function separateAndResolveCSS(arr) {
-  // Perbaiki: cacheKey harus unik untuk setiap input array
-  const cacheKey = Array.isArray(arr) ? arr.join("|") : String(arr);
-  if (cssResolutionCache.has(cacheKey)) {
-    return cssResolutionCache.get(cacheKey);
-  }
-
-  // Batasi ukuran cache untuk menghindari memory leak
-  limitCacheSize(cssResolutionCache);
-
-  const cssProperties = {};
-  arr.forEach((item) => {
-    if (!item) return;
-
-    const declarations = item
-      .split(";")
-      .map((decl) => decl.trim())
-      .filter((decl) => decl);
-
-    declarations.forEach((declaration) => {
-      const colonIndex = declaration.indexOf(":");
-      if (colonIndex === -1) return;
-
-      const key = declaration.substring(0, colonIndex).trim();
-      const value = declaration.substring(colonIndex + 1).trim();
-
-      if (key && value) {
-        // Prioritaskan nilai yang lebih spesifik (misalnya !important)
-        if (value.includes("!important") || !cssProperties[key]) {
-          cssProperties[key] = value;
-        }
-      }
-    });
-  });
-
-  const resolvedProperties = { ...cssProperties };
-
-  const resolveValue = (value, variables) => {
-    if (!value || !value.includes("var(")) return value;
-
-    return value.replace(
-      /var\((--[a-zA-Z0-9-]+)(?:,\s*([^)]+))?\)/g,
-      (match, variable, fallback) => {
-        return variables[variable] || fallback || match;
-      }
-    );
-  };
-
-  // Resolve variables
-  Object.keys(resolvedProperties).forEach((key) => {
-    resolvedProperties[key] = resolveValue(
-      resolvedProperties[key],
-      resolvedProperties
-    );
-  });
-
-  // Remove CSS variables after resolution
-  Object.keys(resolvedProperties).forEach((key) => {
-    if (key.startsWith("--")) {
-      delete resolvedProperties[key];
-    }
-  });
-
-  const result = Object.entries(resolvedProperties)
-    .map(([key, value]) => `${key}: ${value};`)
-    .join(" ");
-
-  cssResolutionCache.set(cacheKey, result);
-  return result;
-}
-
-// Fungsi untuk membatasi ukuran cache untuk mencegah memory leak
+// Enhanced cache management with performance monitoring
 function limitCacheSize(cache, maxSize = 1000) {
   if (cache.size > maxSize) {
+    const cleanupMarker = performanceMonitor.start("cache:cleanup");
     // Hapus 20% entri yang paling lama
     const entriesToRemove = Math.floor(cache.size * 0.2);
     const keys = Array.from(cache.keys()).slice(0, entriesToRemove);
     keys.forEach((key) => cache.delete(key));
+    performanceMonitor.end(cleanupMarker);
   }
 }
 
-// Implementasi fungsi debounce untuk mengoptimalkan panggilan berulang
+// Enhanced debounce with performance tracking
 function debounce(func, wait = 100) {
   let timeout;
+  let callCount = 0;
+  
   return function (...args) {
     const context = this;
+    callCount++;
+    
     clearTimeout(timeout);
-    timeout = setTimeout(() => func.apply(context, args), wait);
+    timeout = setTimeout(() => {
+      const marker = performanceMonitor.start(`debounced:${func.name || 'anonymous'}`);
+      try {
+        const result = func.apply(context, args);
+        performanceMonitor.end(marker);
+        return result;
+      } catch (error) {
+        performanceMonitor.end(marker);
+        console.error(`Debounced function error (call #${callCount}):`, error);
+        throw error;
+      }
+    }, wait);
   };
+}
+
+// Enhanced CSS resolution with better error handling
+function separateAndResolveCSS(arr) {
+  const marker = performanceMonitor.start("css:resolve");
+  
+  try {
+    // Perbaiki: cacheKey harus unik untuk setiap input array
+    const cacheKey = Array.isArray(arr) ? arr.join("|") : String(arr);
+    if (cssResolutionCache.has(cacheKey)) {
+      performanceMonitor.end(marker);
+      return cssResolutionCache.get(cacheKey);
+    }
+
+    // Batasi ukuran cache untuk menghindari memory leak
+    limitCacheSize(cssResolutionCache);
+
+    const cssProperties = {};
+    arr.forEach((item) => {
+      if (!item) return;
+
+      try {
+        const declarations = item
+          .split(";")
+          .map((decl) => decl.trim())
+          .filter((decl) => decl);
+
+        declarations.forEach((declaration) => {
+          const colonIndex = declaration.indexOf(":");
+          if (colonIndex === -1) return;
+
+          const key = declaration.substring(0, colonIndex).trim();
+          const value = declaration.substring(colonIndex + 1).trim();
+
+          if (key && value) {
+            // Prioritaskan nilai yang lebih spesifik (misalnya !important)
+            if (value.includes("!important") || !cssProperties[key]) {
+              cssProperties[key] = value;
+            }
+          }
+        });
+      } catch (error) {
+        console.warn("Error processing CSS declaration:", item, error);
+      }
+    });
+
+    const resolvedProperties = { ...cssProperties };
+
+    const resolveValue = (value, variables) => {
+      if (!value || !value.includes("var(")) return value;
+
+      try {
+        return value.replace(
+          /var\((--[a-zA-Z0-9-]+)(?:,\s*([^)]+))?\)/g,
+          (match, variable, fallback) => {
+            return variables[variable] || fallback || match;
+          }
+        );
+      } catch (error) {
+        console.warn("Error resolving CSS variable:", value, error);
+        return value;
+      }
+    };
+
+    // Resolve variables
+    Object.keys(resolvedProperties).forEach((key) => {
+      resolvedProperties[key] = resolveValue(
+        resolvedProperties[key],
+        resolvedProperties
+      );
+    });
+
+    // Remove CSS variables after resolution
+    Object.keys(resolvedProperties).forEach((key) => {
+      if (key.startsWith("--")) {
+        delete resolvedProperties[key];
+      }
+    });
+
+    const result = Object.entries(resolvedProperties)
+      .map(([key, value]) => `${key}: ${value};`)
+      .join(" ");
+
+    cssResolutionCache.set(cacheKey, result);
+    performanceMonitor.end(marker);
+    return result;
+    
+  } catch (error) {
+    performanceMonitor.end(marker);
+    console.error("Critical error in CSS resolution:", error);
+    return "";
+  }
 }
 
 /**
@@ -636,273 +674,283 @@ function debounce(func, wait = 100) {
  * @returns {string|Object} String CSS inline atau objek style JSON
  */
 export function tws(classNames, convertToJson) {
-  if (
-    [
-      !classNames,
-      typeof classNames !== "string",
-      classNames.trim() === "",
-    ].includes(true)
-  ) {
-    return convertToJson ? {} : "";
-  }
-
-  let classes;
+  const totalMarker = performanceMonitor.start("tws:total");
+  
   try {
-    classes = classNames.match(/[\w-\/]+(?:\[[^\]]+\])?/g);
-
-    // Jika tidak ada class yang valid ditemukan
-    if (!classes || classes.length === 0) {
-      console.warn(`No valid Tailwind classes found in input: "${classNames}"`);
+    if (
+      [
+        !classNames,
+        typeof classNames !== "string",
+        classNames.trim() === "",
+      ].includes(true)
+    ) {
+      performanceMonitor.end(totalMarker);
       return convertToJson ? {} : "";
     }
-  } catch (error) {
-    console.error(`Error parsing Tailwind classes: ${error.message}`);
-    return convertToJson ? {} : "";
-  }
 
-  let cssResult = classes.map((className) => {
-    let result =
-      cssObject[className] ||
-      cssObject[className.replace(/(\/)/g, "\\$1")] ||
-      cssObject[className.replace(/\./g, "\\.")];
+    let classes;
+    try {
+      const parseMarker = performanceMonitor.start("tws:parse");
+      classes = classNames.match(/[\w-\/]+(?:\[[^\]]+\])?/g);
+      performanceMonitor.end(parseMarker);
 
-    if (result) {
-      return resolveCssToClearCss(result);
-    } else if (className.includes("[")) {
-      const match = className.match(/\[([^\]]+)\]/);
-      if (match) {
-        const customValue = match[1];
-        const baseKey = className.split("[")[0];
-        if (cssObject[`${baseKey}custom`]) {
-          return cssObject[`${baseKey}custom`].replace(
-            /custom_value/g,
-            customValue
-          );
+      // Jika tidak ada class yang valid ditemukan
+      if (!classes || classes.length === 0) {
+        console.warn(`No valid Tailwind classes found in input: "${classNames}"`);
+        performanceMonitor.end(totalMarker);
+        return convertToJson ? {} : "";
+      }
+    } catch (error) {
+      console.error(`Error parsing Tailwind classes: ${error.message}`);
+      performanceMonitor.end(totalMarker);
+      return convertToJson ? {} : "";
+    }
+
+    // Process classes with performance monitoring
+    const processMarker = performanceMonitor.start("tws:process");
+    let cssResult = classes.map((className) => {
+      let result =
+        cssObject[className] ||
+        cssObject[className.replace(/(\/)/g, "\\$1")] ||
+        cssObject[className.replace(/\./g, "\\.")];
+
+      if (result) {
+        return resolveCssToClearCss(result);
+      } else if (className.includes("[")) {
+        const match = className.match(/\[([^\]]+)\]/);
+        if (match) {
+          const customValue = match[1];
+          const baseKey = className.split("[")[0];
+          if (cssObject[`${baseKey}custom`]) {
+            return cssObject[`${baseKey}custom`].replace(
+              /custom_value/g,
+              customValue
+            );
+          }
         }
       }
-    }
-    return "";
-  });
+      return "";
+    });
+    performanceMonitor.end(processMarker);
 
-  cssResult = separateAndResolveCSS(cssResult);
+    // Resolve CSS
+    cssResult = performanceMonitor.measure(
+      () => separateAndResolveCSS(cssResult),
+      "tws:resolve"
+    );
 
-  if (convertToJson) {
-    cssResult = inlineStyleToJson(cssResult);
-  }
-
-  return cssResult;
-}
-
-/**
- * Menghasilkan string CSS dari objek style dengan sintaks mirip SCSS
- * Mendukung nested selectors, state variants, responsive variants, dan @css directives
- * @param {Object} obj - Objek dengan format style mirip SCSS
- * @param {Object} [options] - Opsi tambahan, misal { inject: true/false }
- * @returns {string} String CSS yang dihasilkan
- */
-export function twsx(obj, options = {}) {
-  if (!obj || typeof obj !== "object") {
-    console.warn("twsx: Expected an object but received:", obj);
-    return "";
-  }
-  const { inject = true } = options;
-
-  const styles = {};
-
-  function expandGroupedClass(input) {
-    function expandDirectiveGroups(str) {
-      return str.replace(/(\w+)\(([^()]+)\)/g, (_, directive, content) => {
-        return content
-          .trim()
-          .split(/\s+/)
-          .map((val) => {
-            if (val.includes(":")) {
-              const [variant, v] = val.split(":");
-              const prefix = v.startsWith("-") ? "-" : "";
-              const value = v.startsWith("-") ? v.slice(1) : v;
-              return `${variant}:${prefix}${directive}-${value}`;
-            }
-            const prefix = val.startsWith("-") ? "-" : "";
-            const value = val.startsWith("-") ? val.slice(1) : val;
-            return `${prefix}${directive}-${value}`;
-          })
-          .join(" ");
-      });
-    }
-
-    function expandVariants(str, parent = "") {
-      return str.replace(
-        /(\w+):\(([^()]+(?:\((?:[^()]+)\))?[^()]*)\)/g,
-        (_, variant, content) => {
-          return content
-            .trim()
-            .split(/\s+/)
-            .map((c) => {
-              if (/\w+:\(.*\)/.test(c)) {
-                return expandVariants(
-                  c,
-                  parent ? `${parent}:${variant}` : variant
-                );
-              }
-              return `${parent ? `${parent}:${variant}` : variant}:${c}`;
-            })
-            .join(" ");
-        }
+    // Convert to JSON if needed
+    if (convertToJson) {
+      cssResult = performanceMonitor.measure(
+        () => inlineStyleToJson(cssResult),
+        "tws:json"
       );
     }
 
-    let result = encodeBracketValues(input);
-    let prev;
-
-    do {
-      prev = result;
-      result = expandVariants(result);
-      result = expandDirectiveGroups(result);
-    } while (result !== prev);
-
-    return result;
+    performanceMonitor.end(totalMarker);
+    return cssResult;
+    
+  } catch (error) {
+    performanceMonitor.end(totalMarker);
+    console.error("tws error:", error);
+    return convertToJson ? {} : "";
   }
-  function walk(selector, val) {
-    if (!selector || typeof selector !== "string") {
-      console.warn("Invalid selector in walk function:", selector);
-      return;
+}
+
+// Performance monitoring utilities
+const performanceMonitor = {
+  enabled: typeof performance !== "undefined",
+  
+  start(label) {
+    if (!this.enabled) return null;
+    return {
+      label,
+      startTime: performance.now()
+    };
+  },
+  
+  end(marker) {
+    if (!this.enabled || !marker) return;
+    const duration = performance.now() - marker.startTime;
+    if (duration > 5) { // Only log if > 5ms
+      console.warn(`Slow ${marker.label}: ${duration.toFixed(2)}ms`);
     }
+  },
+  
+  measure(fn, label) {
+    const marker = this.start(label);
+    try {
+      const result = fn();
+      this.end(marker);
+      return result;
+    } catch (error) {
+      this.end(marker);
+      throw error;
+    }
+  }
+};
 
-    const { baseSelector, cssProperty } = parseSelector(selector);
-    if (
-      cssProperty &&
-      typeof val === "object" &&
-      Array.isArray(val) &&
-      val.length > 0
-    ) {
-      const cssValue = val[0];
-      if (typeof cssValue === "string") {
-        styles[baseSelector] = styles[baseSelector] || "";
-        styles[baseSelector] += `${cssProperty}: ${cssValue};\n`;
-        return;
+// Utility functions for class expansion
+function expandDirectiveGroups(str) {
+  return str.replace(/(\w+)\(([^()]+)\)/g, (_, directive, content) => {
+    return content
+      .trim()
+      .split(/\s+/)
+      .map((val) => {
+        if (val.includes(":")) {
+          const [variant, v] = val.split(":");
+          const prefix = v.startsWith("-") ? "-" : "";
+          const value = v.startsWith("-") ? v.slice(1) : v;
+          return `${variant}:${prefix}${directive}-${value}`;
+        }
+        const prefix = val.startsWith("-") ? "-" : "";
+        const value = val.startsWith("-") ? val.slice(1) : val;
+        return `${prefix}${directive}-${value}`;
+      })
+      .join(" ");
+  });
+}
+
+function expandVariants(str, parent = "") {
+  return str.replace(
+    /(\w+):\(([^()]+(?:\((?:[^()]+)\))?[^()]*)\)/g,
+    (_, variant, content) => {
+      return content
+        .trim()
+        .split(/\s+/)
+        .map((c) => {
+          if (/\w+:\(.*\)/.test(c)) {
+            return expandVariants(
+              c,
+              parent ? `${parent}:${variant}` : variant
+            );
+          }
+          return `${parent ? `${parent}:${variant}` : variant}:${c}`;
+        })
+        .join(" ");
+    }
+  );
+}
+
+function expandGroupedClass(input) {
+  let result = encodeBracketValues(input);
+  let prev;
+
+  do {
+    prev = result;
+    result = expandVariants(result);
+    result = expandDirectiveGroups(result);
+  } while (result !== prev);
+
+  return result;
+}
+// CSS Processing utilities
+const parseSelectorCache = new Map();
+
+function parseSelector(selector) {
+  if (parseSelectorCache.has(selector)) {
+    return parseSelectorCache.get(selector);
+  }
+
+  let result;
+  if (selector.includes("@css")) {
+    const parts = selector.split("@css");
+    const baseSelector = parts[0].trim();
+    const cssProperty = parts[1]?.trim();
+    result = { baseSelector, cssProperty };
+  } else {
+    result = { baseSelector: selector, cssProperty: null };
+  }
+
+  parseSelectorCache.set(selector, result);
+  limitCacheSize(parseSelectorCache);
+  return result;
+}
+
+function processClass(cls, selector, styles) {
+  if (cls.trim() === "") return;
+
+  const [rawVariants, className] = cls.includes(":")
+    ? [cls.split(":").slice(0, -1), cls.split(":").slice(-1)[0]]
+    : [[], cls];
+
+  let isImportant = false;
+  let pureClassName = className;
+
+  if (className.startsWith("!")) {
+    isImportant = true;
+    pureClassName = className.slice(1);
+  }
+
+  const { media, finalSelector } = resolveVariants(selector, rawVariants);
+
+  let declarations =
+    cssObject[pureClassName] ||
+    cssObject[pureClassName.replace(/(\/)/g, "\\$1")] ||
+    cssObject[pureClassName.replace(/\./g, "\\.")];
+
+  if (!declarations && pureClassName.includes("[")) {
+    const match = pureClassName.match(/^(.+?)\[(.+)\]$/);
+    if (match) {
+      const [, prefix, dynamicValue] = match;
+      const customKey = `${prefix}custom`;
+      const template = cssObject[customKey];
+      if (template) {
+        declarations = template.replace(
+          /custom_value/g,
+          decodeBracketValues(dynamicValue)
+        );
       }
     }
+  }
 
-    if (Array.isArray(val)) {
-      const [base, nested] = val;
+  if (!declarations) {
+    declarations = parseCustomClassWithPatterns(pureClassName);
+  }
 
-      if (typeof base !== "string") {
-        return;
+  if (!declarations) {
+    return;
+  }
+
+  if (isImportant) {
+    declarations = declarations.replace(
+      /([^:;]+):([^;]+)(;?)/g,
+      (_, prop, value) => {
+        return prop.trim().startsWith("--")
+          ? `${prop}:${value};`
+          : `${prop}:${value.trim()} !important;`;
       }
+    );
+  }
 
-      for (const cls of base.split(" ")) {
-        if (cls.trim() === "") continue;
+  const isSpaceOrDivide = [
+    "space-x-",
+    "-space-x-",
+    "space-y-",
+    "-space-y-",
+    "divide-",
+  ].some((prefix) => pureClassName.startsWith(prefix));
 
-        const [rawVariants, className] = cls.includes(":")
-          ? [cls.split(":").slice(0, -1), cls.split(":").slice(-1)[0]]
-          : [[], cls];
+  const expandedSelector = replaceSelector(finalSelector);
+  const targetSelector = isSpaceOrDivide
+    ? `${expandedSelector} > :not([hidden]) ~ :not([hidden])`
+    : expandedSelector;
 
-        let isImportant = false;
-        let pureClassName = className;
+  if (media) {
+    styles[media] = styles[media] || {};
+    styles[media][targetSelector] = styles[media][targetSelector] || "";
+    styles[media][targetSelector] += declarations + "\n";
+  } else {
+    styles[targetSelector] = styles[targetSelector] || "";
+    styles[targetSelector] += declarations + "\n";
+  }
+}
 
-        if (className.startsWith("!")) {
-          isImportant = true;
-          pureClassName = className.slice(1);
-        }
-
-        const { media, finalSelector } = resolveVariants(selector, rawVariants);
-
-        let declarations =
-          cssObject[pureClassName] ||
-          cssObject[pureClassName.replace(/(\/)/g, "\\$1")] ||
-          cssObject[pureClassName.replace(/\./g, "\\.")];
-
-        if (!declarations && pureClassName.includes("[")) {
-          const match = pureClassName.match(/^(.+?)\[(.+)\]$/);
-          if (match) {
-            const [, prefix, dynamicValue] = match;
-            const customKey = `${prefix}custom`;
-            const template = cssObject[customKey];
-            if (template) {
-              declarations = template.replace(
-                /custom_value/g,
-                decodeBracketValues(dynamicValue)
-              );
-            }
-          }
-        }
-
-        if (!declarations) {
-          declarations = parseCustomClassWithPatterns(pureClassName);
-        }
-
-        if (!declarations) {
-          continue;
-        }
-
-        if (isImportant) {
-          declarations = declarations.replace(
-            /([^:;]+):([^;]+)(;?)/g,
-            (_, prop, value) => {
-              return prop.trim().startsWith("--")
-                ? `${prop}:${value};`
-                : `${prop}:${value.trim()} !important;`;
-            }
-          );
-        }
-
-        const isSpaceOrDivide = [
-          "space-x-",
-          "-space-x-",
-          "space-y-",
-          "-space-y-",
-          "divide-",
-        ].some((prefix) => pureClassName.startsWith(prefix));
-
-        const expandedSelector = replaceSelector(finalSelector);
-        const targetSelector = isSpaceOrDivide
-          ? `${expandedSelector} > :not([hidden]) ~ :not([hidden])`
-          : expandedSelector;
-
-        if (media) {
-          styles[media] = styles[media] || {};
-          styles[media][targetSelector] = styles[media][targetSelector] || "";
-          styles[media][targetSelector] += declarations + "\n";
-        } else {
-          styles[targetSelector] = styles[targetSelector] || "";
-          styles[targetSelector] += declarations + "\n";
-        }
-      }
-
-      for (const nestedSel in nested) {
-        const nestedVal = nested[nestedSel];
-        if (nestedSel === "@css" && typeof nestedVal === "object") {
-          const cssDeclarations = Object.entries(nestedVal)
-            .map(([key, value]) => `${key}: ${value};`)
-            .join(" ");
-
-          if (selector in styles) {
-            styles[selector] += cssDeclarations + "\n";
-          } else {
-            styles[selector] = cssDeclarations + "\n";
-          }
-          continue;
-        }
-
-        const combinedSel = nestedSel.includes("&")
-          ? nestedSel.replace(/&/g, selector)
-          : `${selector} ${nestedSel}`;
-        walk(combinedSel, nestedVal);
-      }
-    } else if (typeof val === "string") {
-      if (val.trim() === "") return;
-
-      walk(selector, [expandGroupedClass(val)]);
-    } else if (typeof val === "object" && val !== null) {
-      const { baseSelector, cssProperty } = parseSelector(selector);
-      if (cssProperty) {
-        const cssValue = Object.values(val).join(" ");
-        styles[baseSelector] = styles[baseSelector] || "";
-        styles[baseSelector] += `${cssProperty}: ${cssValue};\n`;
-        return;
-      }
-
-      const cssDeclarations = Object.entries(val)
+function processNestedSelectors(nested, selector, styles, walk) {
+  for (const nestedSel in nested) {
+    const nestedVal = nested[nestedSel];
+    if (nestedSel === "@css" && typeof nestedVal === "object") {
+      const cssDeclarations = Object.entries(nestedVal)
         .map(([key, value]) => `${key}: ${value};`)
         .join(" ");
 
@@ -911,95 +959,118 @@ export function twsx(obj, options = {}) {
       } else {
         styles[selector] = cssDeclarations + "\n";
       }
+      continue;
+    }
+
+    const combinedSel = nestedSel.includes("&")
+      ? nestedSel.replace(/&/g, selector)
+      : `${selector} ${nestedSel}`;
+    walk(combinedSel, nestedVal);
+  }
+}
+
+function walkStyleTree(selector, val, styles, walk) {
+  if (!selector || typeof selector !== "string") {
+    console.warn("Invalid selector in walk function:", selector);
+    return;
+  }
+
+  const { baseSelector, cssProperty } = parseSelector(selector);
+  if (
+    cssProperty &&
+    typeof val === "object" &&
+    Array.isArray(val) &&
+    val.length > 0
+  ) {
+    const cssValue = val[0];
+    if (typeof cssValue === "string") {
+      styles[baseSelector] = styles[baseSelector] || "";
+      styles[baseSelector] += `${cssProperty}: ${cssValue};\n`;
+      return;
     }
   }
 
-  // Menambahkan memoization untuk parseSelector
-  const parseSelectorCache = new Map();
-  function parseSelector(selector) {
-    if (parseSelectorCache.has(selector)) {
-      return parseSelectorCache.get(selector);
+  if (Array.isArray(val)) {
+    const [base, nested] = val;
+
+    if (typeof base !== "string") {
+      return;
     }
 
-    let result;
-    if (selector.includes("@css")) {
-      const parts = selector.split("@css");
-      const baseSelector = parts[0].trim();
-      const cssProperty = parts[1]?.trim();
-      result = { baseSelector, cssProperty };
+    // Process base classes
+    for (const cls of base.split(" ")) {
+      processClass(cls, selector, styles);
+    }
+
+    // Process nested selectors
+    processNestedSelectors(nested, selector, styles, walk);
+  } else if (typeof val === "string") {
+    if (val.trim() === "") return;
+    walk(selector, [expandGroupedClass(val)]);
+  } else if (typeof val === "object" && val !== null) {
+    const { baseSelector, cssProperty } = parseSelector(selector);
+    if (cssProperty) {
+      const cssValue = Object.values(val).join(" ");
+      styles[baseSelector] = styles[baseSelector] || "";
+      styles[baseSelector] += `${cssProperty}: ${cssValue};\n`;
+      return;
+    }
+
+    const cssDeclarations = Object.entries(val)
+      .map(([key, value]) => `${key}: ${value};`)
+      .join(" ");
+
+    if (selector in styles) {
+      styles[selector] += cssDeclarations + "\n";
     } else {
-      result = { baseSelector: selector, cssProperty: null };
+      styles[selector] = cssDeclarations + "\n";
     }
-
-    parseSelectorCache.set(selector, result);
-    limitCacheSize(parseSelectorCache);
-    return result;
   }
+}
 
-  function isSelectorObject(val) {
-    return typeof val === "object" && val !== null && !Array.isArray(val);
-  }
+// Object flattening utilities
+function isSelectorObject(val) {
+  return typeof val === "object" && val !== null && !Array.isArray(val);
+}
 
-  function flatten(obj, parentSelector = "") {
-    const result = {};
+function flattenStyleObject(obj, parentSelector = "") {
+  const result = {};
 
-    for (const selector in obj) {
-      const val = obj[selector];
-      const currentSelector = parentSelector
-        ? selector.includes("&")
-          ? selector.replace(/&/g, parentSelector)
-          : `${parentSelector} ${selector}`
-        : selector;
-
-      if (typeof val === "string") {
-        result[currentSelector] = val;
-      } else if (Array.isArray(val)) {
-        const flatArray = [];
-        for (const item of val) {
-          if (typeof item === "string") {
-            flatArray.push(item);
-          } else if (isSelectorObject(item)) {
-            const nested = flatten(item, currentSelector);
-            Object.assign(result, nested);
-          }
-        }
-        if (flatArray.length > 0) {
-          result[currentSelector] = result[currentSelector] || [];
-          result[currentSelector].push(...flatArray);
-        }
-      } else if (isSelectorObject(val)) {
-        const nested = flatten(val, currentSelector);
-        Object.assign(result, nested);
-      }
-    }
-
-    return result;
-  }
-
-  const flattened = flatten(obj);
-
-  for (const selector in flattened) {
-    let val = flattened[selector];
-    let baseClass = "";
-    let nested = {};
+  for (const selector in obj) {
+    const val = obj[selector];
+    const currentSelector = parentSelector
+      ? selector.includes("&")
+        ? selector.replace(/&/g, parentSelector)
+        : `${parentSelector} ${selector}`
+      : selector;
 
     if (typeof val === "string") {
-      baseClass = expandGroupedClass(val);
+      result[currentSelector] = val;
     } else if (Array.isArray(val)) {
+      const flatArray = [];
       for (const item of val) {
         if (typeof item === "string") {
-          baseClass += (baseClass ? " " : "") + expandGroupedClass(item);
-        } else if (typeof item === "object" && item !== null) {
-          Object.assign(nested, item);
+          flatArray.push(item);
+        } else if (isSelectorObject(item)) {
+          const nested = flattenStyleObject(item, currentSelector);
+          Object.assign(result, nested);
         }
       }
+      if (flatArray.length > 0) {
+        result[currentSelector] = result[currentSelector] || [];
+        result[currentSelector].push(...flatArray);
+      }
+    } else if (isSelectorObject(val)) {
+      const nested = flattenStyleObject(val, currentSelector);
+      Object.assign(result, nested);
     }
-
-    walk(selector, [baseClass, nested]);
   }
 
-  let cssString = "";
+  return result;
+}
 
+// CSS Generation utilities
+function generateCssString(styles) {
   const baseStyles = [];
   const mediaStyles = [];
 
@@ -1011,10 +1082,14 @@ export function twsx(obj, options = {}) {
     }
   }
 
+  let cssString = "";
+
+  // Add base styles
   for (const { sel, css } of baseStyles) {
     cssString += `${sel}{${css.trim().replace(/\n/g, "")}}`;
   }
 
+  // Sort and add media queries
   function mediaPriority(sel) {
     const match = sel.match(/@media \(min-width: (\d+)px\)/);
     return match ? parseInt(match[1], 10) : 99999;
@@ -1029,11 +1104,85 @@ export function twsx(obj, options = {}) {
     }
     cssString += `}`;
   }
-  cssString = cssString.trim();
-  if (inject && typeof window !== "undefined" && typeof document !== "undefined") {
-    autoInjectCss(cssString);
+
+  return cssString.trim();
+}
+
+/**
+ * Menghasilkan string CSS dari objek style dengan sintaks mirip SCSS
+ * Mendukung nested selectors, state variants, responsive variants, dan @css directives
+ * @param {Object} obj - Objek dengan format style mirip SCSS
+ * @param {Object} [options] - Opsi tambahan, misal { inject: true/false }
+ * @returns {string} String CSS yang dihasilkan
+ */
+export function twsx(obj, options = {}) {
+  const totalMarker = performanceMonitor.start("twsx:total");
+  
+  try {
+    if (!obj || typeof obj !== "object") {
+      console.warn("twsx: Expected an object but received:", obj);
+      return "";
+    }
+    
+    const { inject = true } = options;
+    const styles = {};
+
+    // Create walk function with closure over styles
+    function walk(selector, val) {
+      walkStyleTree(selector, val, styles, walk);
+    }
+
+    // Flatten the input object
+    const flattered = performanceMonitor.measure(
+      () => flattenStyleObject(obj),
+      "twsx:flatten"
+    );
+
+    // Process each selector
+    const processMarker = performanceMonitor.start("twsx:process");
+    for (const selector in flattered) {
+      let val = flattered[selector];
+      let baseClass = "";
+      let nested = {};
+
+      if (typeof val === "string") {
+        baseClass = expandGroupedClass(val);
+      } else if (Array.isArray(val)) {
+        for (const item of val) {
+          if (typeof item === "string") {
+            baseClass += (baseClass ? " " : "") + expandGroupedClass(item);
+          } else if (typeof item === "object" && item !== null) {
+            Object.assign(nested, item);
+          }
+        }
+      }
+
+      walk(selector, [baseClass, nested]);
+    }
+    performanceMonitor.end(processMarker);
+
+    // Generate CSS string
+    const cssString = performanceMonitor.measure(
+      () => generateCssString(styles),
+      "twsx:generate"
+    );
+
+    // Auto-inject if needed
+    if (inject && typeof window !== "undefined" && typeof document !== "undefined") {
+      performanceMonitor.measure(
+        () => autoInjectCss(cssString),
+        "twsx:inject"
+      );
+    }
+
+    performanceMonitor.end(totalMarker);
+    return cssString;
+    
+  } catch (error) {
+    performanceMonitor.end(totalMarker);
+    console.error("twsx error:", error);
+    return "";
   }
-  return cssString;
 }
 
 // Fungsi hashCode sederhana untuk deduplikasi CSS
@@ -1048,37 +1197,86 @@ function getCssHash(str) {
   return hash;
 }
 
-// Cache untuk deduplikasi auto-inject CSS pakai hash
+// Enhanced auto-inject CSS dengan performance monitoring
 const injectedCssHashSet = new Set();
 function autoInjectCss(cssString) {
-  if (typeof window !== "undefined" && typeof document !== "undefined") {
-    const cssHash = getCssHash(cssString);
-    if (injectedCssHashSet.has(cssHash)) return;
-    injectedCssHashSet.add(cssHash);
-    let styleTag = document.getElementById("twsx-auto-style");
-    if (!styleTag) {
-      styleTag = document.createElement("style");
-      styleTag.id = "twsx-auto-style";
-      document.head.appendChild(styleTag);
+  const marker = performanceMonitor.start("css:inject");
+  
+  try {
+    if (typeof window !== "undefined" && typeof document !== "undefined") {
+      const cssHash = getCssHash(cssString);
+      if (injectedCssHashSet.has(cssHash)) {
+        performanceMonitor.end(marker);
+        return;
+      }
+      
+      injectedCssHashSet.add(cssHash);
+      let styleTag = document.getElementById("twsx-auto-style");
+      if (!styleTag) {
+        styleTag = document.createElement("style");
+        styleTag.id = "twsx-auto-style";
+        document.head.appendChild(styleTag);
+      }
+      styleTag.textContent += `\n${cssString}`;
+      
+      // Log injection stats periodically
+      if (injectedCssHashSet.size % 10 === 0) {
+        console.debug(`CSS injection stats: ${injectedCssHashSet.size} unique stylesheets injected`);
+      }
     }
-    styleTag.textContent += `\n${cssString}`;
+    performanceMonitor.end(marker);
+  } catch (error) {
+    performanceMonitor.end(marker);
+    console.error("Error injecting CSS:", error);
   }
 }
 
-// Daftarkan versi debounced dari fungsi-fungsi export
+// Enhanced debounced functions dengan konfigurasi performance monitoring
 /**
- * Versi debounced dari fungsi tws
- * Membantu mengoptimalkan performa ketika memanggil tws berulang kali
+ * Versi debounced dari fungsi tws dengan performance monitoring
  * @param {string} classNames - String berisi kelas Tailwind yang akan dikonversi
  * @param {boolean} convertToJson - Jika true, hasil akan menjadi objek JSON, jika false menjadi string CSS
  * @returns {string|Object} String CSS inline atau objek style JSON
  */
-export const debouncedTws = debounce(tws);
+export const debouncedTws = debounce(tws, 50); // Faster debounce for tws
 
 /**
- * Versi debounced dari fungsi twsx
- * Membantu mengoptimalkan performa ketika memanggil twsx berulang kali
+ * Versi debounced dari fungsi twsx dengan performance monitoring
  * @param {Object} obj - Objek dengan format style mirip SCSS
+ * @param {Object} [options] - Opsi tambahan
  * @returns {string} String CSS yang dihasilkan
  */
-export const debouncedTwsx = debounce(twsx);
+export const debouncedTwsx = debounce(twsx, 100); // Standard debounce for twsx
+
+// Export performance utilities untuk debugging
+export const performanceUtils = {
+  getStats() {
+    return {
+      cacheStats: {
+        cssResolution: cssResolutionCache.size,
+        configOptions: configOptionsCache.size,
+        parseSelector: parseSelectorCache.size,
+        encodeBracket: encodeBracketCache.size,
+        decodeBracket: decodeBracketCache.size,
+      },
+      injectionStats: {
+        uniqueStylesheets: injectedCssHashSet.size,
+      }
+    };
+  },
+  
+  clearCaches() {
+    const marker = performanceMonitor.start("performance:clearCaches");
+    cssResolutionCache.clear();
+    parseSelectorCache.clear();
+    encodeBracketCache.clear();
+    decodeBracketCache.clear();
+    console.log("All caches cleared");
+    performanceMonitor.end(marker);
+  },
+  
+  enablePerformanceLogging(enabled = true) {
+    performanceMonitor.enabled = enabled && typeof performance !== "undefined";
+    console.log(`Performance monitoring ${enabled ? 'enabled' : 'disabled'}`);
+  }
+};
