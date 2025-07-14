@@ -79,8 +79,8 @@ This will apply the Tailwind classes directly as inline styles in the React comp
 
 #### Features of `twsx`:
 - Allows **nested styles** similar to SCSS, enabling more complex CSS structures.
-- **Grouping**: Supports grouping utilities inside parentheses, making the code more readable and modular.
-- Fully supports **responsive variants** (`sm`, `md`, `lg`, etc.).
+- **Grouping**: Supports grouping utilities inside parentheses, including responsive variants.
+- Supports **responsive variants** (`sm`, `md`, `lg`, etc.) when used within Tailwind utility classes or in grouping syntax.
 - Handles **state variants** like `hover`, `focus`, and more.
 - Supports **dynamic utilities** such as `w-[300px]`, `bg-[rgba(0,0,0,0.5)]`.
 - **@css directive**: Apply custom CSS properties directly for more complex styles like transitions and animations.
@@ -232,6 +232,62 @@ console.log(styles);
 }
 ```
 
+#### Responsive Variants:
+
+Responsive variants work within Tailwind utility classes and in grouping syntax:
+
+```javascript
+const styles = twsx({
+  ".responsive-card": [
+    "w-full md:w-1/2 lg:w-1/3 p-4 bg-white", 
+    {
+      "&:hover": "shadow-lg transform:scale-105"
+    }
+  ],
+  ".grouped-responsive": "text-sm md:(text-lg px-6) lg:(text-xl px-8)"
+});
+```
+
+**Output**:
+```css
+.responsive-card {
+  width: 100%;
+  padding: 1rem;
+  background-color: white;
+}
+@media (min-width: 768px) {
+  .responsive-card {
+    width: 50%;
+  }
+}
+@media (min-width: 1024px) {
+  .responsive-card {
+    width: 33.333333%;
+  }
+}
+.responsive-card:hover {
+  box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+  transform: scale(1.05);
+}
+.grouped-responsive {
+  font-size: 0.875rem;
+}
+@media (min-width: 768px) {
+  .grouped-responsive {
+    font-size: 1.125rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  .grouped-responsive {
+    font-size: 1.25rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+```
+
 #### `@css` Direct CSS Properties:
 
 With the `@css` feature, you can directly add CSS properties that aren't available as Tailwind utilities or when you need more complex CSS values like transitions, animations, or custom properties.
@@ -285,7 +341,7 @@ The `@css` feature is particularly helpful for properties that require complex v
 
 #### Advanced `@css` Examples:
 
-You can combine `@css` with responsive and state variants:
+You can combine `@css` with state variants:
 
 ```javascript
 const styles = twsx({
@@ -293,20 +349,18 @@ const styles = twsx({
     "bg-white rounded-lg shadow-xl",
     {
       "@css": {
-        transform: "translateY(0)",
-        transition: "transform 0.3s ease-out, opacity 0.2s ease-in-out",
+        transform: "translateX(0px)",
+        transition: "all 0.3s ease-out",
         "will-change": "transform, opacity"
       },
       "&.hidden": [
         "opacity-0",
         {
           "@css": {
-            transform: "translateY(-20px)"
+            transform: "translateX(-100px)"
           }
         }
-      ],
-      "md:@css width": "500px",
-      "lg:@css width": "700px"
+      ]
     }
   ]
 });
@@ -318,24 +372,22 @@ const styles = twsx({
   background-color: white;
   border-radius: 0.5rem;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  transform: translateY(0);
-  transition: transform 0.3s ease-out, opacity 0.2s ease-in-out;
+  transform: translateX(0px);
+  transition: all 0.3s ease-out;
   will-change: transform, opacity;
 }
 .modal.hidden {
   opacity: 0;
-  transform: translateY(-20px);
+  transform: translateX(-100px);
 }
-@media (min-width: 768px) {
-  .modal {
-    width: 500px;
-  }
-}
-@media (min-width: 1024px) {
-  .modal {
-    width: 700px;
-  }
-}
+```
+
+For responsive styles, you can use standard Tailwind responsive utilities within your classes:
+
+```javascript
+const styles = twsx({
+  ".responsive-box": "w-full md:w-1/2 lg:w-1/3 p-4 bg-blue-500"
+});
 ```
 
 The `@css` feature provides a powerful way to bridge the gap between Tailwind's utility classes and custom CSS when needed, without leaving the `twsx` syntax.
@@ -430,9 +482,9 @@ const complexStyles = twsx({
   ".hero": [
     "bg-gradient-to-br from-indigo-900 to-purple-900 min-h-screen",
     {
-      "h1": "text-6xl font-bold text-white",
-      "@media (max-width: 768px)": {
-        "h1": "text-4xl"
+      "h1": "text-6xl font-bold text-white md:text-4xl",
+      "@css": {
+        transition: "font-size 0.3s ease-in-out"
       }
     }
   ]

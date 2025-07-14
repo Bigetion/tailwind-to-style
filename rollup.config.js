@@ -3,6 +3,7 @@ import terser from '@rollup/plugin-terser';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import { babel } from '@rollup/plugin-babel';
+import copy from 'rollup-plugin-copy';
 import pkg from './package.json';
 
 const banner = `/**
@@ -36,7 +37,12 @@ export default [
       resolve({ extensions }),
       commonjs(),
       json(),
-      babel(babelConfig)
+      babel(babelConfig),
+      copy({
+        targets: [
+          { src: 'types/index.d.ts', dest: 'dist/' }
+        ]
+      })
     ]
   },
   
