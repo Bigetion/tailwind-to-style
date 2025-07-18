@@ -361,13 +361,13 @@ function resolveCssToClearCss(cssString) {
     .join(" ");
 }
 
-// Cache untuk getConfigOptions
+// Cache for getConfigOptions
 const configOptionsCache = new Map();
 const cacheKey = (options) => JSON.stringify(options);
 
 function generateTailwindCssString(options = {}) {
   const pluginKeys = Object.keys(plugins);
-  // Menggunakan cache untuk mencegah pemrosesan ulang yang tidak perlu
+  // Use cache to prevent unnecessary reprocessing
   const key = cacheKey(options);
   if (!configOptionsCache.has(key)) {
     configOptionsCache.set(key, getConfigOptions(options, pluginKeys));
@@ -450,7 +450,7 @@ const selectorVariants = {
   number: (arg) => `> :nth-child(${arg})`,
 };
 
-// Mengoptimalkan encoding/decoding bracket values dengan memoization
+// Optimize encoding/decoding bracket values with memoization
 const encodeBracketCache = new Map();
 function encodeBracketValues(input) {
   if (!input) return input;
@@ -535,14 +535,14 @@ function inlineStyleToJson(styleString) {
   return styleObject;
 }
 
-// Cache untuk CSS resolusi
+// Cache for CSS resolution
 const cssResolutionCache = new Map();
 
 // Enhanced cache management with performance monitoring
 function limitCacheSize(cache, maxSize = 1000) {
   if (cache.size > maxSize) {
     const cleanupMarker = performanceMonitor.start("cache:cleanup");
-    // Hapus 20% entri yang paling lama
+    // Remove 20% of the oldest entries
     const entriesToRemove = Math.floor(cache.size * 0.2);
     const keys = Array.from(cache.keys()).slice(0, entriesToRemove);
     keys.forEach((key) => cache.delete(key));
@@ -580,14 +580,14 @@ function separateAndResolveCSS(arr) {
   const marker = performanceMonitor.start("css:resolve");
   
   try {
-    // Perbaiki: cacheKey harus unik untuk setiap input array
+    // Fix: cacheKey must be unique for each input array
     const cacheKey = Array.isArray(arr) ? arr.join("|") : String(arr);
     if (cssResolutionCache.has(cacheKey)) {
       performanceMonitor.end(marker);
       return cssResolutionCache.get(cacheKey);
     }
 
-    // Batasi ukuran cache untuk menghindari memory leak
+    // Limit cache size to avoid memory leaks
     limitCacheSize(cssResolutionCache);
 
     const cssProperties = {};
@@ -608,7 +608,7 @@ function separateAndResolveCSS(arr) {
           const value = declaration.substring(colonIndex + 1).trim();
 
           if (key && value) {
-            // Prioritaskan nilai yang lebih spesifik (misalnya !important)
+            // Prioritize more specific values (e.g., !important)
             if (value.includes("!important") || !cssProperties[key]) {
               cssProperties[key] = value;
             }
@@ -668,10 +668,96 @@ function separateAndResolveCSS(arr) {
 }
 
 /**
- * Mengkonversi string kelas Tailwind menjadi inline styles CSS atau objek JSON
- * @param {string} classNames - String berisi kelas Tailwind yang akan dikonversi
- * @param {boolean} convertToJson - Jika true, hasil akan menjadi objek JSON, jika false menjadi string CSS
- * @returns {string|Object} String CSS inline atau objek style JSON
+ * Process opacity modifier from class name (e.g., text-red-500/50 -> 50% opacity)
+ * @param {string} className - Class name with potential opacity modifier
+ * @param {string} cssDeclaration - CSS declaration to modify
+ * @returns {string} Modified CSS declaration with opacity applied
+ */
+function processOpacityModifier(className, cssDeclaration) {
+  const opacityMatch = className.match(/\/(\d+)$/);
+  if (!opacityMatch) return cssDeclaration;
+  
+  const opacityValue = parseInt(opacityMatch[1], 10);
+  if (opacityValue < 0 || opacityValue > 100) return cssDeclaration;
+  
+  const alphaValue = (opacityValue / 100).toString();
+  
+  // Handle Tailwind's CSS custom property pattern
+  let modifiedDeclaration = cssDeclaration;
+  
+  // Replace opacity custom properties
+  const opacityProperties = [
+    '--text-opacity',
+    '--bg-opacity', 
+    '--border-opacity',
+    '--ring-opacity',
+    '--divide-opacity',
+    '--placeholder-opacity',
+    '--text-decoration-opacity',
+    '--outline-opacity',
+    '--accent-opacity',
+    '--caret-opacity'
+  ];
+  
+  opacityProperties.forEach(prop => {
+    const propRegex = new RegExp(`${prop}\\s*:\\s*[\\d.]+`, 'gi');
+    modifiedDeclaration = modifiedDeclaration.replace(propRegex, `${prop}: ${alphaValue}`);
+  });
+  
+  // Also handle direct color values that might not use CSS variables
+  const colorProperties = [
+    'color', 'background-color', 'border-color', 'text-decoration-color',
+    'outline-color', 'fill', 'stroke', 'caret-color', 'accent-color'
+  ];
+  
+  colorProperties.forEach(prop => {
+    // Match rgb(), rgba(), hsl(), hsla() functions
+    const rgbRegex = new RegExp(`(${prop}\\s*:\\s*)rgb\\((\\d+),\\s*(\\d+),\\s*(\\d+)\\)`, 'gi');
+    const rgbaRegex = new RegExp(`(${prop}\\s*:\\s*)rgba\\((\\d+),\\s*(\\d+),\\s*(\\d+),\\s*[\\d.]+\\)`, 'gi');
+    const hslRegex = new RegExp(`(${prop}\\s*:\\s*)hsl\\((\\d+),\\s*([\\d.]+%),\\s*([\\d.]+%)\\)`, 'gi');
+    const hslaRegex = new RegExp(`(${prop}\\s*:\\s*)hsla\\((\\d+),\\s*([\\d.]+%),\\s*([\\d.]+%),\\s*[\\d.]+\\)`, 'gi');
+    
+    // Convert rgb to rgba with opacity
+    modifiedDeclaration = modifiedDeclaration.replace(rgbRegex, `$1rgba($2, $3, $4, ${alphaValue})`);
+    
+    // Update existing rgba opacity
+    modifiedDeclaration = modifiedDeclaration.replace(rgbaRegex, `$1rgba($2, $3, $4, ${alphaValue})`);
+    
+    // Convert hsl to hsla with opacity
+    modifiedDeclaration = modifiedDeclaration.replace(hslRegex, `$1hsla($2, $3, $4, ${alphaValue})`);
+    
+    // Update existing hsla opacity
+    modifiedDeclaration = modifiedDeclaration.replace(hslaRegex, `$1hsla($2, $3, $4, ${alphaValue})`);
+    
+    // Handle hex colors
+    const hexRegex = new RegExp(`(${prop}\\s*:\\s*)(#[0-9a-fA-F]{3,6})`, 'gi');
+    modifiedDeclaration = modifiedDeclaration.replace(hexRegex, (match, propPart, hexColor) => {
+      // Convert hex to rgba
+      const hex = hexColor.replace('#', '');
+      let r, g, b;
+      
+      if (hex.length === 3) {
+        r = parseInt(hex[0] + hex[0], 16);
+        g = parseInt(hex[1] + hex[1], 16);
+        b = parseInt(hex[2] + hex[2], 16);
+      } else {
+        r = parseInt(hex.substring(0, 2), 16);
+        g = parseInt(hex.substring(2, 4), 16);
+        b = parseInt(hex.substring(4, 6), 16);
+      }
+      
+      return `${propPart}rgba(${r}, ${g}, ${b}, ${alphaValue})`;
+    });
+  });
+  
+  return modifiedDeclaration;
+}
+
+/**
+ * Convert Tailwind class string to inline CSS styles or JSON object
+ * @param {string} classNames - String containing Tailwind classes to convert
+ * @param {boolean} convertToJson - If true, result will be JSON object, if false becomes CSS string
+ * @returns {string|Object} Inline CSS string or style JSON object
  */
 export function tws(classNames, convertToJson) {
   const totalMarker = performanceMonitor.start("tws:total");
@@ -691,10 +777,10 @@ export function tws(classNames, convertToJson) {
     let classes;
     try {
       const parseMarker = performanceMonitor.start("tws:parse");
-      classes = classNames.match(/[\w-\/]+(?:\[[^\]]+\])?/g);
+      classes = classNames.match(/[\w-\/]+(?:\/\d+)?(?:\[[^\]]+\])?/g);
       performanceMonitor.end(parseMarker);
 
-      // Jika tidak ada class yang valid ditemukan
+      // If no valid classes are found
       if (!classes || classes.length === 0) {
         console.warn(`No valid Tailwind classes found in input: "${classNames}"`);
         performanceMonitor.end(totalMarker);
@@ -709,23 +795,35 @@ export function tws(classNames, convertToJson) {
     // Process classes with performance monitoring
     const processMarker = performanceMonitor.start("tws:process");
     let cssResult = classes.map((className) => {
+      // Extract base class name without opacity modifier
+      const baseClassName = className.replace(/\/\d+$/, '');
+      
       let result =
-        cssObject[className] ||
-        cssObject[className.replace(/(\/)/g, "\\$1")] ||
-        cssObject[className.replace(/\./g, "\\.")];
+        cssObject[baseClassName] ||
+        cssObject[baseClassName.replace(/(\/)/g, "\\$1")] ||
+        cssObject[baseClassName.replace(/\./g, "\\.")];
 
       if (result) {
+        // Apply opacity modifier if present
+        if (className.includes('/') && /\/\d+$/.test(className)) {
+          result = processOpacityModifier(className, result);
+        }
         return resolveCssToClearCss(result);
-      } else if (className.includes("[")) {
-        const match = className.match(/\[([^\]]+)\]/);
+      } else if (baseClassName.includes("[")) {
+        const match = baseClassName.match(/\[([^\]]+)\]/);
         if (match) {
           const customValue = match[1];
-          const baseKey = className.split("[")[0];
+          const baseKey = baseClassName.split("[")[0];
           if (cssObject[`${baseKey}custom`]) {
-            return cssObject[`${baseKey}custom`].replace(
+            let customResult = cssObject[`${baseKey}custom`].replace(
               /custom_value/g,
               customValue
             );
+            // Apply opacity modifier to custom values too
+            if (className.includes('/') && /\/\d+$/.test(className)) {
+              customResult = processOpacityModifier(className, customResult);
+            }
+            return customResult;
           }
         }
       }
@@ -884,13 +982,16 @@ function processClass(cls, selector, styles) {
 
   const { media, finalSelector } = resolveVariants(selector, rawVariants);
 
-  let declarations =
-    cssObject[pureClassName] ||
-    cssObject[pureClassName.replace(/(\/)/g, "\\$1")] ||
-    cssObject[pureClassName.replace(/\./g, "\\.")];
+  // Extract base class name without opacity modifier for CSS lookup
+  const baseClassName = pureClassName.replace(/\/\d+$/, '');
 
-  if (!declarations && pureClassName.includes("[")) {
-    const match = pureClassName.match(/^(.+?)\[(.+)\]$/);
+  let declarations =
+    cssObject[baseClassName] ||
+    cssObject[baseClassName.replace(/(\/)/g, "\\$1")] ||
+    cssObject[baseClassName.replace(/\./g, "\\.")];
+
+  if (!declarations && baseClassName.includes("[")) {
+    const match = baseClassName.match(/^(.+?)\[(.+)\]$/);
     if (match) {
       const [, prefix, dynamicValue] = match;
       const customKey = `${prefix}custom`;
@@ -905,11 +1006,16 @@ function processClass(cls, selector, styles) {
   }
 
   if (!declarations) {
-    declarations = parseCustomClassWithPatterns(pureClassName);
+    declarations = parseCustomClassWithPatterns(baseClassName);
   }
 
   if (!declarations) {
     return;
+  }
+
+  // Apply opacity modifier if present
+  if (pureClassName.includes('/') && /\/\d+$/.test(pureClassName)) {
+    declarations = processOpacityModifier(pureClassName, declarations);
   }
 
   if (isImportant) {
@@ -929,7 +1035,7 @@ function processClass(cls, selector, styles) {
     "space-y-",
     "-space-y-",
     "divide-",
-  ].some((prefix) => pureClassName.startsWith(prefix));
+  ].some((prefix) => baseClassName.startsWith(prefix));
 
   const expandedSelector = replaceSelector(finalSelector);
   const targetSelector = isSpaceOrDivide
@@ -1109,11 +1215,11 @@ function generateCssString(styles) {
 }
 
 /**
- * Menghasilkan string CSS dari objek style dengan sintaks mirip SCSS
- * Mendukung nested selectors, state variants, responsive variants, dan @css directives
- * @param {Object} obj - Objek dengan format style mirip SCSS
- * @param {Object} [options] - Opsi tambahan, misal { inject: true/false }
- * @returns {string} String CSS yang dihasilkan
+ * Generate CSS string from style object with SCSS-like syntax
+ * Supports nested selectors, state variants, responsive variants, and @css directives
+ * @param {Object} obj - Object with SCSS-like style format
+ * @param {Object} [options] - Additional options, e.g. { inject: true/false }
+ * @returns {string} Generated CSS string
  */
 export function twsx(obj, options = {}) {
   const totalMarker = performanceMonitor.start("twsx:total");
@@ -1185,7 +1291,7 @@ export function twsx(obj, options = {}) {
   }
 }
 
-// Fungsi hashCode sederhana untuk deduplikasi CSS
+// Simple hashCode function for CSS deduplication
 function getCssHash(str) {
   let hash = 0, i, chr;
   if (str.length === 0) return hash;
@@ -1197,7 +1303,7 @@ function getCssHash(str) {
   return hash;
 }
 
-// Enhanced auto-inject CSS dengan performance monitoring
+// Enhanced auto-inject CSS with performance monitoring
 const injectedCssHashSet = new Set();
 function autoInjectCss(cssString) {
   const marker = performanceMonitor.start("css:inject");
@@ -1231,24 +1337,24 @@ function autoInjectCss(cssString) {
   }
 }
 
-// Enhanced debounced functions dengan konfigurasi performance monitoring
+// Enhanced debounced functions with performance monitoring configuration
 /**
- * Versi debounced dari fungsi tws dengan performance monitoring
- * @param {string} classNames - String berisi kelas Tailwind yang akan dikonversi
- * @param {boolean} convertToJson - Jika true, hasil akan menjadi objek JSON, jika false menjadi string CSS
- * @returns {string|Object} String CSS inline atau objek style JSON
+ * Debounced version of tws function with performance monitoring
+ * @param {string} classNames - String containing Tailwind classes to convert
+ * @param {boolean} convertToJson - If true, result will be JSON object, if false becomes CSS string
+ * @returns {string|Object} Inline CSS string or style JSON object
  */
 export const debouncedTws = debounce(tws, 50); // Faster debounce for tws
 
 /**
- * Versi debounced dari fungsi twsx dengan performance monitoring
- * @param {Object} obj - Objek dengan format style mirip SCSS
- * @param {Object} [options] - Opsi tambahan
- * @returns {string} String CSS yang dihasilkan
+ * Debounced version of twsx function with performance monitoring
+ * @param {Object} obj - Object with SCSS-like style format
+ * @param {Object} [options] - Additional options
+ * @returns {string} Generated CSS string
  */
 export const debouncedTwsx = debounce(twsx, 100); // Standard debounce for twsx
 
-// Export performance utilities untuk debugging
+// Export performance utilities for debugging
 export const performanceUtils = {
   getStats() {
     return {
