@@ -436,7 +436,6 @@ class ConfigManager {
     if (this.initialized) return this.storage;
 
     if (typeof window !== "undefined") {
-      
       if (!window[CONFIG_STORAGE_KEY]) {
         window[CONFIG_STORAGE_KEY] = JSON.parse(JSON.stringify(defaultConfig));
       }
@@ -466,22 +465,26 @@ class ConfigManager {
   set(config) {
     const storage = this.initialize();
     this.deepMerge(storage, config);
-    
+
     return storage;
   }
 
   reset() {
     const storage = this.initialize();
-    Object.keys(storage).forEach(key => delete storage[key]);
+    Object.keys(storage).forEach((key) => delete storage[key]);
     Object.assign(storage, JSON.parse(JSON.stringify(defaultConfig)));
-    
+
     return storage;
   }
 
   deepMerge(target, source) {
     for (const key in source) {
-      if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
-        if (!target[key] || typeof target[key] !== 'object') {
+      if (
+        source[key] &&
+        typeof source[key] === "object" &&
+        !Array.isArray(source[key])
+      ) {
+        if (!target[key] || typeof target[key] !== "object") {
           target[key] = {};
         }
         this.deepMerge(target[key], source[key]);
