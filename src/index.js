@@ -426,31 +426,79 @@ const defaultConfig = {
   inject: true,
 };
 
-// Detect environment and create global storage
-function getGlobalStorage() {
-  if (typeof window !== "undefined") {
-    // Browser environment - use window object
-    if (!window[CONFIG_STORAGE_KEY]) {
-      window[CONFIG_STORAGE_KEY] = { ...defaultConfig };
+class ConfigManager {
+  constructor() {
+    this.storage = null;
+    this.initialized = false;
+  }
+
+  initialize() {
+    if (this.initialized) return this.storage;
+
+    if (typeof window !== "undefined") {
+      
+      if (!window[CONFIG_STORAGE_KEY]) {
+        window[CONFIG_STORAGE_KEY] = JSON.parse(JSON.stringify(defaultConfig));
+      }
+      this.storage = window[CONFIG_STORAGE_KEY];
+    } else if (typeof global !== "undefined") {
+      // Node.js environment
+      if (!global[CONFIG_STORAGE_KEY]) {
+        global[CONFIG_STORAGE_KEY] = JSON.parse(JSON.stringify(defaultConfig));
+      }
+      this.storage = global[CONFIG_STORAGE_KEY];
+    } else {
+      // Fallback
+      console.warn(
+        "tailwind-to-style: Unable to create global config storage. Config will only work within the same module."
+      );
+      this.storage = JSON.parse(JSON.stringify(defaultConfig));
     }
-    return window[CONFIG_STORAGE_KEY];
-  } else if (typeof global !== "undefined") {
-    // Node.js environment - use global object
-    if (!global[CONFIG_STORAGE_KEY]) {
-      global[CONFIG_STORAGE_KEY] = { ...defaultConfig };
+
+    this.initialized = true;
+    return this.storage;
+  }
+
+  get() {
+    return this.initialize();
+  }
+
+  set(config) {
+    const storage = this.initialize();
+    this.deepMerge(storage, config);
+    
+    return storage;
+  }
+
+  reset() {
+    const storage = this.initialize();
+    Object.keys(storage).forEach(key => delete storage[key]);
+    Object.assign(storage, JSON.parse(JSON.stringify(defaultConfig)));
+    
+    return storage;
+  }
+
+  deepMerge(target, source) {
+    for (const key in source) {
+      if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+        if (!target[key] || typeof target[key] !== 'object') {
+          target[key] = {};
+        }
+        this.deepMerge(target[key], source[key]);
+      } else {
+        target[key] = source[key];
+      }
     }
-    return global[CONFIG_STORAGE_KEY];
-  } else {
-    // Fallback - use module-level variable (will work only within same file)
-    console.warn(
-      "tailwind-to-style: Unable to create global config storage. Config will only work within the same module."
-    );
-    return defaultConfig;
   }
 }
 
-// Get global config reference
-let globalConfig = getGlobalStorage();
+const configManager = new ConfigManager();
+
+function getGlobalStorage() {
+  return configManager.get();
+}
+
+let globalConfig = null;
 
 function initializeCss() {
   if (!twString) {
@@ -495,34 +543,8 @@ export function setConfig(config) {
   cssObject = null;
   configOptionsCache.clear();
 
-  // Get current global storage reference
-  const globalStorage = getGlobalStorage();
-
-  // Update global storage directly
-  Object.assign(globalStorage, {
-    ...globalStorage,
-    ...config,
-    theme: {
-      ...globalStorage.theme,
-      ...(config.theme || {}),
-      extend: {
-        ...globalStorage.theme.extend,
-        ...(config.theme?.extend || {}),
-        colors: {
-          ...globalStorage.theme.extend.colors,
-          ...(config.theme?.extend?.colors || {}),
-        },
-      },
-    },
-  });
-
-  // Handle screens configuration
-  if (config.theme?.screens) {
-    globalStorage.theme.screens = {
-      ...globalStorage.theme.screens,
-      ...config.theme.screens,
-    };
-  }
+  // Use ConfigManager to set config
+  const globalStorage = configManager.set(config);
 
   // Handle legacy breakpoints with deprecation warning
   if (config.breakpoints) {
@@ -540,10 +562,10 @@ export function setConfig(config) {
       }
     }
 
-    globalStorage.theme.screens = {
-      ...globalStorage.theme.screens,
-      ...screens,
-    };
+    if (!globalStorage.theme.screens) {
+      globalStorage.theme.screens = {};
+    }
+    Object.assign(globalStorage.theme.screens, screens);
   }
 
   // Update local reference
@@ -551,7 +573,7 @@ export function setConfig(config) {
 
   initializeCss();
 
-  return { ...globalConfig };
+  return { ...globalStorage };
 }
 
 /**
@@ -559,8 +581,7 @@ export function setConfig(config) {
  * @returns {Object} Current global configuration
  */
 export function getConfig() {
-  // Always get fresh reference from global storage
-  globalConfig = getGlobalStorage();
+  globalConfig = configManager.get();
   return { ...globalConfig };
 }
 
@@ -573,25 +594,7 @@ export function resetConfig() {
   cssObject = null;
   configOptionsCache.clear();
 
-  // Get global storage reference and reset it
-  const globalStorage = getGlobalStorage();
-
-  // Reset to default config
-  Object.assign(globalStorage, {
-    theme: {
-      extend: {
-        colors: {},
-      },
-      screens: {
-        sm: "640px",
-        md: "768px",
-        lg: "1024px",
-        xl: "1280px",
-        "2xl": "1536px",
-      },
-    },
-    inject: true,
-  });
+  const globalStorage = configManager.reset();
 
   // Update local reference
   globalConfig = globalStorage;
