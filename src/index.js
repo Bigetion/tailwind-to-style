@@ -406,7 +406,11 @@ function convertCssToObject(cssString) {
 let twString = null;
 let cssObject = null;
 
-let globalConfig = {
+// Global config storage key
+const CONFIG_STORAGE_KEY = "__tailwind_to_style_global_config__";
+
+// Default configuration
+const defaultConfig = {
   theme: {
     extend: {
       colors: {},
@@ -422,12 +426,40 @@ let globalConfig = {
   inject: true,
 };
 
+// Detect environment and create global storage
+function getGlobalStorage() {
+  if (typeof window !== "undefined") {
+    // Browser environment - use window object
+    if (!window[CONFIG_STORAGE_KEY]) {
+      window[CONFIG_STORAGE_KEY] = { ...defaultConfig };
+    }
+    return window[CONFIG_STORAGE_KEY];
+  } else if (typeof global !== "undefined") {
+    // Node.js environment - use global object
+    if (!global[CONFIG_STORAGE_KEY]) {
+      global[CONFIG_STORAGE_KEY] = { ...defaultConfig };
+    }
+    return global[CONFIG_STORAGE_KEY];
+  } else {
+    // Fallback - use module-level variable (will work only within same file)
+    console.warn(
+      "tailwind-to-style: Unable to create global config storage. Config will only work within the same module."
+    );
+    return defaultConfig;
+  }
+}
+
+// Get global config reference
+let globalConfig = getGlobalStorage();
+
 function initializeCss() {
   if (!twString) {
+    // Always get fresh config from global storage
+    const currentConfig = getGlobalStorage();
     const configForGeneration = {
-      ...globalConfig,
+      ...currentConfig,
       theme: {
-        ...globalConfig.theme,
+        ...currentConfig.theme,
       },
     };
 
@@ -463,34 +495,63 @@ export function setConfig(config) {
   cssObject = null;
   configOptionsCache.clear();
 
-  globalConfig = {
-    ...globalConfig,
+  // Get current global storage reference
+  const globalStorage = getGlobalStorage();
+
+  // Update global storage directly
+  Object.assign(globalStorage, {
+    ...globalStorage,
     ...config,
     theme: {
-      ...globalConfig.theme,
+      ...globalStorage.theme,
       ...(config.theme || {}),
       extend: {
-        ...globalConfig.theme.extend,
+        ...globalStorage.theme.extend,
         ...(config.theme?.extend || {}),
         colors: {
-          ...globalConfig.theme.extend.colors,
+          ...globalStorage.theme.extend.colors,
           ...(config.theme?.extend?.colors || {}),
         },
       },
     },
-  };
+  });
 
   // Handle screens configuration
   if (config.theme?.screens) {
-    globalConfig.theme.screens = {
-      ...globalConfig.theme.screens,
+    globalStorage.theme.screens = {
+      ...globalStorage.theme.screens,
       ...config.theme.screens,
     };
   }
 
+  // Handle legacy breakpoints with deprecation warning
+  if (config.breakpoints) {
+    console.warn(
+      "Warning: config.breakpoints is deprecated. Use config.theme.screens instead."
+    );
+
+    // Convert legacy breakpoints to screens format
+    const screens = {};
+    for (const [key, value] of Object.entries(config.breakpoints)) {
+      // Extract min-width value from media query
+      const match = value.match(/min-width:\s*([^)]+)/);
+      if (match) {
+        screens[key] = match[1].trim();
+      }
+    }
+
+    globalStorage.theme.screens = {
+      ...globalStorage.theme.screens,
+      ...screens,
+    };
+  }
+
+  // Update local reference
+  globalConfig = globalStorage;
+
   initializeCss();
 
-  return globalConfig;
+  return { ...globalConfig };
 }
 
 /**
@@ -498,6 +559,8 @@ export function setConfig(config) {
  * @returns {Object} Current global configuration
  */
 export function getConfig() {
+  // Always get fresh reference from global storage
+  globalConfig = getGlobalStorage();
   return { ...globalConfig };
 }
 
@@ -510,7 +573,11 @@ export function resetConfig() {
   cssObject = null;
   configOptionsCache.clear();
 
-  globalConfig = {
+  // Get global storage reference and reset it
+  const globalStorage = getGlobalStorage();
+
+  // Reset to default config
+  Object.assign(globalStorage, {
     theme: {
       extend: {
         colors: {},
@@ -524,12 +591,15 @@ export function resetConfig() {
       },
     },
     inject: true,
-  };
+  });
+
+  // Update local reference
+  globalConfig = globalStorage;
 
   twString = generateTailwindCssString(globalConfig).replace(/\s\s+/g, " ");
   cssObject = convertCssToObject(twString);
 
-  return globalConfig;
+  return { ...globalConfig };
 }
 
 const pseudoVariants = new Set([
@@ -610,8 +680,10 @@ function resolveVariants(selector, variants) {
   let finalSelector = selector;
 
   for (const v of variants) {
+    // Always get fresh config from global storage
+    const currentConfig = getGlobalStorage();
     const breakpoints = convertScreensToBreakpoints(
-      globalConfig.theme.screens || {}
+      currentConfig.theme.screens || {}
     );
 
     if (breakpoints[v]) {
@@ -1385,7 +1457,7 @@ export function twsx(obj, options = {}) {
     }
 
     const mergedOptions = {
-      ...globalConfig,
+      ...getGlobalStorage(),
       ...options,
     };
 
