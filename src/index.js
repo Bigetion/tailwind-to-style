@@ -406,21 +406,131 @@ function convertCssToObject(cssString) {
 let twString = null;
 let cssObject = null;
 
-if (!twString) {
-  twString = generateTailwindCssString().replace(/\s\s+/g, " ");
-}
-
-if (!cssObject) {
-  cssObject = convertCssToObject(twString);
-}
-
-const breakpoints = {
-  sm: "@media (min-width: 640px)",
-  md: "@media (min-width: 768px)",
-  lg: "@media (min-width: 1024px)",
-  xl: "@media (min-width: 1280px)",
-  "2xl": "@media (min-width: 1536px)",
+let globalConfig = {
+  theme: {
+    extend: {
+      colors: {},
+    },
+    screens: {
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1536px",
+    },
+  },
+  inject: true,
 };
+
+function initializeCss() {
+  if (!twString) {
+    const configForGeneration = {
+      ...globalConfig,
+      theme: {
+        ...globalConfig.theme,
+      },
+    };
+
+    twString = generateTailwindCssString(configForGeneration).replace(
+      /\s\s+/g,
+      " "
+    );
+  }
+
+  if (!cssObject) {
+    cssObject = convertCssToObject(twString);
+  }
+}
+
+initializeCss();
+
+function convertScreensToBreakpoints(screens) {
+  const breakpoints = {};
+  for (const [key, value] of Object.entries(screens)) {
+    breakpoints[key] = `@media (min-width: ${value})`;
+  }
+  return breakpoints;
+}
+
+/**
+ * Set global configuration for both tws and twsx functions
+ * @param {Object} config - Global configuration object
+ * @returns {Object} Current global configuration
+ */
+export function setConfig(config) {
+  // Reset CSS object cache when config changes
+  twString = null;
+  cssObject = null;
+  configOptionsCache.clear();
+
+  globalConfig = {
+    ...globalConfig,
+    ...config,
+    theme: {
+      ...globalConfig.theme,
+      ...(config.theme || {}),
+      extend: {
+        ...globalConfig.theme.extend,
+        ...(config.theme?.extend || {}),
+        colors: {
+          ...globalConfig.theme.extend.colors,
+          ...(config.theme?.extend?.colors || {}),
+        },
+      },
+    },
+  };
+
+  // Handle screens configuration
+  if (config.theme?.screens) {
+    globalConfig.theme.screens = {
+      ...globalConfig.theme.screens,
+      ...config.theme.screens,
+    };
+  }
+
+  initializeCss();
+
+  return globalConfig;
+}
+
+/**
+ * Get current global configuration
+ * @returns {Object} Current global configuration
+ */
+export function getConfig() {
+  return { ...globalConfig };
+}
+
+/**
+ * Reset global configuration to default
+ * @returns {Object} Default configuration
+ */
+export function resetConfig() {
+  twString = null;
+  cssObject = null;
+  configOptionsCache.clear();
+
+  globalConfig = {
+    theme: {
+      extend: {
+        colors: {},
+      },
+      screens: {
+        sm: "640px",
+        md: "768px",
+        lg: "1024px",
+        xl: "1280px",
+        "2xl": "1536px",
+      },
+    },
+    inject: true,
+  };
+
+  twString = generateTailwindCssString(globalConfig).replace(/\s\s+/g, " ");
+  cssObject = convertCssToObject(twString);
+
+  return globalConfig;
+}
 
 const pseudoVariants = new Set([
   "hover",
@@ -500,6 +610,10 @@ function resolveVariants(selector, variants) {
   let finalSelector = selector;
 
   for (const v of variants) {
+    const breakpoints = convertScreensToBreakpoints(
+      globalConfig.theme.screens || {}
+    );
+
     if (breakpoints[v]) {
       media = breakpoints[v];
     } else if (pseudoVariants.has(v)) {
@@ -554,14 +668,16 @@ function limitCacheSize(cache, maxSize = 1000) {
 function debounce(func, wait = 100) {
   let timeout;
   let callCount = 0;
-  
+
   return function (...args) {
     const context = this;
     callCount++;
-    
+
     clearTimeout(timeout);
     timeout = setTimeout(() => {
-      const marker = performanceMonitor.start(`debounced:${func.name || 'anonymous'}`);
+      const marker = performanceMonitor.start(
+        `debounced:${func.name || "anonymous"}`
+      );
       try {
         const result = func.apply(context, args);
         performanceMonitor.end(marker);
@@ -578,7 +694,7 @@ function debounce(func, wait = 100) {
 // Enhanced CSS resolution with better error handling
 function separateAndResolveCSS(arr) {
   const marker = performanceMonitor.start("css:resolve");
-  
+
   try {
     // Fix: cacheKey must be unique for each input array
     const cacheKey = Array.isArray(arr) ? arr.join("|") : String(arr);
@@ -659,7 +775,6 @@ function separateAndResolveCSS(arr) {
     cssResolutionCache.set(cacheKey, result);
     performanceMonitor.end(marker);
     return result;
-    
   } catch (error) {
     performanceMonitor.end(marker);
     console.error("Critical error in CSS resolution:", error);
@@ -676,80 +791,117 @@ function separateAndResolveCSS(arr) {
 function processOpacityModifier(className, cssDeclaration) {
   const opacityMatch = className.match(/\/(\d+)$/);
   if (!opacityMatch) return cssDeclaration;
-  
+
   const opacityValue = parseInt(opacityMatch[1], 10);
   if (opacityValue < 0 || opacityValue > 100) return cssDeclaration;
-  
+
   const alphaValue = (opacityValue / 100).toString();
-  
+
   // Handle Tailwind's CSS custom property pattern
   let modifiedDeclaration = cssDeclaration;
-  
+
   // Replace opacity custom properties
   const opacityProperties = [
-    '--text-opacity',
-    '--bg-opacity', 
-    '--border-opacity',
-    '--ring-opacity',
-    '--divide-opacity',
-    '--placeholder-opacity',
-    '--text-decoration-opacity',
-    '--outline-opacity',
-    '--accent-opacity',
-    '--caret-opacity'
+    "--text-opacity",
+    "--bg-opacity",
+    "--border-opacity",
+    "--ring-opacity",
+    "--divide-opacity",
+    "--placeholder-opacity",
+    "--text-decoration-opacity",
+    "--outline-opacity",
+    "--accent-opacity",
+    "--caret-opacity",
   ];
-  
-  opacityProperties.forEach(prop => {
-    const propRegex = new RegExp(`${prop}\\s*:\\s*[\\d.]+`, 'gi');
-    modifiedDeclaration = modifiedDeclaration.replace(propRegex, `${prop}: ${alphaValue}`);
+
+  opacityProperties.forEach((prop) => {
+    const propRegex = new RegExp(`${prop}\\s*:\\s*[\\d.]+`, "gi");
+    modifiedDeclaration = modifiedDeclaration.replace(
+      propRegex,
+      `${prop}: ${alphaValue}`
+    );
   });
-  
+
   // Also handle direct color values that might not use CSS variables
   const colorProperties = [
-    'color', 'background-color', 'border-color', 'text-decoration-color',
-    'outline-color', 'fill', 'stroke', 'caret-color', 'accent-color'
+    "color",
+    "background-color",
+    "border-color",
+    "text-decoration-color",
+    "outline-color",
+    "fill",
+    "stroke",
+    "caret-color",
+    "accent-color",
   ];
-  
-  colorProperties.forEach(prop => {
+
+  colorProperties.forEach((prop) => {
     // Match rgb(), rgba(), hsl(), hsla() functions
-    const rgbRegex = new RegExp(`(${prop}\\s*:\\s*)rgb\\((\\d+),\\s*(\\d+),\\s*(\\d+)\\)`, 'gi');
-    const rgbaRegex = new RegExp(`(${prop}\\s*:\\s*)rgba\\((\\d+),\\s*(\\d+),\\s*(\\d+),\\s*[\\d.]+\\)`, 'gi');
-    const hslRegex = new RegExp(`(${prop}\\s*:\\s*)hsl\\((\\d+),\\s*([\\d.]+%),\\s*([\\d.]+%)\\)`, 'gi');
-    const hslaRegex = new RegExp(`(${prop}\\s*:\\s*)hsla\\((\\d+),\\s*([\\d.]+%),\\s*([\\d.]+%),\\s*[\\d.]+\\)`, 'gi');
-    
+    const rgbRegex = new RegExp(
+      `(${prop}\\s*:\\s*)rgb\\((\\d+),\\s*(\\d+),\\s*(\\d+)\\)`,
+      "gi"
+    );
+    const rgbaRegex = new RegExp(
+      `(${prop}\\s*:\\s*)rgba\\((\\d+),\\s*(\\d+),\\s*(\\d+),\\s*[\\d.]+\\)`,
+      "gi"
+    );
+    const hslRegex = new RegExp(
+      `(${prop}\\s*:\\s*)hsl\\((\\d+),\\s*([\\d.]+%),\\s*([\\d.]+%)\\)`,
+      "gi"
+    );
+    const hslaRegex = new RegExp(
+      `(${prop}\\s*:\\s*)hsla\\((\\d+),\\s*([\\d.]+%),\\s*([\\d.]+%),\\s*[\\d.]+\\)`,
+      "gi"
+    );
+
     // Convert rgb to rgba with opacity
-    modifiedDeclaration = modifiedDeclaration.replace(rgbRegex, `$1rgba($2, $3, $4, ${alphaValue})`);
-    
+    modifiedDeclaration = modifiedDeclaration.replace(
+      rgbRegex,
+      `$1rgba($2, $3, $4, ${alphaValue})`
+    );
+
     // Update existing rgba opacity
-    modifiedDeclaration = modifiedDeclaration.replace(rgbaRegex, `$1rgba($2, $3, $4, ${alphaValue})`);
-    
+    modifiedDeclaration = modifiedDeclaration.replace(
+      rgbaRegex,
+      `$1rgba($2, $3, $4, ${alphaValue})`
+    );
+
     // Convert hsl to hsla with opacity
-    modifiedDeclaration = modifiedDeclaration.replace(hslRegex, `$1hsla($2, $3, $4, ${alphaValue})`);
-    
+    modifiedDeclaration = modifiedDeclaration.replace(
+      hslRegex,
+      `$1hsla($2, $3, $4, ${alphaValue})`
+    );
+
     // Update existing hsla opacity
-    modifiedDeclaration = modifiedDeclaration.replace(hslaRegex, `$1hsla($2, $3, $4, ${alphaValue})`);
-    
+    modifiedDeclaration = modifiedDeclaration.replace(
+      hslaRegex,
+      `$1hsla($2, $3, $4, ${alphaValue})`
+    );
+
     // Handle hex colors
-    const hexRegex = new RegExp(`(${prop}\\s*:\\s*)(#[0-9a-fA-F]{3,6})`, 'gi');
-    modifiedDeclaration = modifiedDeclaration.replace(hexRegex, (match, propPart, hexColor) => {
-      // Convert hex to rgba
-      const hex = hexColor.replace('#', '');
-      let r, g, b;
-      
-      if (hex.length === 3) {
-        r = parseInt(hex[0] + hex[0], 16);
-        g = parseInt(hex[1] + hex[1], 16);
-        b = parseInt(hex[2] + hex[2], 16);
-      } else {
-        r = parseInt(hex.substring(0, 2), 16);
-        g = parseInt(hex.substring(2, 4), 16);
-        b = parseInt(hex.substring(4, 6), 16);
+    const hexRegex = new RegExp(`(${prop}\\s*:\\s*)(#[0-9a-fA-F]{3,6})`, "gi");
+    modifiedDeclaration = modifiedDeclaration.replace(
+      hexRegex,
+      (_, propPart, hexColor) => {
+        // Convert hex to rgba
+        const hex = hexColor.replace("#", "");
+        let r, g, b;
+
+        if (hex.length === 3) {
+          r = parseInt(hex[0] + hex[0], 16);
+          g = parseInt(hex[1] + hex[1], 16);
+          b = parseInt(hex[2] + hex[2], 16);
+        } else {
+          r = parseInt(hex.substring(0, 2), 16);
+          g = parseInt(hex.substring(2, 4), 16);
+          b = parseInt(hex.substring(4, 6), 16);
+        }
+
+        return `${propPart}rgba(${r}, ${g}, ${b}, ${alphaValue})`;
       }
-      
-      return `${propPart}rgba(${r}, ${g}, ${b}, ${alphaValue})`;
-    });
+    );
   });
-  
+
   return modifiedDeclaration;
 }
 
@@ -761,8 +913,11 @@ function processOpacityModifier(className, cssDeclaration) {
  */
 export function tws(classNames, convertToJson) {
   const totalMarker = performanceMonitor.start("tws:total");
-  
+
   try {
+    // Ensure CSS is initialized with current global config
+    initializeCss();
+
     if (
       [
         !classNames,
@@ -782,7 +937,9 @@ export function tws(classNames, convertToJson) {
 
       // If no valid classes are found
       if (!classes || classes.length === 0) {
-        console.warn(`No valid Tailwind classes found in input: "${classNames}"`);
+        console.warn(
+          `No valid Tailwind classes found in input: "${classNames}"`
+        );
         performanceMonitor.end(totalMarker);
         return convertToJson ? {} : "";
       }
@@ -796,8 +953,8 @@ export function tws(classNames, convertToJson) {
     const processMarker = performanceMonitor.start("tws:process");
     let cssResult = classes.map((className) => {
       // Extract base class name without opacity modifier
-      const baseClassName = className.replace(/\/\d+$/, '');
-      
+      const baseClassName = className.replace(/\/\d+$/, "");
+
       let result =
         cssObject[baseClassName] ||
         cssObject[baseClassName.replace(/(\/)/g, "\\$1")] ||
@@ -805,7 +962,7 @@ export function tws(classNames, convertToJson) {
 
       if (result) {
         // Apply opacity modifier if present
-        if (className.includes('/') && /\/\d+$/.test(className)) {
+        if (className.includes("/") && /\/\d+$/.test(className)) {
           result = processOpacityModifier(className, result);
         }
         return resolveCssToClearCss(result);
@@ -820,7 +977,7 @@ export function tws(classNames, convertToJson) {
               customValue
             );
             // Apply opacity modifier to custom values too
-            if (className.includes('/') && /\/\d+$/.test(className)) {
+            if (className.includes("/") && /\/\d+$/.test(className)) {
               customResult = processOpacityModifier(className, customResult);
             }
             return customResult;
@@ -847,7 +1004,6 @@ export function tws(classNames, convertToJson) {
 
     performanceMonitor.end(totalMarker);
     return cssResult;
-    
   } catch (error) {
     performanceMonitor.end(totalMarker);
     console.error("tws error:", error);
@@ -858,23 +1014,24 @@ export function tws(classNames, convertToJson) {
 // Performance monitoring utilities
 const performanceMonitor = {
   enabled: typeof performance !== "undefined",
-  
+
   start(label) {
     if (!this.enabled) return null;
     return {
       label,
-      startTime: performance.now()
+      startTime: performance.now(),
     };
   },
-  
+
   end(marker) {
     if (!this.enabled || !marker) return;
     const duration = performance.now() - marker.startTime;
-    if (duration > 5) { // Only log if > 5ms
+    if (duration > 5) {
+      // Only log if > 5ms
       console.warn(`Slow ${marker.label}: ${duration.toFixed(2)}ms`);
     }
   },
-  
+
   measure(fn, label) {
     const marker = this.start(label);
     try {
@@ -885,7 +1042,7 @@ const performanceMonitor = {
       this.end(marker);
       throw error;
     }
-  }
+  },
 };
 
 // Utility functions for class expansion
@@ -918,10 +1075,7 @@ function expandVariants(str, parent = "") {
         .split(/\s+/)
         .map((c) => {
           if (/\w+:\(.*\)/.test(c)) {
-            return expandVariants(
-              c,
-              parent ? `${parent}:${variant}` : variant
-            );
+            return expandVariants(c, parent ? `${parent}:${variant}` : variant);
           }
           return `${parent ? `${parent}:${variant}` : variant}:${c}`;
         })
@@ -983,7 +1137,7 @@ function processClass(cls, selector, styles) {
   const { media, finalSelector } = resolveVariants(selector, rawVariants);
 
   // Extract base class name without opacity modifier for CSS lookup
-  const baseClassName = pureClassName.replace(/\/\d+$/, '');
+  const baseClassName = pureClassName.replace(/\/\d+$/, "");
 
   let declarations =
     cssObject[baseClassName] ||
@@ -1014,7 +1168,7 @@ function processClass(cls, selector, styles) {
   }
 
   // Apply opacity modifier if present
-  if (pureClassName.includes('/') && /\/\d+$/.test(pureClassName)) {
+  if (pureClassName.includes("/") && /\/\d+$/.test(pureClassName)) {
     declarations = processOpacityModifier(pureClassName, declarations);
   }
 
@@ -1218,19 +1372,24 @@ function generateCssString(styles) {
  * Generate CSS string from style object with SCSS-like syntax
  * Supports nested selectors, state variants, responsive variants, and @css directives
  * @param {Object} obj - Object with SCSS-like style format
- * @param {Object} [options] - Additional options, e.g. { inject: true/false }
+ * @param {Object} [options] - Additional options, merges with global config
  * @returns {string} Generated CSS string
  */
 export function twsx(obj, options = {}) {
   const totalMarker = performanceMonitor.start("twsx:total");
-  
+
   try {
     if (!obj || typeof obj !== "object") {
       console.warn("twsx: Expected an object but received:", obj);
       return "";
     }
-    
-    const { inject = true } = options;
+
+    const mergedOptions = {
+      ...globalConfig,
+      ...options,
+    };
+
+    const { inject = true } = mergedOptions;
     const styles = {};
 
     // Create walk function with closure over styles
@@ -1274,16 +1433,16 @@ export function twsx(obj, options = {}) {
     );
 
     // Auto-inject if needed
-    if (inject && typeof window !== "undefined" && typeof document !== "undefined") {
-      performanceMonitor.measure(
-        () => autoInjectCss(cssString),
-        "twsx:inject"
-      );
+    if (
+      inject &&
+      typeof window !== "undefined" &&
+      typeof document !== "undefined"
+    ) {
+      performanceMonitor.measure(() => autoInjectCss(cssString), "twsx:inject");
     }
 
     performanceMonitor.end(totalMarker);
     return cssString;
-    
   } catch (error) {
     performanceMonitor.end(totalMarker);
     console.error("twsx error:", error);
@@ -1293,11 +1452,13 @@ export function twsx(obj, options = {}) {
 
 // Simple hashCode function for CSS deduplication
 function getCssHash(str) {
-  let hash = 0, i, chr;
+  let hash = 0,
+    i,
+    chr;
   if (str.length === 0) return hash;
   for (i = 0; i < str.length; i++) {
     chr = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + chr;
+    hash = (hash << 5) - hash + chr;
     hash |= 0; // Convert to 32bit integer
   }
   return hash;
@@ -1307,7 +1468,7 @@ function getCssHash(str) {
 const injectedCssHashSet = new Set();
 function autoInjectCss(cssString) {
   const marker = performanceMonitor.start("css:inject");
-  
+
   try {
     if (typeof window !== "undefined" && typeof document !== "undefined") {
       const cssHash = getCssHash(cssString);
@@ -1315,7 +1476,7 @@ function autoInjectCss(cssString) {
         performanceMonitor.end(marker);
         return;
       }
-      
+
       injectedCssHashSet.add(cssHash);
       let styleTag = document.getElementById("twsx-auto-style");
       if (!styleTag) {
@@ -1324,10 +1485,12 @@ function autoInjectCss(cssString) {
         document.head.appendChild(styleTag);
       }
       styleTag.textContent += `\n${cssString}`;
-      
+
       // Log injection stats periodically
       if (injectedCssHashSet.size % 10 === 0) {
-        console.debug(`CSS injection stats: ${injectedCssHashSet.size} unique stylesheets injected`);
+        console.debug(
+          `CSS injection stats: ${injectedCssHashSet.size} unique stylesheets injected`
+        );
       }
     }
     performanceMonitor.end(marker);
@@ -1367,10 +1530,10 @@ export const performanceUtils = {
       },
       injectionStats: {
         uniqueStylesheets: injectedCssHashSet.size,
-      }
+      },
     };
   },
-  
+
   clearCaches() {
     const marker = performanceMonitor.start("performance:clearCaches");
     cssResolutionCache.clear();
@@ -1380,9 +1543,9 @@ export const performanceUtils = {
     console.log("All caches cleared");
     performanceMonitor.end(marker);
   },
-  
+
   enablePerformanceLogging(enabled = true) {
     performanceMonitor.enabled = enabled && typeof performance !== "undefined";
-    console.log(`Performance monitoring ${enabled ? 'enabled' : 'disabled'}`);
-  }
+    console.log(`Performance monitoring ${enabled ? "enabled" : "disabled"}`);
+  },
 };

@@ -50,7 +50,7 @@ export default [
   {
     input,
     output: {
-      file: 'dist/index.cjs.js',
+      file: 'dist/index.cjs',
       format: 'cjs',
       banner,
       exports: 'named'
