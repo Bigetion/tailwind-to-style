@@ -16,14 +16,14 @@ function getConfigOptions(options = {}) {
 
   themeKeys.forEach((key) => {
     newTheme[key] = theme[key] || defaultConfigOptions.theme[key];
-  });
-
-  themeKeys.forEach((key) => {
-    if (themeExtend[key] && newTheme[key]) {
-      newTheme[key] = Object.assign({}, newTheme[key], themeExtend[key]);
+    if (isFunction(newTheme[key])) {
+      newTheme[key] = newTheme[key]({
+        theme: (keyRef) => {
+          return defaultConfigOptions.theme[keyRef];
+        },
+      });
     }
   });
-
   themeKeys.forEach((key) => {
     if (isFunction(newTheme[key])) {
       newTheme[key] = newTheme[key]({
@@ -31,6 +31,9 @@ function getConfigOptions(options = {}) {
           return newTheme[keyRef];
         },
       });
+    }
+    if (themeExtend[key]) {
+      newTheme[key] = Object.assign({}, newTheme[key], themeExtend[key]);
     }
   });
 

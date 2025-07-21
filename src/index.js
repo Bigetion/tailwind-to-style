@@ -406,207 +406,21 @@ function convertCssToObject(cssString) {
 let twString = null;
 let cssObject = null;
 
-// Global config storage key
-const CONFIG_STORAGE_KEY = "__tailwind_to_style_global_config__";
-
-// Default configuration
-const defaultConfig = {
-  theme: {
-    extend: {
-      colors: {},
-    },
-    screens: {
-      sm: "640px",
-      md: "768px",
-      lg: "1024px",
-      xl: "1280px",
-      "2xl": "1536px",
-    },
-  },
-  inject: true,
-};
-
-class ConfigManager {
-  constructor() {
-    this.storage = null;
-    this.initialized = false;
-  }
-
-  initialize() {
-    if (this.initialized) return this.storage;
-
-    if (typeof window !== "undefined") {
-      if (!window[CONFIG_STORAGE_KEY]) {
-        window[CONFIG_STORAGE_KEY] = JSON.parse(JSON.stringify(defaultConfig));
-      }
-      this.storage = window[CONFIG_STORAGE_KEY];
-    } else if (typeof global !== "undefined") {
-      // Node.js environment
-      if (!global[CONFIG_STORAGE_KEY]) {
-        global[CONFIG_STORAGE_KEY] = JSON.parse(JSON.stringify(defaultConfig));
-      }
-      this.storage = global[CONFIG_STORAGE_KEY];
-    } else {
-      // Fallback
-      console.warn(
-        "tailwind-to-style: Unable to create global config storage. Config will only work within the same module."
-      );
-      this.storage = JSON.parse(JSON.stringify(defaultConfig));
-    }
-
-    this.initialized = true;
-    return this.storage;
-  }
-
-  get() {
-    return this.initialize();
-  }
-
-  set(config) {
-    const storage = this.initialize();
-    this.deepMerge(storage, config);
-
-    return storage;
-  }
-
-  reset() {
-    const storage = this.initialize();
-    Object.keys(storage).forEach((key) => delete storage[key]);
-    Object.assign(storage, JSON.parse(JSON.stringify(defaultConfig)));
-
-    return storage;
-  }
-
-  deepMerge(target, source) {
-    for (const key in source) {
-      if (
-        source[key] &&
-        typeof source[key] === "object" &&
-        !Array.isArray(source[key])
-      ) {
-        if (!target[key] || typeof target[key] !== "object") {
-          target[key] = {};
-        }
-        this.deepMerge(target[key], source[key]);
-      } else {
-        target[key] = source[key];
-      }
-    }
-  }
+if (!twString) {
+  twString = generateTailwindCssString().replace(/\s\s+/g, " ");
 }
 
-const configManager = new ConfigManager();
-
-function getGlobalStorage() {
-  return configManager.get();
-}
-
-let globalConfig = null;
-
-function initializeCss() {
-  if (!twString) {
-    // Always get fresh config from global storage
-    const currentConfig = getGlobalStorage();
-    const configForGeneration = {
-      ...currentConfig,
-      theme: {
-        ...currentConfig.theme,
-      },
-    };
-
-    twString = generateTailwindCssString(configForGeneration).replace(
-      /\s\s+/g,
-      " "
-    );
-  }
-
-  if (!cssObject) {
-    cssObject = convertCssToObject(twString);
-  }
-}
-
-initializeCss();
-
-function convertScreensToBreakpoints(screens) {
-  const breakpoints = {};
-  for (const [key, value] of Object.entries(screens)) {
-    breakpoints[key] = `@media (min-width: ${value})`;
-  }
-  return breakpoints;
-}
-
-/**
- * Set global configuration for both tws and twsx functions
- * @param {Object} config - Global configuration object
- * @returns {Object} Current global configuration
- */
-export function setConfig(config) {
-  // Reset CSS object cache when config changes
-  twString = null;
-  cssObject = null;
-  configOptionsCache.clear();
-
-  // Use ConfigManager to set config
-  const globalStorage = configManager.set(config);
-
-  // Handle legacy breakpoints with deprecation warning
-  if (config.breakpoints) {
-    console.warn(
-      "Warning: config.breakpoints is deprecated. Use config.theme.screens instead."
-    );
-
-    // Convert legacy breakpoints to screens format
-    const screens = {};
-    for (const [key, value] of Object.entries(config.breakpoints)) {
-      // Extract min-width value from media query
-      const match = value.match(/min-width:\s*([^)]+)/);
-      if (match) {
-        screens[key] = match[1].trim();
-      }
-    }
-
-    if (!globalStorage.theme.screens) {
-      globalStorage.theme.screens = {};
-    }
-    Object.assign(globalStorage.theme.screens, screens);
-  }
-
-  // Update local reference
-  globalConfig = globalStorage;
-
-  initializeCss();
-
-  return { ...globalStorage };
-}
-
-/**
- * Get current global configuration
- * @returns {Object} Current global configuration
- */
-export function getConfig() {
-  globalConfig = configManager.get();
-  return { ...globalConfig };
-}
-
-/**
- * Reset global configuration to default
- * @returns {Object} Default configuration
- */
-export function resetConfig() {
-  twString = null;
-  cssObject = null;
-  configOptionsCache.clear();
-
-  const globalStorage = configManager.reset();
-
-  // Update local reference
-  globalConfig = globalStorage;
-
-  twString = generateTailwindCssString(globalConfig).replace(/\s\s+/g, " ");
+if (!cssObject) {
   cssObject = convertCssToObject(twString);
-
-  return { ...globalConfig };
 }
+
+const breakpoints = {
+  sm: "@media (min-width: 640px)",
+  md: "@media (min-width: 768px)",
+  lg: "@media (min-width: 1024px)",
+  xl: "@media (min-width: 1280px)",
+  "2xl": "@media (min-width: 1536px)",
+};
 
 const pseudoVariants = new Set([
   "hover",
@@ -686,12 +500,6 @@ function resolveVariants(selector, variants) {
   let finalSelector = selector;
 
   for (const v of variants) {
-    // Always get fresh config from global storage
-    const currentConfig = getGlobalStorage();
-    const breakpoints = convertScreensToBreakpoints(
-      currentConfig.theme.screens || {}
-    );
-
     if (breakpoints[v]) {
       media = breakpoints[v];
     } else if (pseudoVariants.has(v)) {
@@ -960,7 +768,7 @@ function processOpacityModifier(className, cssDeclaration) {
     const hexRegex = new RegExp(`(${prop}\\s*:\\s*)(#[0-9a-fA-F]{3,6})`, "gi");
     modifiedDeclaration = modifiedDeclaration.replace(
       hexRegex,
-      (_, propPart, hexColor) => {
+      (match, propPart, hexColor) => {
         // Convert hex to rgba
         const hex = hexColor.replace("#", "");
         let r, g, b;
@@ -993,9 +801,6 @@ export function tws(classNames, convertToJson) {
   const totalMarker = performanceMonitor.start("tws:total");
 
   try {
-    // Ensure CSS is initialized with current global config
-    initializeCss();
-
     if (
       [
         !classNames,
@@ -1450,7 +1255,7 @@ function generateCssString(styles) {
  * Generate CSS string from style object with SCSS-like syntax
  * Supports nested selectors, state variants, responsive variants, and @css directives
  * @param {Object} obj - Object with SCSS-like style format
- * @param {Object} [options] - Additional options, merges with global config
+ * @param {Object} [options] - Additional options, e.g. { inject: true/false }
  * @returns {string} Generated CSS string
  */
 export function twsx(obj, options = {}) {
@@ -1462,12 +1267,7 @@ export function twsx(obj, options = {}) {
       return "";
     }
 
-    const mergedOptions = {
-      ...getGlobalStorage(),
-      ...options,
-    };
-
-    const { inject = true } = mergedOptions;
+    const { inject = true } = options;
     const styles = {};
 
     // Create walk function with closure over styles
