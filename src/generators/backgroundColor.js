@@ -19,12 +19,12 @@ export default function generator(configOptions = {}) {
 
           if (value === "custom_value") {
             return `
-            ${prefix}-${key} {
-              ${
-                isValidCssColor(value) ? "background-color" : "background"
-              }: ${value};
-            }
-          `;
+              ${prefix}-${key} {
+                ${
+                  isValidCssColor(value) ? "background-color" : "background"
+                }: ${value};
+              }
+            `;
           }
 
           return `

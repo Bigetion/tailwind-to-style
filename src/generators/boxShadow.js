@@ -4,6 +4,7 @@ export default function generator(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}shadow`;
+  const customPrefix = `${globalPrefix}box-shadow`;
 
   const { boxShadowColor, boxShadow = {} } = theme;
 
@@ -12,6 +13,13 @@ export default function generator(configOptions = {}) {
       let cssString = getCssByOptions(boxShadow, (keyTmp, value) => {
         const key = keyTmp.toLowerCase() !== "default" ? `-${keyTmp}` : "";
         const valueSplit = value.split(" ");
+        if (value === "custom_value") {
+          return `
+            ${customPrefix}${key} {
+              box-shadow: ${value};
+            }
+          `;
+        }
         return `
           ${prefix}${key} {
             --shadow: ${value};

@@ -4,6 +4,7 @@ export default function generator(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}outline`;
+  const customPrefix = `${globalPrefix}outline-color`;
 
   const { outlineColor = {} } = theme;
 
@@ -18,6 +19,13 @@ export default function generator(configOptions = {}) {
         let rgbPropertyValue = "";
         if (rgbValue) {
           rgbPropertyValue = `outline-color: rgba(${rgbValue}, var(--outline-opacity));`;
+        }
+        if (value === "custom_value") {
+          return `
+            ${customPrefix}${key} {
+              outline-color: ${value};
+            }
+          `;
         }
         return `
             ${prefix}${key} {
