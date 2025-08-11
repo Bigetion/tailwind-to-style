@@ -36,6 +36,7 @@ logs/
 
 # Testing
 /coverage
+test*.js
 
 # Temporary files
 .tmp/
