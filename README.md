@@ -35,6 +35,7 @@ yarn add tailwind-to-style
 The `tws` function is designed to convert Tailwind CSS utility classes into either **inline CSS** or **JSON style objects**. This makes it particularly useful for applying styles dynamically in React or similar frameworks where inline styles or style objects are often needed.
 
 #### Features of `tws`:
+
 - Converts Tailwind utility classes into **inline CSS** or **JSON style objects**.
 
 #### Usage
@@ -78,219 +79,204 @@ This will apply the Tailwind classes directly as inline styles in the React comp
 `twsx` is an advanced function that builds on `tws` by allowing you to define **nested styles** and more complex CSS structures. It supports **grouping**, **responsive variants**, **state variants**, **dynamic utilities**, and **direct CSS properties** via the `@css` directive, making it ideal for more advanced styling needs.
 
 #### Features of `twsx`:
-- Allows **nested styles** similar to SCSS, enabling more complex CSS structures.
-- **Grouping**: Supports grouping utilities inside parentheses, including responsive variants.
-- Supports **responsive variants** (`sm`, `md`, `lg`, etc.) when used within Tailwind utility classes or in grouping syntax.
-- Handles **state variants** like `hover`, `focus`, and more.
-- Supports **dynamic utilities** such as `w-[300px]`, `bg-[rgba(0,0,0,0.5)]`.
-- **@css directive**: Apply custom CSS properties directly for more complex styles like transitions and animations.
 
-#### Usage
+- ✅ **Nested styles** similar to SCSS, enabling more complex CSS structures
+- ✅ **Grouping**: Supports grouping utilities inside parentheses `hover:(bg-blue-600 scale-105)`
+- ✅ **Responsive variants** (`sm`, `md`, `lg`, `xl`, `2xl`) in standard and grouping syntax
+- ✅ **State variants** like `hover`, `focus`, `active`, `disabled`, etc.
+- ✅ **Dynamic utilities** such as `w-[300px]`, `bg-[rgba(0,0,0,0.5)]`, `text-[14px]`
+- ✅ **!important support** with `!text-red-500`, `!bg-blue-500`
+- ✅ **@css directive**: Apply custom CSS properties for animations, transitions, and modern effects
+
+#### Basic Usage
 
 ```javascript
 import { twsx } from "tailwind-to-style";
 
 const styles = twsx({
   ".card": [
-    "bg-white p-4 rounded-lg",
+    "bg-white p-4 rounded-lg shadow-md",
     {
-      "&:hover": "shadow-lg",
-      ".title": "text-lg font-bold",
-      ".desc": "text-sm text-gray-500"
-    }
-  ]
+      "&:hover": "shadow-xl scale-105",
+      ".title": "text-lg font-bold text-gray-900",
+      ".desc": "text-sm text-gray-600 mt-2",
+    },
+  ],
 });
 
 console.log(styles);
 ```
 
-This will generate CSS like:
+**Output**:
 
 ```css
 .card {
-  background-color: white;
+  background-color: rgba(255, 255, 255, var(--bg-opacity));
   padding: 1rem;
   border-radius: 0.5rem;
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.1),
+    0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 .card:hover {
-  box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+  box-shadow:
+    0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1);
+  transform: scale(1.05);
 }
 .card .title {
   font-size: 1.125rem;
-  font-weight: bold;
+  font-weight: 700;
+  color: rgba(17, 24, 39, var(--text-opacity));
 }
 .card .desc {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: rgba(75, 85, 99, var(--text-opacity));
+  margin-top: 0.5rem;
 }
 ```
 
-#### Grouping Support:
+#### Grouping Support
 
-With `twsx`, you can group related utilities together inside parentheses, making the CSS more modular and easier to manage. This is especially useful for responsive and state variants.
+Group related utilities together inside parentheses for better readability and organization:
 
 ```javascript
 const styles = twsx({
   ".button": [
-    "bg-blue-500 text-white p-2 rounded-md",
-    {
-      "&:hover": "bg-blue-600",
-      ".icon": "text-lg"
-    }
-  ]
+    "bg-blue-500 text-white px-6 py-3 rounded-lg",
+    "hover:(bg-blue-600 scale-105 shadow-lg)",
+    "focus:(ring-2 ring-blue-300 outline-none)",
+    "active:(bg-blue-700 scale-95)",
+  ],
 });
-
-console.log(styles);
 ```
 
 **Output**:
 
 ```css
 .button {
-  background-color: #3b82f6;
-  color: white;
-  padding: 0.5rem;
-  border-radius: 0.375rem;
+  background-color: rgba(59, 130, 246, var(--bg-opacity));
+  color: rgba(255, 255, 255, var(--text-opacity));
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
 }
 .button:hover {
-  background-color: #2563eb;
+  background-color: rgba(37, 99, 235, var(--bg-opacity));
+  transform: scale(1.05);
+  box-shadow:
+    0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
-.button .icon {
-  font-size: 1.125rem;
+.button:focus {
+  box-shadow: var(--ring-offset-shadow), var(--ring-shadow);
+  outline: none;
+}
+.button:active {
+  background-color: rgba(29, 78, 216, var(--bg-opacity));
+  transform: scale(0.95);
 }
 ```
 
-#### Dynamic Utilities:
+#### Responsive Variants
 
-`twsx` supports dynamic values in utilities like `w-[300px]` and `bg-[rgba(0,0,0,0.5)]`.
+Responsive variants work seamlessly with both standard syntax and grouping syntax:
 
 ```javascript
 const styles = twsx({
-  ".box": "w-[300px] h-[50vh] bg-[rgba(0,0,0,0.5)]"
-});
-
-console.log(styles);
-```
-
-**Output**:
-
-```css
-.box {
-  width: 300px;
-  height: 50vh;
-  background-color: rgba(0,0,0,0.5);
-}
-```
-
-#### `!important` Support
-
-You can prepend an exclamation mark (`!`) directly to the class name to make it `!important`. This feature is useful for easily overriding default styles.
-
-```javascript
-const styles = twsx({
-  ".alert": "!text-red-500 !bg-yellow-100 !p-4"
-});
-
-console.log(styles);
-```
-
-**Output**:
-```css
-.alert {
-  color: #ef4444 !important;
-  background-color: #fef3c7 !important;
-  padding: 1rem !important;
-}
-```
-
-#### Grouping Example:
-
-You can group related utilities for better readability:
-
-```javascript
-const styles = twsx({
-  ".alert": "hover:(bg-yellow-500 text-black) md:(px-6 py-3)"
-});
-
-console.log(styles);
-```
-
-**Output**:
-
-```css
-.alert:hover {
-  background-color: #f59e0b;
-  color: #000;
-}
-@media (min-width: 768px) {
-  .alert {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
-  }
-}
-```
-
-#### Responsive Variants:
-
-Responsive variants work within Tailwind utility classes and in grouping syntax:
-
-```javascript
-const styles = twsx({
-  ".responsive-card": [
-    "w-full md:w-1/2 lg:w-1/3 p-4 bg-white", 
+  ".hero": [
+    // Standard responsive syntax
+    "text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl",
+    "w-full md:w-1/2 lg:w-1/3 p-4",
+    // Grouped responsive syntax
+    "sm:(py-16 px-4)",
+    "md:(py-20 px-6)",
+    "lg:(py-24 px-8)",
     {
-      "&:hover": "shadow-lg transform:scale-105"
-    }
+      h1: "font-bold text-gray-900",
+      p: "text-gray-600 mt-4",
+    },
   ],
-  ".grouped-responsive": "text-sm md:(text-lg px-6) lg:(text-xl px-8)"
 });
 ```
 
 **Output**:
+
 ```css
-.responsive-card {
+.hero {
+  font-size: 1.5rem;
   width: 100%;
   padding: 1rem;
-  background-color: white;
+}
+@media (min-width: 640px) {
+  .hero {
+    font-size: 1.875rem;
+    padding: 4rem 1rem;
+  }
 }
 @media (min-width: 768px) {
-  .responsive-card {
+  .hero {
+    font-size: 2.25rem;
     width: 50%;
+    padding: 5rem 1.5rem;
   }
 }
 @media (min-width: 1024px) {
-  .responsive-card {
+  .hero {
+    font-size: 3rem;
     width: 33.333333%;
+    padding: 6rem 2rem;
   }
 }
-.responsive-card:hover {
-  box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-  transform: scale(1.05);
-}
-.grouped-responsive {
-  font-size: 0.875rem;
-}
-@media (min-width: 768px) {
-  .grouped-responsive {
-    font-size: 1.125rem;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+@media (min-width: 1280px) {
+  .hero {
+    font-size: 3.75rem;
   }
 }
-@media (min-width: 1024px) {
-  .grouped-responsive {
-    font-size: 1.25rem;
-    padding-left: 2rem;
-    padding-right: 2rem;
-  }
+.hero h1 {
+  font-weight: 700;
+  color: rgba(17, 24, 39, var(--text-opacity));
+}
+.hero p {
+  color: rgba(75, 85, 99, var(--text-opacity));
+  margin-top: 1rem;
 }
 ```
 
-#### `@css` Direct CSS Properties:
+### Performance Utilities
 
-With the `@css` feature, you can directly add CSS properties that aren't available as Tailwind utilities or when you need more complex CSS values like transitions, animations, or custom properties.
+The library includes performance optimization features:
+
+#### Inject Option
+
+Control CSS output location with the `inject` option:
+
+```javascript
+import { tws, twsx } from "tailwind-to-style";
+
+// Auto-inject into document head (default)
+const styles1 = tws("bg-blue-500 text-white p-4");
+
+// Skip injection - returns CSS only
+const styles2 = tws("bg-red-500 text-black p-2", { inject: false });
+
+// Custom injection target
+const targetElement = document.getElementById("custom-styles");
+const styles3 = tws("bg-green-500 text-yellow p-3", { inject: targetElement });
+```
+
+#### Performance Monitoring
+
+```javascript
+import { tws } from "tailwind-to-style";
+
+// Enable performance logging
+const start = performance.now();
+const styles = tws("complex-classes here...");
+const end = performance.now();
+console.log(`Generation time: ${end - start}ms`);
+```
+
+## Advanced `@css` Directive
 
 There are several ways to use the `@css` feature:
 
@@ -303,15 +289,16 @@ const styles = twsx({
     {
       "@css": {
         transition: "all 0.3s ease-in-out",
-        "will-change": "transform, opacity"
+        "will-change": "transform, opacity",
       },
-      "&:hover": "bg-blue-600"
-    }
-  ]
+      "&:hover": "bg-blue-600",
+    },
+  ],
 });
 ```
 
 **Output**:
+
 ```css
 .button {
   background-color: #3b82f6;
@@ -331,7 +318,7 @@ const styles = twsx({
 const styles = twsx({
   ".button @css transition": "all 0.3s ease-in-out",
   ".button": "bg-blue-500 text-white rounded-md",
-  ".button:hover": "bg-blue-600"
+  ".button:hover": "bg-blue-600",
 });
 ```
 
@@ -351,27 +338,30 @@ const styles = twsx({
       "@css": {
         transform: "translateX(0px)",
         transition: "all 0.3s ease-out",
-        "will-change": "transform, opacity"
+        "will-change": "transform, opacity",
       },
       "&.hidden": [
         "opacity-0",
         {
           "@css": {
-            transform: "translateX(-100px)"
-          }
-        }
-      ]
-    }
-  ]
+            transform: "translateX(-100px)",
+          },
+        },
+      ],
+    },
+  ],
 });
 ```
 
 **Output**:
+
 ```css
 .modal {
   background-color: white;
   border-radius: 0.5rem;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
   transform: translateX(0px);
   transition: all 0.3s ease-out;
   will-change: transform, opacity;
@@ -386,7 +376,7 @@ For responsive styles, you can use standard Tailwind responsive utilities within
 
 ```javascript
 const styles = twsx({
-  ".responsive-box": "w-full md:w-1/2 lg:w-1/3 p-4 bg-blue-500"
+  ".responsive-box": "w-full md:w-1/2 lg:w-1/3 p-4 bg-blue-500",
 });
 ```
 
@@ -449,7 +439,7 @@ performanceUtils.clearCaches();
 The library automatically tracks performance for key operations:
 
 - **tws:total** - Total execution time for `tws()`
-- **tws:parse** - Time spent parsing classes  
+- **tws:parse** - Time spent parsing classes
 - **tws:process** - Time spent processing classes
 - **twsx:total** - Total execution time for `twsx()`
 - **twsx:flatten** - Time spent flattening objects
@@ -482,12 +472,12 @@ const complexStyles = twsx({
   ".hero": [
     "bg-gradient-to-br from-indigo-900 to-purple-900 min-h-screen",
     {
-      "h1": "text-6xl font-bold text-white md:text-4xl",
+      h1: "text-6xl font-bold text-white md:text-4xl",
       "@css": {
-        transition: "font-size 0.3s ease-in-out"
-      }
-    }
-  ]
+        transition: "font-size 0.3s ease-in-out",
+      },
+    },
+  ],
 });
 
 // Check performance stats
