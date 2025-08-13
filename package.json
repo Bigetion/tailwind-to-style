@@ -1,6 +1,6 @@
 {
   "name": "tailwind-to-style",
-  "version": "2.8.0",
+  "version": "2.8.1",
   "description": "Convert tailwind classes to inline style",
   "type": "module",
   "main": "dist/index.cjs",
@@ -11,7 +11,9 @@
     "preflight.css",
     "README.md",
     "LICENSE",
-    "plugins"
+    "plugins",
+    "lib",
+    "twsx.css"
   ],
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests",

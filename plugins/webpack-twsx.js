@@ -1,26 +1,34 @@
-const fs = require("fs");
-const path = require("path");
-const { twsx } = require("tailwind-to-style");
+import fs from "fs";
+import path from "path";
+import { pathToFileURL } from "url";
+import { twsx } from "tailwind-to-style";
 
 class TwsxPlugin {
   constructor(options = {}) {
     this.twsxDir = options.twsxDir || path.resolve(process.cwd(), "src/twsx");
-    this.outDir = options.outDir || path.resolve(process.cwd(), "dist");
   }
 
-  buildTwsx() {
+  async buildTwsx() {
     let allCss = "";
-    fs.readdirSync(this.twsxDir).forEach((file) => {
-      if (file.endsWith(".json")) {
-        const json = JSON.parse(
-          fs.readFileSync(path.join(this.twsxDir, file), "utf8")
-        );
-        const css = twsx(json, { inject: false });
-        const outFile = path.join(this.outDir, file.replace(".json", ".css"));
-        fs.writeFileSync(outFile, css);
-        allCss += css + "\n";
+    try {
+      const files = fs.readdirSync(this.twsxDir);
+      for (const file of files) {
+        if (file.endsWith(".js")) {
+          try {
+            const styleModule = await import(
+              pathToFileURL(path.join(this.twsxDir, file)).href
+            );
+            const styleObj = styleModule.default || styleModule;
+            const css = twsx(styleObj, { inject: false });
+            allCss += css + "\n";
+          } catch (err) {
+            console.error(`[webpack-twsx] Error importing or processing ${file}:`, err);
+          }
+        }
       }
-    });
+    } catch (err) {
+      console.error('[webpack-twsx] Error reading twsxDir:', err);
+    }
     return allCss;
   }
 
@@ -29,15 +37,25 @@ class TwsxPlugin {
       process.cwd(),
       "node_modules/tailwind-to-style/twsx.css"
     );
-    compiler.hooks.beforeCompile.tap("TwsxPlugin", () => {
-      const allCss = this.buildTwsx();
-      fs.writeFileSync(cssFile, allCss);
+    compiler.hooks.beforeCompile.tapPromise("TwsxPlugin", async () => {
+      try {
+        const allCss = await this.buildTwsx();
+        fs.writeFileSync(cssFile, allCss);
+        console.log(`[webpack-twsx] CSS written to ${cssFile}`);
+      } catch (err) {
+        console.error('[webpack-twsx] Error writing CSS:', err);
+      }
     });
-    compiler.hooks.watchRun.tap("TwsxPlugin", () => {
-      const allCss = this.buildTwsx();
-      fs.writeFileSync(cssFile, allCss);
+    compiler.hooks.watchRun.tapPromise("TwsxPlugin", async () => {
+      try {
+        const allCss = await this.buildTwsx();
+        fs.writeFileSync(cssFile, allCss);
+        console.log(`[webpack-twsx] CSS written to ${cssFile}`);
+      } catch (err) {
+        console.error('[webpack-twsx] Error writing CSS:', err);
+      }
     });
   }
 }
 
-module.exports = TwsxPlugin;
+export default TwsxPlugin;

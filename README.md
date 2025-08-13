@@ -490,7 +490,7 @@ This will automatically log warnings for operations taking longer than 5ms and p
 
 ### Automated Modular CSS Generation
 
-1. Save your modular styles in the `src/twsx/` folder as JSON files (e.g., `card.json`, `button.json`).
+1. Save your modular styles in the `src/twsx/` folder as JS files (e.g., `card.js`, `button.js`).
 2. Use the Vite/Webpack plugin from the `plugins/` folder to automatically generate CSS on every build/rebuild.
 3. All generated CSS files will be merged into a single `twsx.css` file inside `node_modules/tailwind-to-style/`.
 4. In React, simply import this file in your entry point: `import 'tailwind-to-style/twsx.css'`.
@@ -540,6 +540,53 @@ Import in React:
 // src/index.js
 import 'tailwind-to-style/twsx.css';
 ```
+
+## Build-Time CSS Generation via Script
+
+In addition to using the Vite/Webpack plugin, you can also use a Node.js script to generate a CSS file from the `src/twsx` folder manually or as part of your build workflow.
+
+### Script: lib/build-twsx.js
+
+This script will read all JS files in `src/twsx`, generate CSS using the `twsx` function, and write the result to `node_modules/tailwind-to-style/twsx.css`.
+
+#### How to Use
+
+1. Make sure your JS files containing style objects are in `src/twsx`.
+2. Run the script with the following command:
+
+```bash
+node lib/build-twsx.js
+```
+3. After running, the combined CSS file will be available at:
+
+```
+node_modules/tailwind-to-style/twsx.css
+```
+4. Import this CSS file in your React entry point:
+
+```js
+import 'tailwind-to-style/twsx.css';
+```
+
+#### Automatic Integration
+
+You can add this script to the build section in your `package.json`:
+
+```json
+{
+  "scripts": {
+    "build-css": "node lib/build-twsx.js"
+  }
+}
+```
+
+Then run:
+
+```bash
+npm run build-css
+```
+
+This script is suitable for CI/CD workflows, pre-build steps, or manually generating CSS without a bundler plugin.
 
 ## License
 
