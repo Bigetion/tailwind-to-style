@@ -1,58 +1,71 @@
-
 import fs from "fs";
 import path from "path";
 import { pathToFileURL } from "url";
 import { twsx } from "tailwind-to-style";
 
-async function buildTwsx(twsxDir) {
-  let allCss = "";
+function findTwsxFiles(dir, files = []) {
+  const items = fs.readdirSync(dir);
+  for (const item of items) {
+    const fullPath = path.join(dir, item);
+    const stat = fs.statSync(fullPath);
+    if (stat.isDirectory()) {
+      findTwsxFiles(fullPath, files);
+    } else if (item.startsWith("twsx.") && item.endsWith(".js")) {
+      files.push(fullPath);
+    }
+  }
+  return files;
+}
+
+async function buildTwsx(inputDir, outputDir) {
   try {
-    const files = fs.readdirSync(twsxDir);
-    for (const file of files) {
-      if (file.endsWith(".js")) {
-        try {
-          const styleModule = await import(
-            pathToFileURL(path.join(twsxDir, file)).href
-          );
-          const styleObj = styleModule.default || styleModule;
-          const css = twsx(styleObj, { inject: false });
-          allCss += css + "\n";
-        } catch (err) {
-          console.error(`[vite-twsx] Error importing or processing ${file}:`, err);
-        }
+    const twsxFiles = findTwsxFiles(inputDir);
+    for (const filePath of twsxFiles) {
+      try {
+        const styleModule = await import(
+          pathToFileURL(filePath).href + `?update=${Date.now()}`
+        );
+        const styleObj = styleModule.default || styleModule;
+        const css = twsx(styleObj, { inject: false });
+        const fileName = path.basename(filePath).replace(/\.js$/, ".css");
+        const cssFilePath = path.join(outputDir, fileName);
+        fs.writeFileSync(cssFilePath, css);
+      } catch (err) {
+        console.error(
+          `[vite-twsx] Error importing or processing ${filePath}:`,
+          err
+        );
       }
     }
   } catch (err) {
-    console.error('[vite-twsx] Error reading twsxDir:', err);
+    console.error("[vite-twsx] Error scanning for twsx files:", err);
   }
-  return allCss;
+  return null;
 }
 
 export default function twsxPlugin(options = {}) {
-  const twsxDir = options.twsxDir || path.resolve(process.cwd(), "src/twsx");
-  const cssFile = path.resolve(
-    process.cwd(),
-    "node_modules/tailwind-to-style/twsx.css"
-  );
+  const inputDir = options.inputDir || path.resolve(process.cwd(), "src");
+  const outputDir =
+    options.outputDir || path.resolve(process.cwd(), "src/styles");
+
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
 
   return {
     name: "vite-twsx",
     async buildStart() {
       try {
-        const allCss = await buildTwsx(twsxDir);
-        fs.writeFileSync(cssFile, allCss);
-        console.log(`[vite-twsx] CSS written to ${cssFile}`);
+        await buildTwsx(inputDir, outputDir);
       } catch (err) {
-        console.error('[vite-twsx] Error writing CSS:', err);
+        console.error("[vite-twsx] Error writing CSS:", err);
       }
     },
     async handleHotUpdate() {
       try {
-        const allCss = await buildTwsx(twsxDir);
-        fs.writeFileSync(cssFile, allCss);
-        console.log(`[vite-twsx] CSS written to ${cssFile}`);
+        await buildTwsx(inputDir, outputDir);
       } catch (err) {
-        console.error('[vite-twsx] Error writing CSS:', err);
+        console.error("[vite-twsx] Error updating CSS:", err);
       }
     },
   };
