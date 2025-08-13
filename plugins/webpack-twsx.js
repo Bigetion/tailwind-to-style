@@ -20,6 +20,9 @@ function findTwsxFiles(dir, files = []) {
 async function buildTwsx(inputDir, outputDir) {
   try {
     const twsxFiles = findTwsxFiles(inputDir);
+    const generatedCssFiles = [];
+
+    // Generate CSS from JS files
     for (const filePath of twsxFiles) {
       try {
         const styleModule = await import(
@@ -30,11 +33,42 @@ async function buildTwsx(inputDir, outputDir) {
         const fileName = path.basename(filePath).replace(/\.js$/, ".css");
         const cssFilePath = path.join(outputDir, fileName);
         fs.writeFileSync(cssFilePath, css);
+        generatedCssFiles.push(fileName);
+        console.log(`[webpack-twsx] CSS written to ${cssFilePath}`);
       } catch (err) {
         console.error(
           `[webpack-twsx] Error importing or processing ${filePath}:`,
           err
         );
+      }
+    }
+
+    // Clean up orphaned CSS files
+    if (fs.existsSync(outputDir)) {
+      const existingCssFiles = fs.readdirSync(outputDir).filter((file) => {
+        return file.startsWith("twsx.") && file.endsWith(".css");
+      });
+
+      if (
+        Array.isArray(existingCssFiles) &&
+        Array.isArray(generatedCssFiles)
+      ) {
+        console.log(
+          `[webpack-twsx] Found ${existingCssFiles.length} existing CSS files:`,
+          existingCssFiles
+        );
+        console.log(
+          `[webpack-twsx] Generated ${generatedCssFiles.length} CSS files:`,
+          generatedCssFiles
+        );
+
+        for (const cssFile of existingCssFiles) {
+          if (!generatedCssFiles.includes(cssFile)) {
+            const cssFilePath = path.join(outputDir, cssFile);
+            fs.unlinkSync(cssFilePath);
+            console.log(`[webpack-twsx] Removed orphaned CSS: ${cssFilePath}`);
+          }
+        }
       }
     }
   } catch (err) {
