@@ -490,82 +490,93 @@ This will automatically log warnings for operations taking longer than 5ms and p
 
 ### Automated Modular CSS Generation
 
-1. Save your modular styles in the `src/twsx/` folder as JS files (e.g., `card.js`, `button.js`).
+1. Create JS files with `twsx.` prefix in your project (e.g., `twsx.card.js`, `twsx.button.js`) anywhere in your `src/` folder.
 2. Use the Vite/Webpack plugin from the `plugins/` folder to automatically generate CSS on every build/rebuild.
-3. All generated CSS files will be merged into a single `twsx.css` file inside `node_modules/tailwind-to-style/`.
-4. In React, simply import this file in your entry point: `import 'tailwind-to-style/twsx.css'`.
+3. Each JS file will generate its own CSS file in the specified output directory (default: `src/styles/`).
+4. Import the generated CSS files directly in your components or bundle them as needed.
 
 #### Vite Plugin Usage Example
 
 Add the plugin to your `vite.config.js`:
 ```js
-import twsxPlugin from './plugins/vite-twsx';
+import twsxPlugin from 'tailwind-to-style/plugins/vite-twsx';
 
 export default {
   plugins: [
     twsxPlugin({
-      twsxDir: 'src/twsx',
-      outDir: 'dist'
+      inputDir: 'src',
+      outputDir: 'src/styles'
     })
   ]
 };
 ```
 
-After build, the merged CSS file will be automatically created at `node_modules/tailwind-to-style/twsx.css`.
-Import in React:
+After build, individual CSS files will be created in `src/styles/` (e.g., `twsx.card.css`, `twsx.button.css`).
+Import in your components:
 ```js
-// src/index.js
-import 'tailwind-to-style/twsx.css';
+// Import specific CSS files
+import './styles/twsx.card.css';
+import './styles/twsx.button.css';
 ```
 
 #### Webpack Plugin Usage Example
 
 Add the plugin to your `webpack.config.js`:
 ```js
-import TwsxPlugin from './plugins/webpack-twsx';
+import TwsxPlugin from 'tailwind-to-style/plugins/webpack-twsx';
 
 module.exports = {
   plugins: [
     new TwsxPlugin({
-      twsxDir: 'src/twsx',
-      outDir: 'dist'
+      inputDir: 'src',
+      outputDir: 'src/styles'
     })
   ]
 };
 ```
 
-After build, the merged CSS file will be automatically created at `node_modules/tailwind-to-style/twsx.css`.
-Import in React:
+After build, individual CSS files will be created in `src/styles/` (e.g., `twsx.card.css`, `twsx.button.css`).
+Import in your components:
 ```js
-// src/index.js
-import 'tailwind-to-style/twsx.css';
+// Import specific CSS files
+import './styles/twsx.card.css';
+import './styles/twsx.button.css';
 ```
 
 ## Build-Time CSS Generation via Script
 
-In addition to using the Vite/Webpack plugin, you can also use a Node.js script to generate a CSS file from the `src/twsx` folder manually or as part of your build workflow.
+In addition to using the Vite/Webpack plugin, you can also use a Node.js script to generate CSS files from `twsx.*.js` files manually or as part of your build workflow.
 
-### Script: lib/build-twsx.js
+### Script: tailwind-to-style/lib/build-twsx.js
 
-This script will read all JS files in `src/twsx`, generate CSS using the `twsx` function, and write the result to `node_modules/tailwind-to-style/twsx.css`.
+This script will recursively scan for all `twsx.*.js` files in your project, generate CSS using the `twsx` function, and write individual CSS files to the specified output directory.
 
 #### How to Use
 
-1. Make sure your JS files containing style objects are in `src/twsx`.
+1. Create JS files with `twsx.` prefix containing style objects anywhere in your `src/` folder (e.g., `src/components/twsx.card.js`).
 2. Run the script with the following command:
 
 ```bash
-node lib/build-twsx.js
+node tailwind-to-style/lib/build-twsx.js
 ```
-3. After running, the combined CSS file will be available at:
+
+You can configure input and output directories using environment variables:
+```bash
+TWSX_INPUT_DIR=src TWSX_OUTPUT_DIR=dist/styles node tailwind-to-style/lib/build-twsx.js
+```
+
+3. After running, individual CSS files will be available in the output directory (default: `src/styles/`):
 
 ```
-node_modules/tailwind-to-style/twsx.css
+src/styles/twsx.card.css
+src/styles/twsx.button.css
 ```
-4. Import this CSS file in your React entry point:
+
+4. Import the generated CSS files in your components:
 
 ```js
-import 'tailwind-to-style/twsx.css';
+import './styles/twsx.card.css';
+import './styles/twsx.button.css';
 ```
 
 #### Automatic Integration
@@ -575,7 +586,7 @@ You can add this script to the build section in your `package.json`:
 ```json
 {
   "scripts": {
-    "build-css": "node lib/build-twsx.js"
+    "build-css": "node tailwind-to-style/lib/build-twsx.js"
   }
 }
 ```

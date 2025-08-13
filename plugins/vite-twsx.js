@@ -21,7 +21,7 @@ async function buildTwsx(inputDir, outputDir) {
   try {
     const twsxFiles = findTwsxFiles(inputDir);
     const generatedCssFiles = [];
-    
+
     // Generate CSS from JS files
     for (const filePath of twsxFiles) {
       try {
@@ -41,20 +41,17 @@ async function buildTwsx(inputDir, outputDir) {
         );
       }
     }
-    
+
     // Clean up orphaned CSS files
     if (fs.existsSync(outputDir)) {
-      const existingCssFiles = fs.readdirSync(outputDir)
-        .filter(file => file.startsWith('twsx.') && file.endsWith('.css'));
-      
-      console.log(`[vite-twsx] Found ${existingCssFiles.length} existing CSS files:`, existingCssFiles);
-      console.log(`[vite-twsx] Generated ${generatedCssFiles.length} CSS files:`, generatedCssFiles);
-      
+      const existingCssFiles = fs
+        .readdirSync(outputDir)
+        .filter((file) => file.startsWith("twsx.") && file.endsWith(".css"));
+
       for (const cssFile of existingCssFiles) {
         if (!generatedCssFiles.includes(cssFile)) {
           const cssFilePath = path.join(outputDir, cssFile);
           fs.unlinkSync(cssFilePath);
-          console.log(`[vite-twsx] Removed orphaned CSS: ${cssFilePath}`);
         }
       }
     }

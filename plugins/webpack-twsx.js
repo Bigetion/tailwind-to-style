@@ -34,7 +34,6 @@ async function buildTwsx(inputDir, outputDir) {
         const cssFilePath = path.join(outputDir, fileName);
         fs.writeFileSync(cssFilePath, css);
         generatedCssFiles.push(fileName);
-        console.log(`[webpack-twsx] CSS written to ${cssFilePath}`);
       } catch (err) {
         console.error(
           `[webpack-twsx] Error importing or processing ${filePath}:`,
@@ -49,24 +48,11 @@ async function buildTwsx(inputDir, outputDir) {
         return file.startsWith("twsx.") && file.endsWith(".css");
       });
 
-      if (
-        Array.isArray(existingCssFiles) &&
-        Array.isArray(generatedCssFiles)
-      ) {
-        console.log(
-          `[webpack-twsx] Found ${existingCssFiles.length} existing CSS files:`,
-          existingCssFiles
-        );
-        console.log(
-          `[webpack-twsx] Generated ${generatedCssFiles.length} CSS files:`,
-          generatedCssFiles
-        );
-
+      if (Array.isArray(existingCssFiles) && Array.isArray(generatedCssFiles)) {
         for (const cssFile of existingCssFiles) {
           if (!generatedCssFiles.includes(cssFile)) {
             const cssFilePath = path.join(outputDir, cssFile);
             fs.unlinkSync(cssFilePath);
-            console.log(`[webpack-twsx] Removed orphaned CSS: ${cssFilePath}`);
           }
         }
       }
