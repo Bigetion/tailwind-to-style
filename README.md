@@ -486,6 +486,63 @@ console.log(performanceUtils.getStats());
 
 This will automatically log warnings for operations taking longer than 5ms and provide insights into cache usage and performance bottlenecks.
 
+# Build-Time Plugins: Vite & Webpack
+
+### Otomatisasi Generate CSS Modular
+
+### Automated Modular CSS Generation
+
+1. Save your modular styles in the `src/twsx/` folder as JSON files (e.g., `card.json`, `button.json`).
+2. Use the Vite/Webpack plugin from the `plugins/` folder to automatically generate CSS on every build/rebuild.
+3. All generated CSS files will be merged into a single `twsx.css` file inside `node_modules/tailwind-to-style/`.
+4. In React, simply import this file in your entry point: `import 'tailwind-to-style/twsx.css'`.
+
+#### Contoh Penggunaan Plugin Vite
+
+Add the plugin to your `vite.config.js`:
+```js
+import twsxPlugin from './plugins/vite-twsx';
+
+export default {
+  plugins: [
+    twsxPlugin({
+      twsxDir: 'src/twsx',
+      outDir: 'dist'
+    })
+  ]
+};
+```
+
+After build, the merged CSS file will be automatically created at `node_modules/tailwind-to-style/twsx.css`.
+Import in React:
+```js
+// src/index.js
+import 'tailwind-to-style/twsx.css';
+```
+
+#### Contoh Penggunaan Plugin Webpack
+
+Add the plugin to your `webpack.config.js`:
+```js
+import TwsxPlugin from './plugins/webpack-twsx';
+
+module.exports = {
+  plugins: [
+    new TwsxPlugin({
+      twsxDir: 'src/twsx',
+      outDir: 'dist'
+    })
+  ]
+};
+```
+
+After build, the merged CSS file will be automatically created at `node_modules/tailwind-to-style/twsx.css`.
+Import in React:
+```js
+// src/index.js
+import 'tailwind-to-style/twsx.css';
+```
+
 ## License
 
 ## Contributing
