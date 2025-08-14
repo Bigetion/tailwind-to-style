@@ -506,18 +506,29 @@ export default {
   plugins: [
     twsxPlugin({
       inputDir: 'src',
-      outputDir: 'src/styles'
+      outputDir: 'src/styles',
+      preserveStructure: false  // Set to true to generate CSS next to JS files
     })
   ]
 };
 ```
 
-After build, individual CSS files will be created in `src/styles/` (e.g., `twsx.card.css`, `twsx.button.css`).
+**Configuration Options:**
+- `inputDir`: Directory to scan for `twsx.*.js` files (default: `'src'`)
+- `outputDir`: Directory where CSS files will be generated (default: `'src/styles'`)
+- `preserveStructure`: Whether to generate CSS files next to their JS counterparts (default: `false`)
+
+**Default mode:** CSS files created in `src/styles/` (e.g., `twsx.card.css`, `twsx.button.css`).
+**Preserve structure mode:** CSS files created next to JS files (e.g., `src/components/Card/twsx.card.css`).
+
 Import in your components:
 ```js
-// Import specific CSS files
+// Default mode
 import './styles/twsx.card.css';
 import './styles/twsx.button.css';
+
+// Preserve structure mode
+import './twsx.card.css';  // If in same directory
 ```
 
 #### Webpack Plugin Usage Example
@@ -530,18 +541,29 @@ module.exports = {
   plugins: [
     new TwsxPlugin({
       inputDir: 'src',
-      outputDir: 'src/styles'
+      outputDir: 'src/styles',
+      preserveStructure: false  // Set to true to generate CSS next to JS files
     })
   ]
 };
 ```
 
-After build, individual CSS files will be created in `src/styles/` (e.g., `twsx.card.css`, `twsx.button.css`).
+**Configuration Options:**
+- `inputDir`: Directory to scan for `twsx.*.js` files (default: `'src'`)
+- `outputDir`: Directory where CSS files will be generated (default: `'src/styles'`)
+- `preserveStructure`: Whether to generate CSS files next to their JS counterparts (default: `false`)
+
+**Default mode:** CSS files created in `src/styles/` (e.g., `twsx.card.css`, `twsx.button.css`).
+**Preserve structure mode:** CSS files created next to JS files (e.g., `src/components/Card/twsx.card.css`).
+
 Import in your components:
 ```js
-// Import specific CSS files
+// Default mode
 import './styles/twsx.card.css';
 import './styles/twsx.button.css';
+
+// Preserve structure mode
+import './twsx.card.css';  // If in same directory
 ```
 
 ## Build-Time CSS Generation via Script
@@ -568,23 +590,54 @@ node tailwind-to-style/lib/twsx-cli.js
 node tailwind-to-style/lib/twsx-cli.js --watch
 ```
 
+4. **Preserve Structure Mode (Generate CSS next to JS files):**
+```bash
+# One-time build with preserve structure
+node tailwind-to-style/lib/twsx-cli.js --preserve-structure
+
+# Watch mode with preserve structure
+node tailwind-to-style/lib/twsx-cli.js --watch --preserve-structure
+```
+
 You can configure input and output directories using environment variables:
 ```bash
 TWSX_INPUT_DIR=src TWSX_OUTPUT_DIR=dist/styles node tailwind-to-style/lib/twsx-cli.js --watch
 ```
 
-4. After running, individual CSS files will be available in the output directory (default: `src/styles/`):
+Or use environment variables for preserve structure:
+```bash
+TWSX_PRESERVE_STRUCTURE=true node tailwind-to-style/lib/twsx-cli.js --watch
+```
 
+5. **Output locations:**
+
+**Default mode:** CSS files will be in the output directory (default: `src/styles/`):
 ```
 src/styles/twsx.card.css
 src/styles/twsx.button.css
 ```
 
+**Preserve structure mode:** CSS files will be generated next to their JS counterparts:
+```
+src/components/Button/twsx.button.js  →  src/components/Button/twsx.button.css
+src/components/Card/twsx.card.js      →  src/components/Card/twsx.card.css
+```
+
 5. Import the generated CSS files in your components:
 
+**Default mode:**
 ```js
 import './styles/twsx.card.css';
 import './styles/twsx.button.css';
+```
+
+**Preserve structure mode:**
+```js
+// In src/components/Button/Button.jsx
+import './twsx.button.css';
+
+// In src/components/Card/Card.jsx
+import './twsx.card.css';
 ```
 
 #### Usage in Different Projects
@@ -602,6 +655,8 @@ npm install tailwind-to-style
   "scripts": {
     "twsx:build": "node node_modules/tailwind-to-style/lib/twsx-cli.js",
     "twsx:watch": "node node_modules/tailwind-to-style/lib/twsx-cli.js --watch",
+    "twsx:preserve": "node node_modules/tailwind-to-style/lib/twsx-cli.js --preserve-structure",
+    "twsx:dev": "node node_modules/tailwind-to-style/lib/twsx-cli.js --watch --preserve-structure",
     "dev": "npm run twsx:watch & next dev"
   }
 }

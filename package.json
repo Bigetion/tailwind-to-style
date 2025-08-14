@@ -1,6 +1,6 @@
 {
   "name": "tailwind-to-style",
-  "version": "2.8.5",
+  "version": "2.8.6",
   "description": "Convert tailwind classes to inline style",
   "type": "module",
   "main": "dist/index.cjs",
@@ -12,8 +12,7 @@
     "README.md",
     "LICENSE",
     "plugins",
-    "lib",
-    "twsx.css"
+    "lib"
   ],
   "bin": {
     "twsx-cli": "./lib/twsx-cli.js"

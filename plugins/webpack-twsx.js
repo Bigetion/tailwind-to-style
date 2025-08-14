@@ -17,7 +17,7 @@ function findTwsxFiles(dir, files = []) {
   return files;
 }
 
-async function buildTwsx(inputDir, outputDir) {
+async function buildTwsx(inputDir, outputDir, preserveStructure = false) {
   try {
     const twsxFiles = findTwsxFiles(inputDir);
     const generatedCssFiles = [];
@@ -31,9 +31,24 @@ async function buildTwsx(inputDir, outputDir) {
         const styleObj = styleModule.default || styleModule;
         const css = twsx(styleObj, { inject: false });
         const fileName = path.basename(filePath).replace(/\.js$/, ".css");
-        const cssFilePath = path.join(outputDir, fileName);
+        
+        let cssFilePath;
+        if (preserveStructure) {
+          // Generate CSS file next to the JS file
+          cssFilePath = filePath.replace(/\.js$/, ".css");
+        } else {
+          // Generate CSS file in the output directory
+          cssFilePath = path.join(outputDir, fileName);
+        }
+        
+        // Ensure the directory exists
+        const cssDir = path.dirname(cssFilePath);
+        if (!fs.existsSync(cssDir)) {
+          fs.mkdirSync(cssDir, { recursive: true });
+        }
+        
         fs.writeFileSync(cssFilePath, css);
-        generatedCssFiles.push(fileName);
+        generatedCssFiles.push(preserveStructure ? cssFilePath : fileName);
       } catch (err) {
         console.error(
           `[webpack-twsx] Error importing or processing ${filePath}:`,
@@ -43,16 +58,28 @@ async function buildTwsx(inputDir, outputDir) {
     }
 
     // Clean up orphaned CSS files
-    if (fs.existsSync(outputDir)) {
-      const existingCssFiles = fs.readdirSync(outputDir).filter((file) => {
-        return file.startsWith("twsx.") && file.endsWith(".css");
-      });
+    if (preserveStructure) {
+      // For preserve structure mode, clean up next to JS files
+      const allJsFiles = findTwsxFiles(inputDir);
+      for (const jsFile of allJsFiles) {
+        const cssFile = jsFile.replace(/\.js$/, ".css");
+        if (fs.existsSync(cssFile) && !generatedCssFiles.includes(cssFile)) {
+          fs.unlinkSync(cssFile);
+        }
+      }
+    } else {
+      // For normal mode, clean up in output directory
+      if (fs.existsSync(outputDir)) {
+        const existingCssFiles = fs.readdirSync(outputDir).filter((file) => {
+          return file.startsWith("twsx.") && file.endsWith(".css");
+        });
 
-      if (Array.isArray(existingCssFiles) && Array.isArray(generatedCssFiles)) {
-        for (const cssFile of existingCssFiles) {
-          if (!generatedCssFiles.includes(cssFile)) {
-            const cssFilePath = path.join(outputDir, cssFile);
-            fs.unlinkSync(cssFilePath);
+        if (Array.isArray(existingCssFiles) && Array.isArray(generatedCssFiles)) {
+          for (const cssFile of existingCssFiles) {
+            if (!generatedCssFiles.includes(cssFile)) {
+              const cssFilePath = path.join(outputDir, cssFile);
+              fs.unlinkSync(cssFilePath);
+            }
           }
         }
       }
@@ -67,7 +94,9 @@ class TwsxPlugin {
     this.inputDir = options.inputDir || path.resolve(process.cwd(), "src");
     this.outputDir =
       options.outputDir || path.resolve(process.cwd(), "src/styles");
-    if (!fs.existsSync(this.outputDir)) {
+    this.preserveStructure = options.preserveStructure || false;
+    
+    if (!this.preserveStructure && !fs.existsSync(this.outputDir)) {
       fs.mkdirSync(this.outputDir, { recursive: true });
     }
   }
@@ -75,14 +104,14 @@ class TwsxPlugin {
   apply(compiler) {
     compiler.hooks.beforeCompile.tapPromise("TwsxPlugin", async () => {
       try {
-        await buildTwsx(this.inputDir, this.outputDir);
+        await buildTwsx(this.inputDir, this.outputDir, this.preserveStructure);
       } catch (err) {
         console.error("[webpack-twsx] Error writing CSS:", err);
       }
     });
     compiler.hooks.watchRun.tapPromise("TwsxPlugin", async () => {
       try {
-        await buildTwsx(this.inputDir, this.outputDir);
+        await buildTwsx(this.inputDir, this.outputDir, this.preserveStructure);
       } catch (err) {
         console.error("[webpack-twsx] Error updating CSS:", err);
       }
