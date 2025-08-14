@@ -7,10 +7,11 @@
 
 `tailwind-to-style` is a JavaScript library designed to convert Tailwind CSS utility classes into inline styles or JavaScript objects. This is especially useful when you need to dynamically apply styles to elements in frameworks like React, where inline styles or style objects are frequently used.
 
-The library exposes two main functions:
+The library exposes two main functions and a CLI tool:
 
 1. **`tws`**: Converts Tailwind CSS classes into inline CSS styles or JavaScript objects (JSON).
 2. **`twsx`**: A more advanced function that allows you to define nested and complex styles similar to SCSS, including support for responsive, state variants, and grouping.
+3. **`twsx-cli`**: A command-line tool for generating CSS files from `twsx.*.js` files with watch mode support.
 
 ## Installation
 
@@ -547,36 +548,88 @@ import './styles/twsx.button.css';
 
 In addition to using the Vite/Webpack plugin, you can also use a Node.js script to generate CSS files from `twsx.*.js` files manually or as part of your build workflow.
 
-### Script: tailwind-to-style/lib/build-twsx.js
+### Script: tailwind-to-style/lib/twsx-cli.js (Legacy)
+
+> **💡 Recommended:** Use `npx twsx-cli` instead of calling the script directly.
 
 This script will recursively scan for all `twsx.*.js` files in your project, generate CSS using the `twsx` function, and write individual CSS files to the specified output directory.
 
 #### How to Use
 
 1. Create JS files with `twsx.` prefix containing style objects anywhere in your `src/` folder (e.g., `src/components/twsx.card.js`).
-2. Run the script with the following command:
 
+2. **One-time Build:**
 ```bash
-node tailwind-to-style/lib/build-twsx.js
+node tailwind-to-style/lib/twsx-cli.js
+```
+
+3. **Watch Mode (Auto-rebuild on file changes):**
+```bash
+node tailwind-to-style/lib/twsx-cli.js --watch
 ```
 
 You can configure input and output directories using environment variables:
 ```bash
-TWSX_INPUT_DIR=src TWSX_OUTPUT_DIR=dist/styles node tailwind-to-style/lib/build-twsx.js
+TWSX_INPUT_DIR=src TWSX_OUTPUT_DIR=dist/styles node tailwind-to-style/lib/twsx-cli.js --watch
 ```
 
-3. After running, individual CSS files will be available in the output directory (default: `src/styles/`):
+4. After running, individual CSS files will be available in the output directory (default: `src/styles/`):
 
 ```
 src/styles/twsx.card.css
 src/styles/twsx.button.css
 ```
 
-4. Import the generated CSS files in your components:
+5. Import the generated CSS files in your components:
 
 ```js
 import './styles/twsx.card.css';
 import './styles/twsx.button.css';
+```
+
+#### Usage in Different Projects
+
+**React/Next.js/Vue/Any Project:**
+
+1. Install the package:
+```bash
+npm install tailwind-to-style
+```
+
+2. Add to your `package.json`:
+```json
+{
+  "scripts": {
+    "twsx:build": "node node_modules/tailwind-to-style/lib/twsx-cli.js",
+    "twsx:watch": "node node_modules/tailwind-to-style/lib/twsx-cli.js --watch",
+    "dev": "npm run twsx:watch & next dev"
+  }
+}
+```
+
+3. For development with auto-rebuild:
+```bash
+npm run twsx:watch
+```
+
+4. For production build:
+```bash
+npm run twsx:build
+```
+
+**VS Code Integration:**
+Add to your workspace settings (`.vscode/settings.json`):
+```json
+{
+  "emeraldwalk.runonsave": {
+    "commands": [
+      {
+        "match": "twsx\\..*\\.js$",
+        "cmd": "npm run twsx:build"
+      }
+    ]
+  }
+}
 ```
 
 #### Automatic Integration
@@ -586,7 +639,7 @@ You can add this script to the build section in your `package.json`:
 ```json
 {
   "scripts": {
-    "build-css": "node tailwind-to-style/lib/build-twsx.js"
+    "build-css": "node tailwind-to-style/lib/twsx-cli.js"
   }
 }
 ```
