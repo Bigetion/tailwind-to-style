@@ -23,6 +23,7 @@ async function buildTwsx(inputDir, outputDir, preserveStructure = false) {
     const generatedCssFiles = [];
 
     // Generate CSS from JS files
+    let cssWrittenCount = 0;
     for (const filePath of twsxFiles) {
       try {
         const styleModule = await import(
@@ -49,12 +50,23 @@ async function buildTwsx(inputDir, outputDir, preserveStructure = false) {
 
         fs.writeFileSync(cssFilePath, css);
         generatedCssFiles.push(cssFilePath);
+        cssWrittenCount++;
       } catch (err) {
         console.error(
           `[vite-twsx] Error importing or processing ${filePath}:`,
           err
         );
       }
+    }
+    if (cssWrittenCount > 0) {
+      const green = "\x1b[32m";
+      const reset = "\x1b[0m";
+      const check = green + "✔" + reset;
+      const now = new Date();
+      const time = now.toLocaleTimeString();
+      console.log(
+        `[vite-twsx] ${check} CSS updated in ${cssWrittenCount} file(s) at ${time}`
+      );
     }
 
     // Clean up orphaned CSS files

@@ -23,6 +23,7 @@ async function buildTwsx(inputDir, outputDir, preserveStructure = false) {
     const generatedCssFiles = [];
 
     // Generate CSS from JS files
+    let cssWrittenCount = 0;
     for (const filePath of twsxFiles) {
       try {
         const styleModule = await import(
@@ -31,7 +32,7 @@ async function buildTwsx(inputDir, outputDir, preserveStructure = false) {
         const styleObj = styleModule.default || styleModule;
         const css = twsx(styleObj, { inject: false });
         const fileName = path.basename(filePath).replace(/\.js$/, ".css");
-        
+
         let cssFilePath;
         if (preserveStructure) {
           // Generate CSS file next to the JS file
@@ -40,21 +41,32 @@ async function buildTwsx(inputDir, outputDir, preserveStructure = false) {
           // Generate CSS file in the output directory
           cssFilePath = path.join(outputDir, fileName);
         }
-        
+
         // Ensure the directory exists
         const cssDir = path.dirname(cssFilePath);
         if (!fs.existsSync(cssDir)) {
           fs.mkdirSync(cssDir, { recursive: true });
         }
-        
+
         fs.writeFileSync(cssFilePath, css);
         generatedCssFiles.push(preserveStructure ? cssFilePath : fileName);
+        cssWrittenCount++;
       } catch (err) {
         console.error(
           `[webpack-twsx] Error importing or processing ${filePath}:`,
           err
         );
       }
+    }
+    if (cssWrittenCount > 0) {
+      const green = "\x1b[32m";
+      const reset = "\x1b[0m";
+      const check = green + "✔" + reset;
+      const now = new Date();
+      const time = now.toLocaleTimeString();
+      console.log(
+        `[webpack-twsx] ${check} CSS updated in ${cssWrittenCount} file(s) at ${time}`
+      );
     }
 
     // Clean up orphaned CSS files
@@ -74,7 +86,10 @@ async function buildTwsx(inputDir, outputDir, preserveStructure = false) {
           return file.startsWith("twsx.") && file.endsWith(".css");
         });
 
-        if (Array.isArray(existingCssFiles) && Array.isArray(generatedCssFiles)) {
+        if (
+          Array.isArray(existingCssFiles) &&
+          Array.isArray(generatedCssFiles)
+        ) {
           for (const cssFile of existingCssFiles) {
             if (!generatedCssFiles.includes(cssFile)) {
               const cssFilePath = path.join(outputDir, cssFile);
@@ -95,7 +110,7 @@ class TwsxPlugin {
     this.outputDir =
       options.outputDir || path.resolve(process.cwd(), "src/styles");
     this.preserveStructure = options.preserveStructure || false;
-    
+
     if (!this.preserveStructure && !fs.existsSync(this.outputDir)) {
       fs.mkdirSync(this.outputDir, { recursive: true });
     }
