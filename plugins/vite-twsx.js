@@ -31,7 +31,7 @@ async function buildTwsx(inputDir, outputDir, preserveStructure = false) {
         const styleObj = styleModule.default || styleModule;
         const css = twsx(styleObj, { inject: false });
         const fileName = path.basename(filePath).replace(/\.js$/, ".css");
-        
+
         let cssFilePath;
         if (preserveStructure) {
           // Generate CSS file next to the JS file
@@ -40,15 +40,15 @@ async function buildTwsx(inputDir, outputDir, preserveStructure = false) {
           // Generate CSS file in the output directory
           cssFilePath = path.join(outputDir, fileName);
         }
-        
+
         // Ensure the directory exists
         const cssDir = path.dirname(cssFilePath);
         if (!fs.existsSync(cssDir)) {
           fs.mkdirSync(cssDir, { recursive: true });
         }
-        
+
         fs.writeFileSync(cssFilePath, css);
-        generatedCssFiles.push(preserveStructure ? cssFilePath : fileName);
+        generatedCssFiles.push(cssFilePath);
       } catch (err) {
         console.error(
           `[vite-twsx] Error importing or processing ${filePath}:`,
@@ -75,17 +75,19 @@ async function buildTwsx(inputDir, outputDir, preserveStructure = false) {
           .filter((file) => file.startsWith("twsx.") && file.endsWith(".css"));
 
         for (const cssFile of existingCssFiles) {
-          if (!generatedCssFiles.includes(cssFile)) {
-            const cssFilePath = path.join(outputDir, cssFile);
+          const cssFilePath = path.join(outputDir, cssFile);
+          if (!generatedCssFiles.includes(cssFilePath)) {
             fs.unlinkSync(cssFilePath);
           }
         }
       }
     }
+
+    return { generatedCssFiles };
   } catch (err) {
     console.error("[vite-twsx] Error scanning for twsx files:", err);
+    return { generatedCssFiles: [] };
   }
-  return null;
 }
 
 export default function twsxPlugin(options = {}) {
@@ -93,6 +95,9 @@ export default function twsxPlugin(options = {}) {
   const outputDir =
     options.outputDir || path.resolve(process.cwd(), "src/styles");
   const preserveStructure = options.preserveStructure || false;
+
+  // Keep track of generated files to avoid triggering on our own changes
+  const generatedFiles = new Set();
 
   if (!preserveStructure && !fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
@@ -102,16 +107,42 @@ export default function twsxPlugin(options = {}) {
     name: "vite-twsx",
     async buildStart() {
       try {
-        await buildTwsx(inputDir, outputDir, preserveStructure);
+        const result = await buildTwsx(inputDir, outputDir, preserveStructure);
+        // Track generated CSS files
+        if (result && result.generatedCssFiles) {
+          result.generatedCssFiles.forEach((file) => generatedFiles.add(file));
+        }
       } catch (err) {
         console.error("[vite-twsx] Error writing CSS:", err);
       }
     },
-    async handleHotUpdate() {
-      try {
-        await buildTwsx(inputDir, outputDir, preserveStructure);
-      } catch (err) {
-        console.error("[vite-twsx] Error updating CSS:", err);
+    async handleHotUpdate({ file, server }) {
+      // Skip if this is a CSS file we generated
+      if (generatedFiles.has(file)) {
+        return [];
+      }
+
+      // Only process .js files that start with "twsx."
+      if (file.endsWith(".js") && path.basename(file).startsWith("twsx.")) {
+        try {
+          const result = await buildTwsx(
+            inputDir,
+            outputDir,
+            preserveStructure
+          );
+
+          // Update our tracking of generated files
+          if (result && result.generatedCssFiles) {
+            generatedFiles.clear();
+            result.generatedCssFiles.forEach((f) => generatedFiles.add(f));
+          }
+
+          // Return empty array to prevent default HMR handling
+          return [];
+        } catch (err) {
+          console.error("[vite-twsx] Error updating CSS:", err);
+          return [];
+        }
       }
     },
   };
