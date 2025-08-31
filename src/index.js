@@ -841,7 +841,7 @@ export function tws(classNames, convertToJson) {
       const opacityMatch = className.match(/\/(\d+)$/);
       let baseClassName = className;
       let hasOpacityModifier = false;
-      
+
       if (opacityMatch) {
         const opacityValue = parseInt(opacityMatch[1], 10);
         // If it's a valid opacity value (0-100), treat it as opacity modifier
@@ -849,11 +849,26 @@ export function tws(classNames, convertToJson) {
           // Check if this could be a fraction (e.g., w-2/3, h-1/2)
           // Fractions typically have denominators of 2, 3, 4, 5, 6, 12
           const fractionDenominators = [2, 3, 4, 5, 6, 12];
-          const couldBeFraction = fractionDenominators.includes(opacityValue) && 
-                                 (className.startsWith('w-') || className.startsWith('h-') || 
-                                  className.startsWith('max-w-') || className.startsWith('max-h-') ||
-                                  className.startsWith('min-w-') || className.startsWith('min-h-'));
-          
+          const fractionPrefixes = [
+            "w-",
+            "h-",
+            "max-w-",
+            "max-h-",
+            "min-w-",
+            "min-h-",
+            "top-",
+            "bottom-",
+            "left-",
+            "right-",
+            "inset-",
+            "inset-x-",
+            "inset-y-",
+            "translate-x-",
+            "translate-y-",
+          ];
+          const couldBeFraction =
+            fractionDenominators.includes(opacityValue) &&
+            fractionPrefixes.some((prefix) => className.startsWith(prefix));
           if (!couldBeFraction) {
             baseClassName = className.replace(/\/\d+$/, "");
             hasOpacityModifier = true;
@@ -868,7 +883,11 @@ export function tws(classNames, convertToJson) {
 
       if (result) {
         // Apply opacity modifier if present
-        if (hasOpacityModifier && className.includes("/") && /\/\d+$/.test(className)) {
+        if (
+          hasOpacityModifier &&
+          className.includes("/") &&
+          /\/\d+$/.test(className)
+        ) {
           result = processOpacityModifier(className, result);
         }
         return resolveCssToClearCss(result);
@@ -883,7 +902,11 @@ export function tws(classNames, convertToJson) {
               customValue
             );
             // Apply opacity modifier to custom values too
-            if (hasOpacityModifier && className.includes("/") && /\/\d+$/.test(className)) {
+            if (
+              hasOpacityModifier &&
+              className.includes("/") &&
+              /\/\d+$/.test(className)
+            ) {
               customResult = processOpacityModifier(className, customResult);
             }
             return customResult;
@@ -1047,18 +1070,43 @@ function processClass(cls, selector, styles) {
   const opacityMatch = pureClassName.match(/\/(\d+)$/);
   let baseClassName = pureClassName;
   let hasOpacityModifier = false;
-  
+
   if (opacityMatch) {
     const opacityValue = parseInt(opacityMatch[1], 10);
     // If it's a valid opacity value (0-100), treat it as opacity modifier
     if (opacityValue >= 0 && opacityValue <= 100) {
-      // Check if this could be a fraction (e.g., w-2/3, h-1/2)
+      // Check if this could be a fraction (e.g., w-2/3, h-1/2, top-1/2, etc.)
       const fractionDenominators = [2, 3, 4, 5, 6, 12];
-      const couldBeFraction = fractionDenominators.includes(opacityValue) && 
-                             (pureClassName.startsWith('w-') || pureClassName.startsWith('h-') || 
-                              pureClassName.startsWith('max-w-') || pureClassName.startsWith('max-h-') ||
-                              pureClassName.startsWith('min-w-') || pureClassName.startsWith('min-h-'));
-      
+      const fractionPrefixes = [
+        "w-",
+        "h-",
+        "max-w-",
+        "max-h-",
+        "min-w-",
+        "min-h-",
+        "top-",
+        "bottom-",
+        "left-",
+        "right-",
+        "inset-",
+        "inset-x-",
+        "inset-y-",
+        "translate-x-",
+        "translate-y-",
+        "rounded-t-",
+        "rounded-b-",
+        "rounded-l-",
+        "rounded-r-",
+        "rounded-bl-",
+        "rounded-br-",
+        "rounded-tl-",
+        "rounded-tr-",
+        "flex-basis-",
+        "z-",
+      ];
+      const couldBeFraction =
+        fractionDenominators.includes(opacityValue) &&
+        fractionPrefixes.some((prefix) => pureClassName.startsWith(prefix));
       if (!couldBeFraction) {
         baseClassName = pureClassName.replace(/\/\d+$/, "");
         hasOpacityModifier = true;
@@ -1095,7 +1143,11 @@ function processClass(cls, selector, styles) {
   }
 
   // Apply opacity modifier if present
-  if (hasOpacityModifier && pureClassName.includes("/") && /\/\d+$/.test(pureClassName)) {
+  if (
+    hasOpacityModifier &&
+    pureClassName.includes("/") &&
+    /\/\d+$/.test(pureClassName)
+  ) {
     declarations = processOpacityModifier(pureClassName, declarations);
   }
 
