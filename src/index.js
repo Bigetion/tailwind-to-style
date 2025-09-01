@@ -414,6 +414,35 @@ if (!cssObject) {
   cssObject = convertCssToObject(twString);
 }
 
+const fractionDenominators = [2, 3, 4, 5, 6, 12];
+const fractionPrefixes = [
+  "w-",
+  "h-",
+  "max-w-",
+  "max-h-",
+  "min-w-",
+  "min-h-",
+  "top-",
+  "bottom-",
+  "left-",
+  "right-",
+  "inset-",
+  "inset-x-",
+  "inset-y-",
+  "translate-x-",
+  "translate-y-",
+  "rounded-t-",
+  "rounded-b-",
+  "rounded-l-",
+  "rounded-r-",
+  "rounded-bl-",
+  "rounded-br-",
+  "rounded-tl-",
+  "rounded-tr-",
+  "flex-basis-",
+  "z-",
+];
+
 const breakpoints = {
   sm: "@media (min-width: 640px)",
   md: "@media (min-width: 768px)",
@@ -848,27 +877,13 @@ export function tws(classNames, convertToJson) {
         if (opacityValue >= 0 && opacityValue <= 100) {
           // Check if this could be a fraction (e.g., w-2/3, h-1/2)
           // Fractions typically have denominators of 2, 3, 4, 5, 6, 12
-          const fractionDenominators = [2, 3, 4, 5, 6, 12];
-          const fractionPrefixes = [
-            "w-",
-            "h-",
-            "max-w-",
-            "max-h-",
-            "min-w-",
-            "min-h-",
-            "top-",
-            "bottom-",
-            "left-",
-            "right-",
-            "inset-",
-            "inset-x-",
-            "inset-y-",
-            "translate-x-",
-            "translate-y-",
-          ];
           const couldBeFraction =
             fractionDenominators.includes(opacityValue) &&
-            fractionPrefixes.some((prefix) => className.startsWith(prefix));
+            fractionPrefixes.some(
+              (prefix) =>
+                className.startsWith(prefix) ||
+                className.startsWith(`-${prefix}`)
+            );
           if (!couldBeFraction) {
             baseClassName = className.replace(/\/\d+$/, "");
             hasOpacityModifier = true;
@@ -1076,37 +1091,13 @@ function processClass(cls, selector, styles) {
     // If it's a valid opacity value (0-100), treat it as opacity modifier
     if (opacityValue >= 0 && opacityValue <= 100) {
       // Check if this could be a fraction (e.g., w-2/3, h-1/2, top-1/2, etc.)
-      const fractionDenominators = [2, 3, 4, 5, 6, 12];
-      const fractionPrefixes = [
-        "w-",
-        "h-",
-        "max-w-",
-        "max-h-",
-        "min-w-",
-        "min-h-",
-        "top-",
-        "bottom-",
-        "left-",
-        "right-",
-        "inset-",
-        "inset-x-",
-        "inset-y-",
-        "translate-x-",
-        "translate-y-",
-        "rounded-t-",
-        "rounded-b-",
-        "rounded-l-",
-        "rounded-r-",
-        "rounded-bl-",
-        "rounded-br-",
-        "rounded-tl-",
-        "rounded-tr-",
-        "flex-basis-",
-        "z-",
-      ];
       const couldBeFraction =
         fractionDenominators.includes(opacityValue) &&
-        fractionPrefixes.some((prefix) => pureClassName.startsWith(prefix));
+        fractionPrefixes.some(
+          (prefix) =>
+            pureClassName.startsWith(prefix) ||
+            pureClassName.startsWith(`-${prefix}`)
+        );
       if (!couldBeFraction) {
         baseClassName = pureClassName.replace(/\/\d+$/, "");
         hasOpacityModifier = true;
