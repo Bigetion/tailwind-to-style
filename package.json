@@ -1,6 +1,6 @@
 {
   "name": "tailwind-to-style",
-  "version": "2.8.9",
+  "version": "2.8.10",
   "description": "Convert tailwind classes to inline style",
   "type": "module",
   "main": "dist/index.cjs",
