@@ -468,6 +468,7 @@ const pseudoVariants = new Set([
 const specialVariants = {
   group: (state, sel) => `.group:${state} ${sel}`,
   peer: (state, sel) => `.peer:${state} ~ ${sel}`,
+  dark: (state, sel) => `.dark ${sel}`,
 };
 
 const selectorVariants = {
@@ -533,6 +534,9 @@ function resolveVariants(selector, variants) {
       media = breakpoints[v];
     } else if (pseudoVariants.has(v)) {
       finalSelector += `:${v}`;
+    } else if (v === 'dark') {
+      // Special handling for dark variant
+      finalSelector = `.dark ${finalSelector}`;
     } else {
       for (const key in specialVariants) {
         if (v.startsWith(`${key}-`)) {
@@ -992,6 +996,15 @@ const performanceMonitor = {
 // Utility functions for class expansion
 function expandDirectiveGroups(str) {
   return str.replace(/(\w+)\(([^()]+)\)/g, (_, directive, content) => {
+    // Special handling for dark mode syntax: dark:(classes)
+    if (directive === 'dark') {
+      return content
+        .trim()
+        .split(/\s+/)
+        .map((cls) => `dark:${cls}`)
+        .join(" ");
+    }
+    
     return content
       .trim()
       .split(/\s+/)
