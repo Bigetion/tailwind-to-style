@@ -1180,8 +1180,13 @@ function processNestedSelectors(nested, selector, styles, walk) {
   for (const nestedSel in nested) {
     const nestedVal = nested[nestedSel];
     if (nestedSel === "@css" && typeof nestedVal === "object") {
+      // For @css directive, use raw CSS values without any processing
       const cssDeclarations = Object.entries(nestedVal)
-        .map(([key, value]) => `${key}: ${value};`)
+        .map(([key, value]) => {
+          // Ensure CSS values are properly formatted and not processed through Tailwind conversion
+          const cleanValue = typeof value === 'string' ? value.trim() : String(value);
+          return `${key}: ${cleanValue};`;
+        })
         .join(" ");
 
       if (selector in styles) {
@@ -1246,14 +1251,33 @@ function walkStyleTree(selector, val, styles, walk) {
       return;
     }
 
-    const cssDeclarations = Object.entries(val)
-      .map(([key, value]) => `${key}: ${value};`)
-      .join(" ");
+    // Check if this is a @css object within the current object
+    if (val['@css'] && typeof val['@css'] === 'object') {
+      // Handle object with @css directive - process the @css part specially
+      const cssDeclarations = Object.entries(val['@css'])
+        .map(([key, value]) => {
+          // Keep CSS values intact without any processing
+          const cleanValue = typeof value === 'string' ? value.trim() : String(value);
+          return `${key}: ${cleanValue};`;
+        })
+        .join(" ");
 
-    if (selector in styles) {
-      styles[selector] += cssDeclarations + "\n";
+      if (selector in styles) {
+        styles[selector] += cssDeclarations + "\n";
+      } else {
+        styles[selector] = cssDeclarations + "\n";
+      }
+      
+      // Process other properties in the object (non-@css)
+      const otherProps = { ...val };
+      delete otherProps['@css'];
+      
+      if (Object.keys(otherProps).length > 0) {
+        processNestedSelectors(otherProps, selector, styles, walk);
+      }
     } else {
-      styles[selector] = cssDeclarations + "\n";
+      // Regular object processing - use processNestedSelectors to handle properly
+      processNestedSelectors(val, selector, styles, walk);
     }
   }
 }
@@ -1362,9 +1386,40 @@ export function twsx(obj, options = {}) {
       walkStyleTree(selector, val, styles, walk);
     }
 
-    // Flatten the input object
+    // Enhanced selector processing to handle responsive breakpoints
+    const enhancedObj = {};
+    
+    for (const selector in obj) {
+      const val = obj[selector];
+      
+      // Check if selector starts with breakpoint (e.g., 'md:.title')
+      const breakpointMatch = selector.match(/^(sm|md|lg|xl|2xl):(.+)$/);
+      
+      if (breakpointMatch) {
+        const [, breakpoint, baseSelector] = breakpointMatch;
+        
+        if (typeof val === "string") {
+          // Convert 'md:.title': 'text-lg' to '.title': 'md:text-lg'
+          if (!enhancedObj[baseSelector]) {
+            enhancedObj[baseSelector] = "";
+          }
+          
+          // Add responsive classes to the base selector
+          const responsiveClasses = val.split(" ").map(cls => `${breakpoint}:${cls}`).join(" ");
+          enhancedObj[baseSelector] += (enhancedObj[baseSelector] ? " " : "") + responsiveClasses;
+        } else {
+          // For non-string values (objects, arrays), keep original structure
+          enhancedObj[selector] = val;
+        }
+      } else {
+        // Regular selector - keep as is
+        enhancedObj[selector] = val;
+      }
+    }
+
+    // Flatten the enhanced input object
     const flattered = performanceMonitor.measure(
-      () => flattenStyleObject(obj),
+      () => flattenStyleObject(enhancedObj),
       "twsx:flatten"
     );
 
@@ -1376,7 +1431,14 @@ export function twsx(obj, options = {}) {
       let nested = {};
 
       if (typeof val === "string") {
-        baseClass = expandGroupedClass(val);
+        // Check if this is a @css property value - if so, don't process through expandGroupedClass
+        if (selector.includes(" @css ")) {
+          // This is a CSS property value from @css flattening - keep as-is
+          baseClass = val;
+        } else {
+          // Regular Tailwind class - process normally
+          baseClass = expandGroupedClass(val);
+        }
       } else if (Array.isArray(val)) {
         for (const item of val) {
           if (typeof item === "string") {
