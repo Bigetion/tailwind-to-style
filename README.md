@@ -851,6 +851,24 @@ This script is suitable for CI/CD workflows, pre-build steps, or manually genera
 
 ## License
 
+## Support
+
+If you find this library helpful and want to support its development, consider buying me a coffee:
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/bigetion)
+
+Your support helps maintain and improve this library! ❤️
+
+### Why Support?
+
+- 🔧 **Active Maintenance**: Regular updates and bug fixes
+- ⚡ **New Features**: Continuous improvement based on community feedback
+- 📚 **Documentation**: Better examples and tutorials
+- 🚀 **Performance**: Optimization and new capabilities
+- 💬 **Support**: Responsive community support
+
+Every contribution, no matter how small, is greatly appreciated and helps keep this project alive and growing!
+
 ## Contributing
 
 Contributions are welcome! Please see our [Contributing Guide](CONTRIBUTING.md) for more details.

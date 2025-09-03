@@ -41,6 +41,10 @@
   ],
   "author": "Bigetion",
   "license": "MIT",
+  "funding": {
+    "type": "individual",
+    "url": "https://buymeacoffee.com/bigetion"
+  },
   "bugs": {
     "url": "https://github.com/Bigetion/tailwind-to-style/issues"
   },
