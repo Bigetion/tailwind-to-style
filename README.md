@@ -84,6 +84,7 @@ export default App;
 
 This will apply the Tailwind classes directly as inline styles in the React component.
 
+
 ### 2. `twsx`
 
 `twsx` is an advanced function that builds on `tws` by allowing you to define **nested styles** and more complex CSS structures. It supports **grouping**, **responsive variants**, **state variants**, **dynamic utilities**, and **direct CSS properties** via the `@css` directive, making it ideal for more advanced styling needs.
@@ -299,6 +300,53 @@ This new syntax automatically converts responsive selectors to traditional Tailw
 - ✅ Easier to maintain complex responsive designs
 - ✅ Backward compatible with existing syntax
 - ✅ Works with all breakpoints: `sm`, `md`, `lg`, `xl`, `2xl`
+
+#### Handling Dark and Light Mode
+
+`twsx` supports writing styles for dark and light mode easily, similar to Tailwind CSS. You can use the `dark:` prefix, `.dark` selector, grouping, or nested selector.
+
+**Usage Example:**
+
+```javascript
+import { twsx } from "tailwind-to-style";
+
+const styles = twsx({
+  ".card": [
+    "bg-white text-gray-900 dark:bg-gray-900 dark:text-white", // Using dark: prefix
+    { ".dark &": "bg-gray-900 text-white border-gray-700" }, // Or .dark selector
+  ],
+  // Grouping is also supported
+  ".button": "bg-blue-500 text-white dark:(bg-gray-900 text-yellow-200)",
+});
+```
+
+**Explanation:**
+- The `dark:` prefix will automatically generate CSS that is only active if the parent has the `dark` class (e.g. `<html class="dark">`).
+- The `.dark &` selector can also be used for more flexibility.
+- Grouping `dark:(...)` will be automatically expanded into multiple dark classes.
+
+**CSS Output:**
+```css
+.card {
+  background-color: #fff;
+  color: #111827;
+}
+.dark .card {
+  background-color: #111827;
+  color: #fff;
+  border-color: #374151;
+}
+.button {
+  background-color: #3b82f6;
+  color: #fff;
+}
+.dark .button {
+  background-color: #111827;
+  color: #fde68a;
+}
+```
+
+**Enable dark mode** by adding the `dark` class to the root element (usually `<html class="dark">`).
 
 ### Performance Utilities
 
