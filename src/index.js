@@ -534,7 +534,7 @@ function resolveVariants(selector, variants) {
       media = breakpoints[v];
     } else if (pseudoVariants.has(v)) {
       finalSelector += `:${v}`;
-    } else if (v === 'dark') {
+    } else if (v === "dark") {
       // Special handling for dark variant
       finalSelector = `.dark ${finalSelector}`;
     } else {
@@ -997,14 +997,14 @@ const performanceMonitor = {
 function expandDirectiveGroups(str) {
   return str.replace(/(\w+)\(([^()]+)\)/g, (_, directive, content) => {
     // Special handling for dark mode syntax: dark:(classes)
-    if (directive === 'dark') {
+    if (directive === "dark") {
       return content
         .trim()
         .split(/\s+/)
         .map((cls) => `dark:${cls}`)
         .join(" ");
     }
-    
+
     return content
       .trim()
       .split(/\s+/)
@@ -1197,7 +1197,8 @@ function processNestedSelectors(nested, selector, styles, walk) {
       const cssDeclarations = Object.entries(nestedVal)
         .map(([key, value]) => {
           // Ensure CSS values are properly formatted and not processed through Tailwind conversion
-          const cleanValue = typeof value === 'string' ? value.trim() : String(value);
+          const cleanValue =
+            typeof value === "string" ? value.trim() : String(value);
           return `${key}: ${cleanValue};`;
         })
         .join(" ");
@@ -1265,12 +1266,13 @@ function walkStyleTree(selector, val, styles, walk) {
     }
 
     // Check if this is a @css object within the current object
-    if (val['@css'] && typeof val['@css'] === 'object') {
+    if (val["@css"] && typeof val["@css"] === "object") {
       // Handle object with @css directive - process the @css part specially
-      const cssDeclarations = Object.entries(val['@css'])
+      const cssDeclarations = Object.entries(val["@css"])
         .map(([key, value]) => {
           // Keep CSS values intact without any processing
-          const cleanValue = typeof value === 'string' ? value.trim() : String(value);
+          const cleanValue =
+            typeof value === "string" ? value.trim() : String(value);
           return `${key}: ${cleanValue};`;
         })
         .join(" ");
@@ -1280,11 +1282,11 @@ function walkStyleTree(selector, val, styles, walk) {
       } else {
         styles[selector] = cssDeclarations + "\n";
       }
-      
+
       // Process other properties in the object (non-@css)
       const otherProps = { ...val };
-      delete otherProps['@css'];
-      
+      delete otherProps["@css"];
+
       if (Object.keys(otherProps).length > 0) {
         processNestedSelectors(otherProps, selector, styles, walk);
       }
@@ -1401,25 +1403,29 @@ export function twsx(obj, options = {}) {
 
     // Enhanced selector processing to handle responsive breakpoints
     const enhancedObj = {};
-    
+
     for (const selector in obj) {
       const val = obj[selector];
-      
+
       // Check if selector starts with breakpoint (e.g., 'md:.title')
       const breakpointMatch = selector.match(/^(sm|md|lg|xl|2xl):(.+)$/);
-      
+
       if (breakpointMatch) {
         const [, breakpoint, baseSelector] = breakpointMatch;
-        
+
         if (typeof val === "string") {
           // Convert 'md:.title': 'text-lg' to '.title': 'md:text-lg'
           if (!enhancedObj[baseSelector]) {
             enhancedObj[baseSelector] = "";
           }
-          
+
           // Add responsive classes to the base selector
-          const responsiveClasses = val.split(" ").map(cls => `${breakpoint}:${cls}`).join(" ");
-          enhancedObj[baseSelector] += (enhancedObj[baseSelector] ? " " : "") + responsiveClasses;
+          const responsiveClasses = val
+            .split(" ")
+            .map((cls) => `${breakpoint}:${cls}`)
+            .join(" ");
+          enhancedObj[baseSelector] +=
+            (enhancedObj[baseSelector] ? " " : "") + responsiveClasses;
         } else {
           // For non-string values (objects, arrays), keep original structure
           enhancedObj[selector] = val;
