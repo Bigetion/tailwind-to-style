@@ -2,6 +2,86 @@
 
 > **Purpose**: This guide provides comprehensive examples and patterns for AI agents to understand and use `twsx()` function effectively for advanced CSS styling with Tailwind CSS.
 
+## Installation & Import
+
+### NPM/Yarn Installation
+```bash
+# Using npm
+npm install tailwind-to-style
+
+# Using yarn
+yarn add tailwind-to-style
+```
+
+### Import Methods
+
+#### ES6 Modules (Recommended)
+```javascript
+import { twsx } from 'tailwind-to-style';
+
+// Usage
+const styles = twsx({
+  ".my-component": "bg-blue-500 text-white p-4"
+});
+```
+
+#### CommonJS (Node.js)
+```javascript
+const { twsx } = require('tailwind-to-style');
+
+// Usage
+const styles = twsx({
+  ".my-component": "bg-blue-500 text-white p-4"
+});
+```
+
+#### CDN Usage (Browser)
+```html
+<!-- Include the library via CDN -->
+<script src="https://unpkg.com/tailwind-to-style@latest/dist/index.browser.js"></script>
+
+<script>
+  // Access via global object
+  const { twsx } = tailwindToStyle;
+  
+  // Usage
+  const styles = twsx({
+    ".my-component": "bg-blue-500 text-white p-4"
+  });
+  
+  // CSS is automatically injected into <head>
+  console.log(styles);
+</script>
+```
+
+#### CDN with Module (Modern Browsers)
+```html
+<script type="module">
+  import { twsx } from 'https://unpkg.com/tailwind-to-style@latest/dist/index.esm.js';
+  
+  const styles = twsx({
+    ".my-component": "bg-blue-500 text-white p-4"
+  });
+</script>
+```
+
+### Quick Start Example
+```javascript
+import { twsx } from 'tailwind-to-style';
+
+// Simple component styling
+const buttonStyles = twsx({
+  ".btn": [
+    "bg-blue-500 text-white px-4 py-2 rounded",
+    "hover:bg-blue-600 focus:ring-2 focus:ring-blue-300"
+  ]
+});
+
+// The generated CSS is automatically injected in browser
+// Or you can use it in your build process
+console.log(buttonStyles);
+```
+
 ## Table of Contents
 1. [Nested Styles (SCSS-like)](#1-nested-styles-scss-like)
 2. [Grouping with Parentheses](#2-grouping-with-parentheses)
