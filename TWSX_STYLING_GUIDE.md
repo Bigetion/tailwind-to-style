@@ -19,8 +19,7 @@ yarn add tailwind-to-style
 ```javascript
 import { twsx } from 'tailwind-to-style';
 
-// Usage
-const styles = twsx({
+twsx({
   ".my-component": "bg-blue-500 text-white p-4"
 });
 ```
@@ -29,28 +28,25 @@ const styles = twsx({
 ```javascript
 const { twsx } = require('tailwind-to-style');
 
-// Usage
 const styles = twsx({
   ".my-component": "bg-blue-500 text-white p-4"
-});
+}, { inject: false });
+// For Node.js, use the returned value if you want to embed it into SSR or a CSS file
+
+console.log(styles);
 ```
 
 #### CDN Usage (Browser)
 ```html
 <!-- Include the library via CDN -->
 <script src="https://unpkg.com/tailwind-to-style@latest/dist/index.browser.js"></script>
-
 <script>
   // Access via global object
   const { twsx } = tailwindToStyle;
-  
-  // Usage
-  const styles = twsx({
+  twsx({
     ".my-component": "bg-blue-500 text-white p-4"
   });
-  
-  // CSS is automatically injected into <head>
-  console.log(styles);
+  // <div class="my-component">My Component</div>
 </script>
 ```
 
@@ -58,10 +54,10 @@ const styles = twsx({
 ```html
 <script type="module">
   import { twsx } from 'https://unpkg.com/tailwind-to-style@latest/dist/index.esm.js';
-  
-  const styles = twsx({
+  twsx({
     ".my-component": "bg-blue-500 text-white p-4"
   });
+  // <div class="my-component">My Component</div>
 </script>
 ```
 
@@ -69,17 +65,73 @@ const styles = twsx({
 ```javascript
 import { twsx } from 'tailwind-to-style';
 
-// Simple component styling
-const buttonStyles = twsx({
+twsx({
   ".btn": [
     "bg-blue-500 text-white px-4 py-2 rounded",
     "hover:bg-blue-600 focus:ring-2 focus:ring-blue-300"
   ]
 });
+// <button class="btn">Button</button>
+```
 
-// The generated CSS is automatically injected in browser
-// Or you can use it in your build process
-console.log(buttonStyles);
+---
+
+### Usage in Frameworks
+
+#### ReactJS
+```jsx
+import React from 'react';
+import { twsx } from 'tailwind-to-style';
+
+twsx({
+  ".my-btn": [
+    "bg-blue-500 text-white px-4 py-2 rounded",
+    "hover:bg-blue-600 focus:ring-2 focus:ring-blue-300"
+  ]
+});
+
+export default function App() {
+  return <button className="my-btn">Button</button>;
+}
+```
+
+#### Angular (v12+)
+```typescript
+// my-button.component.ts
+import { Component, OnInit } from '@angular/core';
+import { twsx } from 'tailwind-to-style';
+
+@Component({
+  selector: 'app-my-button',
+  template: `<button class="my-btn">Button</button>`
+})
+export class MyButtonComponent implements OnInit {
+  ngOnInit() {
+    twsx({
+      '.my-btn': 'bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:ring-2 focus:ring-blue-300'
+    });
+  }
+}
+```
+
+#### VueJS (Options API)
+```html
+<template>
+  <button class="my-btn">Button</button>
+</template>
+
+<script>
+import { twsx } from 'tailwind-to-style';
+
+export default {
+  name: 'MyButton',
+  mounted() {
+    twsx({
+      '.my-btn': 'bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600'
+    });
+  }
+}
+</script>
 ```
 
 ## Table of Contents
