@@ -1,25 +1,9 @@
-import { generateCssString } from "../utils/index";
+import { createStaticOptionsGenerator } from "../utils/baseGenerator.js";
 
-export default function generator(configOptions = {}) {
-  const { prefix } = configOptions;
-
-  const propertyOptions = {
+export default createStaticOptionsGenerator('', 'visibility', {
+  values: {
     visible: "visible",
     collapse: "collapse",
     invisible: "hidden",
-  };
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      propertyOptions,
-      (key, value) => `
-          ${prefix}${key} {
-            visibility: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+  }
+});

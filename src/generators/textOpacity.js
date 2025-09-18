@@ -1,23 +1,7 @@
-import { generateCssString } from "../utils/index";
+import { createSimpleGenerator } from "../utils/baseGenerator.js";
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix, theme = {} } = configOptions;
-
-  const prefix = `${globalPrefix}text-opacity`;
-
-  const { textOpacity = {} } = theme;
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      textOpacity,
-      (key, value) => `
-          ${prefix}-${key} {
-            --text-opacity: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+export default createSimpleGenerator({
+  prefix: "text-opacity",
+  property: "--text-opacity",
+  themeKey: "textOpacity"
+});

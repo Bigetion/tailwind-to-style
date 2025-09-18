@@ -1,29 +1,16 @@
-import { generateCssString } from "../utils/index";
+import { createStaticOptionsGenerator } from '../utils/baseGenerator.js';
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix } = configOptions;
-
-  const prefix = `${globalPrefix}bg-clip`;
-
-  const propertyOptions = {
-    border: "border-box",
-    padding: "padding-box",
-    content: "content-box",
-    text: "text",
-  };
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      propertyOptions,
-      (key, value) => `
-          ${prefix}-${key} {
+export default createStaticOptionsGenerator('bg-clip', 'background-clip', {
+  values: {
+    border: 'border-box',
+    padding: 'padding-box',
+    content: 'content-box',
+    text: 'text'
+  },
+  customHandler: (selector, key, value, cssProperty) => `
+          ${selector} {
             -webkit-background-clip: ${value};
-            background-clip: ${value};
+            ${cssProperty}: ${value};
           }
         `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+});

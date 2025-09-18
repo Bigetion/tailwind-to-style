@@ -1,11 +1,7 @@
-import { generateCssString } from "../utils/index";
+import { createStaticOptionsGenerator } from "../utils/baseGenerator.js";
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix } = configOptions;
-
-  const prefix = `${globalPrefix}place-content`;
-
-  const propertyOptions = {
+export default createStaticOptionsGenerator('place-content', 'place-content', {
+  values: {
     start: "start",
     end: "end",
     center: "center",
@@ -13,19 +9,5 @@ export default function generator(configOptions = {}) {
     around: "space-around",
     evenly: "space-evenly",
     stretch: "stretch",
-  };
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      propertyOptions,
-      (key, value) => `
-          ${prefix}-${key} {
-            place-content: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+  }
+});

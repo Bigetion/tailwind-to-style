@@ -1,26 +1,10 @@
-import { generateCssString } from "../utils/index";
+import { createStaticOptionsGenerator } from "../utils/baseGenerator.js";
 
-export default function generator(configOptions = {}) {
-  const { prefix } = configOptions;
-
-  const propertyOptions = {
+export default createStaticOptionsGenerator('', 'text-decoration', {
+  values: {
     underline: "underline",
     overline: "overline",
     "line-through": "line-through",
     "no-underline": "none",
-  };
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      propertyOptions,
-      (key, value) => `
-          ${prefix}${key} {
-            text-decoration: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+  }
+});

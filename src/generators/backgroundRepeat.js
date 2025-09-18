@@ -1,30 +1,12 @@
-import { generateCssString } from "../utils/index";
+import { createStaticOptionsGenerator } from '../utils/baseGenerator.js';
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix } = configOptions;
-
-  const prefix = `${globalPrefix}bg`;
-
-  const propertyOptions = {
-    repeat: "repeat",
-    "no-repeat": "no-repeat",
-    "repeat-x": "repeat-x",
-    "repeat-y": "repeat-y",
-    "repeat-round": "round",
-    "repeat-space": "space",
-  };
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      propertyOptions,
-      (key, value) => `
-          ${prefix}-${key} {
-            background-repeat: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+export default createStaticOptionsGenerator('bg', 'background-repeat', {
+  values: {
+    repeat: 'repeat',
+    'no-repeat': 'no-repeat',
+    'repeat-x': 'repeat-x',
+    'repeat-y': 'repeat-y',
+    'repeat-round': 'round',
+    'repeat-space': 'space'
+  }
+});

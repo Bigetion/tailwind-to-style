@@ -1,23 +1,7 @@
-import { generateCssString } from "../utils/index";
+import { createSimpleGenerator } from "../utils/baseGenerator.js";
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix, theme = {} } = configOptions;
-
-  const prefix = `${globalPrefix}decoration`;
-
-  const { textDecorationThickness = {} } = theme;
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      textDecorationThickness,
-      (key, value) => `
-          ${prefix}-${key} {
-            text-decoration-thickness: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+export default createSimpleGenerator({
+  prefix: "decoration",
+  property: "text-decoration-thickness",
+  themeKey: "textDecorationThickness"
+});

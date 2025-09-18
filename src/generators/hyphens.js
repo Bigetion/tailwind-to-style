@@ -1,24 +1,10 @@
-import { generateCssString } from "../utils/index";
+import { createArrayOptionsGenerator } from '../utils/baseGenerator.js';
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix } = configOptions;
-
-  const prefix = `${globalPrefix}hyphens`;
-
-  const propertyOptions = ["none", "manual", "auto"];
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      propertyOptions,
-      (key, value) => `
-          ${prefix}-${key} {
+export default createArrayOptionsGenerator('hyphens', 'hyphens', ['none', 'manual', 'auto'], {
+  customHandler: (selector, key, value, cssProperty) => `
+          ${selector} {
             -webkit-hyphens: ${value};
-            hyphens: ${value};
+            ${cssProperty}: ${value};
           }
         `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+});

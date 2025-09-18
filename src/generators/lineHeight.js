@@ -1,23 +1,5 @@
-import { generateCssString } from "../utils/index";
+import { createSimpleGenerator } from '../utils/baseGenerator.js';
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix, theme = {} } = configOptions;
-
-  const prefix = `${globalPrefix}leading`;
-
-  const { lineHeight = {} } = theme;
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      lineHeight,
-      (key, value) => `
-          ${prefix}-${key} {
-            line-height: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+export default createSimpleGenerator('leading', 'line-height', {
+  themeKey: 'lineHeight'
+});

@@ -1,23 +1,3 @@
-import { generateCssString } from "../utils/index";
+import { createArrayOptionsGenerator } from '../utils/baseGenerator.js';
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix } = configOptions;
-
-  const prefix = `${globalPrefix}clear`;
-
-  const propertyOptions = ["left", "right", "both", "none"];
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      propertyOptions,
-      (key, value) => `
-          ${prefix}-${key} {
-            clear: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+export default createArrayOptionsGenerator('clear', 'clear', ['left', 'right', 'both', 'none']);

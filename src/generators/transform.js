@@ -1,7 +1,9 @@
-export default function generator({ prefix }) {
-  return `
-  ${prefix}transform-none {
-    transform: none !important;
+import { createMultiPropertyStaticGenerator } from "../utils/baseGenerator.js";
+
+export default createMultiPropertyStaticGenerator({
+  classes: {
+    "transform-none": {
+      "transform": "none !important"
+    }
   }
-`;
-}
+});

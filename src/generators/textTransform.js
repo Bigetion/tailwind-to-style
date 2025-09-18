@@ -1,26 +1,10 @@
-import { generateCssString } from "../utils/index";
+import { createStaticOptionsGenerator } from "../utils/baseGenerator.js";
 
-export default function generator(configOptions = {}) {
-  const { prefix } = configOptions;
-
-  const propertyOptions = {
+export default createStaticOptionsGenerator('', 'text-transform', {
+  values: {
     uppercase: "uppercase",
     lowercase: "lowercase",
     capitalize: "capitalize",
     "normal-case": "none",
-  };
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      propertyOptions,
-      (key, value) => `
-          ${prefix}${key} {
-            text-transform: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+  }
+});

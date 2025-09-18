@@ -1,23 +1,3 @@
-import { generateCssString } from "../utils/index";
+import { createSimpleGenerator } from '../utils/baseGenerator.js';
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix, theme = {} } = configOptions;
-
-  const prefix = `${globalPrefix}border-opacity`;
-
-  const { borderOpacity = {} } = theme;
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      borderOpacity,
-      (key, value) => `
-          ${prefix}-${key} {
-            --border-opacity: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+export default createSimpleGenerator('border-opacity', '--border-opacity');

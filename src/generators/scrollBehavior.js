@@ -1,21 +1,7 @@
-import { generateCssString } from "../utils/index";
+import { createArrayOptionsGenerator } from "../utils/baseGenerator.js";
 
-export default function generator(configOptions = {}) {
-  const { prefix } = configOptions;
-
-  const propertyOptions = ["auto", "smooth"];
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      propertyOptions,
-      (key, value) => `
-          ${prefix}scroll-${key} {
-            scroll-behavior: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+export default createArrayOptionsGenerator({
+  prefix: "scroll",
+  property: "scroll-behavior",
+  options: ["auto", "smooth"]
+});

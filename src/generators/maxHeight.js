@@ -1,23 +1,7 @@
-import { generateCssString } from "../utils/index";
+import { createSimpleGenerator } from "../utils/baseGenerator.js";
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix, theme = {} } = configOptions;
-
-  const prefix = `${globalPrefix}max-h`;
-
-  const { maxHeight = {} } = theme;
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      maxHeight,
-      (key, value) => `
-          ${prefix}-${key} {
-            max-height: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+export default createSimpleGenerator({
+  prefix: "max-h",
+  property: "max-height",
+  themeKey: "maxHeight"
+});

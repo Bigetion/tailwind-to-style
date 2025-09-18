@@ -1,23 +1,7 @@
-import { generateCssString } from "../utils/index";
+import { createArrayOptionsGenerator } from "../utils/baseGenerator.js";
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix } = configOptions;
-
-  const prefix = `${globalPrefix}snap`;
-
-  const propertyOptions = ["normal", "always"];
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      propertyOptions,
-      (key, value) => `
-          ${prefix}-${key} {
-            scroll-snap-stop: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+export default createArrayOptionsGenerator({
+  prefix: "snap",
+  property: "scroll-snap-stop",
+  options: ["normal", "always"]
+});

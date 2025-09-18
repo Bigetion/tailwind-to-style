@@ -1,23 +1,3 @@
-import { generateCssString } from "../utils/index";
+import { createArrayOptionsGenerator } from '../utils/baseGenerator.js';
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix } = configOptions;
-
-  const prefix = `${globalPrefix}border`;
-
-  const propertyOptions = ["collapse", "separate"];
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      propertyOptions,
-      (key, value) => `
-          ${prefix}-${key} {
-            border-collapse: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+export default createArrayOptionsGenerator('border', 'border-collapse', ['collapse', 'separate']);

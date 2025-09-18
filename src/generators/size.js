@@ -1,24 +1,10 @@
-import { generateCssString } from "../utils/index";
+import { createSimpleGenerator } from "../utils/baseGenerator.js";
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix, theme = {} } = configOptions;
-
-  const prefix = `${globalPrefix}size`;
-
-  const { size = {} } = theme;
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      size,
-      (key, value) => `
-          ${prefix}-${key} {
-            width: ${value};
-            height: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+export default createSimpleGenerator({
+  prefix: "size",
+  themeKey: "size",
+  customHandler: (key, value) => ({
+    width: value,
+    height: value
+  })
+});

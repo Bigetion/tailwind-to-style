@@ -1,29 +1,16 @@
-import { generateCssString } from "../utils/index";
+import { createDualClassGenerator } from "../utils/baseGenerator.js";
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix, theme = {}, vars = {} } = configOptions;
-
-  const prefix = `${globalPrefix}sepia`;
-  const basePrefix = prefix.replace(globalPrefix, "");
-
-  const { sepia = {} } = theme;
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(sepia, (keyTmp, value) => {
-      const key = keyTmp.toLowerCase() !== "default" ? `-${keyTmp}` : "";
-      return `
-          ${prefix}${key} {
-            --sepia: ${value};
-            ${vars.filter}
-          }
-          ${prefix.replace(basePrefix, `backdrop-${basePrefix}`)}${key} {
-            --backdrop-sepia: ${value};
-            ${vars.backdropFilter}
-          }
-        `;
-    });
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+export default createDualClassGenerator({
+  prefix: "sepia",
+  themeKey: "sepia",
+  handleDefaultKey: true,
+  mainClass: {
+    property: "--sepia",
+    varsKey: "filter"
+  },
+  secondaryClass: {
+    prefix: "backdrop-sepia",
+    property: "--backdrop-sepia",
+    varsKey: "backdropFilter"
+  }
+});

@@ -1,29 +1,16 @@
-import { generateCssString } from "../utils/index";
+import { createDualClassGenerator } from "../utils/baseGenerator.js";
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix, theme = {}, vars = {} } = configOptions;
-
-  const prefix = `${globalPrefix}contrast`;
-  const basePrefix = prefix.replace(globalPrefix, "");
-
-  const { contrast = {} } = theme;
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(contrast, (keyTmp, value) => {
-      const key = keyTmp.toLowerCase() !== "default" ? `-${keyTmp}` : "";
-      return `
-          ${prefix}${key} {
-            --contrast: ${value};
-            ${vars.filter}
-          }
-          ${prefix.replace(basePrefix, `backdrop-${basePrefix}`)}${key} {
-            --backdrop-contrast: ${value};
-            ${vars.backdropFilter}
-          }
-        `;
-    });
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+export default createDualClassGenerator({
+  prefix: "contrast",
+  themeKey: "contrast",
+  handleDefaultKey: true,
+  mainClass: {
+    property: "--contrast",
+    varsKey: "filter"
+  },
+  secondaryClass: {
+    prefix: "backdrop-contrast",
+    property: "--backdrop-contrast",
+    varsKey: "backdropFilter"
+  }
+});

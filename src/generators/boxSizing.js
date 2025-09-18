@@ -1,26 +1,8 @@
-import { generateCssString } from "../utils/index";
+import { createStaticOptionsGenerator } from "../utils/baseGenerator.js";
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix } = configOptions;
-
-  const prefix = `${globalPrefix}box`;
-
-  const propertyOptions = {
+export default createStaticOptionsGenerator('box', 'box-sizing', {
+  values: {
     border: "border-box",
     content: "content-box",
-  };
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      propertyOptions,
-      (key, value) => `
-          ${prefix}-${key} {
-            box-sizing: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+  }
+});

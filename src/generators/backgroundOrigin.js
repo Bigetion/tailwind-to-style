@@ -1,28 +1,15 @@
-import { generateCssString } from "../utils/index";
+import { createStaticOptionsGenerator } from '../utils/baseGenerator.js';
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix } = configOptions;
-
-  const prefix = `${globalPrefix}bg-origin`;
-
-  const propertyOptions = {
-    border: "border-box",
-    padding: "padding-box",
-    content: "content-box",
-  };
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      propertyOptions,
-      (key, value) => `
-          ${prefix}-${key} {
+export default createStaticOptionsGenerator('bg-origin', 'background-origin', {
+  values: {
+    border: 'border-box',
+    padding: 'padding-box',
+    content: 'content-box'
+  },
+  customHandler: (selector, key, value, cssProperty) => `
+          ${selector} {
             -webkit-background-origin: ${value};
-            background-origin: ${value};
+            ${cssProperty}: ${value};
           }
         `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+});

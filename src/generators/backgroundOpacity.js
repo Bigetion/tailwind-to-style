@@ -1,23 +1,3 @@
-import { generateCssString } from "../utils/index";
+import { createSimpleGenerator } from '../utils/baseGenerator.js';
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix, theme = {} } = configOptions;
-
-  const prefix = `${globalPrefix}bg-opacity`;
-
-  const { backgroundOpacity = {} } = theme;
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      backgroundOpacity,
-      (key, value) => `
-          ${prefix}-${key} {
-            --bg-opacity: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+export default createSimpleGenerator('bg-opacity', '--bg-opacity');

@@ -1,28 +1,10 @@
-import { generateCssString } from "../utils/index";
+import { createStaticOptionsGenerator } from "../utils/baseGenerator.js";
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix } = configOptions;
-
-  const prefix = `${globalPrefix}flex`;
-
-  const propertyOptions = {
+export default createStaticOptionsGenerator('flex', 'flex-wrap', {
+  values: {
     wrap: "wrap",
     "wrap-reverse": "wrap-reverse",
     "no-wrap": "nowrap",
     nowrap: "nowrap",
-  };
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      propertyOptions,
-      (key, value) => `
-          ${prefix}-${key} {
-            flex-wrap: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+  }
+});

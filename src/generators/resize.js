@@ -1,28 +1,10 @@
-import { generateCssString } from "../utils/index";
+import { createStaticOptionsGenerator } from "../utils/baseGenerator.js";
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix } = configOptions;
-
-  const prefix = `${globalPrefix}resize`;
-
-  const propertyOptions = {
+export default createStaticOptionsGenerator('resize', 'resize', {
+  values: {
     none: "none",
-    y: "vertical",
+    y: "vertical", 
     x: "horizontal",
-    default: "both",
-  };
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(propertyOptions, (keyTmp, value) => {
-      const key = keyTmp.toLowerCase() !== "default" ? `-${keyTmp}` : "";
-      return `
-          ${prefix}${key} {
-            resize: ${value};
-          }
-        `;
-    });
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+    "": "both", // default case - empty string for just "resize"
+  }
+});

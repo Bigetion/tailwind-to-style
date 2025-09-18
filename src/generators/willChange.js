@@ -1,28 +1,10 @@
-import { generateCssString } from "../utils/index";
+import { createStaticOptionsGenerator } from '../utils/baseGenerator.js';
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix } = configOptions;
-
-  const prefix = `${globalPrefix}will-change`;
-
-  const propertyOptions = {
-    auto: "auto",
-    scroll: "scroll-position",
-    contents: "contents",
-    transform: "transform",
-  };
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      propertyOptions,
-      (key, value) => `
-          ${prefix}-${key} {
-            will-change: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+export default createStaticOptionsGenerator('will-change', 'will-change', {
+  values: {
+    auto: 'auto',
+    scroll: 'scroll-position',
+    contents: 'contents',
+    transform: 'transform'
+  }
+});

@@ -1,26 +1,15 @@
-import { generateCssString } from "../utils/index";
+import { createMixedStaticGenerator } from "../utils/baseGenerator.js";
 
-export default function generator(configOptions = {}) {
-  const { prefix } = configOptions;
-
-  const propertyOptions = ["ellipsis", "clip"];
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      propertyOptions,
-      (key, value) => `
-          ${prefix}truncate {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-          }
-          ${prefix}text-${key} {
-            text-overflow: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+export default createMixedStaticGenerator({
+  staticClass: {
+    name: "truncate",
+    properties: {
+      "overflow": "hidden",
+      "text-overflow": "ellipsis", 
+      "white-space": "nowrap"
+    }
+  },
+  dynamicPrefix: "text",
+  dynamicProperty: "text-overflow",
+  values: ["ellipsis", "clip"]
+});

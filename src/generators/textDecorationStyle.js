@@ -1,23 +1,7 @@
-import { generateCssString } from "../utils/index";
+import { createArrayOptionsGenerator } from "../utils/baseGenerator.js";
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix } = configOptions;
-
-  const prefix = `${globalPrefix}decoration`;
-
-  const propertyOptions = ["solid", "double", "dotted", "dashed", "wavy"];
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      propertyOptions,
-      (key, value) => `
-          ${prefix}-${key} {
-            text-decoration-style: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+export default createArrayOptionsGenerator({
+  prefix: "decoration",
+  property: "text-decoration-style",
+  options: ["solid", "double", "dotted", "dashed", "wavy"]
+});

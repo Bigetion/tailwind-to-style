@@ -1,31 +1,11 @@
-import { generateCssString } from "../utils/index";
+import { createArrayOptionsGenerator } from '../utils/baseGenerator.js';
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix } = configOptions;
-
-  const prefix = `${globalPrefix}whitespace`;
-
-  const propertyOptions = [
-    "normal",
-    "nowrap",
-    "nowrap",
-    "pre",
-    "pre-line",
-    "pre-wrap",
-    "break-spaces",
-  ];
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      propertyOptions,
-      (key, value) => `
-          ${prefix}-${key} {
-            white-space: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+export default createArrayOptionsGenerator('whitespace', 'white-space', [
+  'normal',
+  'nowrap',
+  'nowrap',
+  'pre',
+  'pre-line',
+  'pre-wrap',
+  'break-spaces'
+]);

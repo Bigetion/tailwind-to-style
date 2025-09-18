@@ -1,11 +1,9 @@
-import { generateCssString } from "../utils/index";
+import { createArrayOptionsGenerator } from "../utils/baseGenerator.js";
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix } = configOptions;
-
-  const prefix = `${globalPrefix}align`;
-
-  const propertyOptions = [
+export default createArrayOptionsGenerator({
+  prefix: "align",
+  property: "vertical-align",
+  options: [
     "baseline",
     "top",
     "middle",
@@ -13,20 +11,6 @@ export default function generator(configOptions = {}) {
     "text-top",
     "text-bottom",
     "text-sub",
-    "text-super",
-  ];
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      propertyOptions,
-      (key, value) => `
-          ${prefix}-${key} {
-            vertical-align: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+    "text-super"
+  ]
+});

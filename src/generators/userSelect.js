@@ -1,26 +1,12 @@
-import { generateCssString } from "../utils/index";
+import { createArrayOptionsGenerator } from '../utils/baseGenerator.js';
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix } = configOptions;
-
-  const prefix = `${globalPrefix}select`;
-
-  const propertyOptions = ["none", "text", "all", "auto"];
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      propertyOptions,
-      (key, value) => `
-          ${prefix}-${key} {
+export default createArrayOptionsGenerator('select', 'user-select', ['none', 'text', 'all', 'auto'], {
+  customHandler: (selector, key, value, cssProperty) => `
+          ${selector} {
             -webkit-user-select: ${value};
             -moz-user-select: ${value};
             -ms-user-select: ${value};
-            user-select: ${value};
+            ${cssProperty}: ${value};
           }
         `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+});

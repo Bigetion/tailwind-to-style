@@ -1,33 +1,20 @@
-import { generateCssString } from "../utils/index";
+import { createArrayOptionsGenerator } from "../utils/baseGenerator.js";
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix } = configOptions;
-
-  const prefix = `${globalPrefix}origin`;
-
-  const propertyOptions = [
+export default createArrayOptionsGenerator({
+  prefix: "origin",
+  property: "transform-origin",
+  options: [
     "center",
     "top",
-    "top-right",
+    "top-right", 
     "right",
     "bottom-right",
     "bottom",
     "bottom-left",
     "left",
-    "top-left",
-  ];
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      propertyOptions,
-      (key, value) => `
-          ${prefix}-${key} {
-            transform-origin: ${value.replace("-", " ")};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+    "top-left"
+  ],
+  customHandler: (key, value) => ({
+    "transform-origin": value.replace("-", " ")
+  })
+});

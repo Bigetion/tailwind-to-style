@@ -1,68 +1,47 @@
-import { generateCssString } from "../utils/index";
+import { generateCssString } from "../utils/index.js";
 
 export default function generator(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
   const prefix = `${globalPrefix}rounded`;
-
   const { borderRadius = {} } = theme;
+
+  // DRY: Border radius direction configurations
+  const borderRadiusDirections = [
+    { suffix: "", properties: ["border-radius"] },
+    { suffix: "-s", properties: ["border-start-start-radius", "border-end-start-radius"] },
+    { suffix: "-e", properties: ["border-start-end-radius", "border-end-end-radius"] },
+    { suffix: "-t", properties: ["border-top-left-radius", "border-top-right-radius"] },
+    { suffix: "-r", properties: ["border-top-right-radius", "border-bottom-right-radius"] },
+    { suffix: "-b", properties: ["border-bottom-right-radius", "border-bottom-left-radius"] },
+    { suffix: "-l", properties: ["border-top-left-radius", "border-bottom-left-radius"] },
+    { suffix: "-ss", properties: ["border-start-start-radius"] },
+    { suffix: "-se", properties: ["border-start-end-radius"] },
+    { suffix: "-ee", properties: ["border-end-end-radius"] },
+    { suffix: "-es", properties: ["border-end-start-radius"] },
+    { suffix: "-tl", properties: ["border-top-left-radius"] },
+    { suffix: "-tr", properties: ["border-top-right-radius"] },
+    { suffix: "-br", properties: ["border-bottom-right-radius"] },
+    { suffix: "-bl", properties: ["border-bottom-left-radius"] }
+  ];
 
   const responsiveCssString = generateCssString(({ getCssByOptions }) => {
     const cssString = getCssByOptions(borderRadius, (keyTmp, value) => {
       const key = keyTmp.toLowerCase() !== "default" ? `-${keyTmp}` : "";
-      return `
-          ${prefix}${key} {
-            border-radius: ${value};
-          }
-          ${prefix}-s${key} {
-            border-start-start-radius: ${value};
-            border-end-start-radius: ${value};
-          }
-          ${prefix}-e${key} {
-            border-start-end-radius: ${value};
-            border-end-end-radius: ${value};
-          }
-          ${prefix}-t${key} {
-            border-top-left-radius: ${value};
-            border-top-right-radius: ${value};
-          }
-          ${prefix}-r${key} {
-            border-top-right-radius: ${value};
-            border-bottom-right-radius: ${value};
-          }
-          ${prefix}-b${key} {
-            border-bottom-right-radius: ${value};
-            border-bottom-left-radius: ${value};
-          }
-          ${prefix}-l${key} {
-            border-top-left-radius: ${value};
-            border-bottom-left-radius: ${value};
-          }
-          ${prefix}-ss${key} {
-            border-start-start-radius: ${value};
-          }
-          ${prefix}-se${key} {
-            border-start-end-radius: ${value};
-          }
-          ${prefix}-ee${key} {
-            border-end-end-radius: ${value};
-          }
-          ${prefix}-es${key} {
-            border-end-start-radius: ${value};
-          }
-          ${prefix}-tl${key} {
-            border-top-left-radius: ${value};
-          }
-          ${prefix}-tr${key} {
-            border-top-right-radius: ${value};
-          }
-          ${prefix}-br${key} {
-            border-bottom-right-radius: ${value};
-          }
-          ${prefix}-bl${key} {
-            border-bottom-left-radius: ${value};
-          }
-        `;
+      
+      return borderRadiusDirections
+        .map(({ suffix, properties }) => {
+          const className = `${prefix}${suffix}${key}`;
+          const cssProperties = properties
+            .map(prop => `            ${prop}: ${value};`)
+            .join('\n');
+          
+          return `
+          ${className} {
+${cssProperties}
+          }`;
+        })
+        .join('');
     });
     return cssString;
   }, configOptions);

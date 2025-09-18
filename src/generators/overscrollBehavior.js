@@ -1,29 +1,9 @@
-import { generateCssString } from "../utils/index";
+import { createMultiAxisGenerator } from "../utils/baseGenerator.js";
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix } = configOptions;
-
-  const prefix = `${globalPrefix}overscroll`;
-
-  const propertyOptions = ["auto", "contain", "none"];
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      propertyOptions,
-      (key, value) => `
-          ${prefix}-${key} {
-            overscroll-behavior: ${value};
-          }
-          ${prefix}-x-${key} {
-            overscroll-behavior-x: ${value};
-          }
-          ${prefix}-y-${key} {
-            overscroll-behavior-y: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+export default createMultiAxisGenerator({
+  prefix: "overscroll",
+  mainProperty: "overscroll-behavior",
+  xProperty: "overscroll-behavior-x",
+  yProperty: "overscroll-behavior-y", 
+  values: ["auto", "contain", "none"]
+});

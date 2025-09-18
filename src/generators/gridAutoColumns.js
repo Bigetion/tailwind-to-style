@@ -1,23 +1,5 @@
-import { generateCssString } from "../utils/index";
+import { createSimpleGenerator } from '../utils/baseGenerator.js';
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix, theme = {} } = configOptions;
-
-  let prefix = `${globalPrefix}auto-cols`;
-
-  const { gridAutoColumns = {} } = theme;
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      gridAutoColumns,
-      (key, value) => `
-          ${prefix}-${key} {
-            grid-auto-columns: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+export default createSimpleGenerator('auto-cols', 'grid-auto-columns', {
+  themeKey: 'gridAutoColumns'
+});

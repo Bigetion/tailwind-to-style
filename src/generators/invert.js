@@ -1,29 +1,16 @@
-import { generateCssString } from "../utils/index";
+import { createDualClassGenerator } from "../utils/baseGenerator.js";
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix, theme = {}, vars = {} } = configOptions;
-
-  const prefix = `${globalPrefix}invert`;
-  const basePrefix = prefix.replace(globalPrefix, "");
-
-  const { invert = {} } = theme;
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(invert, (keyTmp, value) => {
-      const key = keyTmp.toLowerCase() !== "default" ? `-${keyTmp}` : "";
-      return `
-          ${prefix}${key} {
-            --invert: ${value};
-            ${vars.filter}
-          }
-          ${prefix.replace(basePrefix, `backdrop-${basePrefix}`)}${key} {
-            --backdrop-invert: ${value};
-            ${vars.backdropFilter}
-          }
-        `;
-    });
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+export default createDualClassGenerator({
+  prefix: "invert",
+  themeKey: "invert",
+  handleDefaultKey: true,
+  mainClass: {
+    property: "--invert",
+    varsKey: "filter"
+  },
+  secondaryClass: {
+    prefix: "backdrop-invert",
+    property: "--backdrop-invert",
+    varsKey: "backdropFilter"
+  }
+});

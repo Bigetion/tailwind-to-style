@@ -1,23 +1,7 @@
-import { generateCssString } from "../utils/index";
+import { createSimpleGenerator } from "../utils/baseGenerator.js";
 
-export default function generator(configOptions = {}) {
-  const { prefix: globalPrefix, theme = {} } = configOptions;
-
-  const prefix = `${globalPrefix}underline-offset`;
-
-  const { textUnderlineOffset = {} } = theme;
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      textUnderlineOffset,
-      (key, value) => `
-          ${prefix}-${key} {
-            text-underline-offset: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+export default createSimpleGenerator({
+  prefix: "underline-offset",
+  property: "text-underline-offset",
+  themeKey: "textUnderlineOffset"
+});

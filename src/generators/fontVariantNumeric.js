@@ -1,9 +1,7 @@
-import { generateCssString } from "../utils/index";
+import { createStaticOptionsGenerator } from "../utils/baseGenerator.js";
 
-export default function generator(configOptions = {}) {
-  const { prefix } = configOptions;
-
-  const propertyOptions = {
+export default createStaticOptionsGenerator('', 'font-variant-numeric', {
+  values: {
     "normal-nums": "normal",
     ordinal: "ordinal",
     "slashed-zero": "slashed-zero",
@@ -13,19 +11,5 @@ export default function generator(configOptions = {}) {
     "tabular-nums": "tabular-nums",
     "diagonal-fractions": "diagonal-fractions",
     "stacked-fractions": "stacked-fractions",
-  };
-
-  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    const cssString = getCssByOptions(
-      propertyOptions,
-      (key, value) => `
-          ${prefix}-${key} {
-            font-variant-numeric: ${value};
-          }
-        `
-    );
-    return cssString;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+  }
+});

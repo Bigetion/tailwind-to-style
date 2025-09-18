@@ -1,18 +1,8 @@
-import { generateCssString } from "../utils/index";
+import { createStaticOptionsGenerator } from "../utils/baseGenerator.js";
 
-export default function generator(configOptions = {}) {
-  const { prefix } = configOptions;
-
-  const responsiveCssString = generateCssString(() => {
-    return `
-        ${prefix}pointer-events-none {
-          pointer-events: none;
-        }
-        ${prefix}pointer-events-auto {
-          pointer-events: auto;
-        }
-      `;
-  }, configOptions);
-
-  return responsiveCssString;
-}
+export default createStaticOptionsGenerator({
+  options: {
+    "pointer-events-none": { "pointer-events": "none" },
+    "pointer-events-auto": { "pointer-events": "auto" }
+  }
+});
