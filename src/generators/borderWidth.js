@@ -96,9 +96,9 @@ export default function generator(configOptions = {}) {
             .join("\n");
 
           return `
-        ${className} {
-${cssProps}
-        }`;
+          ${className} {
+            ${cssProps}
+          }`;
         })
         .join("");
     });
