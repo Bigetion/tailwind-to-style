@@ -5,6 +5,6 @@ export default createSimpleGenerator({
   themeKey: "size",
   customHandler: (key, value) => ({
     width: value,
-    height: value
-  })
+    height: value,
+  }),
 });

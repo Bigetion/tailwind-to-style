@@ -6,11 +6,11 @@ export default createDualClassGenerator({
   handleDefaultKey: true,
   mainClass: {
     property: "--contrast",
-    varsKey: "filter"
+    varsKey: "filter",
   },
   secondaryClass: {
     prefix: "backdrop-contrast",
     property: "--backdrop-contrast",
-    varsKey: "backdropFilter"
-  }
+    varsKey: "backdropFilter",
+  },
 });

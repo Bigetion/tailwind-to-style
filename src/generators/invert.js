@@ -6,11 +6,11 @@ export default createDualClassGenerator({
   handleDefaultKey: true,
   mainClass: {
     property: "--invert",
-    varsKey: "filter"
+    varsKey: "filter",
   },
   secondaryClass: {
     prefix: "backdrop-invert",
     property: "--backdrop-invert",
-    varsKey: "backdropFilter"
-  }
+    varsKey: "backdropFilter",
+  },
 });

@@ -4,12 +4,12 @@ export default createMixedStaticGenerator({
   staticClass: {
     name: "truncate",
     properties: {
-      "overflow": "hidden",
-      "text-overflow": "ellipsis", 
-      "white-space": "nowrap"
-    }
+      overflow: "hidden",
+      "text-overflow": "ellipsis",
+      "white-space": "nowrap",
+    },
   },
   dynamicPrefix: "text",
   dynamicProperty: "text-overflow",
-  values: ["ellipsis", "clip"]
+  values: ["ellipsis", "clip"],
 });

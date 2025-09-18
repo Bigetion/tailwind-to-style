@@ -5,11 +5,11 @@ export default createDualClassGenerator({
   themeKey: "opacity",
   mainClass: {
     property: "opacity",
-    varsKey: "filter"
+    varsKey: "filter",
   },
   secondaryClass: {
     prefix: "backdrop-opacity",
     property: "--backdrop-opacity",
-    varsKey: "backdropFilter"
-  }
+    varsKey: "backdropFilter",
+  },
 });

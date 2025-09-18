@@ -4,6 +4,6 @@ export default createMultiAxisGenerator({
   prefix: "overscroll",
   mainProperty: "overscroll-behavior",
   xProperty: "overscroll-behavior-x",
-  yProperty: "overscroll-behavior-y", 
-  values: ["auto", "contain", "none"]
+  yProperty: "overscroll-behavior-y",
+  values: ["auto", "contain", "none"],
 });

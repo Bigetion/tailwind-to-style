@@ -1,5 +1,5 @@
-import { createSimpleGenerator } from '../utils/baseGenerator.js';
+import { createSimpleGenerator } from "../utils/baseGenerator.js";
 
-export default createSimpleGenerator('list', 'list-style-type', {
-  themeKey: 'listStyleType'
+export default createSimpleGenerator("list", "list-style-type", {
+  themeKey: "listStyleType",
 });

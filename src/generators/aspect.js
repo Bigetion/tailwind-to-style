@@ -11,17 +11,17 @@ export default function generator(configOptions = {}) {
     {
       suffix: "-h",
       properties: {
-        "--aspect-h": "${key}"
-      }
+        "--aspect-h": "${key}",
+      },
     },
     {
-      suffix: "-w", 
+      suffix: "-w",
       properties: {
-        "position": "relative",
+        position: "relative",
         "padding-bottom": "calc(var(--aspect-h) / var(--aspect-w) * 100%)",
-        "--aspect-w": "${key}"
-      }
-    }
+        "--aspect-w": "${key}",
+      },
+    },
   ];
 
   const responsiveCssString = generateCssString(({ getCssByOptions }) => {
@@ -30,15 +30,18 @@ export default function generator(configOptions = {}) {
         .map(({ suffix, properties }) => {
           const className = `${prefix}${suffix}-${key}`;
           const cssProps = Object.entries(properties)
-            .map(([prop, val]) => `            ${prop}: ${val.replace('${key}', key)};`)
-            .join('\n');
-          
+            .map(
+              ([prop, val]) =>
+                `            ${prop}: ${val.replace("${key}", key)};`
+            )
+            .join("\n");
+
           return `
           ${className} {
 ${cssProps}
           }`;
         })
-        .join('');
+        .join("");
     });
     return cssString;
   }, configOptions);

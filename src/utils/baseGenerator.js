@@ -4,7 +4,7 @@
  */
 
 // Import generateCssString dari utils yang sudah ada
-import { generateCssString } from './index.js';
+import { generateCssString } from "./index.js";
 
 /**
  * Base class untuk semua CSS generators
@@ -15,7 +15,7 @@ class BaseGenerator {
     this.generatorName = generatorName;
     this.cssProperty = cssProperty;
     this.configOptions = configOptions;
-    this.globalPrefix = configOptions.prefix || '';
+    this.globalPrefix = configOptions.prefix || "";
     this.theme = configOptions.theme || {};
   }
 
@@ -24,7 +24,7 @@ class BaseGenerator {
    * @param {string} suffix - Optional suffix untuk prefix
    * @returns {string} CSS prefix
    */
-  getPrefix(suffix = '') {
+  getPrefix(suffix = "") {
     const base = `${this.globalPrefix}${this.generatorName}`;
     return suffix ? `${base}-${suffix}` : base;
   }
@@ -38,7 +38,7 @@ class BaseGenerator {
   generateRule(selector, properties) {
     const props = Object.entries(properties)
       .map(([key, value]) => `  ${key}: ${value};`)
-      .join('\n');
+      .join("\n");
     return `${selector} {\n${props}\n}`;
   }
 
@@ -55,13 +55,14 @@ class BaseGenerator {
     const properties = {};
 
     if (opacityVar) {
-      properties[`--${opacityVar}-opacity`] = '1';
+      properties[`--${opacityVar}-opacity`] = "1";
     }
 
     properties[this.cssProperty] = value;
 
     if (rgbValue && opacityVar) {
-      properties[this.cssProperty] = `rgba(${rgbValue}, var(--${opacityVar}-opacity))`;
+      properties[this.cssProperty] =
+        `rgba(${rgbValue}, var(--${opacityVar}-opacity))`;
     }
 
     return this.generateRule(selector, properties);
@@ -74,16 +75,16 @@ class BaseGenerator {
    * @returns {string} CSS rules
    */
   generateOpacityRules(opacityConfig, opacityVar) {
-    if (!opacityConfig) return '';
+    if (!opacityConfig) return "";
 
     return Object.entries(opacityConfig)
       .map(([key, value]) => {
         const selector = `${this.getPrefix()}-${key}`;
         return this.generateRule(selector, {
-          [`--${opacityVar}-opacity`]: value
+          [`--${opacityVar}-opacity`]: value,
         });
       })
-      .join('\n');
+      .join("\n");
   }
 
   /**
@@ -93,7 +94,7 @@ class BaseGenerator {
    * @returns {string} CSS rules
    */
   generateSpacingRules(spacingConfig, property) {
-    if (!spacingConfig) return '';
+    if (!spacingConfig) return "";
 
     return Object.entries(spacingConfig)
       .map(([key, value]) => {
@@ -101,31 +102,41 @@ class BaseGenerator {
         const prefix = this.getPrefix();
 
         // Base rule
-        rules.push(this.generateRule(`${prefix}-${key}`, { [property]: value }));
+        rules.push(
+          this.generateRule(`${prefix}-${key}`, { [property]: value })
+        );
 
         // Directional rules for padding/margin
-        if (['padding', 'margin'].includes(property)) {
-          const shortProp = property === 'padding' ? 'padding' : 'margin';
-          
+        if (["padding", "margin"].includes(property)) {
+          const shortProp = property === "padding" ? "padding" : "margin";
+
           rules.push(
             this.generateRule(`${prefix}x-${key}`, {
               [`${shortProp}-left`]: value,
-              [`${shortProp}-right`]: value
+              [`${shortProp}-right`]: value,
             }),
             this.generateRule(`${prefix}y-${key}`, {
               [`${shortProp}-top`]: value,
-              [`${shortProp}-bottom`]: value
+              [`${shortProp}-bottom`]: value,
             }),
-            this.generateRule(`${prefix}t-${key}`, { [`${shortProp}-top`]: value }),
-            this.generateRule(`${prefix}r-${key}`, { [`${shortProp}-right`]: value }),
-            this.generateRule(`${prefix}b-${key}`, { [`${shortProp}-bottom`]: value }),
-            this.generateRule(`${prefix}l-${key}`, { [`${shortProp}-left`]: value })
+            this.generateRule(`${prefix}t-${key}`, {
+              [`${shortProp}-top`]: value,
+            }),
+            this.generateRule(`${prefix}r-${key}`, {
+              [`${shortProp}-right`]: value,
+            }),
+            this.generateRule(`${prefix}b-${key}`, {
+              [`${shortProp}-bottom`]: value,
+            }),
+            this.generateRule(`${prefix}l-${key}`, {
+              [`${shortProp}-left`]: value,
+            })
           );
         }
 
-        return rules.join('\n');
+        return rules.join("\n");
       })
-      .join('\n');
+      .join("\n");
   }
 
   /**
@@ -154,61 +165,72 @@ export function createColorGenerator(name, cssProperty, options = {}) {
   return function generator(configOptions = {}) {
     const { prefix: globalPrefix, theme = {} } = configOptions;
     const prefix = `${globalPrefix}${name}`;
-    const customPrefix = options.customPrefix ? `${globalPrefix}${options.customPrefix}` : prefix;
-    
+    const customPrefix = options.customPrefix
+      ? `${globalPrefix}${options.customPrefix}`
+      : prefix;
+
     const themeKey = options.themeKey || `${name}Color`;
     const opacityKey = options.opacityKey || name;
-    
+
     const colorConfig = theme[themeKey] || {};
     const opacityConfig = theme.opacity || {};
 
-    return generateCssString(({ getCssByColors, getCssByOptions, isValidCssColor }) => {
-      let cssString = '';
+    return generateCssString(
+      ({ getCssByColors, getCssByOptions, isValidCssColor }) => {
+        let cssString = "";
 
-      // Generate color rules - mengikuti pattern original
-      cssString += getCssByColors(colorConfig, (key, value, rgbValue) => {
-        let rgbPropertyValue = "";
-        if (rgbValue) {
-          rgbPropertyValue = `${cssProperty}: rgba(${rgbValue}, var(--${opacityKey}-opacity));`;
-        }
-
-        // Handle custom values menggunakan callback jika ada
-        if (value === "custom_value") {
-          if (options.customValueHandler) {
-            return options.customValueHandler(key, value, customPrefix, cssProperty, isValidCssColor);
+        // Generate color rules - mengikuti pattern original
+        cssString += getCssByColors(colorConfig, (key, value, rgbValue) => {
+          let rgbPropertyValue = "";
+          if (rgbValue) {
+            rgbPropertyValue = `${cssProperty}: rgba(${rgbValue}, var(--${opacityKey}-opacity));`;
           }
-          
-          // Default custom value handling
-          return `
+
+          // Handle custom values menggunakan callback jika ada
+          if (value === "custom_value") {
+            if (options.customValueHandler) {
+              return options.customValueHandler(
+                key,
+                value,
+                customPrefix,
+                cssProperty,
+                isValidCssColor
+              );
+            }
+
+            // Default custom value handling
+            return `
             ${customPrefix}-${key} {
               ${cssProperty}: ${value};
             }
           `;
-        }
+          }
 
-        return `
+          return `
           ${prefix}-${key} {
             --${opacityKey}-opacity: 1;
             ${cssProperty}: ${value};
             ${rgbPropertyValue}
           }
         `;
-      });
+        });
 
-      // Generate opacity rules - hanya jika tidak di-disable
-      if (!options.disableOpacity && Object.keys(opacityConfig).length > 0) {
-        cssString += getCssByOptions(
-          opacityConfig,
-          (key, value) => `
+        // Generate opacity rules - hanya jika tidak di-disable
+        if (!options.disableOpacity && Object.keys(opacityConfig).length > 0) {
+          cssString += getCssByOptions(
+            opacityConfig,
+            (key, value) => `
             ${prefix}-${key} {
               --${opacityKey}-opacity: ${value};
             }
           `
-        );
-      }
+          );
+        }
 
-      return cssString;
-    }, configOptions);
+        return cssString;
+      },
+      configOptions
+    );
   };
 }
 
@@ -220,14 +242,19 @@ export function createColorGenerator(name, cssProperty, options = {}) {
  * @param {Object} options - Additional options
  * @returns {Function} Generator function
  */
-export function createSpacingGenerator(name, cssProperty, shortName, options = {}) {
+export function createSpacingGenerator(
+  name,
+  cssProperty,
+  shortName,
+  options = {}
+) {
   return function generator(configOptions = {}) {
     const { prefix: globalPrefix, theme = {} } = configOptions;
-    
+
     let spacingConfig = theme[name] || {};
 
     // Handle negative values for margin
-    if (name === 'margin') {
+    if (name === "margin") {
       Object.entries(spacingConfig).forEach(([key, value]) => {
         spacingConfig[`-${key}`] = `-${value}`.replace("--", "-");
       });
@@ -237,13 +264,13 @@ export function createSpacingGenerator(name, cssProperty, shortName, options = {
       return getCssByOptions(spacingConfig, (keyTmp, value) => {
         let prefix = `${globalPrefix}${shortName}`;
         let key = keyTmp;
-        
+
         // Handle negative margin prefix
-        if (name === 'margin' && `${key}`.indexOf("-") >= 0) {
+        if (name === "margin" && `${key}`.indexOf("-") >= 0) {
           key = key.split("-").join("");
           prefix = `${globalPrefix}-${shortName}`;
         }
-        
+
         // Generate all directional variants
         return `
           ${prefix}-${key} {
@@ -292,15 +319,17 @@ export function createSimpleGenerator(name, cssProperty, options = {}) {
   return function generator(configOptions = {}) {
     const { prefix: globalPrefix, theme = {} } = configOptions;
     const prefix = `${globalPrefix}${name}`;
-    const customPrefix = options.customPrefix ? `${globalPrefix}${options.customPrefix}` : prefix;
-    
+    const customPrefix = options.customPrefix
+      ? `${globalPrefix}${options.customPrefix}`
+      : prefix;
+
     const themeKey = options.themeKey || name;
     const config = theme[themeKey] || {};
 
     return generateCssString(({ getCssByOptions, isValidCssColor }) => {
       return getCssByOptions(config, (key, value) => {
         // Handle custom values
-        if (value === 'custom_value') {
+        if (value === "custom_value") {
           return `
             ${customPrefix}-${key} {
               ${options.customProperty || cssProperty}: ${value};
@@ -309,7 +338,8 @@ export function createSimpleGenerator(name, cssProperty, options = {}) {
         }
 
         // Handle default key case (like grow, shrink)
-        const selector = key.toLowerCase() === 'default' ? prefix : `${prefix}-${key}`;
+        const selector =
+          key.toLowerCase() === "default" ? prefix : `${prefix}-${key}`;
 
         return `
           ${selector} {
@@ -332,11 +362,13 @@ export function createBorderColorGenerator(name, cssProperty, options = {}) {
   return function generator(configOptions = {}) {
     const { prefix: globalPrefix, theme = {} } = configOptions;
     const prefix = `${globalPrefix}${name}`;
-    const customPrefix = options.customPrefix ? `${globalPrefix}${options.customPrefix}` : prefix;
-    
+    const customPrefix = options.customPrefix
+      ? `${globalPrefix}${options.customPrefix}`
+      : prefix;
+
     const themeKey = options.themeKey || `${name}Color`;
     const opacityKey = options.opacityKey || name;
-    
+
     const colorConfig = theme[themeKey] || {};
 
     return generateCssString(({ getCssByColors }) => {
@@ -344,13 +376,13 @@ export function createBorderColorGenerator(name, cssProperty, options = {}) {
         if (keyTmp.toLowerCase() === "default") {
           return "";
         }
-        
+
         const key = keyTmp.toLowerCase() !== "default" ? `-${keyTmp}` : "";
         let rgbPropertyValue = "";
         if (rgbValue) {
           rgbPropertyValue = `${cssProperty}: rgba(${rgbValue}, var(--${opacityKey}-opacity));`;
         }
-        
+
         if (value === "custom_value") {
           return `
             ${customPrefix}${key} {
@@ -358,7 +390,7 @@ export function createBorderColorGenerator(name, cssProperty, options = {}) {
             }
           `;
         }
-        
+
         return `
           ${prefix}${key} {
             --${opacityKey}-opacity: 1;
@@ -369,68 +401,76 @@ export function createBorderColorGenerator(name, cssProperty, options = {}) {
             --${opacityKey}-opacity: 1;
             border-left-color: ${value};
             border-right-color: ${value};
-            ${rgbValue
-              ? `border-left-color: rgba(${rgbValue}, var(--${opacityKey}-opacity));
+            ${
+              rgbValue
+                ? `border-left-color: rgba(${rgbValue}, var(--${opacityKey}-opacity));
             border-right-color: rgba(${rgbValue}, var(--${opacityKey}-opacity));`
-              : ""
+                : ""
             }
           }
           ${prefix}-y${key} {
             --${opacityKey}-opacity: 1;
             border-top-color: ${value};
             border-bottom-color: ${value};
-            ${rgbValue
-              ? `border-top-color: rgba(${rgbValue}, var(--${opacityKey}-opacity));
+            ${
+              rgbValue
+                ? `border-top-color: rgba(${rgbValue}, var(--${opacityKey}-opacity));
             border-bottom-color: rgba(${rgbValue}, var(--${opacityKey}-opacity));`
-              : ""
+                : ""
             }
           }
           ${prefix}-t${key} {
             --${opacityKey}-opacity: 1;
             border-top-color: ${value};
-            ${rgbValue
-              ? `border-top-color: rgba(${rgbValue}, var(--${opacityKey}-opacity));`
-              : ""
+            ${
+              rgbValue
+                ? `border-top-color: rgba(${rgbValue}, var(--${opacityKey}-opacity));`
+                : ""
             }
           }
           ${prefix}-r${key} {
             --${opacityKey}-opacity: 1;
             border-right-color: ${value};
-            ${rgbValue
-              ? `border-right-color: rgba(${rgbValue}, var(--${opacityKey}-opacity));`
-              : ""
+            ${
+              rgbValue
+                ? `border-right-color: rgba(${rgbValue}, var(--${opacityKey}-opacity));`
+                : ""
             }
           }
           ${prefix}-b${key} {
             --${opacityKey}-opacity: 1;
             border-bottom-color: ${value};
-            ${rgbValue
-              ? `border-bottom-color: rgba(${rgbValue}, var(--${opacityKey}-opacity));`
-              : ""
+            ${
+              rgbValue
+                ? `border-bottom-color: rgba(${rgbValue}, var(--${opacityKey}-opacity));`
+                : ""
             }
           }
           ${prefix}-l${key} {
             --${opacityKey}-opacity: 1;
             border-left-color: ${value};
-            ${rgbValue
-              ? `border-left-color: rgba(${rgbValue}, var(--${opacityKey}-opacity));`
-              : ""
+            ${
+              rgbValue
+                ? `border-left-color: rgba(${rgbValue}, var(--${opacityKey}-opacity));`
+                : ""
             }
           }
           ${prefix}-s${key} {
             --${opacityKey}-opacity: 1;
             border-inline-start-color: ${value};
-            ${rgbValue
-              ? `border-inline-start-color: rgba(${rgbValue}, var(--${opacityKey}-opacity));`
-              : ""
+            ${
+              rgbValue
+                ? `border-inline-start-color: rgba(${rgbValue}, var(--${opacityKey}-opacity));`
+                : ""
             }
           }
           ${prefix}-e${key} {
             --${opacityKey}-opacity: 1;
             border-inline-end-color: ${value};
-            ${rgbValue
-              ? `border-inline-end-color: rgba(${rgbValue}, var(--${opacityKey}-opacity));`
-              : ""
+            ${
+              rgbValue
+                ? `border-inline-end-color: rgba(${rgbValue}, var(--${opacityKey}-opacity));`
+                : ""
             }
           }
         `;
@@ -450,26 +490,23 @@ export function createStaticOptionsGenerator(name, cssProperty, options = {}) {
   return function generator(configOptions = {}) {
     const { prefix: globalPrefix } = configOptions;
     const prefix = `${globalPrefix}${name}`;
-    
+
     const staticOptions = options.values || {};
 
     return generateCssString(({ getCssByOptions }) => {
-      return getCssByOptions(
-        staticOptions,
-        (key, value) => {
-          const selector = key === '' ? prefix : `${prefix}-${key}`;
-          
-          if (options.customHandler) {
-            return options.customHandler(selector, key, value, cssProperty);
-          }
-          
-          return `
+      return getCssByOptions(staticOptions, (key, value) => {
+        const selector = key === "" ? prefix : `${prefix}-${key}`;
+
+        if (options.customHandler) {
+          return options.customHandler(selector, key, value, cssProperty);
+        }
+
+        return `
           ${selector} {
             ${cssProperty}: ${value};
           }
         `;
-        }
-      );
+      });
     }, configOptions);
   };
 }
@@ -482,28 +519,30 @@ export function createStaticOptionsGenerator(name, cssProperty, options = {}) {
  * @param {Object} options - Additional options like customHandler
  * @returns {Function} Generator function
  */
-export function createArrayOptionsGenerator(name, cssProperty, values = [], options = {}) {
+export function createArrayOptionsGenerator(
+  name,
+  cssProperty,
+  values = [],
+  options = {}
+) {
   return function generator(configOptions = {}) {
     const { prefix: globalPrefix } = configOptions;
     const prefix = `${globalPrefix}${name}`;
 
     return generateCssString(({ getCssByOptions }) => {
-      return getCssByOptions(
-        values,
-        (key, value) => {
-          const selector = `${prefix}-${key}`;
-          
-          if (options.customHandler) {
-            return options.customHandler(selector, key, value, cssProperty);
-          }
-          
-          return `
+      return getCssByOptions(values, (key, value) => {
+        const selector = `${prefix}-${key}`;
+
+        if (options.customHandler) {
+          return options.customHandler(selector, key, value, cssProperty);
+        }
+
+        return `
           ${selector} {
             ${cssProperty}: ${value};
           }
         `;
-        }
-      );
+      });
     }, configOptions);
   };
 }
@@ -519,8 +558,13 @@ export function createArrayOptionsGenerator(name, cssProperty, values = [], opti
  * @returns {Function} Generator function
  */
 export function createNegativeKeyGenerator(config) {
-  const { prefix: basePrefix, property: cssProperty, themeKey, customHandler } = config;
-  
+  const {
+    prefix: basePrefix,
+    property: cssProperty,
+    themeKey,
+    customHandler,
+  } = config;
+
   return function generator(configOptions = {}) {
     const { prefix: globalPrefix, theme = {} } = configOptions;
     const themeValues = theme[themeKey] || {};
@@ -529,19 +573,19 @@ export function createNegativeKeyGenerator(config) {
       return getCssByOptions(themeValues, (keyTmp, value) => {
         let prefix = `${globalPrefix}${basePrefix}`;
         let key = keyTmp;
-        
+
         // Handle negative keys (keys that start with "-")
         if (`${key}`.indexOf("-") >= 0) {
           key = key.split("-").join("");
           prefix = `${globalPrefix}-${basePrefix}`;
         }
-        
+
         const selector = `${prefix}-${key}`;
-        
+
         if (customHandler) {
           return customHandler(selector, key, value, keyTmp);
         }
-        
+
         return `
           ${selector} {
             ${cssProperty}: ${value};
@@ -561,25 +605,25 @@ export function createNegativeKeyGenerator(config) {
  * @returns {Function} Generator function
  */
 export function createMultiPropertyStaticGenerator(config) {
-  const { classes, basePrefix = '' } = config;
-  
+  const { classes, basePrefix = "" } = config;
+
   return function generator(configOptions = {}) {
-    const { prefix: globalPrefix = '' } = configOptions;
+    const { prefix: globalPrefix = "" } = configOptions;
 
     return generateCssString(() => {
       return Object.entries(classes)
         .map(([classSuffix, properties]) => {
-          const className = basePrefix ? 
-            `${globalPrefix}${basePrefix}-${classSuffix}` : 
-            `${globalPrefix}${classSuffix}`;
-          
+          const className = basePrefix
+            ? `${globalPrefix}${basePrefix}-${classSuffix}`
+            : `${globalPrefix}${classSuffix}`;
+
           const cssProperties = Object.entries(properties)
             .map(([prop, value]) => `  ${prop}: ${value};`)
-            .join('\n');
-          
+            .join("\n");
+
           return `${className} {\n${cssProperties}\n}`;
         })
-        .join('\n');
+        .join("\n");
     }, configOptions);
   };
 }
@@ -595,8 +639,13 @@ export function createMultiPropertyStaticGenerator(config) {
  * @returns {Function} Generator function
  */
 export function createDefaultKeyGenerator(config) {
-  const { prefix: prefixName, property: cssProperty, themeKey, customHandler } = config;
-  
+  const {
+    prefix: prefixName,
+    property: cssProperty,
+    themeKey,
+    customHandler,
+  } = config;
+
   return function generator(configOptions = {}) {
     const { prefix: globalPrefix, theme = {} } = configOptions;
     const prefix = `${globalPrefix}${prefixName}`;
@@ -607,11 +656,11 @@ export function createDefaultKeyGenerator(config) {
         // Handle default key - no suffix for "default"
         const key = keyTmp.toLowerCase() !== "default" ? `-${keyTmp}` : "";
         const selector = `${prefix}${key}`;
-        
+
         if (customHandler) {
           return customHandler(selector, keyTmp, value, key);
         }
-        
+
         return `
           ${selector} {
             ${cssProperty}: ${value};
@@ -634,7 +683,7 @@ export function createDefaultKeyGenerator(config) {
  */
 export function createCustomValueGenerator(config) {
   const { prefix, customPrefix, property, themeKey } = config;
-  
+
   return function generator(configOptions = {}) {
     const { prefix: globalPrefix, theme = {} } = configOptions;
     const standardPrefix = `${globalPrefix}${prefix}`;
@@ -674,26 +723,26 @@ export function createCustomValueGenerator(config) {
  */
 export function createMixedStaticGenerator(config) {
   const { staticClass, dynamicPrefix, dynamicProperty, values } = config;
-  
+
   return function generator(configOptions = {}) {
-    const { prefix: globalPrefix = '' } = configOptions;
+    const { prefix: globalPrefix = "" } = configOptions;
 
     return generateCssString(() => {
-      let cssString = '';
-      
+      let cssString = "";
+
       // Generate static class (only once)
       const staticClassName = `${globalPrefix}${staticClass.name}`;
       const staticProps = Object.entries(staticClass.properties)
         .map(([prop, value]) => `  ${prop}: ${value};`)
-        .join('\n');
+        .join("\n");
       cssString += `${staticClassName} {\n${staticProps}\n}\n`;
-      
+
       // Generate dynamic classes
-      values.forEach(value => {
+      values.forEach((value) => {
         const dynamicClassName = `${globalPrefix}${dynamicPrefix}-${value}`;
         cssString += `${dynamicClassName} {\n  ${dynamicProperty}: ${value};\n}\n`;
       });
-      
+
       return cssString;
     }, configOptions);
   };
@@ -712,10 +761,17 @@ export function createMixedStaticGenerator(config) {
  * @returns {Function} Generator function
  */
 export function createMultiAxisGenerator(config) {
-  const { prefix, mainProperty, xProperty, yProperty, values, staticClasses = [] } = config;
-  
+  const {
+    prefix,
+    mainProperty,
+    xProperty,
+    yProperty,
+    values,
+    staticClasses = [],
+  } = config;
+
   return function generator(configOptions = {}) {
-    const { prefix: globalPrefix = '' } = configOptions;
+    const { prefix: globalPrefix = "" } = configOptions;
 
     return generateCssString(({ getCssByOptions }) => {
       // Generate multi-axis classes from values
@@ -733,16 +789,16 @@ export function createMultiAxisGenerator(config) {
           }
         `
       );
-      
+
       // Add static classes
-      staticClasses.forEach(staticClass => {
+      staticClasses.forEach((staticClass) => {
         const className = `${globalPrefix}${staticClass.name}`;
         const cssProps = Object.entries(staticClass.properties)
           .map(([prop, value]) => `  ${prop}: ${value};`)
-          .join('\n');
+          .join("\n");
         cssString += `\n${className} {\n${cssProps}\n}`;
       });
-      
+
       return cssString;
     }, configOptions);
   };
@@ -760,25 +816,31 @@ export function createMultiAxisGenerator(config) {
  * @returns {Function} Generator function
  */
 export function createConditionalSuffixGenerator(config) {
-  const { prefix, defaultProperty, values, specialCases = {}, defaultValue } = config;
-  
+  const {
+    prefix,
+    defaultProperty,
+    values,
+    specialCases = {},
+    defaultValue,
+  } = config;
+
   return function generator(configOptions = {}) {
-    const { prefix: globalPrefix = '' } = configOptions;
+    const { prefix: globalPrefix = "" } = configOptions;
 
     return generateCssString(({ getCssByOptions }) => {
       return getCssByOptions(values, (keyTmp, value) => {
         const key = keyTmp !== defaultValue ? `-${keyTmp}` : "";
-        
+
         // Check for special cases
         if (specialCases[keyTmp]) {
           const specialCase = specialCases[keyTmp];
           const className = `${globalPrefix}${prefix}${specialCase.suffix || key}`;
           const cssProps = Object.entries(specialCase.properties)
             .map(([prop, val]) => `  ${prop}: ${val};`)
-            .join('\n');
+            .join("\n");
           return `\n${className} {\n${cssProps}\n}`;
         }
-        
+
         // Default case
         const className = `${globalPrefix}${prefix}${key}`;
         return `\n${className} {\n  ${defaultProperty}: ${value};\n}`;
@@ -799,34 +861,41 @@ export function createConditionalSuffixGenerator(config) {
  * @returns {Function} Generator function
  */
 export function createDualClassGenerator(config) {
-  const { prefix, themeKey, mainClass, secondaryClass, handleDefaultKey = false } = config;
-  
+  const {
+    prefix,
+    themeKey,
+    mainClass,
+    secondaryClass,
+    handleDefaultKey = false,
+  } = config;
+
   return function generator(configOptions = {}) {
-    const { prefix: globalPrefix = '', theme = {}, vars = {} } = configOptions;
-    
+    const { prefix: globalPrefix = "", theme = {}, vars = {} } = configOptions;
+
     const basePrefix = prefix;
     const fullPrefix = `${globalPrefix}${prefix}`;
     const themeValues = theme[themeKey] || {};
 
     return generateCssString(({ getCssByOptions }) => {
-      return getCssByOptions(
-        themeValues,
-        (keyTmp, value) => {
-          const key = (handleDefaultKey && keyTmp.toLowerCase() === "default") ? "" : `-${keyTmp}`;
-          const mainClassName = `${fullPrefix}${key}`;
-          const secondaryClassName = `${globalPrefix}${secondaryClass.prefix}${key}`;
-          
-          let mainProperties = `${mainClass.property}: ${value};`;
-          if (mainClass.varsKey && vars[mainClass.varsKey]) {
-            mainProperties += `\n            ${vars[mainClass.varsKey]}`;
-          }
-          
-          let secondaryProperties = `${secondaryClass.property}: ${value};`;
-          if (secondaryClass.varsKey && vars[secondaryClass.varsKey]) {
-            secondaryProperties += `\n            ${vars[secondaryClass.varsKey]}`;
-          }
-          
-          return `
+      return getCssByOptions(themeValues, (keyTmp, value) => {
+        const key =
+          handleDefaultKey && keyTmp.toLowerCase() === "default"
+            ? ""
+            : `-${keyTmp}`;
+        const mainClassName = `${fullPrefix}${key}`;
+        const secondaryClassName = `${globalPrefix}${secondaryClass.prefix}${key}`;
+
+        let mainProperties = `${mainClass.property}: ${value};`;
+        if (mainClass.varsKey && vars[mainClass.varsKey]) {
+          mainProperties += `\n            ${vars[mainClass.varsKey]}`;
+        }
+
+        let secondaryProperties = `${secondaryClass.property}: ${value};`;
+        if (secondaryClass.varsKey && vars[secondaryClass.varsKey]) {
+          secondaryProperties += `\n            ${vars[secondaryClass.varsKey]}`;
+        }
+
+        return `
           ${mainClassName} {
             ${mainProperties}
           }
@@ -834,8 +903,7 @@ export function createDualClassGenerator(config) {
             ${secondaryProperties}
           }
         `;
-        }
-      );
+      });
     }, configOptions);
   };
 }

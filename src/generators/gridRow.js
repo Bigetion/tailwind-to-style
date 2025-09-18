@@ -1,5 +1,5 @@
-import { createSimpleGenerator } from '../utils/baseGenerator.js';
+import { createSimpleGenerator } from "../utils/baseGenerator.js";
 
-export default createSimpleGenerator('row', 'grid-row', {
-  themeKey: 'gridRow'
+export default createSimpleGenerator("row", "grid-row", {
+  themeKey: "gridRow",
 });

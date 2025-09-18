@@ -1,3 +1,9 @@
-import { createArrayOptionsGenerator } from '../utils/baseGenerator.js';
+import { createArrayOptionsGenerator } from "../utils/baseGenerator.js";
 
-export default createArrayOptionsGenerator('divide', 'border-style', ['solid', 'dashed', 'dotted', 'double', 'none']);
+export default createArrayOptionsGenerator("divide", "border-style", [
+  "solid",
+  "dashed",
+  "dotted",
+  "double",
+  "none",
+]);

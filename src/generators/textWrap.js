@@ -1,3 +1,8 @@
-import { createArrayOptionsGenerator } from '../utils/baseGenerator.js';
+import { createArrayOptionsGenerator } from "../utils/baseGenerator.js";
 
-export default createArrayOptionsGenerator('text', 'text-wrap', ['wrap', 'nowrap', 'balance', 'pretty']);
+export default createArrayOptionsGenerator("text", "text-wrap", [
+  "wrap",
+  "nowrap",
+  "balance",
+  "pretty",
+]);

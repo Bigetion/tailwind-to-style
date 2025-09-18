@@ -1,5 +1,5 @@
-import { createSimpleGenerator } from '../utils/baseGenerator.js';
+import { createSimpleGenerator } from "../utils/baseGenerator.js";
 
-export default createSimpleGenerator('tracking', 'letter-spacing', {
-  themeKey: 'letterSpacing'
+export default createSimpleGenerator("tracking", "letter-spacing", {
+  themeKey: "letterSpacing",
 });

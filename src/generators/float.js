@@ -1,3 +1,7 @@
-import { createArrayOptionsGenerator } from '../utils/baseGenerator.js';
+import { createArrayOptionsGenerator } from "../utils/baseGenerator.js";
 
-export default createArrayOptionsGenerator('float', 'float', ['left', 'right', 'none']);
+export default createArrayOptionsGenerator("float", "float", [
+  "left",
+  "right",
+  "none",
+]);

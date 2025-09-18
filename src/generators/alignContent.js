@@ -1,6 +1,6 @@
 import { createStaticOptionsGenerator } from "../utils/baseGenerator.js";
 
-export default createStaticOptionsGenerator('content', 'align-content', {
+export default createStaticOptionsGenerator("content", "align-content", {
   values: {
     start: "flex-start",
     end: "flex-end",
@@ -8,5 +8,5 @@ export default createStaticOptionsGenerator('content', 'align-content', {
     between: "space-between",
     around: "space-around",
     evenly: "space-evenly",
-  }
+  },
 });

@@ -9,5 +9,5 @@ export default createColorGenerator("bg", "background-color", {
         ${isValidCssColor(value) ? "background-color" : "background"}: ${value};
       }
     `;
-  }
+  },
 });

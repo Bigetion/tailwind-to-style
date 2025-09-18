@@ -1,3 +1,6 @@
-import { createArrayOptionsGenerator } from '../utils/baseGenerator.js';
+import { createArrayOptionsGenerator } from "../utils/baseGenerator.js";
 
-export default createArrayOptionsGenerator('list', 'list-style-position', ['inside', 'outside']);
+export default createArrayOptionsGenerator("list", "list-style-position", [
+  "inside",
+  "outside",
+]);

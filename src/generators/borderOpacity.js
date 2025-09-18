@@ -1,3 +1,3 @@
-import { createSimpleGenerator } from '../utils/baseGenerator.js';
+import { createSimpleGenerator } from "../utils/baseGenerator.js";
 
-export default createSimpleGenerator('border-opacity', '--border-opacity');
+export default createSimpleGenerator("border-opacity", "--border-opacity");

@@ -6,11 +6,11 @@ export default createDualClassGenerator({
   handleDefaultKey: true,
   mainClass: {
     property: "--sepia",
-    varsKey: "filter"
+    varsKey: "filter",
   },
   secondaryClass: {
     prefix: "backdrop-sepia",
     property: "--backdrop-sepia",
-    varsKey: "backdropFilter"
-  }
+    varsKey: "backdropFilter",
+  },
 });

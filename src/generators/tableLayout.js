@@ -1,3 +1,6 @@
-import { createArrayOptionsGenerator } from '../utils/baseGenerator.js';
+import { createArrayOptionsGenerator } from "../utils/baseGenerator.js";
 
-export default createArrayOptionsGenerator('table', 'table-layout', ['auto', 'fixed']);
+export default createArrayOptionsGenerator("table", "table-layout", [
+  "auto",
+  "fixed",
+]);

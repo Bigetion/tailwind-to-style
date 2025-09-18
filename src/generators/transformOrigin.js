@@ -6,15 +6,15 @@ export default createArrayOptionsGenerator({
   options: [
     "center",
     "top",
-    "top-right", 
+    "top-right",
     "right",
     "bottom-right",
     "bottom",
     "bottom-left",
     "left",
-    "top-left"
+    "top-left",
   ],
   customHandler: (key, value) => ({
-    "transform-origin": value.replace("-", " ")
-  })
+    "transform-origin": value.replace("-", " "),
+  }),
 });

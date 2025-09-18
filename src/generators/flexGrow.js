@@ -1,5 +1,5 @@
-import { createSimpleGenerator } from '../utils/baseGenerator.js';
+import { createSimpleGenerator } from "../utils/baseGenerator.js";
 
-export default createSimpleGenerator('grow', 'flex-grow', {
-  themeKey: 'flexGrow'
+export default createSimpleGenerator("grow", "flex-grow", {
+  themeKey: "flexGrow",
 });

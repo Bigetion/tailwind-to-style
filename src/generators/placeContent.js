@@ -1,6 +1,6 @@
 import { createStaticOptionsGenerator } from "../utils/baseGenerator.js";
 
-export default createStaticOptionsGenerator('place-content', 'place-content', {
+export default createStaticOptionsGenerator("place-content", "place-content", {
   values: {
     start: "start",
     end: "end",
@@ -9,5 +9,5 @@ export default createStaticOptionsGenerator('place-content', 'place-content', {
     around: "space-around",
     evenly: "space-evenly",
     stretch: "stretch",
-  }
+  },
 });

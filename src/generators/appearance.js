@@ -1,3 +1,6 @@
-import { createArrayOptionsGenerator } from '../utils/baseGenerator.js';
+import { createArrayOptionsGenerator } from "../utils/baseGenerator.js";
 
-export default createArrayOptionsGenerator('appearance', 'appearance', ['auto', 'none']);
+export default createArrayOptionsGenerator("appearance", "appearance", [
+  "auto",
+  "none",
+]);

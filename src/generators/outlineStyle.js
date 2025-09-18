@@ -6,12 +6,12 @@ export default createConditionalSuffixGenerator({
   values: ["none", "solid", "dashed", "dotted", "double"],
   defaultValue: "solid",
   specialCases: {
-    "none": {
+    none: {
       suffix: "-none",
       properties: {
-        "outline": "2px solid transparent",
-        "outline-offset": "2px"
-      }
-    }
-  }
+        outline: "2px solid transparent",
+        "outline-offset": "2px",
+      },
+    },
+  },
 });

@@ -4,5 +4,5 @@ export default createCustomValueGenerator({
   prefix: "outline",
   customPrefix: "outline-width",
   property: "outline-width",
-  themeKey: "outlineWidth"
+  themeKey: "outlineWidth",
 });

@@ -16,59 +16,59 @@ export default function generator(configOptions = {}) {
         "border-top-width": "${value}",
         "border-bottom-width": "${value}",
         "border-left-width": "${value}",
-        "border-right-width": "${value}"
-      }
+        "border-right-width": "${value}",
+      },
     },
     {
       suffix: "-x",
       properties: {
         "border-left-width": "${value}",
-        "border-right-width": "${value}"
-      }
+        "border-right-width": "${value}",
+      },
     },
     {
-      suffix: "-y", 
+      suffix: "-y",
       properties: {
         "border-top-width": "${value}",
-        "border-bottom-width": "${value}"
-      }
+        "border-bottom-width": "${value}",
+      },
     },
     {
       suffix: "-s",
       properties: {
-        "border-inline-start-width": "${value}"
-      }
+        "border-inline-start-width": "${value}",
+      },
     },
     {
       suffix: "-e",
       properties: {
-        "border-inline-end-width": "${value}"
-      }
+        "border-inline-end-width": "${value}",
+      },
     },
     {
       suffix: "-t",
       properties: {
-        "border-top-width": "${value}"
-      }
+        "border-top-width": "${value}",
+      },
     },
     {
       suffix: "-r",
       properties: {
-        "border-right-width": "${value}"
-      }
+        "border-right-width": "${value}",
+      },
     },
     {
       suffix: "-b",
       properties: {
-        "border-bottom-width": "${value}"
-      }
+        "border-bottom-width": "${value}",
+      },
     },
     {
       suffix: "-l",
       properties: {
-        "border-left-width": "${value}"
-      }
-    }
+        "border-left-width": "${value}",
+      },
+    },
   ];
 
   const responsiveCssString = generateCssString(({ getCssByOptions }) => {
@@ -89,15 +89,18 @@ export default function generator(configOptions = {}) {
         .map(({ suffix, properties }) => {
           const className = `${prefix}${suffix}${key}`;
           const cssProps = Object.entries(properties)
-            .map(([prop, val]) => `          ${prop}: ${val.replace('${value}', value)};`)
-            .join('\n');
-          
+            .map(
+              ([prop, val]) =>
+                `          ${prop}: ${val.replace("${value}", value)};`
+            )
+            .join("\n");
+
           return `
         ${className} {
 ${cssProps}
         }`;
         })
-        .join('');
+        .join("");
     });
     return cssString;
   }, configOptions);

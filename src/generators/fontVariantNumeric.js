@@ -1,6 +1,6 @@
 import { createStaticOptionsGenerator } from "../utils/baseGenerator.js";
 
-export default createStaticOptionsGenerator('', 'font-variant-numeric', {
+export default createStaticOptionsGenerator("", "font-variant-numeric", {
   values: {
     "normal-nums": "normal",
     ordinal: "ordinal",
@@ -11,5 +11,5 @@ export default createStaticOptionsGenerator('', 'font-variant-numeric', {
     "tabular-nums": "tabular-nums",
     "diagonal-fractions": "diagonal-fractions",
     "stacked-fractions": "stacked-fractions",
-  }
+  },
 });

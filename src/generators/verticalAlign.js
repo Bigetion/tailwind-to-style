@@ -11,6 +11,6 @@ export default createArrayOptionsGenerator({
     "text-top",
     "text-bottom",
     "text-sub",
-    "text-super"
-  ]
+    "text-super",
+  ],
 });

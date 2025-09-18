@@ -4,5 +4,5 @@ export default createCustomValueGenerator({
   prefix: "bg",
   customPrefix: "bg-position",
   property: "background-position",
-  themeKey: "backgroundPosition"
+  themeKey: "backgroundPosition",
 });
