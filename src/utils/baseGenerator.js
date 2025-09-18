@@ -531,7 +531,9 @@ export function createArrayOptionsGenerator(
 
     return generateCssString(({ getCssByOptions }) => {
       return getCssByOptions(values, (key, value) => {
-        const selector = `${prefix}-${key}`;
+        // Handle empty prefix case - no dash needed
+        const selector =
+          name === "" ? `${globalPrefix}${key}` : `${prefix}-${key}`;
 
         if (options.customHandler) {
           return options.customHandler(selector, key, value, cssProperty);

@@ -26,10 +26,8 @@ export default createArrayOptionsGenerator(
   ],
   {
     customHandler: (selector, key, value, cssProperty) => {
-      // Remove extra dash caused by empty prefix
-      const cleanSelector = selector.replace("tw--", "tw-");
       const className =
-        key === "none" ? cleanSelector.replace(key, "hidden") : cleanSelector;
+        key === "none" ? selector.replace("none", "hidden") : selector;
       return `
           ${className} {
             ${cssProperty}: ${value};
