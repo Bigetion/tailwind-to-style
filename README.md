@@ -15,6 +15,40 @@ The library exposes two main functions and a CLI tool:
 2. **`twsx`**: A more advanced function that allows you to define nested and complex styles similar to SCSS, including support for responsive design, state variants, grouping, and enhanced CSS capabilities.
 3. **`twsx-cli`**: A command-line tool for generating CSS files from `twsx.*.js` files with watch mode support.
 
+## ✨ What's New in v2.12.0
+
+- 🎬 **Animation Support**: Full support for `animate-spin`, `animate-pulse`, `animate-bounce`, `animate-ping`!
+- 🔄 **Transition Utilities**: Complete transition system with `duration`, `delay`, `ease`, and property control
+- ⏱️ **Keyframes**: Built-in keyframes with support for custom animations via `configure()`
+- 🎨 **Custom Animations**: Create your own animations through theme extension or plugin API
+- 📝 **Examples**: New comprehensive animation examples
+
+Now you can create smooth transitions and eye-catching animations like Tailwind CSS!
+
+## ✨ What's New in v2.11.0
+
+- 🎨 **Theme Customization**: Extend default theme with custom colors, spacing, and more!
+- 🔌 **Plugin API**: Create custom utilities with `createPlugin()` and `createUtilityPlugin()`
+- ⚙️ **Configuration System**: Use `configure()` to set up theme and plugins
+- 📝 **Config Files**: Support for `tailwind-to-style.config.js`
+- 🎯 **Complete TypeScript**: Full type definitions for config and plugins
+- 📚 **Examples**: New examples for theme customization and custom plugins
+
+Now you can create brand-specific design systems and custom utilities!
+
+## ✨ What's New in v2.10.0
+
+- 🔄 **Updated Dependencies**: All dependencies updated to latest 2025 versions (ESLint 9, Jest 30, Rollup 4)
+- 🎯 **LRU Cache**: Replaced naive caching with proper LRU implementation for better memory management
+- 📝 **Logger System**: Configurable logging with production-safe defaults (no more console spam!)
+- ⚠️ **Error Handling**: Event-based error system with `onError()` subscription pattern
+- 🔒 **Singleton Pattern**: Refactored global state to testable singleton
+- 📘 **Complete TypeScript**: Added full type definitions for all exports
+- 🚀 **Node.js Support**: Now supports Node 18.x, 20.x, 22.x LTS (dropped EOL versions)
+- 🔧 **ESLint 9**: Migrated to modern flat config format
+
+All changes are **backward compatible** - your existing code continues to work!
+
 ## ✨ What's New in v2.9.0
 
 - 🆕 **Responsive Selector Syntax**: Intuitive `'md:.title': 'text-lg'` format for responsive styling
@@ -84,6 +118,429 @@ export default App;
 
 This will apply the Tailwind classes directly as inline styles in the React component.
 
+## Advanced Features (v2.10.0+)
+
+### Logger Configuration
+
+Control logging behavior for production environments:
+
+```javascript
+import { logger } from "tailwind-to-style";
+
+// Set log level (debug, info, warn, error, silent)
+logger.setLevel('error'); // Only show errors in production
+
+// Default is 'warn' in development, 'error' in production
+```
+
+### Error Handling
+
+Subscribe to errors for monitoring and debugging:
+
+```javascript
+import { onError, TwsError } from "tailwind-to-style";
+
+// Subscribe to errors
+const unsubscribe = onError((error) => {
+  console.log(error.message);
+  console.log(error.context);  // Additional context
+  console.log(error.timestamp); // When it occurred
+  
+  // Send to error tracking service
+  // Sentry.captureException(error);
+});
+
+// Unsubscribe when done
+unsubscribe();
+```
+
+### Cache Management
+
+For testing or memory management:
+
+```javascript
+import { getTailwindCache, resetTailwindCache } from "tailwind-to-style";
+
+// Get cache instance
+const cache = getTailwindCache();
+
+// Check if initialized
+if (cache.isInitialized()) {
+  console.log("Cache is ready");
+}
+
+// Reset cache (useful for testing)
+resetTailwindCache();
+```
+
+### Custom Logger Instance
+
+Create your own logger with custom settings:
+
+```javascript
+import { Logger } from "tailwind-to-style";
+
+const customLogger = new Logger('debug');
+customLogger.debug('Custom message');
+customLogger.setLevel('silent'); // Disable all logging
+```
+
+## Animations & Transitions (v2.12.0+)
+
+Full support for Tailwind CSS animations and transitions!
+
+### Built-in Animations
+
+```javascript
+import { tws } from "tailwind-to-style";
+
+// Spin animation (loading spinners)
+const spinner = tws("animate-spin", 1);
+// { animation: "spin 1s linear infinite" }
+
+// Ping animation (notification badges)
+const badge = tws("animate-ping", 1);
+// { animation: "ping 1s cubic-bezier(0, 0, 0.2, 1) infinite" }
+
+// Pulse animation (breathing effect)
+const pulse = tws("animate-pulse", 1);
+// { animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite" }
+
+// Bounce animation
+const bounce = tws("animate-bounce", 1);
+// { animation: "bounce 1s infinite" }
+
+// Disable animation
+const none = tws("animate-none", 1);
+// { animation: "none" }
+```
+
+### Transition Utilities
+
+```javascript
+// Basic transition
+const button = tws("transition duration-300 ease-in-out", 1);
+// {
+//   transitionProperty: "color, background-color, border-color, ...",
+//   transitionDuration: "300ms",
+//   transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)"
+// }
+
+// Transition specific properties
+tws("transition-colors", 1); // Only colors
+tws("transition-opacity", 1); // Only opacity
+tws("transition-shadow", 1); // Only box-shadow
+tws("transition-transform", 1); // Only transform
+tws("transition-all", 1); // All properties
+
+// Duration
+tws("duration-75", 1);   // 75ms
+tws("duration-150", 1);  // 150ms
+tws("duration-300", 1);  // 300ms
+tws("duration-500", 1);  // 500ms
+tws("duration-1000", 1); // 1000ms
+
+// Timing functions
+tws("ease-linear", 1);   // linear
+tws("ease-in", 1);       // cubic-bezier(0.4, 0, 1, 1)
+tws("ease-out", 1);      // cubic-bezier(0, 0, 0.2, 1)
+tws("ease-in-out", 1);   // cubic-bezier(0.4, 0, 0.2, 1)
+
+// Delay
+tws("delay-75", 1);   // 75ms
+tws("delay-150", 1);  // 150ms
+tws("delay-300", 1);  // 300ms
+tws("delay-500", 1);  // 500ms
+```
+
+### Custom Animations
+
+Create your own animations using `configure()`:
+
+```javascript
+import { configure, tws } from "tailwind-to-style";
+
+configure({
+  theme: {
+    extend: {
+      animation: {
+        'fade-in': 'fadeIn 1s ease-in forwards',
+        'slide-up': 'slideUp 0.5s ease-out',
+        'wiggle': 'wiggle 1s ease-in-out infinite',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(100%)' },
+          '100%': { transform: 'translateY(0)' },
+        },
+        wiggle: {
+          '0%, 100%': { transform: 'rotate(-3deg)' },
+          '50%': { transform: 'rotate(3deg)' },
+        },
+      },
+    },
+  },
+});
+
+// Use custom animations
+const modal = tws("animate-fade-in", 1);
+// { animation: "fadeIn 1s ease-in forwards" }
+
+const notification = tws("animate-slide-up", 1);
+// { animation: "slideUp 0.5s ease-out" }
+```
+
+### Real-World Examples
+
+```javascript
+// Button with hover transition
+const button = tws(
+  "bg-blue-500 hover:bg-blue-600 transition-colors duration-200",
+  1
+);
+
+// Loading spinner
+const spinner = tws(
+  "animate-spin w-8 h-8 border-2 border-blue-500 rounded-full",
+  1
+);
+
+// Notification with fade in
+const notification = tws(
+  "animate-fade-in bg-green-500 text-white p-4 rounded shadow-lg",
+  1
+);
+
+// Menu with slide transition
+const menu = tws(
+  "transition-transform duration-300 ease-out transform translate-x-0",
+  1
+);
+
+// Icon with hover wiggle
+const icon = tws("hover:animate-wiggle cursor-pointer", 1);
+```
+
+See [examples/animations.js](examples/animations.js) for more examples!
+
+## Theme Customization (v2.10.0+)
+
+Extend the default Tailwind theme with your own custom values:
+
+### Basic Theme Extension
+
+```javascript
+import { configure, tws } from "tailwind-to-style";
+
+// Configure custom theme
+configure({
+  theme: {
+    extend: {
+      colors: {
+        brand: {
+          500: '#0ea5e9',
+          600: '#0284c7',
+        },
+        accent: '#ff6b6b',
+      },
+      spacing: {
+        '128': '32rem',
+        '144': '36rem',
+      },
+      borderRadius: {
+        '4xl': '2rem',
+      },
+    },
+  },
+});
+
+// Now use your custom values
+const button = tws('bg-brand-500 hover:bg-brand-600 p-128 rounded-4xl', 1);
+// Works! Uses your custom colors, spacing, and border radius
+```
+
+### Theme Configuration Options
+
+```javascript
+configure({
+  theme: {
+    extend: {
+      colors: { /* custom colors */ },
+      spacing: { /* custom spacing */ },
+      borderRadius: { /* custom border radius */ },
+      fontSize: { /* custom font sizes */ },
+      // ... any Tailwind theme property
+    },
+  },
+  
+  // Optional: Add prefix to all classes
+  prefix: 'tw-',
+  
+  // Optional: Disable specific core plugins
+  corePlugins: {
+    float: false,
+    clear: false,
+  },
+});
+```
+
+### Using Config File
+
+Create `tailwind-to-style.config.js`:
+
+```javascript
+export default {
+  theme: {
+    extend: {
+      colors: {
+        brand: {
+          500: '#0ea5e9',
+        },
+      },
+    },
+  },
+};
+```
+
+Then import and use it:
+
+```javascript
+import { configure } from "tailwind-to-style";
+import config from "./tailwind-to-style.config.js";
+
+configure(config);
+```
+
+## Custom Plugins (v2.10.0+)
+
+Create custom utility classes with the plugin API:
+
+### Simple Utility Plugin
+
+```javascript
+import { createPlugin, configure, tws } from "tailwind-to-style";
+
+// Create a text gradient plugin
+const textGradientPlugin = createPlugin('text-gradient', {
+  utilities: {
+    '.text-gradient': {
+      'background-clip': 'text',
+      '-webkit-background-clip': 'text',
+      '-webkit-text-fill-color': 'transparent',
+      'background-image': 'linear-gradient(to right, #3b82f6, #8b5cf6)',
+    },
+  },
+});
+
+// Register the plugin
+configure({
+  plugins: [textGradientPlugin],
+});
+
+// Use it!
+const heading = tws('text-gradient text-4xl font-bold', 1);
+```
+
+### Dynamic Utility Plugin
+
+```javascript
+import { createUtilityPlugin, configure } from "tailwind-to-style";
+
+// Create a text-shadow plugin with multiple values
+const textShadowPlugin = createUtilityPlugin('text-shadow', {
+  prefix: 'text-shadow',
+  values: {
+    sm: '1px 1px 2px rgba(0,0,0,0.1)',
+    md: '2px 2px 4px rgba(0,0,0,0.15)',
+    lg: '4px 4px 8px rgba(0,0,0,0.2)',
+    xl: '6px 6px 12px rgba(0,0,0,0.25)',
+  },
+  formatter: (value) => ({
+    'text-shadow': value,
+  }),
+});
+
+configure({
+  plugins: [textShadowPlugin],
+});
+
+// Use with different sizes
+tws('text-shadow-sm'); // Small shadow
+tws('text-shadow-lg'); // Large shadow
+```
+
+### Glassmorphism Plugin Example
+
+```javascript
+const glassmorphismPlugin = createPlugin('glassmorphism', {
+  utilities: {
+    '.glass': {
+      'backdrop-filter': 'blur(10px)',
+      '-webkit-backdrop-filter': 'blur(10px)',
+      'background-color': 'rgba(255, 255, 255, 0.1)',
+      'border': '1px solid rgba(255, 255, 255, 0.2)',
+    },
+    '.glass-dark': {
+      'backdrop-filter': 'blur(10px)',
+      '-webkit-backdrop-filter': 'blur(10px)',
+      'background-color': 'rgba(0, 0, 0, 0.1)',
+      'border': '1px solid rgba(255, 255, 255, 0.1)',
+    },
+  },
+});
+
+configure({
+  plugins: [glassmorphismPlugin],
+});
+
+// Use glassmorphism effects
+const card = tws('glass p-6 rounded-lg', 1);
+```
+
+### Complete Configuration Example
+
+```javascript
+import { configure, createPlugin, createUtilityPlugin } from "tailwind-to-style";
+
+const textShadowPlugin = createUtilityPlugin('text-shadow', {
+  prefix: 'text-shadow',
+  values: {
+    sm: '1px 1px 2px rgba(0,0,0,0.1)',
+    md: '2px 2px 4px rgba(0,0,0,0.15)',
+    lg: '4px 4px 8px rgba(0,0,0,0.2)',
+  },
+  formatter: (value) => ({ 'text-shadow': value }),
+});
+
+const glassmorphismPlugin = createPlugin('glassmorphism', {
+  utilities: {
+    '.glass': {
+      'backdrop-filter': 'blur(10px)',
+      'background-color': 'rgba(255, 255, 255, 0.1)',
+    },
+  },
+});
+
+configure({
+  theme: {
+    extend: {
+      colors: {
+        brand: {
+          500: '#0ea5e9',
+        },
+      },
+      spacing: {
+        '128': '32rem',
+      },
+    },
+  },
+  plugins: [textShadowPlugin, glassmorphismPlugin],
+});
+```
 
 ### 2. `twsx`
 

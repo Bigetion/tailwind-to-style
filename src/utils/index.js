@@ -1,4 +1,5 @@
 import defaultConfigOptions from "../config/index.js";
+import { getExtendedTheme, getPrefix } from "../config/userConfig.js";
 
 function isFunction(functionToCheck) {
   return (
@@ -24,6 +25,7 @@ function getConfigOptions(options = {}) {
       });
     }
   });
+  
   themeKeys.forEach((key) => {
     if (isFunction(newTheme[key])) {
       newTheme[key] = newTheme[key]({
@@ -37,8 +39,22 @@ function getConfigOptions(options = {}) {
     }
   });
 
+  // Apply user config theme extensions
+  const userThemeExtensions = {};
+  themeKeys.forEach((key) => {
+    const extended = getExtendedTheme(key);
+    if (extended && Object.keys(extended).length > 0) {
+      userThemeExtensions[key] = extended;
+      newTheme[key] = Object.assign({}, newTheme[key], extended);
+    }
+  });
+
+  // Get user prefix
+  const userPrefix = getPrefix();
+  const finalPrefix = userPrefix || options.prefix || "";
+
   return {
-    prefix: "",
+    prefix: finalPrefix,
     ...defaultConfigOptions,
     ...options,
     theme: newTheme,

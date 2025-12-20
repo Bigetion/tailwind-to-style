@@ -1,7 +1,123 @@
 // Type definitions for tailwind-to-style
-// Project: https://github.com/your-username/tailwind-to-style
-// Definitions by: Your Name <https://github.com/your-username>
+// Project: https://github.com/Bigetion/tailwind-to-style
+// Definitions by: Bigetion
 
+// Logger types
+export class Logger {
+  constructor(level?: 'debug' | 'info' | 'warn' | 'error' | 'silent');
+  setLevel(level: 'debug' | 'info' | 'warn' | 'error' | 'silent'): void;
+  getLevel(): string;
+  debug(message: string, ...args: any[]): void;
+  info(message: string, ...args: any[]): void;
+  warn(message: string, ...args: any[]): void;
+  error(message: string, ...args: any[]): void;
+}
+
+export const logger: Logger;
+
+// LRU Cache types
+export class LRUCache<K = any, V = any> {
+  constructor(maxSize?: number);
+  get(key: K): V | undefined;
+  set(key: K, value: V): void;
+  has(key: K): boolean;
+  clear(): void;
+  delete(key: K): boolean;
+  readonly size: number;
+}
+
+// Error handling types
+export class TwsError extends Error {
+  constructor(message: string, context?: Record<string, any>);
+  context: Record<string, any>;
+  timestamp: string;
+}
+
+export function onError(handler: (error: TwsError) => void): () => void;
+export function handleError(error: Error, context?: Record<string, any>): TwsError;
+
+// Tailwind cache types
+export class TailwindCache {
+  getOrGenerate(generateFn: Function, convertFn: Function): any;
+  getCssString(): string | null;
+  getCssObject(): Record<string, string> | null;
+  isInitialized(): boolean;
+  reset(): void;
+}
+
+export function getTailwindCache(): TailwindCache;
+export function resetTailwindCache(): void;
+
+// Configuration and Plugin System
+export interface ThemeExtension {
+  colors?: Record<string, string | Record<string, string>>;
+  spacing?: Record<string, string>;
+  borderRadius?: Record<string, string>;
+  fontSize?: Record<string, string>;
+  [key: string]: any;
+}
+
+export interface TailwindConfig {
+  theme?: {
+    extend?: ThemeExtension;
+    colors?: Record<string, string | Record<string, string>>;
+    spacing?: Record<string, string>;
+    [key: string]: any;
+  };
+  plugins?: Plugin[];
+  corePlugins?: Record<string, boolean>;
+  prefix?: string;
+}
+
+export interface Plugin {
+  name: string;
+  type: string;
+  utilities?: Record<string, string | Record<string, string>>;
+  components?: Record<string, string | Record<string, string>>;
+  handler?: any;
+}
+
+export interface UtilityPluginConfig {
+  prefix: string;
+  values: Record<string, string>;
+  formatter: (value: string, key: string) => Record<string, string>;
+}
+
+/**
+ * Configure tailwind-to-style with custom theme and plugins
+ */
+export function configure(config: TailwindConfig): void;
+
+/**
+ * Get current configuration
+ */
+export function getConfig(): TailwindConfig;
+
+/**
+ * Reset configuration to defaults
+ */
+export function resetConfig(): void;
+
+/**
+ * Create a custom plugin
+ */
+export function createPlugin(name: string, definition: {
+  utilities?: Record<string, string | Record<string, string>>;
+  components?: Record<string, string | Record<string, string>>;
+  handler?: Function;
+}): Plugin;
+
+/**
+ * Create a utility plugin with dynamic values
+ */
+export function createUtilityPlugin(name: string, config: UtilityPluginConfig): Plugin;
+
+/**
+ * Create a variant plugin
+ */
+export function createVariantPlugin(name: string, handler: (selector: string) => string): Plugin;
+
+// Main function types
 export interface TwsxOptions {
   inject?: boolean;
   [key: string]: any;

@@ -5,6 +5,7 @@ import generateAccessibility from "./generators/accessibility.js";
 import generateAlignContent from "./generators/alignContent.js";
 import generateAlignItems from "./generators/alignItems.js";
 import generateAlignSelf from "./generators/alignSelf.js";
+import generateAnimation from "./generators/animation.js";
 import generateAppearance from "./generators/appearance.js";
 import generateAspect from "./generators/aspect.js";
 import generateBackgroundAttachment from "./generators/backgroundAttachment.js";
@@ -147,6 +148,10 @@ import generateTextWrap from "./generators/textWrap.js";
 import generateTouchAction from "./generators/touchAction.js";
 import generateTransform from "./generators/transform.js";
 import generateTransformOrigin from "./generators/transformOrigin.js";
+import generateTransitionDelay from "./generators/transitionDelay.js";
+import generateTransitionDuration from "./generators/transitionDuration.js";
+import generateTransitionProperty from "./generators/transitionProperty.js";
+import generateTransitionTimingFunction from "./generators/transitionTimingFunction.js";
 import generateTranslate from "./generators/translate.js";
 import generateUserSelect from "./generators/userSelect.js";
 import generateVerticalAlign from "./generators/verticalAlign.js";
@@ -157,6 +162,12 @@ import generateWordBreak from "./generators/wordBreak.js";
 import generateWillChange from "./generators/willChange.js";
 import generateZIndex from "./generators/zIndex.js";
 
+import { logger } from "./utils/logger.js";
+import { LRUCache } from "./utils/lruCache.js";
+import { handleError, TwsError, onError } from "./utils/errorHandler.js";
+import { getTailwindCache, resetTailwindCache } from "./utils/tailwindCache.js";
+import { getPlugins } from "./config/userConfig.js";
+import { pluginToLookup } from "./plugins/pluginAPI.js";
 import patterns from "./patterns/index.js";
 
 const plugins = {
@@ -165,6 +176,7 @@ const plugins = {
   alignContent: generateAlignContent,
   alignItems: generateAlignItems,
   alignSelf: generateAlignSelf,
+  animation: generateAnimation,
   appearance: generateAppearance,
   aspect: generateAspect,
   backgroundAttachment: generateBackgroundAttachment,
@@ -307,6 +319,10 @@ const plugins = {
   touchAction: generateTouchAction,
   transform: generateTransform,
   transformOrigin: generateTransformOrigin,
+  transitionDelay: generateTransitionDelay,
+  transitionDuration: generateTransitionDuration,
+  transitionProperty: generateTransitionProperty,
+  transitionTimingFunction: generateTransitionTimingFunction,
   translate: generateTranslate,
   userSelect: generateUserSelect,
   verticalAlign: generateVerticalAlign,
@@ -361,17 +377,16 @@ function resolveCssToClearCss(cssString) {
     .join(" ");
 }
 
-// Cache for getConfigOptions
-const configOptionsCache = new Map();
-const cacheKey = (options) => JSON.stringify(options);
+// Cache for getConfigOptions - use LRU cache
+const configOptionsCache = new LRUCache(500);
 
 function generateTailwindCssString(options = {}) {
   const pluginKeys = Object.keys(plugins);
   // Use cache to prevent unnecessary reprocessing
-  const key = cacheKey(options);
+  const key = JSON.stringify(options);
+  
   if (!configOptionsCache.has(key)) {
     configOptionsCache.set(key, getConfigOptions(options, pluginKeys));
-    limitCacheSize(configOptionsCache);
   }
 
   const configOptions = configOptionsCache.get(key);
@@ -400,19 +415,21 @@ function convertCssToObject(cssString) {
     obj[className] = cssRules;
   }
 
+  // Add plugin utilities to the lookup object
+  const plugins = getPlugins();
+  const configOptions = getConfigOptions();
+  const prefix = configOptions.prefix || "";
+  
+  plugins.forEach((plugin) => {
+    const pluginLookup = pluginToLookup(plugin, prefix);
+    Object.assign(obj, pluginLookup);
+  });
+
   return obj;
 }
 
-let twString = null;
-let cssObject = null;
-
-if (!twString) {
-  twString = generateTailwindCssString().replace(/\s\s+/g, " ");
-}
-
-if (!cssObject) {
-  cssObject = convertCssToObject(twString);
-}
+// Use singleton cache instead of global variables
+const tailwindCache = getTailwindCache();
 
 const fractionDenominators = [2, 3, 4, 5, 6, 12];
 const fractionPrefixes = [
@@ -481,7 +498,7 @@ const selectorVariants = {
 };
 
 // Optimize encoding/decoding bracket values with memoization
-const encodeBracketCache = new Map();
+const encodeBracketCache = new LRUCache(1000);
 function encodeBracketValues(input) {
   if (!input) return input;
   if (encodeBracketCache.has(input)) return encodeBracketCache.get(input);
@@ -494,11 +511,10 @@ function encodeBracketValues(input) {
   });
 
   encodeBracketCache.set(input, result);
-  limitCacheSize(encodeBracketCache);
   return result;
 }
 
-const decodeBracketCache = new Map();
+const decodeBracketCache = new LRUCache(1000);
 function decodeBracketValues(input) {
   if (!input) return input;
   if (decodeBracketCache.has(input)) return decodeBracketCache.get(input);
@@ -508,7 +524,6 @@ function decodeBracketValues(input) {
     .replace(/__C__/g, ")");
 
   decodeBracketCache.set(input, result);
-  limitCacheSize(decodeBracketCache);
   return result;
 }
 
@@ -569,19 +584,7 @@ function inlineStyleToJson(styleString) {
 }
 
 // Cache for CSS resolution
-const cssResolutionCache = new Map();
-
-// Enhanced cache management with performance monitoring
-function limitCacheSize(cache, maxSize = 1000) {
-  if (cache.size > maxSize) {
-    const cleanupMarker = performanceMonitor.start("cache:cleanup");
-    // Remove 20% of the oldest entries
-    const entriesToRemove = Math.floor(cache.size * 0.2);
-    const keys = Array.from(cache.keys()).slice(0, entriesToRemove);
-    keys.forEach((key) => cache.delete(key));
-    performanceMonitor.end(cleanupMarker);
-  }
-}
+const cssResolutionCache = new LRUCache(1000);
 
 // Enhanced debounce with performance tracking
 function debounce(func, wait = 100) {
@@ -603,7 +606,7 @@ function debounce(func, wait = 100) {
         return result;
       } catch (error) {
         performanceMonitor.end(marker);
-        console.error(`Debounced function error (call #${callCount}):`, error);
+        logger.error(`Debounced function error (call #${callCount}):`, error);
         throw error;
       }
     }, wait);
@@ -622,9 +625,7 @@ function separateAndResolveCSS(arr) {
       return cssResolutionCache.get(cacheKey);
     }
 
-    // Limit cache size to avoid memory leaks
-    limitCacheSize(cssResolutionCache);
-
+    // Process CSS resolution
     const cssProperties = {};
     arr.forEach((item) => {
       if (!item) return;
@@ -650,7 +651,7 @@ function separateAndResolveCSS(arr) {
           }
         });
       } catch (error) {
-        console.warn("Error processing CSS declaration:", item, error);
+        logger.warn("Error processing CSS declaration:", item, error);
       }
     });
 
@@ -667,7 +668,7 @@ function separateAndResolveCSS(arr) {
           }
         );
       } catch (error) {
-        console.warn("Error resolving CSS variable:", value, error);
+        logger.warn("Error resolving CSS variable:", value, error);
         return value;
       }
     };
@@ -696,7 +697,7 @@ function separateAndResolveCSS(arr) {
     return result;
   } catch (error) {
     performanceMonitor.end(marker);
-    console.error("Critical error in CSS resolution:", error);
+    logger.error("Critical error in CSS resolution:", error);
     return "";
   }
 }
@@ -834,6 +835,12 @@ export function tws(classNames, convertToJson) {
   const totalMarker = performanceMonitor.start("tws:total");
 
   try {
+    // Initialize CSS object using singleton cache
+    const cssObject = tailwindCache.getOrGenerate(
+      generateTailwindCssString,
+      convertCssToObject
+    );
+
     if (
       [
         !classNames,
@@ -853,14 +860,14 @@ export function tws(classNames, convertToJson) {
 
       // If no valid classes are found
       if (!classes || classes.length === 0) {
-        console.warn(
+        logger.warn(
           `No valid Tailwind classes found in input: "${classNames}"`
         );
         performanceMonitor.end(totalMarker);
         return convertToJson ? {} : "";
       }
     } catch (error) {
-      console.error(`Error parsing Tailwind classes: ${error.message}`);
+      logger.error(`Error parsing Tailwind classes: ${error.message}`);
       performanceMonitor.end(totalMarker);
       return convertToJson ? {} : "";
     }
@@ -954,7 +961,7 @@ export function tws(classNames, convertToJson) {
     return cssResult;
   } catch (error) {
     performanceMonitor.end(totalMarker);
-    console.error("tws error:", error);
+    const twsError = handleError(error, { classNames, convertToJson });
     return convertToJson ? {} : "";
   }
 }
@@ -976,7 +983,7 @@ const performanceMonitor = {
     const duration = performance.now() - marker.startTime;
     if (duration > 5) {
       // Only log if > 5ms
-      console.warn(`Slow ${marker.label}: ${duration.toFixed(2)}ms`);
+      logger.warn(`Slow ${marker.label}: ${duration.toFixed(2)}ms`);
     }
   },
 
@@ -1054,7 +1061,7 @@ function expandGroupedClass(input) {
   return result;
 }
 // CSS Processing utilities
-const parseSelectorCache = new Map();
+const parseSelectorCache = new LRUCache(500);
 
 function parseSelector(selector) {
   if (parseSelectorCache.has(selector)) {
@@ -1072,7 +1079,6 @@ function parseSelector(selector) {
   }
 
   parseSelectorCache.set(selector, result);
-  limitCacheSize(parseSelectorCache);
   return result;
 }
 
@@ -1220,7 +1226,7 @@ function processNestedSelectors(nested, selector, styles, walk) {
 
 function walkStyleTree(selector, val, styles, walk) {
   if (!selector || typeof selector !== "string") {
-    console.warn("Invalid selector in walk function:", selector);
+    logger.warn("Invalid selector in walk function:", selector);
     return;
   }
 
@@ -1389,7 +1395,7 @@ export function twsx(obj, options = {}) {
 
   try {
     if (!obj || typeof obj !== "object") {
-      console.warn("twsx: Expected an object but received:", obj);
+      logger.warn("twsx: Expected an object but received:", obj);
       return "";
     }
 
@@ -1491,7 +1497,7 @@ export function twsx(obj, options = {}) {
     return cssString;
   } catch (error) {
     performanceMonitor.end(totalMarker);
-    console.error("twsx error:", error);
+    const twsxError = handleError(error, { obj, options });
     return "";
   }
 }
@@ -1534,7 +1540,7 @@ function autoInjectCss(cssString) {
 
       // Log injection stats periodically
       if (injectedCssHashSet.size % 10 === 0) {
-        console.debug(
+        logger.debug(
           `CSS injection stats: ${injectedCssHashSet.size} unique stylesheets injected`
         );
       }
@@ -1542,7 +1548,7 @@ function autoInjectCss(cssString) {
     performanceMonitor.end(marker);
   } catch (error) {
     performanceMonitor.end(marker);
-    console.error("Error injecting CSS:", error);
+    logger.error("Error injecting CSS:", error);
   }
 }
 
@@ -1586,12 +1592,27 @@ export const performanceUtils = {
     parseSelectorCache.clear();
     encodeBracketCache.clear();
     decodeBracketCache.clear();
-    console.log("All caches cleared");
+    logger.info("All caches cleared");
     performanceMonitor.end(marker);
   },
 
   enablePerformanceLogging(enabled = true) {
     performanceMonitor.enabled = enabled && typeof performance !== "undefined";
-    console.log(`Performance monitoring ${enabled ? "enabled" : "disabled"}`);
+    logger.info(`Performance monitoring ${enabled ? "enabled" : "disabled"}`);
   },
 };
+
+// Export utility classes and functions
+export { logger, Logger } from "./utils/logger.js";
+export { LRUCache } from "./utils/lruCache.js";
+export { TwsError, onError, handleError } from "./utils/errorHandler.js";
+export { getTailwindCache, resetTailwindCache } from "./utils/tailwindCache.js";
+
+// Export configuration and plugin system
+export { configure, getConfig, resetConfig } from "./config/userConfig.js";
+export { 
+  createPlugin, 
+  createUtilityPlugin, 
+  createVariantPlugin 
+} from "./plugins/pluginAPI.js";
+
