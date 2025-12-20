@@ -1124,6 +1124,12 @@ function processClass(cls, selector, styles) {
     }
   }
 
+  // Get cssObject from singleton cache
+  const cssObject = tailwindCache.getOrGenerate(
+    generateTailwindCssString,
+    convertCssToObject
+  );
+
   let declarations =
     cssObject[baseClassName] ||
     cssObject[baseClassName.replace(/(\/)/g, "\\$1")] ||
