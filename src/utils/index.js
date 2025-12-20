@@ -49,6 +49,19 @@ function getConfigOptions(options = {}) {
     }
   });
 
+  // Re-resolve theme functions after all extensions are applied
+  // This ensures that theme functions like backgroundColor: ({ theme }) => theme("colors")
+  // get the updated colors including custom theme extensions
+  themeKeys.forEach((key) => {
+    if (isFunction(defaultConfigOptions.theme[key])) {
+      newTheme[key] = defaultConfigOptions.theme[key]({
+        theme: (keyRef) => {
+          return newTheme[keyRef];
+        },
+      });
+    }
+  });
+
   // Get user prefix
   const userPrefix = getPrefix();
   const finalPrefix = userPrefix || options.prefix || "";

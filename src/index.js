@@ -1,4 +1,5 @@
 import { getConfigOptions } from "./utils/index.js";
+import { getConfig } from "./config/userConfig.js";
 
 import generateAccentColor from "./generators/accentColor.js";
 import generateAccessibility from "./generators/accessibility.js";
@@ -382,18 +383,38 @@ const configOptionsCache = new LRUCache(500);
 
 function generateTailwindCssString(options = {}) {
   const pluginKeys = Object.keys(plugins);
+  
+  // Merge user config with options
+  const userConfigData = getConfig();
+  const mergedOptions = {
+    ...options,
+    theme: {
+      ...options.theme,
+      ...userConfigData.theme,
+      extend: {
+        ...options.theme?.extend,
+        ...userConfigData.theme?.extend,
+      },
+    },
+  };
+  
   // Use cache to prevent unnecessary reprocessing
-  const key = JSON.stringify(options);
+  // Include user config in cache key to ensure cache invalidation
+  const key = JSON.stringify({
+    options: mergedOptions,
+    userConfigHash: JSON.stringify(userConfigData),
+  });
   
   if (!configOptionsCache.has(key)) {
-    configOptionsCache.set(key, getConfigOptions(options, pluginKeys));
+    const configOptions = getConfigOptions(mergedOptions, pluginKeys);
+    configOptionsCache.set(key, configOptions);
   }
 
   const configOptions = configOptionsCache.get(key);
   const { corePlugins = {} } = configOptions;
   const corePluginKeys = Object.keys(corePlugins);
 
-  let cssString = ``;
+  let cssString = "";
   Object.keys(plugins).forEach((key) => {
     if (corePluginKeys.indexOf(key) >= 0 && !corePlugins[key]) {
       cssString += "";
@@ -489,10 +510,10 @@ const specialVariants = {
 };
 
 const selectorVariants = {
-  first: () => `> :first-child`,
-  last: () => `> :last-child`,
-  odd: () => `> :nth-child(odd)`,
-  even: () => `> :nth-child(even)`,
+  first: () => "> :first-child",
+  last: () => "> :last-child",
+  odd: () => "> :nth-child(odd)",
+  even: () => "> :nth-child(even)",
   not: (arg) => `> :not(${arg})`,
   number: (arg) => `> :nth-child(${arg})`,
 };
@@ -595,7 +616,9 @@ function debounce(func, wait = 100) {
     const context = this;
     callCount++;
 
+    // eslint-disable-next-line no-undef
     clearTimeout(timeout);
+    // eslint-disable-next-line no-undef
     timeout = setTimeout(() => {
       const marker = performanceMonitor.start(
         `debounced:${func.name || "anonymous"}`
@@ -1383,7 +1406,7 @@ function generateCssString(styles) {
     for (const subSel in content) {
       cssString += `${subSel}{${content[subSel].trim().replace(/\n/g, "")}}`;
     }
-    cssString += `}`;
+    cssString += "}";
   }
 
   return cssString.trim();
@@ -1457,9 +1480,9 @@ export function twsx(obj, options = {}) {
     // Process each selector
     const processMarker = performanceMonitor.start("twsx:process");
     for (const selector in flattered) {
-      let val = flattered[selector];
+      const val = flattered[selector];
       let baseClass = "";
-      let nested = {};
+      const nested = {};
 
       if (typeof val === "string") {
         // Check if this is a @css property value - if so, don't process through expandGroupedClass
