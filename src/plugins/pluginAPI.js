@@ -7,14 +7,14 @@ import { logger } from "../utils/logger.js";
 
 /**
  * Create a plugin for tailwind-to-style
- * 
+ *
  * @param {string} name - Plugin name
  * @param {Object} definition - Plugin definition
  * @param {Object} [definition.utilities] - Custom utility classes
  * @param {Object} [definition.components] - Custom component classes
  * @param {Function} [definition.handler] - Custom handler function
  * @returns {Object} Plugin object
- * 
+ *
  * @example
  * const myPlugin = createPlugin('my-plugin', {
  *   utilities: {
@@ -53,14 +53,14 @@ export function createPlugin(name, definition) {
 
 /**
  * Create a utility plugin with dynamic values
- * 
+ *
  * @param {string} name - Plugin name
  * @param {Object} config - Configuration
  * @param {string} config.prefix - Class prefix (e.g., 'text', 'bg')
  * @param {Object} config.values - Values object
  * @param {Function} config.formatter - Function to format CSS properties
  * @returns {Object} Plugin object
- * 
+ *
  * @example
  * const textShadowPlugin = createUtilityPlugin('text-shadow', {
  *   prefix: 'text-shadow',
@@ -78,7 +78,9 @@ export function createUtilityPlugin(name, config) {
   const { prefix, values, formatter } = config;
 
   if (!prefix || !values || !formatter) {
-    throw new Error("createUtilityPlugin requires prefix, values, and formatter");
+    throw new Error(
+      "createUtilityPlugin requires prefix, values, and formatter"
+    );
   }
 
   const utilities = {};
@@ -95,11 +97,11 @@ export function createUtilityPlugin(name, config) {
 
 /**
  * Create a variant plugin
- * 
+ *
  * @param {string} name - Plugin name
  * @param {Function} handler - Variant handler function
  * @returns {Object} Plugin object
- * 
+ *
  * @example
  * const hoverParentPlugin = createVariantPlugin('hover-parent', (selector) => {
  *   return `.parent:hover ${selector}`;
@@ -130,7 +132,9 @@ export function generatePluginCSS(plugin, prefix = "") {
   // Generate utilities
   if (plugin.utilities) {
     for (const [className, props] of Object.entries(plugin.utilities)) {
-      const prefixedClass = prefix ? `.${prefix}${className.slice(1)}` : className;
+      const prefixedClass = prefix
+        ? `.${prefix}${className.slice(1)}`
+        : className;
       css += `${prefixedClass}{`;
 
       if (typeof props === "string") {
@@ -148,7 +152,9 @@ export function generatePluginCSS(plugin, prefix = "") {
   // Generate components
   if (plugin.components) {
     for (const [className, props] of Object.entries(plugin.components)) {
-      const prefixedClass = prefix ? `.${prefix}${className.slice(1)}` : className;
+      const prefixedClass = prefix
+        ? `.${prefix}${className.slice(1)}`
+        : className;
       css += `${prefixedClass}{`;
 
       if (typeof props === "string") {
@@ -179,7 +185,7 @@ export function pluginToLookup(plugin, prefix = "") {
   if (plugin.utilities) {
     for (const [className, props] of Object.entries(plugin.utilities)) {
       // Remove leading dot and add prefix
-      const key = prefix 
+      const key = prefix
         ? `${prefix}${className.slice(1)}`
         : className.slice(1);
 
@@ -198,7 +204,7 @@ export function pluginToLookup(plugin, prefix = "") {
   // Process components
   if (plugin.components) {
     for (const [className, props] of Object.entries(plugin.components)) {
-      const key = prefix 
+      const key = prefix
         ? `${prefix}${className.slice(1)}`
         : className.slice(1);
 
@@ -234,7 +240,9 @@ export function validatePlugin(plugin) {
   }
 
   if (!plugin.utilities && !plugin.components && !plugin.handler) {
-    logger.warn(`Plugin "${plugin.name}" has no utilities, components, or handler`);
+    logger.warn(
+      `Plugin "${plugin.name}" has no utilities, components, or handler`
+    );
   }
 
   return true;

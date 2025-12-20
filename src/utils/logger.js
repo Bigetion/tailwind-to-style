@@ -3,14 +3,14 @@
  * Prevents console spam in production
  */
 class Logger {
-  constructor(level = 'warn') {
+  constructor(level = "warn") {
     this.level = level;
-    this.levels = { 
-      debug: 0, 
-      info: 1, 
-      warn: 2, 
-      error: 3, 
-      silent: 4 
+    this.levels = {
+      debug: 0,
+      info: 1,
+      warn: 2,
+      error: 3,
+      silent: 4,
     };
   }
 
@@ -42,7 +42,7 @@ class Logger {
    * Log debug message
    */
   debug(message, ...args) {
-    if (this.shouldLog('debug')) {
+    if (this.shouldLog("debug")) {
       console.debug(`[twsx:debug] ${message}`, ...args);
     }
   }
@@ -51,7 +51,7 @@ class Logger {
    * Log info message
    */
   info(message, ...args) {
-    if (this.shouldLog('info')) {
+    if (this.shouldLog("info")) {
       console.info(`[twsx:info] ${message}`, ...args);
     }
   }
@@ -60,7 +60,7 @@ class Logger {
    * Log warning message
    */
   warn(message, ...args) {
-    if (this.shouldLog('warn')) {
+    if (this.shouldLog("warn")) {
       console.warn(`[twsx:warn] ${message}`, ...args);
     }
   }
@@ -69,15 +69,16 @@ class Logger {
    * Log error message
    */
   error(message, ...args) {
-    if (this.shouldLog('error')) {
+    if (this.shouldLog("error")) {
       console.error(`[twsx:error] ${message}`, ...args);
     }
   }
 }
 
 // Create singleton instance with production-safe defaults
-const isProduction = typeof process !== 'undefined' && process.env?.NODE_ENV === 'production';
-export const logger = new Logger(isProduction ? 'error' : 'warn');
+const isProduction =
+  typeof process !== "undefined" && process.env?.NODE_ENV === "production";
+export const logger = new Logger(isProduction ? "error" : "warn");
 
 // Export Logger class for custom instances
 export { Logger };

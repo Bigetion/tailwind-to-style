@@ -12,19 +12,16 @@ export default function generator(configOptions = {}) {
 
   const { transitionDelay = {} } = theme;
 
-  const responsiveCssString = generateCssString(
-    ({ getCssByOptions }) => {
-      const cssString = getCssByOptions(transitionDelay, (key, value) => {
-        return `
+  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
+    const cssString = getCssByOptions(transitionDelay, (key, value) => {
+      return `
           ${prefix}-${key} {
             transition-delay: ${value};
           }
         `;
-      });
-      return cssString;
-    },
-    configOptions
-  );
+    });
+    return cssString;
+  }, configOptions);
 
   return responsiveCssString;
 }

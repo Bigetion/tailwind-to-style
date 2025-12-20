@@ -17,7 +17,7 @@ class TailwindCache {
    */
   getOrGenerate(generateFn, convertFn) {
     if (!this.initialized) {
-      this.twString = generateFn().replace(/\s\s+/g, ' ');
+      this.twString = generateFn().replace(/\s\s+/g, " ");
       this.cssObject = convertFn(this.twString);
       this.initialized = true;
     }

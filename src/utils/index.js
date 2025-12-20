@@ -25,7 +25,7 @@ function getConfigOptions(options = {}) {
       });
     }
   });
-  
+
   themeKeys.forEach((key) => {
     if (isFunction(newTheme[key])) {
       newTheme[key] = newTheme[key]({

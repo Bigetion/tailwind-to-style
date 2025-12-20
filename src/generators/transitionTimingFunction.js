@@ -12,9 +12,10 @@ export default function generator(configOptions = {}) {
 
   const { transitionTimingFunction = {} } = theme;
 
-  const responsiveCssString = generateCssString(
-    ({ getCssByOptions }) => {
-      const cssString = getCssByOptions(transitionTimingFunction, (key, value) => {
+  const responsiveCssString = generateCssString(({ getCssByOptions }) => {
+    const cssString = getCssByOptions(
+      transitionTimingFunction,
+      (key, value) => {
         if (key === "DEFAULT") {
           return ""; // Skip DEFAULT for ease
         }
@@ -23,11 +24,10 @@ export default function generator(configOptions = {}) {
             transition-timing-function: ${value};
           }
         `;
-      });
-      return cssString;
-    },
-    configOptions
-  );
+      }
+    );
+    return cssString;
+  }, configOptions);
 
   return responsiveCssString;
 }

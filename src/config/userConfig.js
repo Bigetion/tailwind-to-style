@@ -28,7 +28,11 @@ function deepMerge(target, source) {
   const result = { ...target };
 
   for (const key in source) {
-    if (source[key] && typeof source[key] === "object" && !Array.isArray(source[key])) {
+    if (
+      source[key] &&
+      typeof source[key] === "object" &&
+      !Array.isArray(source[key])
+    ) {
       result[key] = deepMerge(target[key] || {}, source[key]);
     } else {
       result[key] = source[key];
@@ -46,7 +50,7 @@ function deepMerge(target, source) {
  * @param {Array} [config.plugins] - Array of plugins
  * @param {Object} [config.corePlugins] - Core plugins to enable/disable
  * @param {string} [config.prefix] - Prefix for all classes
- * 
+ *
  * @example
  * configure({
  *   theme: {
@@ -111,7 +115,7 @@ export function configure(config = {}) {
 
     // Reset cache to apply new configuration
     resetTailwindCache();
-    
+
     logger.info("Configuration applied successfully");
   } catch (error) {
     logger.error("Error applying configuration:", error);

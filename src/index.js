@@ -383,7 +383,7 @@ const configOptionsCache = new LRUCache(500);
 
 function generateTailwindCssString(options = {}) {
   const pluginKeys = Object.keys(plugins);
-  
+
   // Merge user config with options
   const userConfigData = getConfig();
   const mergedOptions = {
@@ -397,14 +397,14 @@ function generateTailwindCssString(options = {}) {
       },
     },
   };
-  
+
   // Use cache to prevent unnecessary reprocessing
   // Include user config in cache key to ensure cache invalidation
   const key = JSON.stringify({
     options: mergedOptions,
     userConfigHash: JSON.stringify(userConfigData),
   });
-  
+
   if (!configOptionsCache.has(key)) {
     const configOptions = getConfigOptions(mergedOptions, pluginKeys);
     configOptionsCache.set(key, configOptions);
@@ -440,7 +440,7 @@ function convertCssToObject(cssString) {
   const plugins = getPlugins();
   const configOptions = getConfigOptions();
   const prefix = configOptions.prefix || "";
-  
+
   plugins.forEach((plugin) => {
     const pluginLookup = pluginToLookup(plugin, prefix);
     Object.assign(obj, pluginLookup);
@@ -1639,9 +1639,26 @@ export { getTailwindCache, resetTailwindCache } from "./utils/tailwindCache.js";
 
 // Export configuration and plugin system
 export { configure, getConfig, resetConfig } from "./config/userConfig.js";
-export { 
-  createPlugin, 
-  createUtilityPlugin, 
-  createVariantPlugin 
+export {
+  createPlugin,
+  createUtilityPlugin,
+  createVariantPlugin,
 } from "./plugins/pluginAPI.js";
 
+// Export dynamic animation utilities
+export { applyWebAnimation, initWebAnimations } from "./utils/webAnimations.js";
+
+export {
+  createDynamicAnimation,
+  createTemplateAnimation,
+  applyDynamicAnimation,
+  DYNAMIC_TEMPLATES,
+} from "./utils/dynamicAnimations.js";
+
+export {
+  applyInlineAnimation,
+  animateElement,
+  chainAnimations,
+  staggerAnimations,
+  INLINE_ANIMATIONS,
+} from "./utils/inlineAnimations.js";
