@@ -15,15 +15,14 @@ The library exposes two main functions and a CLI tool:
 2. **`twsx`**: A more advanced function that allows you to define nested and complex styles similar to SCSS, including support for responsive design, state variants, grouping, and enhanced CSS capabilities.
 3. **`twsx-cli`**: A command-line tool for generating CSS files from `twsx.*.js` files with watch mode support.
 
-## ✨ What's New in v2.12.0
+## ✨ What's New in v2.10.2
 
-- 🎬 **Animation Support**: Full support for `animate-spin`, `animate-pulse`, `animate-bounce`, `animate-ping`!
-- 🔄 **Transition Utilities**: Complete transition system with `duration`, `delay`, `ease`, and property control
-- ⏱️ **Keyframes**: Built-in keyframes with support for custom animations via `configure()`
-- 🎨 **Custom Animations**: Create your own animations through theme extension or plugin API
-- 📝 **Examples**: New comprehensive animation examples
-
-Now you can create smooth transitions and eye-catching animations like Tailwind CSS!
+- **⚛️ React Integration**: Built-in React hooks and provider for seamless integration
+- **🎬 Enhanced Animations**: Complete animation system with custom keyframes support
+- **🔄 Improved Transitions**: Full transition utilities with duration, delay, and easing
+- **🎨 Advanced Theming**: More flexible theme customization and plugin system
+- **⚡ Performance Boost**: Better caching and optimized CSS generation
+- **📱 Responsive Selector Syntax**: New intuitive `'md:.title': 'text-lg'` format
 
 ## ✨ What's New in v2.11.0
 
@@ -58,18 +57,233 @@ All changes are **backward compatible** - your existing code continues to work!
 
 ## Installation
 
-To use `tailwind-to-style`, install the library using either npm or yarn:
-
-### Using npm
-
 ```bash
 npm install tailwind-to-style
 ```
 
-### Using yarn
+## React Integration
 
-```bash
-yarn add tailwind-to-style
+### Quick Start with React
+
+```javascript
+import { useTwsx, TwsxProvider } from 'tailwind-to-style'
+
+// Theme configuration
+const config = {
+  theme: {
+    extend: {
+      colors: {
+        brand: { 500: '#3b82f6', 600: '#2563eb' }
+      }
+    }
+  }
+}
+
+function App() {
+  return (
+    <TwsxProvider config={config}>
+      <MyComponent />
+    </TwsxProvider>
+  )
+}
+
+function MyComponent() {
+  // Auto-inject CSS into document head
+  useTwsx({
+    '.card': [
+      'bg-brand-500 text-white p-6 rounded-lg',
+      {
+        '&:hover': 'bg-brand-600 transform scale-105',
+        '.title': 'text-xl font-bold mb-2'
+      }
+    ]
+  })
+
+  return (
+    <div className="card">
+      <h2 className="title">Interactive Card</h2>
+      <p>Hover me to see the effect!</p>
+    </div>
+  )
+}
+```
+
+### Import Options
+
+```javascript
+// Import from main package (recommended)
+import { useTwsx, TwsxProvider } from 'tailwind-to-style'
+
+// Or from React subpath
+import { useTwsx, TwsxProvider } from 'tailwind-to-style/react'
+```
+
+### `useTwsx()` Hook
+
+The main React hook for component styling:
+
+```javascript
+import { useTwsx } from 'tailwind-to-style'
+
+function MyComponent() {
+  // Auto-inject CSS (default behavior)
+  useTwsx({
+    '.button': [
+      'bg-blue-500 text-white px-6 py-3 rounded-lg font-medium',
+      {
+        '&:hover': 'bg-blue-600 transform scale-105',
+        '&:active': 'bg-blue-700 scale-95',
+        '&:disabled': 'bg-gray-400 cursor-not-allowed'
+      }
+    ]
+  })
+
+  // Get CSS without injection
+  const css = useTwsx({
+    '.card': 'bg-white p-6 rounded-lg shadow-md'
+  }, { inject: false })
+
+  return (
+    <>
+      <style>{css}</style>
+      <div className="card">
+        <button className="button">Click me</button>
+      </div>
+    </>
+  )
+}
+```
+
+### `TwsxProvider` - Theme Configuration
+
+Provide global theme configuration and custom colors:
+
+```javascript
+import { TwsxProvider, useTwsx } from 'tailwind-to-style'
+
+const themeConfig = {
+  theme: {
+    extend: {
+      colors: {
+        brand: {
+          50: '#eff6ff',
+          500: '#3b82f6',
+          600: '#2563eb',
+          900: '#1e3a8a'
+        },
+        accent: '#f59e0b'
+      },
+      spacing: {
+        '128': '32rem',
+        '144': '36rem'
+      }
+    }
+  }
+}
+
+function App() {
+  return (
+    <TwsxProvider config={themeConfig}>
+      <Header />
+      <Main />
+      <Footer />
+    </TwsxProvider>
+  )
+}
+
+function Header() {
+  useTwsx({
+    '.header': [
+      'bg-brand-500 text-white p-128', // Uses custom spacing
+      {
+        '.logo': 'text-accent font-bold text-2xl', // Uses custom color
+        '&:hover': 'bg-brand-600'
+      }
+    ]
+  })
+
+  return (
+    <header className="header">
+      <div className="logo">My Brand</div>
+    </header>
+  )
+}
+```
+
+### Dynamic Styling with State
+
+Create dynamic styles that respond to component state:
+
+```javascript
+import { useTwsx } from 'tailwind-to-style'
+import { useState } from 'react'
+
+function ThemeToggle() {
+  const [theme, setTheme] = useState('light')
+  
+  useTwsx({
+    '.theme-container': [
+      `bg-${theme === 'dark' ? 'gray-900' : 'white'} p-6 rounded-lg transition-all duration-300`,
+      {
+        [`&.${theme}`]: theme === 'dark' 
+          ? 'text-white border-gray-700' 
+          : 'text-gray-900 border-gray-200',
+        '.theme-title': 'text-2xl font-bold mb-4',
+        '.theme-button': [
+          'px-4 py-2 rounded-lg font-medium transition-colors',
+          theme === 'dark' 
+            ? 'bg-yellow-500 text-gray-900 hover:bg-yellow-400'
+            : 'bg-gray-800 text-white hover:bg-gray-700'
+        ]
+      }
+    ]
+  })
+
+  return (
+    <div className={`theme-container ${theme}`}>
+      <h2 className="theme-title">🌓 Dynamic Theme</h2>
+      <button 
+        className="theme-button"
+        onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+      >
+        Switch to {theme === 'light' ? 'Dark' : 'Light'} Mode
+      </button>
+    </div>
+  )
+}
+```
+
+### Available React Hooks
+
+```javascript
+import { 
+  useTwsx,           // Main hook for styling
+  TwsxProvider,      // Context provider
+  useTwsxContext,    // Access provider context
+  useTwsxConfig,     // Get current config
+  useUpdateTwsxConfig // Update config
+} from 'tailwind-to-style'
+
+// Example usage
+function ConfigAwareComponent() {
+  const { config, isConfigured } = useTwsxConfig()
+  const updateConfig = useUpdateTwsxConfig()
+  
+  if (!isConfigured) {
+    return <div>Loading theme...</div>
+  }
+  
+  return (
+    <div>
+      <p>Current theme: {config.theme?.extend?.colors?.brand ? 'Custom' : 'Default'}</p>
+      <button onClick={() => updateConfig({ 
+        theme: { extend: { colors: { brand: { 500: '#ef4444' } } } }
+      })}>
+        Change Brand Color
+      </button>
+    </div>
+  )
+}
 ```
 
 ## Core Functions
