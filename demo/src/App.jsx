@@ -42,6 +42,21 @@ const showcaseItems = [
     category: 'Features'
   },
   {
+    id: 'aspect-ratio',
+    title: 'Aspect Ratio',
+    category: 'Layout'
+  },
+  {
+    id: 'columns',
+    title: 'Columns',
+    category: 'Layout'
+  },
+  {
+    id: 'box-decoration-break',
+    title: 'Box Decoration Break',
+    category: 'Layout'
+  },
+  {
     id: 'components',
     title: 'Components',
     category: 'Features'
