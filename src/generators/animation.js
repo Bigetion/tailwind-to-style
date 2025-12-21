@@ -27,9 +27,9 @@ export default function generator(configOptions = {}) {
           const cssProp = prop.replace(/([A-Z])/g, "-$1").toLowerCase();
           keyframesCSS += `    ${cssProp}: ${value};\n`;
         }
-        keyframesCSS += `  }\n`;
+        keyframesCSS += "  }\n";
       }
-      keyframesCSS += `}\n`;
+      keyframesCSS += "}\n";
     }
 
     // Merge theme animations with inline animations (but skip inline if keyframes exist)
