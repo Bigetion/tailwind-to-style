@@ -14,15 +14,38 @@ export default function generator(configOptions = {}) {
 
   const prefix = `${globalPrefix}animate`;
 
-  const { animation = {} } = theme;
+  const { animation = {}, keyframes = {} } = theme;
 
   const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    // Merge theme animations with inline animations
+    // Generate keyframes first
+    let keyframesCSS = "";
+    for (const [name, keyframe] of Object.entries(keyframes)) {
+      keyframesCSS += `@keyframes ${name} {\n`;
+      for (const [percentage, styles] of Object.entries(keyframe)) {
+        keyframesCSS += `  ${percentage} {\n`;
+        for (const [prop, value] of Object.entries(styles)) {
+          const cssProp = prop.replace(/([A-Z])/g, "-$1").toLowerCase();
+          keyframesCSS += `    ${cssProp}: ${value};\n`;
+        }
+        keyframesCSS += "  }\n";
+      }
+      keyframesCSS += "}\n";
+    }
+
+    // Merge theme animations with inline animations (but skip inline if keyframes exist)
     const allAnimations = {
       ...animation,
-      // Add inline animations to the mix
+      // Add inline animations to the mix, but skip if keyframes version exists
       ...Object.keys(INLINE_ANIMATIONS).reduce((acc, key) => {
-        acc[key] = `inline-${key}`; // Special marker for inline animations
+        // Check if keyframes version exists (both camelCase and kebab-case)
+        const camelCaseKey = key.replace(/-([a-z])/g, (match, letter) =>
+          letter.toUpperCase()
+        );
+        const hasKeyframes = keyframes[key] || keyframes[camelCaseKey];
+
+        if (!hasKeyframes) {
+          acc[key] = `inline-${key}`; // Special marker for inline animations
+        }
         return acc;
       }, {}),
     };
@@ -75,7 +98,9 @@ export default function generator(configOptions = {}) {
           }
         `;
     });
-    return cssString;
+
+    // Combine keyframes and animation classes
+    return keyframesCSS + cssString;
   }, configOptions);
 
   return responsiveCssString;
