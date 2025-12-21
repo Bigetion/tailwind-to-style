@@ -25,7 +25,7 @@ const babelConfig = {
 };
 
 export default [
-  // ESM build
+  // Main ESM build
   {
     input,
     output: {
@@ -40,13 +40,31 @@ export default [
       babel(babelConfig),
       copy({
         targets: [
-          { src: 'types/index.d.ts', dest: 'dist/' }
+          { src: 'types/index.d.ts', dest: 'dist/' },
+          { src: 'types/react.d.ts', dest: 'dist/' }
         ]
       })
     ]
   },
   
-  // CommonJS build
+  // React hooks ESM build
+  {
+    input: 'src/react/index.js',
+    output: {
+      file: 'dist/react.esm.js',
+      format: 'esm',
+      banner
+    },
+    external: ['react', 'react-dom'],
+    plugins: [
+      resolve({ extensions }),
+      commonjs(),
+      json(),
+      babel(babelConfig)
+    ]
+  },
+  
+  // Main CommonJS build
   {
     input,
     output: {
@@ -55,6 +73,24 @@ export default [
       banner,
       exports: 'named'
     },
+    plugins: [
+      resolve({ extensions }),
+      commonjs(),
+      json(),
+      babel(babelConfig)
+    ]
+  },
+  
+  // React hooks CommonJS build
+  {
+    input: 'src/react/index.js',
+    output: {
+      file: 'dist/react.cjs.js',
+      format: 'cjs',
+      banner,
+      exports: 'named'
+    },
+    external: ['react', 'react-dom'],
     plugins: [
       resolve({ extensions }),
       commonjs(),

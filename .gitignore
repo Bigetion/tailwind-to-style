@@ -38,6 +38,11 @@ logs/
 /coverage
 /tests/*.js
 
+# Demo (React playground)
+/demo/node_modules
+/demo/dist
+/demo/.env*
+
 # Temporary files
 .tmp/
 temp/

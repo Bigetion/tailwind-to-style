@@ -66,7 +66,6 @@ export default [
       'coverage/**',
       '*.min.js',
       'rollup.config.js',
-      'rollup.config.mjs',
     ],
   },
 ];
