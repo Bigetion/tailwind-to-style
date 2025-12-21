@@ -1545,17 +1545,52 @@ export function twsx(obj, options = {}) {
       "twsx:generate"
     );
 
+    // Generate keyframes CSS separately
+    const keyframesMarker = performanceMonitor.start("twsx:keyframes");
+    const userConfigData = getConfig();
+    const mergedOptions = {
+      ...options,
+      theme: {
+        ...options.theme,
+        ...userConfigData.theme,
+        extend: {
+          ...options.theme?.extend,
+          ...userConfigData.theme?.extend,
+        },
+      },
+    };
+    const configOptions = getConfigOptions(mergedOptions, Object.keys(plugins));
+    const { keyframes = {} } = configOptions.theme || {};
+
+    let keyframesCSS = "";
+    for (const [name, keyframe] of Object.entries(keyframes)) {
+      keyframesCSS += `@keyframes ${name} {\n`;
+      for (const [percentage, styles] of Object.entries(keyframe)) {
+        keyframesCSS += `  ${percentage} {\n`;
+        for (const [prop, value] of Object.entries(styles)) {
+          const cssProp = prop.replace(/([A-Z])/g, "-$1").toLowerCase();
+          keyframesCSS += `    ${cssProp}: ${value};\n`;
+        }
+        keyframesCSS += `  }\n`;
+      }
+      keyframesCSS += `}\n`;
+    }
+    performanceMonitor.end(keyframesMarker);
+
+    // Combine keyframes and regular CSS
+    const finalCSS = keyframesCSS + cssString;
+
     // Auto-inject if needed
     if (
       inject &&
       typeof window !== "undefined" &&
       typeof document !== "undefined"
     ) {
-      performanceMonitor.measure(() => autoInjectCss(cssString), "twsx:inject");
+      performanceMonitor.measure(() => autoInjectCss(finalCSS), "twsx:inject");
     }
 
     performanceMonitor.end(totalMarker);
-    return cssString;
+    return finalCSS;
   } catch (error) {
     performanceMonitor.end(totalMarker);
     handleError(error, { obj, options });

@@ -10,6 +10,8 @@ const theme = {
     ping: "ping 1s cubic-bezier(0, 0, 0.2, 1) infinite",
     pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
     bounce: "bounce 1s infinite",
+    "fade-in": "fadeIn 2s ease-in-out infinite",
+    "slide-up": "slideUp 2s ease-in-out infinite",
     custom: "custom_value",
   },
   aspectRatio: {
@@ -1269,6 +1271,16 @@ const theme = {
         transform: "none",
         animationTimingFunction: "cubic-bezier(0,0,0.2,1)",
       },
+    },
+    fadeIn: {
+      "0%": { opacity: "0" },
+      "50%": { opacity: "1" },
+      "100%": { opacity: "0" },
+    },
+    slideUp: {
+      "0%": { transform: "translateY(20px)", opacity: "0" },
+      "50%": { transform: "translateY(0)", opacity: "1" },
+      "100%": { transform: "translateY(-20px)", opacity: "0" },
     },
   },
   transitionProperty: {
