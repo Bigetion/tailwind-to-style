@@ -18,6 +18,16 @@ import generateBackgroundOrigin from "./generators/backgroundOrigin.js";
 import generateBackgroundPosition from "./generators/backgroundPosition.js";
 import generateBackgroundRepeat from "./generators/backgroundRepeat.js";
 import generateBackgroundSize from "./generators/backgroundSize.js";
+import generateBackdropBlur from "./generators/backdropBlur.js";
+import generateBackdropBrightness from "./generators/backdropBrightness.js";
+import generateBackdropContrast from "./generators/backdropContrast.js";
+import generateBackdropFilter from "./generators/backdropFilter.js";
+import generateBackdropGrayscale from "./generators/backdropGrayscale.js";
+import generateBackdropHueRotate from "./generators/backdropHueRotate.js";
+import generateBackdropInvert from "./generators/backdropInvert.js";
+import generateBackdropOpacity from "./generators/backdropOpacity.js";
+import generateBackdropSaturate from "./generators/backdropSaturate.js";
+import generateBackdropSepia from "./generators/backdropSepia.js";
 import generateBlur from "./generators/blur.js";
 import generateBorderCollapse from "./generators/borderCollapse.js";
 import generateBorderColor from "./generators/borderColor.js";
@@ -29,10 +39,15 @@ import generateBorderWidth from "./generators/borderWidth.js";
 import generateBoxDecorationBreak from "./generators/boxDecorationBreak.js";
 import generateBoxShadow from "./generators/boxShadow.js";
 import generateBoxSizing from "./generators/boxSizing.js";
+import generateBreakAfter from "./generators/breakAfter.js";
+import generateBreakBefore from "./generators/breakBefore.js";
+import generateBreakInside from "./generators/breakInside.js";
 import generateBrightness from "./generators/brightness.js";
 import generateCaptionSide from "./generators/captionSide.js";
 import generateCaretColor from "./generators/caretColor.js";
 import generateClear from "./generators/clear.js";
+import generateColumns from "./generators/columns.js";
+import generateContainer from "./generators/container.js";
 import generateContent from "./generators/content.js";
 import generateContrast from "./generators/contrast.js";
 import generateCursor from "./generators/cursor.js";
@@ -82,6 +97,7 @@ import generateJustifySelf from "./generators/justifySelf.js";
 import generateLetterSpacing from "./generators/letterSpacing.js";
 import generateLineClamp from "./generators/lineClamp.js";
 import generateLineHeight from "./generators/lineHeight.js";
+import generateListStyleImage from "./generators/listStyleImage.js";
 import generateListStylePosition from "./generators/listStylePosition.js";
 import generateListStyleType from "./generators/listStyleType.js";
 import generateMargin from "./generators/margin.js";
@@ -165,8 +181,8 @@ import generateZIndex from "./generators/zIndex.js";
 
 import { logger } from "./utils/logger.js";
 import { LRUCache } from "./utils/lruCache.js";
-import { handleError, TwsError, onError } from "./utils/errorHandler.js";
-import { getTailwindCache, resetTailwindCache } from "./utils/tailwindCache.js";
+import { handleError } from "./utils/errorHandler.js";
+import { getTailwindCache } from "./utils/tailwindCache.js";
 import { getPlugins } from "./config/userConfig.js";
 import { pluginToLookup } from "./plugins/pluginAPI.js";
 import patterns from "./patterns/index.js";
@@ -189,6 +205,16 @@ const plugins = {
   backgroundPosition: generateBackgroundPosition,
   backgroundRepeat: generateBackgroundRepeat,
   backgroundSize: generateBackgroundSize,
+  backdropBlur: generateBackdropBlur,
+  backdropBrightness: generateBackdropBrightness,
+  backdropContrast: generateBackdropContrast,
+  backdropFilter: generateBackdropFilter,
+  backdropGrayscale: generateBackdropGrayscale,
+  backdropHueRotate: generateBackdropHueRotate,
+  backdropInvert: generateBackdropInvert,
+  backdropOpacity: generateBackdropOpacity,
+  backdropSaturate: generateBackdropSaturate,
+  backdropSepia: generateBackdropSepia,
   blur: generateBlur,
   borderCollapse: generateBorderCollapse,
   borderColor: generateBorderColor,
@@ -200,10 +226,15 @@ const plugins = {
   boxDecorationBreak: generateBoxDecorationBreak,
   boxShadow: generateBoxShadow,
   boxSizing: generateBoxSizing,
+  breakAfter: generateBreakAfter,
+  breakBefore: generateBreakBefore,
+  breakInside: generateBreakInside,
   brightness: generateBrightness,
   captionSide: generateCaptionSide,
   caretColor: generateCaretColor,
   clear: generateClear,
+  columns: generateColumns,
+  container: generateContainer,
   content: generateContent,
   contrast: generateContrast,
   cursor: generateCursor,
@@ -253,6 +284,7 @@ const plugins = {
   letterSpacing: generateLetterSpacing,
   lineClamp: generateLineClamp,
   lineHeight: generateLineHeight,
+  listStyleImage: generateListStyleImage,
   listStylePosition: generateListStylePosition,
   listStyleType: generateListStyleType,
   margin: generateMargin,
@@ -984,7 +1016,7 @@ export function tws(classNames, convertToJson) {
     return cssResult;
   } catch (error) {
     performanceMonitor.end(totalMarker);
-    const twsError = handleError(error, { classNames, convertToJson });
+    handleError(error, { classNames, convertToJson });
     return convertToJson ? {} : "";
   }
 }
@@ -1526,7 +1558,7 @@ export function twsx(obj, options = {}) {
     return cssString;
   } catch (error) {
     performanceMonitor.end(totalMarker);
-    const twsxError = handleError(error, { obj, options });
+    handleError(error, { obj, options });
     return "";
   }
 }

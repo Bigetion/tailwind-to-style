@@ -1,6 +1,6 @@
 # Changelog
 
-## [2.12.0] - 2025-12-21
+## [2.10.2] - 2025-12-21
 
 ### 🎬 Animation & Transition Support
 
