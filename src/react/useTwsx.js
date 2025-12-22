@@ -4,7 +4,28 @@
  */
 
 import { twsx } from "../index.js";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
+
+// Global CSS cache to prevent duplicate injections
+const globalCssCache = new Map();
+let globalStyleElement = null;
+
+function getOrCreateGlobalStyleElement() {
+  if (!globalStyleElement) {
+    globalStyleElement = document.createElement("style");
+    globalStyleElement.setAttribute("data-twsx-global", "true");
+    document.head.appendChild(globalStyleElement);
+  }
+  return globalStyleElement;
+}
+
+function updateGlobalCSS() {
+  if (typeof document === "undefined") return;
+  
+  const styleElement = getOrCreateGlobalStyleElement();
+  const allCSS = Array.from(globalCssCache.values()).join("\n");
+  styleElement.textContent = allCSS;
+}
 
 /**
  * Custom hook for using TWSX in React components
@@ -17,42 +38,44 @@ import { useEffect, useMemo, useRef } from "react";
  * - Get CSS only: useTwsx({ '.card': 'bg-white p-4' }, { inject: false })
  */
 export function useTwsx(styles, options = {}) {
-  const styleElementRef = useRef();
-
   // Generate CSS with memoization for performance
   const css = useMemo(() => {
     if (!styles) return "";
 
+    console.log("useTwsx - Input styles:", styles);
+
     try {
-      return twsx(styles, { inject: false, ...options });
+      const result = twsx(styles, { inject: false, ...options });
+      console.log("useTwsx - Generated CSS:", result);
+      return result;
     } catch (error) {
       console.error("TWSX Error:", error);
       return "";
     }
   }, [styles, options]);
 
-  // Auto-inject CSS into document head (unless inject: false)
+  // Create a unique key for this CSS
+  const cssKey = useMemo(() => {
+    if (!css) return null;
+    return `twsx-${Math.random().toString(36).substr(2, 8)}`;
+  }, [css]);
+
+  // Auto-inject CSS into global style element (unless inject: false)
   useEffect(() => {
-    if (!css || options.inject === false) return;
+    if (!css || !cssKey || options.inject === false) return;
 
-    // Create or update style element
-    if (!styleElementRef.current) {
-      styleElementRef.current = document.createElement("style");
-      styleElementRef.current.setAttribute("data-twsx-hook", "true");
-      document.head.appendChild(styleElementRef.current);
-    }
+    // Add CSS to global cache
+    globalCssCache.set(cssKey, css);
+    updateGlobalCSS();
 
-    // Update CSS content
-    styleElementRef.current.textContent = css;
+    console.log("useTwsx - Injected CSS with key:", cssKey);
 
     // Cleanup function
     return () => {
-      if (styleElementRef.current && styleElementRef.current.parentNode) {
-        styleElementRef.current.parentNode.removeChild(styleElementRef.current);
-        styleElementRef.current = null;
-      }
+      globalCssCache.delete(cssKey);
+      updateGlobalCSS();
     };
-  }, [css, options.inject]);
+  }, [css, cssKey, options.inject]);
 
   return css;
 }
