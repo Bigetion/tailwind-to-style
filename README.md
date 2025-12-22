@@ -15,45 +15,41 @@ The library exposes two main functions and a CLI tool:
 2. **`twsx`**: A more advanced function that allows you to define nested and complex styles similar to SCSS, including support for responsive design, state variants, grouping, and enhanced CSS capabilities.
 3. **`twsx-cli`**: A command-line tool for generating CSS files from `twsx.*.js` files with watch mode support.
 
-## ✨ What's New in v2.10.2
+## ✨ What's New in v2.10.5
 
-- **⚛️ React Integration**: Built-in React hooks and provider for seamless integration
-- **🎬 Enhanced Animations**: Complete animation system with custom keyframes support
-- **🔄 Improved Transitions**: Full transition utilities with duration, delay, and easing
-- **🎨 Advanced Theming**: More flexible theme customization and plugin system
-- **⚡ Performance Boost**: Better caching and optimized CSS generation
-- **📱 Responsive Selector Syntax**: New intuitive `'md:.title': 'text-lg'` format
+- **🎬 Complete Animation System**: Full support for Tailwind animations and transitions
+  - Built-in animations: `animate-spin`, `animate-ping`, `animate-pulse`, `animate-bounce`
+  - Complete transition utilities with duration, delay, and easing controls
+  - Custom animations via theme configuration
+  - Keyframes system with built-in and custom support
+  
+- **🎨 Theme Customization**: Extend default theme with custom colors, spacing, and more!
+  - Deep merge support for nested theme values
+  - Works seamlessly with existing Tailwind utilities
+  - Brand-specific design systems
+  
+- **🔌 Plugin API**: Create custom utilities with `createPlugin()` and `createUtilityPlugin()`
+  - Simple utility plugins for custom styles
+  - Dynamic utilities with multiple values
+  - Unlimited custom utility classes
+  
+- **⚙️ Configuration System**: Use `configure()` to set up theme and plugins
+  - Support for `tailwind-to-style.config.js`
+  - Prefix support and core plugin control
+  - Easy configuration management
+  
+- **🚀 Infrastructure Improvements**: 
+  - Updated dependencies (ESLint 9, Jest 30, Rollup 4)
+  - LRU Cache for better memory management
+  - Configurable logger system (production-safe)
+  - Event-based error handling
+  - Complete TypeScript definitions
+  - Node.js 18.x, 20.x, 22.x LTS support
 
-## ✨ What's New in v2.11.0
-
-- 🎨 **Theme Customization**: Extend default theme with custom colors, spacing, and more!
-- 🔌 **Plugin API**: Create custom utilities with `createPlugin()` and `createUtilityPlugin()`
-- ⚙️ **Configuration System**: Use `configure()` to set up theme and plugins
-- 📝 **Config Files**: Support for `tailwind-to-style.config.js`
-- 🎯 **Complete TypeScript**: Full type definitions for config and plugins
-- 📚 **Examples**: New examples for theme customization and custom plugins
-
-Now you can create brand-specific design systems and custom utilities!
-
-## ✨ What's New in v2.10.0
-
-- 🔄 **Updated Dependencies**: All dependencies updated to latest 2025 versions (ESLint 9, Jest 30, Rollup 4)
-- 🎯 **LRU Cache**: Replaced naive caching with proper LRU implementation for better memory management
-- 📝 **Logger System**: Configurable logging with production-safe defaults (no more console spam!)
-- ⚠️ **Error Handling**: Event-based error system with `onError()` subscription pattern
-- 🔒 **Singleton Pattern**: Refactored global state to testable singleton
-- 📘 **Complete TypeScript**: Added full type definitions for all exports
-- 🚀 **Node.js Support**: Now supports Node 18.x, 20.x, 22.x LTS (dropped EOL versions)
-- 🔧 **ESLint 9**: Migrated to modern flat config format
+- **📱 Responsive Selector Syntax**: Intuitive `'md:.title': 'text-lg'` format
+- **🐛 Enhanced @css Directive**: Perfect CSS variables and functions preservation
 
 All changes are **backward compatible** - your existing code continues to work!
-
-## ✨ What's New in v2.9.0
-
-- 🆕 **Responsive Selector Syntax**: Intuitive `'md:.title': 'text-lg'` format for responsive styling
-- 🐛 **Critical @css Bug Fix**: Perfect preservation of CSS variables, functions, and complex expressions
-- ⚡ **Enhanced Performance**: Improved processing for large datasets and concurrent operations
-- 🔧 **Better Error Handling**: 100% error recovery rate for malformed inputs
 
 ## Installation
 
