@@ -1,10 +1,222 @@
 # Changelog
 
-## [2.10.2] - 2025-12-21
+## [2.11.0] - 2025-12-22
 
-### 🎬 Animation & Transition Support
+### 🎨 New Features: Styled Components & Variants System
 
-#### **Built-in Animations**
+#### **🏗️ `styled()` - Component Factory**
+Create reusable styled components with Tailwind classes:
+
+```javascript
+import { styled } from 'tailwind-to-style';
+
+const Button = styled('button', {
+  base: 'px-4 py-2 rounded-lg font-medium transition-all',
+  hover: 'bg-blue-600 transform scale-105',
+  variants: {
+    color: {
+      primary: 'bg-blue-500 text-white',
+      secondary: 'bg-gray-500 text-white',
+      danger: 'bg-red-500 text-white'
+    },
+    size: {
+      sm: 'text-sm px-3 py-1.5',
+      md: 'text-base px-4 py-2',
+      lg: 'text-lg px-6 py-3'
+    }
+  },
+  defaultVariants: {
+    color: 'primary',
+    size: 'md'
+  }
+});
+
+// Usage
+<Button color="danger" size="lg">Delete</Button>
+```
+
+**Features:**
+- ✅ Variant-based styling system
+- ✅ Compound variants for complex conditions
+- ✅ Pseudo-state support (hover, focus, active, disabled)
+- ✅ Nested styles with SCSS-like syntax
+- ✅ Forward refs support
+- ✅ Polymorphic "as" prop
+- ✅ Tag helpers: `styled.div()`, `styled.button()`, etc.
+- ✅ Full TypeScript support with type inference
+
+#### **🎭 `tv()` - Type-safe Variants**
+Framework-agnostic variant system for design systems:
+
+```javascript
+import { tv } from 'tailwind-to-style';
+
+const button = tv({
+  base: 'px-4 py-2 rounded-lg',
+  variants: {
+    color: {
+      primary: 'bg-blue-500 text-white',
+      secondary: 'bg-gray-500 text-white'
+    },
+    size: {
+      sm: 'text-sm',
+      lg: 'text-lg'
+    }
+  },
+  compoundVariants: [
+    {
+      color: 'primary',
+      size: 'lg',
+      class: 'font-bold shadow-lg'
+    }
+  ],
+  defaultVariants: {
+    color: 'primary',
+    size: 'sm'
+  }
+});
+
+// Usage
+const className = button({ color: 'primary', size: 'lg' });
+// Output: 'px-4 py-2 rounded-lg bg-blue-500 text-white text-lg font-bold shadow-lg'
+```
+
+**Features:**
+- ✅ Type-safe variant props
+- ✅ Compound variants for conditional styling
+- ✅ Default variants
+- ✅ Framework-agnostic (works anywhere)
+- ✅ `createVariants()` for batch creation
+- ✅ Inspired by tailwind-variants and CVA
+
+#### **📦 Export Changes**
+- Added `styled` from `tailwind-to-style` (React)
+- Added `tv` and `createVariants` from root package
+- Full TypeScript definitions in `types/styled.d.ts`
+
+#### **🎯 Use Cases**
+- Building design systems and UI libraries
+- Component-based styling with variants
+- Type-safe variant props in TypeScript
+- Reusable style patterns across projects
+- Complex component styling without CSS-in-JS runtime
+
+#### **🔗 Integration Examples**
+```javascript
+// Option 1: Styled components with React
+import { styled, TwsxProvider } from 'tailwind-to-style';
+
+const Card = styled.div({
+  base: 'bg-white rounded-lg p-6',
+  hover: 'shadow-xl',
+  nested: {
+    '.title': 'text-xl font-bold',
+    '.content': 'text-gray-600 mt-2'
+  }
+});
+
+// Option 2: Variant function (framework-agnostic)
+import { tv } from 'tailwind-to-style';
+
+const cardStyles = tv({
+  base: 'bg-white rounded-lg p-6',
+  variants: {
+    elevation: {
+      sm: 'shadow-sm',
+      lg: 'shadow-lg'
+    }
+  }
+});
+```
+
+See [examples/styled-components.jsx](examples/styled-components.jsx) for complete examples.
+
+---
+
+## [2.10.5] - 2025-12-21
+
+### 🎉 Major Features
+
+#### **⚛️ React Integration**
+- ✅ **`useTwsx()` Hook**: Main React hook for component styling
+  - Auto-inject CSS into document head by default
+  - Optional manual CSS string output with `{ inject: false }`
+  - Perfect for dynamic component-level styling
+  ```javascript
+  import { useTwsx } from 'tailwind-to-style';
+  
+  function MyComponent() {
+    useTwsx({
+      '.button': [
+        'bg-blue-500 text-white px-6 py-3 rounded-lg',
+        {
+          '&:hover': 'bg-blue-600 transform scale-105',
+          '&:active': 'bg-blue-700 scale-95'
+        }
+      ]
+    });
+    
+    return <button className="button">Click me</button>;
+  }
+  ```
+
+- ✅ **`TwsxProvider`**: Global theme configuration provider
+  - Provide theme config to all child components
+  - Support for custom colors, spacing, and design tokens
+  - Seamless integration with React context
+  ```javascript
+  import { TwsxProvider } from 'tailwind-to-style';
+  
+  const themeConfig = {
+    theme: {
+      extend: {
+        colors: {
+          brand: { 500: '#3b82f6', 600: '#2563eb' }
+        }
+      }
+    }
+  };
+  
+  function App() {
+    return (
+      <TwsxProvider config={themeConfig}>
+        <YourComponents />
+      </TwsxProvider>
+    );
+  }
+  ```
+
+- ✅ **Additional React Hooks**:
+  - `useTwsxContext()` - Access provider context
+  - `useTwsxConfig()` - Get current configuration and status
+  - `useUpdateTwsxConfig()` - Dynamically update theme config
+  ```javascript
+  import { useTwsxConfig, useUpdateTwsxConfig } from 'tailwind-to-style';
+  
+  function ThemeSettings() {
+    const { config, isConfigured } = useTwsxConfig();
+    const updateConfig = useUpdateTwsxConfig();
+    
+    return (
+      <button onClick={() => updateConfig({ 
+        theme: { extend: { colors: { brand: { 500: '#ef4444' } } } }
+      })}>
+        Change Theme
+      </button>
+    );
+  }
+  ```
+
+- ✅ **Import Options**: Flexible import paths
+  ```javascript
+  // From main package (recommended)
+  import { useTwsx, TwsxProvider } from 'tailwind-to-style';
+  
+  // From React subpath
+  import { useTwsx, TwsxProvider } from 'tailwind-to-style/react';
+  ```
+
+#### **🎬 Animation & Transition Support**
 - ✅ **Animation Utilities**: Full support for Tailwind animations
   - `animate-spin` - Continuous rotation (loading spinners)
   - `animate-ping` - Scale and fade effect (notifications)
@@ -15,46 +227,24 @@
   tws('animate-spin'); // { animation: "spin 1s linear infinite" }
   ```
 
-#### **Transition Utilities**
-- ✅ **Transition Properties**: Control what properties transition
+- ✅ **Transition Utilities**: Complete transition system
   - `transition` - Default transition (colors, opacity, shadow, transform, etc.)
   - `transition-all` - Transition all properties
-  - `transition-colors` - Only color-related properties
-  - `transition-opacity` - Only opacity
-  - `transition-shadow` - Only box-shadow
-  - `transition-transform` - Only transform
-  - `transition-none` - Disable transitions
-
-- ✅ **Duration Control**: Set transition duration
-  - `duration-75` through `duration-1000` (75ms to 1000ms)
+  - `transition-colors`, `transition-opacity`, `transition-shadow`, `transition-transform`
+  - Duration control: `duration-75` through `duration-1000`
+  - Timing functions: `ease-linear`, `ease-in`, `ease-out`, `ease-in-out`
+  - Delay control: `delay-75` through `delay-1000`
   ```javascript
-  tws('duration-300'); // { transitionDuration: "300ms" }
+  tws('transition-all duration-300 ease-in-out delay-150');
   ```
 
-- ✅ **Timing Functions**: Control animation easing
-  - `ease-linear` - Linear timing
-  - `ease-in` - Ease in
-  - `ease-out` - Ease out
-  - `ease-in-out` - Ease in and out
-  ```javascript
-  tws('ease-in-out'); // { transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)" }
-  ```
-
-- ✅ **Delay Control**: Set transition delay
-  - `delay-75` through `delay-1000` (75ms to 1000ms)
-  ```javascript
-  tws('delay-150'); // { transitionDelay: "150ms" }
-  ```
-
-#### **Keyframes System**
-- ✅ **Built-in Keyframes**: Pre-defined animation keyframes
+- ✅ **Keyframes System**: Built-in animation keyframes
   - `spin` - 360° rotation
   - `ping` - Scale and fade out
   - `pulse` - Opacity breathing
   - `bounce` - Bouncing motion with cubic-bezier timing
 
-#### **Custom Animations**
-- ✅ **Theme Extension**: Define custom animations via `configure()`
+- ✅ **Custom Animations**: Define custom animations via `configure()`
   ```javascript
   configure({
     theme: {
@@ -78,30 +268,7 @@
   });
   ```
 
-- ✅ **Plugin API Support**: Create animation plugins
-  ```javascript
-  const animPlugin = createUtilityPlugin(
-    'customAnims',
-    { shake: 'shake 0.5s ease-in-out' },
-    { property: 'animation' }
-  );
-  ```
-
-### 📝 Documentation & Examples
-- ✅ Added comprehensive animation documentation to README
-- ✅ Created `examples/animations.js` with real-world use cases
-- ✅ Added test files: `test-animation.js`, `test-transition.js`
-
-### 🔧 Technical Improvements
-- ✅ New generators: `animation.js`, `transitionProperty.js`, `transitionDuration.js`, `transitionTimingFunction.js`, `transitionDelay.js`
-- ✅ Updated theme config with animation values and keyframes
-- ✅ All animation utilities work with responsive variants (md:, lg:) and state variants (hover:, focus:)
-
-## [2.11.0] - 2025-12-20
-
-### 🎉 Major Features
-
-#### **Theme Customization System**
+#### **🎨 Theme Customization System**
 - ✅ **Custom Theme Extensions**: Extend default Tailwind theme with your own values
   - Custom colors, spacing, border radius, font sizes, and more
   - Deep merge support for nested theme values
@@ -111,34 +278,40 @@
     theme: {
       extend: {
         colors: {
-          brand: { 500: '#0ea5e9' },
+          brand: { 500: '#0ea5e9', 600: '#0284c7' },
+        },
+        spacing: {
+          '128': '32rem',
+          '144': '36rem',
         },
       },
     },
   });
-  tws('bg-brand-500'); // Works!
+  tws('bg-brand-500 p-128'); // Works!
   ```
 
-#### **Plugin API**
+#### **🔌 Plugin API**
 - ✅ **Custom Utility Plugins**: Create your own utility classes
   - `createPlugin()` - Create simple utility plugins
   - `createUtilityPlugin()` - Create dynamic utilities with multiple values
   - `createVariantPlugin()` - Create custom variants (coming soon)
   ```javascript
-  const plugin = createPlugin('my-plugin', {
+  const textGradientPlugin = createPlugin('text-gradient', {
     utilities: {
       '.text-gradient': {
         'background-clip': 'text',
+        '-webkit-background-clip': 'text',
         '-webkit-text-fill-color': 'transparent',
+        'background-image': 'linear-gradient(to right, #3b82f6, #8b5cf6)',
       },
     },
   });
   
-  configure({ plugins: [plugin] });
+  configure({ plugins: [textGradientPlugin] });
   tws('text-gradient'); // Works!
   ```
 
-#### **Configuration System**
+#### **⚙️ Configuration System**
 - ✅ **`configure()` Function**: Apply theme and plugin configuration
 - ✅ **`getConfig()` Function**: Get current configuration
 - ✅ **`resetConfig()` Function**: Reset to defaults
@@ -146,48 +319,9 @@
 - ✅ **Prefix Support**: Add prefix to all classes
 - ✅ **Core Plugin Control**: Enable/disable core plugins
 
-### 📦 New Exports
-```javascript
-// Configuration
-export { configure, getConfig, resetConfig };
+### 🚀 Infrastructure & Performance
 
-// Plugin API
-export { createPlugin, createUtilityPlugin, createVariantPlugin };
-```
-
-### 📚 Documentation
-- Added comprehensive theme customization guide
-- Added plugin API documentation with examples
-- Added example config files
-- Created `examples/theme-customization.js`
-- Created `examples/custom-plugins.js`
-- Created `examples/tailwind-to-style.config.example.js`
-
-### 🎯 TypeScript
-- Added complete type definitions for configuration system
-- Added plugin API types
-- Better IntelliSense support for custom theme values
-
-### 🔧 Technical Improvements
-- User config management system
-- Deep merge algorithm for theme extensions
-- Plugin utilities integrated into CSS lookup
-- Cache invalidation on config changes
-
-### 💡 Use Cases Unlocked
-- Brand-specific color systems
-- Custom design tokens
-- Glassmorphism effects
-- Text gradients
-- Custom shadows
-- Scroll snap utilities
-- And unlimited custom utilities!
-
----
-
-## [2.10.0] - 2025-12-20
-
-### 🚀 Major Improvements
+### 🚀 Infrastructure & Performance
 
 #### **Modernization & Dependencies**
 - ✅ **Updated all dependencies** to latest versions (December 2025)
@@ -195,7 +329,7 @@ export { createPlugin, createUtilityPlugin, createVariantPlugin };
   - Jest: v28.1 → v30.0 (latest testing framework)
   - Rollup: v2.75 → v4.27 (latest bundler)
   - @rollup/* plugins: Updated to latest versions
-- ✅ **Node.js support**: Dropped EOL versions, now supports 18.x, 20.x, 22.x LTS
+- ✅ **Node.js support**: Dropped EOL versions, now supports Node 18.x, 20.x, 22.x LTS
 - ✅ **ESLint flat config**: Migrated to modern eslint.config.js format
 
 #### **Architecture Refactoring**
@@ -222,37 +356,64 @@ export { createPlugin, createUtilityPlugin, createVariantPlugin };
   - handleError() centralized error processing
   - Better debugging in production
 
-#### **TypeScript & API**
-- ✅ **Complete TypeScript definitions**: Added missing type exports
-  - Logger and Logger class
-  - LRUCache class
+### 📦 New Exports & TypeScript
+
+```javascript
+// Configuration
+export { configure, getConfig, resetConfig };
+
+// Plugin API
+export { createPlugin, createUtilityPlugin, createVariantPlugin };
+
+// Advanced utilities
+export { 
+  logger, Logger,
+  LRUCache,
+  TwsError, onError,
+  getTailwindCache, resetTailwindCache
+};
+```
+
+- ✅ **Complete TypeScript definitions**: Full type exports
+  - Configuration system types
+  - Plugin API types
+  - Logger and LRUCache types
   - TwsError and error handlers
-  - TailwindCache singleton
   - Better autocomplete support
-- ✅ **New exports**: Exposed utility classes for advanced usage
-  ```javascript
-  import { 
-    logger, Logger,
-    LRUCache,
-    TwsError, onError,
-    getTailwindCache, resetTailwindCache
-  } from 'tailwind-to-style';
-  ```
+
+### 📚 Documentation & Examples
+- ✅ Added comprehensive animation documentation to README
+- ✅ Added theme customization guide
+- ✅ Added plugin API documentation with examples
+- ✅ Created `examples/animations.js` with real-world use cases
+- ✅ Created `examples/theme-customization.js`
+- ✅ Created `examples/custom-plugins.js`
+- ✅ Created `examples/tailwind-to-style.config.example.js`
+- ✅ Updated all inline JSDoc comments
 
 ### 🔧 Technical Improvements
-- Performance: LRU caches are more efficient than Map with arbitrary cleanup
-- Memory: Better memory management with proper cache eviction
-- Security: Fixed outdated dependencies with known vulnerabilities
-- Testing: Easier to test with singleton reset methods
-- Production: No more console spam, production-safe logging
+- ✅ New animation generators: `animation.js`, `transitionProperty.js`, `transitionDuration.js`, `transitionTimingFunction.js`, `transitionDelay.js`
+- ✅ Updated theme config with animation values and keyframes
+- ✅ All animation utilities work with responsive and state variants
+- ✅ User config management system
+- ✅ Deep merge algorithm for theme extensions
+- ✅ Plugin utilities integrated into CSS lookup
+- ✅ Cache invalidation on config changes
+- ✅ Performance: LRU caches are more efficient than Map with arbitrary cleanup
+- ✅ Memory: Better memory management with proper cache eviction
+- ✅ Security: Fixed outdated dependencies with known vulnerabilities
 
-### 📚 Documentation
-- Updated all inline JSDoc comments
-- Added comprehensive error context
-- Improved type definitions
+### 💡 Use Cases Unlocked
+- 🎬 Complete animation system with custom keyframes
+- 🎨 Brand-specific color systems
+- 🔧 Custom design tokens
+- ✨ Glassmorphism effects
+- 🌈 Text gradients
+- 🎯 Custom shadows and utilities
+- 🚀 And unlimited custom utilities!
 
 ### 🎯 Breaking Changes
-None - All changes are backward compatible!
+**None** - All changes are backward compatible! Your existing code continues to work.
 
 ### 🔄 Migration Guide
 No migration needed! All existing code continues to work.
@@ -266,8 +427,18 @@ logger.setLevel('silent'); // For production
 // Subscribe to errors
 import { onError } from 'tailwind-to-style';
 const unsubscribe = onError((error) => {
-  // Your error tracking
+  console.log(error.message);
   console.log(error.context);
+});
+
+// Use custom theme
+import { configure } from 'tailwind-to-style';
+configure({
+  theme: {
+    extend: {
+      colors: { brand: { 500: '#3b82f6' } }
+    }
+  }
 });
 
 // Clear caches manually

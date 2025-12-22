@@ -15,51 +15,131 @@ The library exposes two main functions and a CLI tool:
 2. **`twsx`**: A more advanced function that allows you to define nested and complex styles similar to SCSS, including support for responsive design, state variants, grouping, and enhanced CSS capabilities.
 3. **`twsx-cli`**: A command-line tool for generating CSS files from `twsx.*.js` files with watch mode support.
 
-## ✨ What's New in v2.10.2
-
-- **⚛️ React Integration**: Built-in React hooks and provider for seamless integration
-- **🎬 Enhanced Animations**: Complete animation system with custom keyframes support
-- **🔄 Improved Transitions**: Full transition utilities with duration, delay, and easing
-- **🎨 Advanced Theming**: More flexible theme customization and plugin system
-- **⚡ Performance Boost**: Better caching and optimized CSS generation
-- **📱 Responsive Selector Syntax**: New intuitive `'md:.title': 'text-lg'` format
-
 ## ✨ What's New in v2.11.0
 
-- 🎨 **Theme Customization**: Extend default theme with custom colors, spacing, and more!
-- 🔌 **Plugin API**: Create custom utilities with `createPlugin()` and `createUtilityPlugin()`
-- ⚙️ **Configuration System**: Use `configure()` to set up theme and plugins
-- 📝 **Config Files**: Support for `tailwind-to-style.config.js`
-- 🎯 **Complete TypeScript**: Full type definitions for config and plugins
-- 📚 **Examples**: New examples for theme customization and custom plugins
+- **🎨 Styled Components System**: Create reusable components with `styled()` factory
+  - Variant-based styling inspired by styled-components and twin.macro
+  - Tag helpers: `styled.div()`, `styled.button()`, etc.
+  - Pseudo-state support: hover, focus, active, disabled
+  - Nested styles with SCSS-like syntax
+  - Polymorphic "as" prop for component flexibility
+  - Full TypeScript support with type inference
+  
+- **🎭 Type-safe Variants**: Framework-agnostic `tv()` for design systems
+  - Compound variants for complex conditions
+  - Default variants support
+  - Full TypeScript integration
+  - Works with any framework or vanilla JS
+  - `createVariants()` for batch variant creation
 
-Now you can create brand-specific design systems and custom utilities!
+### Previous Updates (v2.10.5)
 
-## ✨ What's New in v2.10.0
+- **🎬 Complete Animation System**: Full support for Tailwind animations and transitions
+  - Built-in animations: `animate-spin`, `animate-ping`, `animate-pulse`, `animate-bounce`
+  - Complete transition utilities with duration, delay, and easing controls
+  - Custom animations via theme configuration
+  - Keyframes system with built-in and custom support
+  
+- **🎨 Theme Customization**: Extend default theme with custom colors, spacing, and more!
+  - Deep merge support for nested theme values
+  - Works seamlessly with existing Tailwind utilities
+  - Brand-specific design systems
+  
+- **🔌 Plugin API**: Create custom utilities with `createPlugin()` and `createUtilityPlugin()`
+  - Simple utility plugins for custom styles
+  - Dynamic utilities with multiple values
+  - Unlimited custom utility classes
+  
+- **⚙️ Configuration System**: Use `configure()` to set up theme and plugins
+  - Support for `tailwind-to-style.config.js`
+  - Prefix support and core plugin control
+  - Easy configuration management
+  
+- **🚀 Infrastructure Improvements**: 
+  - Updated dependencies (ESLint 9, Jest 30, Rollup 4)
+  - LRU Cache for better memory management
+  - Configurable logger system (production-safe)
+  - Event-based error handling
+  - Complete TypeScript definitions
+  - Node.js 18.x, 20.x, 22.x LTS support
 
-- 🔄 **Updated Dependencies**: All dependencies updated to latest 2025 versions (ESLint 9, Jest 30, Rollup 4)
-- 🎯 **LRU Cache**: Replaced naive caching with proper LRU implementation for better memory management
-- 📝 **Logger System**: Configurable logging with production-safe defaults (no more console spam!)
-- ⚠️ **Error Handling**: Event-based error system with `onError()` subscription pattern
-- 🔒 **Singleton Pattern**: Refactored global state to testable singleton
-- 📘 **Complete TypeScript**: Added full type definitions for all exports
-- 🚀 **Node.js Support**: Now supports Node 18.x, 20.x, 22.x LTS (dropped EOL versions)
-- 🔧 **ESLint 9**: Migrated to modern flat config format
+- **📱 Responsive Selector Syntax**: Intuitive `'md:.title': 'text-lg'` format
+- **🐛 Enhanced @css Directive**: Perfect CSS variables and functions preservation
 
 All changes are **backward compatible** - your existing code continues to work!
 
-## ✨ What's New in v2.9.0
+## Quick Start: v2.11.0+ Features
 
-- 🆕 **Responsive Selector Syntax**: Intuitive `'md:.title': 'text-lg'` format for responsive styling
-- 🐛 **Critical @css Bug Fix**: Perfect preservation of CSS variables, functions, and complex expressions
-- ⚡ **Enhanced Performance**: Improved processing for large datasets and concurrent operations
-- 🔧 **Better Error Handling**: 100% error recovery rate for malformed inputs
+### Styled Components
+
+```javascript
+import { styled } from 'tailwind-to-style/react'
+
+const Button = styled('button', {
+  base: 'px-4 py-2 rounded-lg font-medium',
+  variants: {
+    color: {
+      primary: 'bg-blue-500 text-white hover:bg-blue-600',
+      danger: 'bg-red-500 text-white hover:bg-red-600'
+    }
+  }
+})
+
+<Button color="primary">Click me</Button>
+```
+
+### Type-safe Variants
+
+```javascript
+import { tv } from 'tailwind-to-style'
+
+const button = tv({
+  base: 'px-4 py-2 rounded font-medium',
+  variants: {
+    color: {
+      primary: 'bg-blue-500 text-white',
+      secondary: 'bg-gray-500 text-white'
+    }
+  }
+})
+
+const className = button({ color: 'primary' })
+```
+
+**See full documentation:** [Styled Components](#styled-components) | [React Integration](#react-integration)
 
 ## Installation
 
 ```bash
 npm install tailwind-to-style
 ```
+
+### Optional: Import Tailwind Preflight CSS
+
+For best results and consistent styling, import Tailwind's preflight (base styles):
+
+```javascript
+// React (in your main entry file)
+import 'tailwind-to-style/preflight.css'
+import { TwsxProvider } from 'tailwind-to-style'
+
+function App() {
+  return <TwsxProvider>{/* your app */}</TwsxProvider>
+}
+```
+
+```html
+<!-- HTML (in your index.html) -->
+<link rel="stylesheet" href="node_modules/tailwind-to-style/preflight.css">
+```
+
+The preflight CSS provides Tailwind's base styles including:
+- Consistent box-sizing
+- Reset margins and paddings
+- Normalized form elements
+- Better default font rendering
+
+**Note:** If you're already using Tailwind CSS in your project, you don't need to import this.
 
 ## React Integration
 
@@ -284,6 +364,432 @@ function ConfigAwareComponent() {
     </div>
   )
 }
+```
+
+## Styled Components
+
+**New in v2.11.0** - Create reusable, variant-based components inspired by styled-components and tailwind-variants.
+
+### Basic Usage
+
+```javascript
+import { styled } from 'tailwind-to-style/react'
+
+const Button = styled('button', {
+  base: 'px-4 py-2 rounded-lg font-medium transition-all',
+  variants: {
+    color: {
+      primary: 'bg-blue-500 text-white hover:bg-blue-600',
+      secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300',
+      danger: 'bg-red-500 text-white hover:bg-red-600'
+    },
+    size: {
+      sm: 'text-sm px-3 py-1.5',
+      md: 'text-base px-4 py-2',
+      lg: 'text-lg px-6 py-3'
+    },
+    outlined: {
+      true: 'bg-transparent border-2'
+    }
+  },
+  defaultVariants: {
+    color: 'primary',
+    size: 'md'
+  }
+})
+
+// Usage
+function App() {
+  return (
+    <>
+      <Button>Default Button</Button>
+      <Button color="secondary" size="lg">Large Secondary</Button>
+      <Button color="danger" outlined>Outlined Danger</Button>
+    </>
+  )
+}
+```
+
+### Tag Helpers
+
+Convenient helpers for common HTML elements:
+
+```javascript
+import { styled } from 'tailwind-to-style/react'
+
+const Container = styled.div({
+  base: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'
+})
+
+const Title = styled.h1({
+  base: 'text-4xl font-bold text-gray-900',
+  variants: {
+    centered: {
+      true: 'text-center'
+    }
+  }
+})
+
+const Card = styled.article({
+  base: 'bg-white rounded-lg shadow-md p-6',
+  hover: 'shadow-xl transform scale-105',
+  active: 'shadow-lg scale-100'
+})
+
+function HomePage() {
+  return (
+    <Container>
+      <Title centered>Welcome</Title>
+      <Card>
+        <p>This card has hover effects!</p>
+      </Card>
+    </Container>
+  )
+}
+```
+
+**Available tag helpers**: `div`, `span`, `p`, `a`, `button`, `input`, `label`, `form`, `section`, `article`, `header`, `footer`, `nav`, `main`, `aside`, `h1`, `h2`, `h3`, `h4`, `h5`, `h6`, `ul`, `ol`, `li`, `img`, `video`
+
+### Pseudo-state Variants
+
+Define styles for hover, focus, active, and disabled states:
+
+```javascript
+const Input = styled.input({
+  base: 'w-full px-4 py-2 border border-gray-300 rounded-lg transition-all',
+  focus: 'border-blue-500 outline-none ring-2 ring-blue-200',
+  disabled: 'bg-gray-100 cursor-not-allowed opacity-60',
+  variants: {
+    error: {
+      true: 'border-red-500 focus:border-red-600 focus:ring-red-200'
+    }
+  }
+})
+
+const LinkButton = styled.a({
+  base: 'inline-block px-6 py-3 rounded-lg font-semibold',
+  hover: 'transform scale-105',
+  active: 'scale-95',
+  focus: 'outline-none ring-4 ring-blue-300',
+  variants: {
+    variant: {
+      solid: 'bg-blue-600 text-white',
+      ghost: 'bg-transparent text-blue-600 border border-blue-600'
+    }
+  }
+})
+
+// Usage
+<Input placeholder="Enter email" />
+<Input error placeholder="Invalid email" disabled />
+<LinkButton href="/signup" variant="solid">Sign Up</LinkButton>
+```
+
+### Nested Styles (SCSS-like)
+
+Create complex components with nested selectors:
+
+```javascript
+const Card = styled.div({
+  base: 'bg-white rounded-lg shadow-md p-6',
+  nested: {
+    '.card-header': [
+      'border-b border-gray-200 pb-4 mb-4',
+      {
+        '.card-title': 'text-2xl font-bold text-gray-900',
+        '.card-subtitle': 'text-sm text-gray-500 mt-1'
+      }
+    ],
+    '.card-body': 'text-gray-700 leading-relaxed',
+    '.card-footer': [
+      'border-t border-gray-200 pt-4 mt-4 flex justify-end gap-2',
+      {
+        'button': 'px-4 py-2 rounded-lg transition-colors',
+        'button.primary': 'bg-blue-500 text-white hover:bg-blue-600',
+        'button.secondary': 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+      }
+    ]
+  }
+})
+
+// Usage
+function ProfileCard() {
+  return (
+    <Card>
+      <div className="card-header">
+        <h2 className="card-title">John Doe</h2>
+        <p className="card-subtitle">Software Engineer</p>
+      </div>
+      <div className="card-body">
+        Passionate developer with 10 years of experience...
+      </div>
+      <div className="card-footer">
+        <button className="secondary">Cancel</button>
+        <button className="primary">Save</button>
+      </div>
+    </Card>
+  )
+}
+```
+
+### Compound Variants
+
+Apply styles based on multiple variant combinations:
+
+```javascript
+const Button = styled('button', {
+  base: 'px-4 py-2 rounded-lg font-medium',
+  variants: {
+    color: {
+      primary: 'bg-blue-500 text-white',
+      secondary: 'bg-gray-500 text-white'
+    },
+    size: {
+      sm: 'text-sm',
+      lg: 'text-lg'
+    },
+    outlined: {
+      true: 'bg-transparent border-2'
+    }
+  },
+  compoundVariants: [
+    {
+      color: 'primary',
+      outlined: true,
+      class: 'border-blue-500 text-blue-500 hover:bg-blue-50'
+    },
+    {
+      color: 'secondary',
+      outlined: true,
+      class: 'border-gray-500 text-gray-500 hover:bg-gray-50'
+    },
+    {
+      size: 'lg',
+      outlined: true,
+      class: 'border-4' // Larger borders for large outlined buttons
+    }
+  ]
+})
+
+// Usage
+<Button color="primary" outlined>Outlined Primary</Button>
+<Button color="secondary" size="lg" outlined>Large Outlined</Button>
+```
+
+### Polymorphic "as" Prop
+
+Change the underlying element while keeping styles:
+
+```javascript
+const Button = styled('button', {
+  base: 'px-4 py-2 rounded-lg bg-blue-500 text-white font-medium'
+})
+
+function Navigation() {
+  return (
+    <>
+      {/* Renders as <button> */}
+      <Button onClick={() => alert('Clicked!')}>
+        Click Me
+      </Button>
+      
+      {/* Renders as <a> with same styles */}
+      <Button as="a" href="/signup">
+        Sign Up
+      </Button>
+      
+      {/* Renders as custom component */}
+      <Button as={Link} to="/dashboard">
+        Dashboard
+      </Button>
+    </>
+  )
+}
+```
+
+### Extending Styled Components
+
+Extend existing styled components:
+
+```javascript
+const BaseButton = styled('button', {
+  base: 'px-4 py-2 rounded-lg font-medium transition-colors'
+})
+
+const PrimaryButton = styled(BaseButton, {
+  base: 'bg-blue-500 text-white hover:bg-blue-600'
+})
+
+const IconButton = styled(PrimaryButton, {
+  base: 'flex items-center gap-2',
+  nested: {
+    'svg': 'w-5 h-5'
+  }
+})
+
+// Usage
+<IconButton>
+  <svg>...</svg>
+  Save Changes
+</IconButton>
+```
+
+### Type-safe Variants with `tv()`
+
+Framework-agnostic variant system for design systems:
+
+```javascript
+import { tv } from 'tailwind-to-style'
+
+// Create a variant function
+const buttonVariants = tv({
+  base: 'px-4 py-2 rounded-lg font-medium transition-all',
+  variants: {
+    intent: {
+      primary: 'bg-blue-500 text-white hover:bg-blue-600',
+      secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300',
+      danger: 'bg-red-500 text-white hover:bg-red-600'
+    },
+    size: {
+      sm: 'text-sm px-3 py-1.5',
+      md: 'text-base px-4 py-2',
+      lg: 'text-lg px-6 py-3'
+    },
+    fullWidth: {
+      true: 'w-full'
+    }
+  },
+  compoundVariants: [
+    {
+      intent: 'primary',
+      size: 'lg',
+      class: 'shadow-lg hover:shadow-xl'
+    }
+  ],
+  defaultVariants: {
+    intent: 'primary',
+    size: 'md'
+  }
+})
+
+// Use in React
+function Button({ intent, size, fullWidth, children, ...props }) {
+  return (
+    <button 
+      className={buttonVariants({ intent, size, fullWidth })} 
+      {...props}
+    >
+      {children}
+    </button>
+  )
+}
+
+// Use in vanilla JS
+const className = buttonVariants({ intent: 'danger', size: 'lg' })
+document.querySelector('.my-button').className = className
+
+// Use in Vue
+<template>
+  <button :class="buttonVariants({ intent: 'primary', fullWidth: true })">
+    Click me
+  </button>
+</template>
+```
+
+### Batch Variant Creation
+
+Create multiple variant functions at once:
+
+```javascript
+import { createVariants } from 'tailwind-to-style'
+
+const components = createVariants({
+  button: {
+    base: 'px-4 py-2 rounded font-medium',
+    variants: {
+      color: {
+        primary: 'bg-blue-500 text-white',
+        secondary: 'bg-gray-500 text-white'
+      }
+    }
+  },
+  badge: {
+    base: 'px-2 py-1 text-xs rounded-full font-semibold',
+    variants: {
+      color: {
+        success: 'bg-green-100 text-green-800',
+        error: 'bg-red-100 text-red-800',
+        warning: 'bg-yellow-100 text-yellow-800'
+      }
+    }
+  },
+  input: {
+    base: 'w-full px-3 py-2 border rounded',
+    variants: {
+      error: {
+        true: 'border-red-500',
+        false: 'border-gray-300'
+      }
+    }
+  }
+})
+
+// Use the variants
+const buttonClass = components.button({ color: 'primary' })
+const badgeClass = components.badge({ color: 'success' })
+const inputClass = components.input({ error: true })
+```
+
+### TypeScript Support
+
+Full type inference for variants and props:
+
+```typescript
+import { styled, tv } from 'tailwind-to-style/react'
+import type { StyledProps } from 'tailwind-to-style/react'
+
+// Styled components have inferred types
+const Button = styled('button', {
+  variants: {
+    color: {
+      primary: 'bg-blue-500',
+      secondary: 'bg-gray-500'
+    },
+    size: {
+      sm: 'text-sm',
+      lg: 'text-lg'
+    }
+  }
+})
+
+// Props are fully typed
+function App() {
+  return (
+    <>
+      <Button color="primary" size="lg">Typed!</Button>
+      {/* @ts-expect-error - invalid variant */}
+      <Button color="invalid">Error</Button>
+    </>
+  )
+}
+
+// Extract prop types
+type ButtonProps = StyledProps<typeof Button>
+// { color?: 'primary' | 'secondary', size?: 'sm' | 'lg', as?: any, ... }
+
+// tv() also has full type inference
+const cardVariants = tv({
+  variants: {
+    elevated: {
+      true: 'shadow-lg',
+      false: 'shadow-none'
+    }
+  }
+})
+
+// Type-safe variant props
+const className = cardVariants({ elevated: true }) // ✅
+const invalid = cardVariants({ elevated: 'yes' }) // ❌ Type error
 ```
 
 ## Core Functions

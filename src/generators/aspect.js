@@ -9,23 +9,20 @@ export default function generator(configOptions = {}) {
 
   const responsiveCssString = generateCssString(({ getCssByOptions }) => {
     // Generate aspect-ratio utilities (aspect-auto, aspect-square, aspect-video, etc.)
-    let cssString = getCssByOptions(
-      aspectRatio,
-      (key, value) => {
-        if (value === "custom_value") {
-          return `
+    let cssString = getCssByOptions(aspectRatio, (key, value) => {
+      if (value === "custom_value") {
+        return `
             ${prefix}-${key} {
               aspect-ratio: ${value};
             }
           `;
-        }
-        return `
+      }
+      return `
           ${prefix}-${key} {
             aspect-ratio: ${value};
           }
         `;
-      }
-    );
+    });
 
     // Generate legacy aspect-h and aspect-w utilities
     cssString += getCssByOptions(

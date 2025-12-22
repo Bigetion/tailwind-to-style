@@ -30,19 +30,16 @@ export default function generator(configOptions = {}) {
             }
           `;
       });
-      cssString += getCssByOptions(
-        opacity,
-        (key, value) => {
-          // Skip 'custom' to avoid overwriting caret-custom from colors
-          if (key === "custom") return "";
+      cssString += getCssByOptions(opacity, (key, value) => {
+        // Skip 'custom' to avoid overwriting caret-custom from colors
+        if (key === "custom") return "";
 
-          return `
+        return `
             ${prefix}-${key} {
               --caret-opacity: ${value};
             }
           `;
-        }
-      );
+      });
       return cssString;
     },
     configOptions

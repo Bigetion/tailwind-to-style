@@ -37,6 +37,7 @@ logs/
 # Testing
 /coverage
 /tests/*.js
+/tests/*.jsx
 
 # Demo (React playground)
 /demo/node_modules

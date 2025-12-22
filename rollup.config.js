@@ -4,7 +4,10 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import { babel } from '@rollup/plugin-babel';
 import copy from 'rollup-plugin-copy';
-import pkg from './package.json';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
+const pkg = require('./package.json');
 
 const banner = `/**
  * tailwind-to-style v${pkg.version}
@@ -15,13 +18,14 @@ const banner = `/**
  */`;
 
 const input = 'src/index.js';
-const extensions = ['.js'];
+const extensions = ['.js', '.jsx'];
 
 // Babel configuration for browser compatibility
 const babelConfig = {
   babelHelpers: 'bundled',
   exclude: 'node_modules/**',
-  extensions
+  extensions,
+  presets: ['@babel/preset-react']
 };
 
 export default [
@@ -57,10 +61,10 @@ export default [
     },
     external: ['react', 'react-dom'],
     plugins: [
-      resolve({ extensions }),
+      resolve({ extensions: ['.js', '.jsx'] }),
+      babel(babelConfig),
       commonjs(),
-      json(),
-      babel(babelConfig)
+      json()
     ]
   },
   
@@ -92,10 +96,10 @@ export default [
     },
     external: ['react', 'react-dom'],
     plugins: [
-      resolve({ extensions }),
+      resolve({ extensions: ['.js', '.jsx'] }),
+      babel(babelConfig),
       commonjs(),
-      json(),
-      babel(babelConfig)
+      json()
     ]
   },
   
