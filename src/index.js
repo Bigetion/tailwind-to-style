@@ -66,6 +66,7 @@ import generateFlexGrow from "./generators/flexGrow.js";
 import generateFlexShrink from "./generators/flexShrink.js";
 import generateFlexWrap from "./generators/flexWrap.js";
 import generateFloat from "./generators/float.js";
+import generateFontFamily from "./generators/fontFamily.js";
 import generateFontSize from "./generators/fontSize.js";
 import generateFontSmoothing from "./generators/fontSmoothing.js";
 import generateFontStyle from "./generators/fontStyle.js";
@@ -253,6 +254,7 @@ const plugins = {
   flexShrink: generateFlexShrink,
   flexWrap: generateFlexWrap,
   float: generateFloat,
+  fontFamily: generateFontFamily,
   fontSize: generateFontSize,
   fontSmoothing: generateFontSmoothing,
   fontStyle: generateFontStyle,

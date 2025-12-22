@@ -10,7 +10,10 @@ const fontFamily = {
 
       // Split by comma and process each font
       const fonts = decodedValue.split(",").map((font) => {
-        const trimmedFont = font.trim();
+        let trimmedFont = font.trim();
+        
+        // Replace underscores with spaces (Tailwind convention)
+        trimmedFont = trimmedFont.replace(/_/g, " ");
 
         // If font contains spaces and is not already quoted, add quotes
         if (
