@@ -19,6 +19,9 @@ export default function generator(configOptions = {}) {
           ${customPrefix}-${key} {
             color: ${value};
           }
+          ${prefix}-${key} {
+            color: ${value};
+          }
         `;
       }
       return `

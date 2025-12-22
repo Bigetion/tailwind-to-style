@@ -10,6 +10,14 @@ export default function generator(configOptions = {}) {
   const responsiveCssString = generateCssString(
     ({ getCssByColors, getCssByOptions }) => {
       let cssString = getCssByColors(caretColor, (key, value, rgbValue) => {
+        if (value === "custom_value") {
+          return `
+            ${prefix}-${key} {
+              caret-color: ${value};
+            }
+          `;
+        }
+
         let rgbPropertyValue = "";
         if (rgbValue) {
           rgbPropertyValue = `caret-color: rgba(${rgbValue}, var(--caret-opacity));`;
@@ -24,11 +32,16 @@ export default function generator(configOptions = {}) {
       });
       cssString += getCssByOptions(
         opacity,
-        (key, value) => `
-          ${prefix}-${key} {
-            --caret-opacity: ${value};
-          }
-        `
+        (key, value) => {
+          // Skip 'custom' to avoid overwriting caret-custom from colors
+          if (key === "custom") return "";
+
+          return `
+            ${prefix}-${key} {
+              --caret-opacity: ${value};
+            }
+          `;
+        }
       );
       return cssString;
     },
