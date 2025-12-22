@@ -11,7 +11,7 @@ const fontFamily = {
       // Split by comma and process each font
       const fonts = decodedValue.split(",").map((font) => {
         let trimmedFont = font.trim();
-        
+
         // Replace underscores with spaces (Tailwind convention)
         trimmedFont = trimmedFont.replace(/_/g, " ");
 

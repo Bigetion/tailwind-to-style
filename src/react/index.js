@@ -10,6 +10,8 @@ export {
   useTwsxConfig,
   useUpdateTwsxConfig,
 } from "./TwsxProvider.jsx";
+export { styled } from "./styled.jsx";
+export { tv, createVariants } from "../tv.js";
 
 // Re-export core TWSX functions for convenience
 export { tws, twsx, configure, createPlugin } from "../index.js";

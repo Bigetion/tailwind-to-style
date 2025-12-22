@@ -20,4 +20,3 @@ export default function generator(configOptions = {}) {
 
   return responsiveCssString;
 }
-

@@ -1731,3 +1731,6 @@ export {
   staggerAnimations,
   INLINE_ANIMATIONS,
 } from "./utils/inlineAnimations.js";
+
+// Variant system (framework-agnostic)
+export { tv, createVariants } from "./tv.js";

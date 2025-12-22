@@ -15,7 +15,24 @@ The library exposes two main functions and a CLI tool:
 2. **`twsx`**: A more advanced function that allows you to define nested and complex styles similar to SCSS, including support for responsive design, state variants, grouping, and enhanced CSS capabilities.
 3. **`twsx-cli`**: A command-line tool for generating CSS files from `twsx.*.js` files with watch mode support.
 
-## ✨ What's New in v2.10.5
+## ✨ What's New in v2.11.0
+
+- **🎨 Styled Components System**: Create reusable components with `styled()` factory
+  - Variant-based styling inspired by styled-components and twin.macro
+  - Tag helpers: `styled.div()`, `styled.button()`, etc.
+  - Pseudo-state support: hover, focus, active, disabled
+  - Nested styles with SCSS-like syntax
+  - Polymorphic "as" prop for component flexibility
+  - Full TypeScript support with type inference
+  
+- **🎭 Type-safe Variants**: Framework-agnostic `tv()` for design systems
+  - Compound variants for complex conditions
+  - Default variants support
+  - Full TypeScript integration
+  - Works with any framework or vanilla JS
+  - `createVariants()` for batch variant creation
+
+### Previous Updates (v2.10.5)
 
 - **🎬 Complete Animation System**: Full support for Tailwind animations and transitions
   - Built-in animations: `animate-spin`, `animate-ping`, `animate-pulse`, `animate-bounce`

@@ -1,5 +1,138 @@
 # Changelog
 
+## [2.11.0] - 2025-12-22
+
+### 🎨 New Features: Styled Components & Variants System
+
+#### **🏗️ `styled()` - Component Factory**
+Create reusable styled components with Tailwind classes:
+
+```javascript
+import { styled } from 'tailwind-to-style';
+
+const Button = styled('button', {
+  base: 'px-4 py-2 rounded-lg font-medium transition-all',
+  hover: 'bg-blue-600 transform scale-105',
+  variants: {
+    color: {
+      primary: 'bg-blue-500 text-white',
+      secondary: 'bg-gray-500 text-white',
+      danger: 'bg-red-500 text-white'
+    },
+    size: {
+      sm: 'text-sm px-3 py-1.5',
+      md: 'text-base px-4 py-2',
+      lg: 'text-lg px-6 py-3'
+    }
+  },
+  defaultVariants: {
+    color: 'primary',
+    size: 'md'
+  }
+});
+
+// Usage
+<Button color="danger" size="lg">Delete</Button>
+```
+
+**Features:**
+- ✅ Variant-based styling system
+- ✅ Compound variants for complex conditions
+- ✅ Pseudo-state support (hover, focus, active, disabled)
+- ✅ Nested styles with SCSS-like syntax
+- ✅ Forward refs support
+- ✅ Polymorphic "as" prop
+- ✅ Tag helpers: `styled.div()`, `styled.button()`, etc.
+- ✅ Full TypeScript support with type inference
+
+#### **🎭 `tv()` - Type-safe Variants**
+Framework-agnostic variant system for design systems:
+
+```javascript
+import { tv } from 'tailwind-to-style';
+
+const button = tv({
+  base: 'px-4 py-2 rounded-lg',
+  variants: {
+    color: {
+      primary: 'bg-blue-500 text-white',
+      secondary: 'bg-gray-500 text-white'
+    },
+    size: {
+      sm: 'text-sm',
+      lg: 'text-lg'
+    }
+  },
+  compoundVariants: [
+    {
+      color: 'primary',
+      size: 'lg',
+      class: 'font-bold shadow-lg'
+    }
+  ],
+  defaultVariants: {
+    color: 'primary',
+    size: 'sm'
+  }
+});
+
+// Usage
+const className = button({ color: 'primary', size: 'lg' });
+// Output: 'px-4 py-2 rounded-lg bg-blue-500 text-white text-lg font-bold shadow-lg'
+```
+
+**Features:**
+- ✅ Type-safe variant props
+- ✅ Compound variants for conditional styling
+- ✅ Default variants
+- ✅ Framework-agnostic (works anywhere)
+- ✅ `createVariants()` for batch creation
+- ✅ Inspired by tailwind-variants and CVA
+
+#### **📦 Export Changes**
+- Added `styled` from `tailwind-to-style` (React)
+- Added `tv` and `createVariants` from root package
+- Full TypeScript definitions in `types/styled.d.ts`
+
+#### **🎯 Use Cases**
+- Building design systems and UI libraries
+- Component-based styling with variants
+- Type-safe variant props in TypeScript
+- Reusable style patterns across projects
+- Complex component styling without CSS-in-JS runtime
+
+#### **🔗 Integration Examples**
+```javascript
+// Option 1: Styled components with React
+import { styled, TwsxProvider } from 'tailwind-to-style';
+
+const Card = styled.div({
+  base: 'bg-white rounded-lg p-6',
+  hover: 'shadow-xl',
+  nested: {
+    '.title': 'text-xl font-bold',
+    '.content': 'text-gray-600 mt-2'
+  }
+});
+
+// Option 2: Variant function (framework-agnostic)
+import { tv } from 'tailwind-to-style';
+
+const cardStyles = tv({
+  base: 'bg-white rounded-lg p-6',
+  variants: {
+    elevation: {
+      sm: 'shadow-sm',
+      lg: 'shadow-lg'
+    }
+  }
+});
+```
+
+See [examples/styled-components.jsx](examples/styled-components.jsx) for complete examples.
+
+---
+
 ## [2.10.5] - 2025-12-21
 
 ### 🎉 Major Features
