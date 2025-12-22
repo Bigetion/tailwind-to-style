@@ -370,6 +370,14 @@ function ConfigAwareComponent() {
 
 **New in v2.11.0** - Create reusable, variant-based components inspired by styled-components and tailwind-variants.
 
+### Key Features
+
+- ⚡ **Deterministic Class Names**: Hash-based naming ensures consistent class names across renders and SSR
+- 🚀 **Optimized CSS Injection**: Global cache prevents duplicate styles, single `<style>` tag for better performance
+- 🎯 **Type-safe Variants**: Full TypeScript support with automatic type inference
+- 🔄 **SSR-Compatible**: Same class names on server and client, no hydration mismatches
+- 📦 **Zero Runtime Overhead**: Styles are generated once and cached efficiently
+
 ### Basic Usage
 
 ```javascript
@@ -792,7 +800,81 @@ const className = cardVariants({ elevated: true }) // ✅
 const invalid = cardVariants({ elevated: 'yes' }) // ❌ Type error
 ```
 
-## Core Functions
+### Performance & Class Naming
+
+#### Deterministic Hash-based Class Names
+
+`styled()` components generate **deterministic class names** based on the component's configuration. This ensures:
+
+- **Stability**: Same config = same class name across all renders
+- **SSR Compatibility**: Server and client generate identical class names, preventing hydration mismatches
+- **Predictability**: Class names are consistent across environments and builds
+
+```javascript
+const Button = styled('button', {
+  base: 'px-4 py-2 rounded bg-blue-500'
+})
+// Generates: twsx-button-a1b2c3 (deterministic hash)
+```
+
+#### Optimized CSS Injection
+
+The library uses a **global CSS cache** with hash-based deduplication:
+
+- **Single Style Tag**: All component styles are injected into one `<style data-twsx-global>` tag
+- **No Duplicate CSS**: Same styles are cached and reused across components
+- **Efficient Updates**: Only new styles are added, existing styles are preserved
+- **Memory Efficient**: CSS content hashing prevents redundant injections
+
+```javascript
+// Multiple instances share the same cached styles
+function App() {
+  return (
+    <>
+      <Button>First</Button>   {/* Injects CSS */}
+      <Button>Second</Button>  {/* Reuses cached CSS */}
+      <Button>Third</Button>   {/* Reuses cached CSS */}
+    </>
+  )
+}
+```
+
+#### Best Practices
+
+1. **Define components outside render** - Component definitions should be at module level:
+```javascript
+// ✅ Good - defined once at module level
+const Button = styled('button', { base: 'px-4 py-2' })
+
+function App() {
+  return <Button>Click</Button>
+}
+
+// ❌ Bad - redefined on every render
+function App() {
+  const Button = styled('button', { base: 'px-4 py-2' })
+  return <Button>Click</Button>
+}
+```
+
+2. **Use `tv()` for dynamic variants** - When you need runtime flexibility:
+```javascript
+const buttonVariants = tv({
+  variants: { color: { primary: '...', secondary: '...' } }
+})
+
+function DynamicButton({ color }) {
+  return <button className={buttonVariants({ color })}>Click</button>
+}
+```
+
+3. **SSR Considerations** - Class names are deterministic, ensuring proper hydration:
+```javascript
+// Server renders: <button class="twsx-button-a1b2c3">
+// Client hydrates: <button class="twsx-button-a1b2c3"> ✅ No mismatch!
+```
+
+
 
 ### 1. `tws`
 

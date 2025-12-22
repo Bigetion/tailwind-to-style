@@ -49,7 +49,7 @@ export function tv(config) {
     defaultVariants = {},
   } = config;
 
-  return function (props = {}) {
+  const variantFunction = function (props = {}) {
     const classes = [base];
 
     // Apply default variants
@@ -79,6 +79,16 @@ export function tv(config) {
     // Filter and join classes
     return classes.filter(Boolean).join(" ");
   };
+
+  // Attach config and metadata to function for styled() to access
+  variantFunction.config = config;
+  variantFunction.base = base;
+  variantFunction.variants = variants;
+  variantFunction.compoundVariants = compoundVariants;
+  variantFunction.defaultVariants = defaultVariants;
+  variantFunction.variantKeys = Object.keys(variants);
+
+  return variantFunction;
 }
 
 /**
