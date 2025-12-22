@@ -7,7 +7,8 @@
         "modules": false,
         "useBuiltIns": false
       }
-    ]
+    ],
+    "@babel/preset-react"
   ],
   "plugins": [
     "@babel/plugin-proposal-optional-chaining"
@@ -15,7 +16,8 @@
   "env": {
     "test": {
       "presets": [
-        ["@babel/preset-env", { "targets": { "node": "current" } }]
+        ["@babel/preset-env", { "targets": { "node": "current" } }],
+        "@babel/preset-react"
       ]
     }
   }

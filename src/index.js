@@ -1573,9 +1573,9 @@ export function twsx(obj, options = {}) {
           const cssProp = prop.replace(/([A-Z])/g, "-$1").toLowerCase();
           keyframesCSS += `    ${cssProp}: ${value};\n`;
         }
-        keyframesCSS += `  }\n`;
+        keyframesCSS += "  }\n";
       }
-      keyframesCSS += `}\n`;
+      keyframesCSS += "}\n";
     }
     performanceMonitor.end(keyframesMarker);
 
@@ -1734,3 +1734,6 @@ export {
 
 // Variant system (framework-agnostic)
 export { tv, createVariants } from "./tv.js";
+
+// React integration (conditional exports)
+// Note: styled components are available via 'tailwind-to-style/react'
