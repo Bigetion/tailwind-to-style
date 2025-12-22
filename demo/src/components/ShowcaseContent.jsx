@@ -3,6 +3,7 @@ import { useTwsx } from 'twsx-react'
 import BasicUsageShowcase from '../showcases/BasicUsageShowcase'
 import ReactHooksShowcase from '../showcases/ReactHooksShowcase'
 import AnimationsShowcase from '../showcases/AnimationsShowcase'
+import AllAnimationsShowcase from '../showcases/AllAnimationsShowcase'
 import AspectRatioShowcase from '../showcases/AspectRatioShowcase'
 import ColumnsShowcase from '../showcases/ColumnsShowcase'
 import BoxDecorationBreakShowcase from '../showcases/BoxDecorationBreakShowcase'
@@ -13,6 +14,7 @@ const showcases = {
   'basic-usage': BasicUsageShowcase,
   'react-hooks': ReactHooksShowcase,
   'animations': AnimationsShowcase,
+  'all-animations': AllAnimationsShowcase,
   'aspect-ratio': AspectRatioShowcase,
   'columns': ColumnsShowcase,
   'box-decoration-break': BoxDecorationBreakShowcase,

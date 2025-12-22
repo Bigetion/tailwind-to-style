@@ -42,6 +42,11 @@ const showcaseItems = [
     category: 'Features'
   },
   {
+    id: 'all-animations',
+    title: 'All Animations',
+    category: 'Features'
+  },
+  {
     id: 'aspect-ratio',
     title: 'Aspect Ratio',
     category: 'Layout'
