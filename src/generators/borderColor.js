@@ -23,6 +23,9 @@ export default function generator(configOptions = {}) {
           ${customPrefix}${key} {
             border-color: ${value};
           }
+          ${prefix}${key} {
+            border-color: ${value};
+          }
         `;
       }
       return `
