@@ -20,7 +20,6 @@
 
 import React, { useMemo } from "react";
 import { useTwsx } from "./useTwsx.js";
-import { tv } from "../tv.js";
 
 /**
  * Simple hash function for deterministic class names
@@ -215,12 +214,6 @@ export function styled(component, config = {}) {
   const componentId = generateClassName(config, componentType);
   const className = `.${componentId}`;
 
-  // Create variant function if variants exist
-  const variantFn =
-    Object.keys(variants).length > 0
-      ? tv({ base, variants, compoundVariants, defaultVariants })
-      : null;
-
   // Create styled component
   const StyledComponent = React.forwardRef((props, ref) => {
     const { as, className: userClassName, children, ...restProps } = props;
@@ -237,35 +230,83 @@ export function styled(component, config = {}) {
       }
     });
 
-    // Generate variant classes
-    const variantClasses = variantFn ? variantFn(variantProps) : base;
+    // Apply default variants
+    const appliedVariantProps = { ...defaultVariants, ...variantProps };
 
-    // Build twsx styles object
+    // Generate variant class names with twsx- prefix
+    const variantClassNames = [];
+    Object.entries(appliedVariantProps).forEach(([key, value]) => {
+      if (value) {
+        variantClassNames.push(`twsx-${key}-${value}`);
+      }
+    });
+
+    // Build twsx styles object with nested structure
     const styles = useMemo(() => {
-      const styleObj = {
-        [className]: [variantClasses],
-      };
+      const styleObj = {};
 
-      // Add pseudo-state classes
+      // Build nested variants structure
+      const nestedVariants = {};
+
+      // Generate variant selectors
+      Object.entries(variants).forEach(([variantKey, variantValues]) => {
+        Object.entries(variantValues).forEach(
+          ([variantValue, variantClasses]) => {
+            const variantSelector = `&.twsx-${variantKey}-${variantValue}`;
+
+            if (variantClasses && variantClasses.trim()) {
+              nestedVariants[variantSelector] = variantClasses;
+            }
+          }
+        );
+      });
+
+      // Generate compound variant selectors
+      compoundVariants.forEach((compound) => {
+        const { class: compoundClass, ...conditions } = compound;
+
+        const conditionClasses = Object.entries(conditions)
+          .map(([key, value]) => `twsx-${key}-${value}`)
+          .join(".");
+
+        const compoundSelector = `&.${conditionClasses}`;
+
+        if (compoundClass && compoundClass.trim()) {
+          nestedVariants[compoundSelector] = compoundClass;
+        }
+      });
+
+      // Build final nested structure: [base, { nested variants }]
+      const styleArray = [];
+
+      if (base.trim()) {
+        styleArray.push(base);
+      }
+
+      // Add pseudo-state classes to nested
       const pseudoStates = {};
       if (hover) pseudoStates["&:hover"] = hover;
       if (active) pseudoStates["&:active"] = active;
       if (focus) pseudoStates["&:focus"] = focus;
       if (disabled) pseudoStates["&:disabled"] = disabled;
 
-      // Merge nested styles
-      if (
-        Object.keys(pseudoStates).length > 0 ||
-        Object.keys(nested).length > 0
-      ) {
-        styleObj[className].push({
-          ...pseudoStates,
-          ...nested,
-        });
+      // Merge nested variants, pseudo states, and custom nested
+      const allNested = {
+        ...nestedVariants,
+        ...pseudoStates,
+        ...nested,
+      };
+
+      if (Object.keys(allNested).length > 0) {
+        styleArray.push(allNested);
+      }
+
+      if (styleArray.length > 0) {
+        styleObj[className] = styleArray;
       }
 
       return styleObj;
-    }, [variantClasses]);
+    }, []); // Empty deps - only generate once
 
     // Inject styles
     useTwsx(styles);
@@ -273,8 +314,8 @@ export function styled(component, config = {}) {
     // Determine component to render
     const Component = as || component;
 
-    // Combine class names
-    const finalClassName = [componentId, userClassName]
+    // Combine class names with variant classes
+    const finalClassName = [componentId, ...variantClassNames, userClassName]
       .filter(Boolean)
       .join(" ");
 
