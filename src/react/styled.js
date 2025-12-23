@@ -108,7 +108,7 @@ export function styled(component, config = {}) {
         }
       });
 
-      // Build nested styles object with SEPARATED base and variant selectors
+      // Build nested styles object like twsx() format (nested structure)
       const styles = useMemo(() => {
         const styleObj = {};
 
@@ -119,27 +119,23 @@ export function styled(component, config = {}) {
           compoundVariants = [],
         } = tvFunction.config || {};
 
-        // 1. Generate BASE styles (inject once, shared by all)
-        if (base.trim()) {
-          styleObj[baseClassName] = [base];
-        }
+        // Build nested structure: base + nested variants
+        const nestedVariants = {};
 
-        // 2. Generate INDIVIDUAL variant styles for ALL possible values
-        // This ensures all variants are available, not just the currently used ones
+        // 1. Generate INDIVIDUAL variant styles as nested selectors
         Object.entries(variants).forEach(([variantKey, variantValues]) => {
           Object.entries(variantValues).forEach(
             ([variantValue, variantClasses]) => {
-              const variantSelector = `${baseClassName}.twsx-${variantKey}-${variantValue}`;
+              const variantSelector = `&.twsx-${variantKey}-${variantValue}`;
 
               if (variantClasses && variantClasses.trim()) {
-                styleObj[variantSelector] = [variantClasses];
+                nestedVariants[variantSelector] = variantClasses;
               }
             }
           );
         });
 
-        // 3. Generate COMPOUND VARIANT styles
-        // These are combinations of multiple variants (e.g., variant="primary" + style="solid")
+        // 2. Generate COMPOUND VARIANT styles as nested selectors
         compoundVariants.forEach((compound) => {
           const { class: compoundClass, ...conditions } = compound;
 
@@ -148,12 +144,28 @@ export function styled(component, config = {}) {
             .map(([key, value]) => `twsx-${key}-${value}`)
             .join(".");
 
-          const compoundSelector = `${baseClassName}.${conditionClasses}`;
+          const compoundSelector = `&.${conditionClasses}`;
 
           if (compoundClass && compoundClass.trim()) {
-            styleObj[compoundSelector] = [compoundClass];
+            nestedVariants[compoundSelector] = compoundClass;
           }
         });
+
+        // 3. Build final structure: [base, { nested variants }]
+        // This matches the twsx() format exactly
+        const styleArray = [];
+
+        if (base.trim()) {
+          styleArray.push(base);
+        }
+
+        if (Object.keys(nestedVariants).length > 0) {
+          styleArray.push(nestedVariants);
+        }
+
+        if (styleArray.length > 0) {
+          styleObj[baseClassName] = styleArray;
+        }
 
         return styleObj;
       }, []); // Empty deps - only generate once
