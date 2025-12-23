@@ -987,7 +987,7 @@ customLogger.debug('Custom message');
 customLogger.setLevel('silent'); // Disable all logging
 ```
 
-## Animations & Transitions (v2.12.0+)
+## Animations & Transitions (v2.10.0+)
 
 Full support for Tailwind CSS animations and transitions!
 
