@@ -263,13 +263,30 @@ export function styled(component, config = {}) {
 
       // Generate compound variant selectors
       compoundVariants.forEach((compound) => {
-        const { class: compoundClass, ...conditions } = compound;
+        const { className: compoundClass, ...conditions } = compound;
 
-        const conditionClasses = Object.entries(conditions)
-          .map(([key, value]) => `twsx-${key}-${value}`)
-          .join(".");
+        // Build selector with :not() for false values
+        const positiveConditions = [];
+        const negativeConditions = [];
 
-        const compoundSelector = `&.${conditionClasses}`;
+        Object.entries(conditions).forEach(([key, value]) => {
+          if (value === false) {
+            negativeConditions.push(`twsx-${key}-true`);
+          } else {
+            positiveConditions.push(`twsx-${key}-${value}`);
+          }
+        });
+
+        // Build compound selector
+        let compoundSelector = "&";
+        if (positiveConditions.length > 0) {
+          compoundSelector += "." + positiveConditions.join(".");
+        }
+        if (negativeConditions.length > 0) {
+          negativeConditions.forEach((negClass) => {
+            compoundSelector += `:not(.${negClass})`;
+          });
+        }
 
         if (compoundClass && compoundClass.trim()) {
           nestedVariants[compoundSelector] = compoundClass;
