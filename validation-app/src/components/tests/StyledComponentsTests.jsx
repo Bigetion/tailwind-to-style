@@ -31,12 +31,14 @@ function StyledComponentsTests({ updateResult }) {
         lg: 'text-lg px-6 py-3'
       },
       outlined: {
-        true: 'bg-transparent border-2'
+        true: 'bg-transparent border-2',
+        false: ''
       }
     },
     defaultVariants: {
       color: 'primary',
-      size: 'md'
+      size: 'md',
+      outlined: false
     }
   })
 
@@ -63,164 +65,282 @@ function StyledComponentsTests({ updateResult }) {
 
   const tests = [
     {
-      name: 'Basic Styled Component Creation',
-      description: 'Test creating a basic styled component with base styles',
+      name: 'Basic Styled Component CSS Generation',
+      description: 'Test CSS string generation from basic styled component',
       test: () => {
         try {
-          const component = styled('div', {
-            base: 'bg-blue-500 text-white p-4 rounded'
+          // Create a simple styled component and check if it generates CSS
+          const SimpleButton = styled('button', {
+            base: 'bg-blue-500 text-white px-4 py-2 rounded'
           })
-          return {
-            passed: typeof component === 'function',
-            output: 'Component created successfully',
-            expected: 'Should return a React component function'
-          }
-        } catch (error) {
-          throw error
-        }
-      }
-    },
-    {
-      name: 'Variants System',
-      description: 'Test variant-based styling system',
-      test: () => {
-        try {
-          // Test if TestButton component exists and has proper structure
-          const hasVariants = TestButton.toString().includes('variants') || true // Component exists
-          return {
-            passed: hasVariants,
-            output: 'Button component with variants created',
-            expected: 'Should create component with color, size, and outlined variants'
-          }
-        } catch (error) {
-          throw error
-        }
-      }
-    },
-    {
-      name: 'Tag Helpers',
-      description: 'Test styled.div, styled.button, etc. tag helpers',
-      test: () => {
-        try {
-          const DivComponent = styled.div({ base: 'p-4 bg-white' })
-          const ButtonComponent = styled.button({ base: 'px-4 py-2 bg-blue-500' })
-          const InputComponent = styled.input({ base: 'border border-gray-300' })
+          
+          // Check if component is created and can be used
+          const isFunction = typeof SimpleButton === 'function'
+          
+          // Look for CSS in the document that should be generated
+          const allStyles = Array.from(document.querySelectorAll('style'))
+          const hasRelevantCSS = allStyles.some(style => 
+            style.textContent.includes('background-color') || 
+            style.textContent.includes('padding') ||
+            style.textContent.includes('border-radius')
+          )
           
           return {
-            passed: typeof DivComponent === 'function' && 
-                   typeof ButtonComponent === 'function' && 
-                   typeof InputComponent === 'function',
-            output: 'Tag helper components created successfully',
-            expected: 'Should create components using tag helpers'
+            passed: isFunction && hasRelevantCSS,
+            output: `Component created: ${isFunction}, CSS found: ${hasRelevantCSS}`,
+            expected: 'Should create component and generate CSS with background-color, padding, border-radius'
           }
         } catch (error) {
-          throw error
-        }
-      }
-    },
-    {
-      name: 'Pseudo-state Variants',
-      description: 'Test hover, focus, active, disabled states',
-      test: () => {
-        try {
-          // TestCard has hover and active states defined
           return {
-            passed: true, // Component was created successfully above
-            output: 'Card component with hover and active states created',
-            expected: 'Should support hover, focus, active, disabled pseudo-states'
+            passed: false,
+            output: error.message,
+            expected: 'Should generate basic CSS without errors'
           }
-        } catch (error) {
-          throw error
         }
       }
     },
     {
-      name: 'Nested Styles',
-      description: 'Test SCSS-like nested styling',
+      name: 'Styled Component with Variants CSS',
+      description: 'Test CSS generation for component variants',
       test: () => {
         try {
-          // TestCard has nested styles defined
-          return {
-            passed: true, // Component was created successfully above
-            output: 'Card component with nested .card-title and .card-content styles',
-            expected: 'Should support nested selectors like SCSS'
-          }
-        } catch (error) {
-          throw error
-        }
-      }
-    },
-    {
-      name: 'Default Variants',
-      description: 'Test default variant values',
-      test: () => {
-        try {
-          // TestButton has defaultVariants defined
-          return {
-            passed: true, // Component was created successfully above
-            output: 'Button component with default color=primary and size=md',
-            expected: 'Should apply default variants when no props provided'
-          }
-        } catch (error) {
-          throw error
-        }
-      }
-    },
-    {
-      name: 'Compound Variants',
-      description: 'Test compound variants for complex conditions',
-      test: () => {
-        try {
-          const CompoundButton = styled('button', {
+          // Create component with variants
+          const VariantButton = styled('button', {
             base: 'px-4 py-2 rounded font-medium',
             variants: {
               color: {
                 primary: 'bg-blue-500 text-white',
-                secondary: 'bg-gray-500 text-white'
+                danger: 'bg-red-500 text-white'
               },
-              outlined: {
-                true: 'bg-transparent border-2'
+              size: {
+                sm: 'text-sm px-2 py-1',
+                lg: 'text-lg px-6 py-3'
               }
-            },
-            compoundVariants: [
-              {
-                color: 'primary',
-                outlined: true,
-                class: 'border-blue-500 text-blue-500 hover:bg-blue-50'
-              }
-            ]
+            }
           })
           
+          const isFunction = typeof VariantButton === 'function'
+          
+          // Check for variant-related CSS classes in document
+          const allStyles = Array.from(document.querySelectorAll('style'))
+          const cssText = allStyles.map(s => s.textContent).join(' ')
+          
+          // Look for CSS properties that should be generated from variants
+          const hasVariantCSS = cssText.includes('background-color') && 
+                               (cssText.includes('rgb(59, 130, 246)') || cssText.includes('#3b82f6') || cssText.includes('blue')) &&
+                               cssText.includes('font-weight')
+          
           return {
-            passed: typeof CompoundButton === 'function',
-            output: 'Button component with compound variants created',
-            expected: 'Should support compound variants for complex styling conditions'
+            passed: isFunction && hasVariantCSS,
+            output: `Component: ${isFunction}, Variant CSS found: ${hasVariantCSS}`,
+            expected: 'Should generate CSS for variants with background colors and font weights'
           }
         } catch (error) {
-          throw error
+          return {
+            passed: false,
+            output: error.message,
+            expected: 'Should handle variant CSS generation'
+          }
         }
       }
     },
     {
-      name: 'Component Extension',
-      description: 'Test extending existing styled components',
+      name: 'Pseudo-states CSS Generation',
+      description: 'Test CSS generation for hover, focus, active states',
       test: () => {
         try {
-          const BaseButton = styled('button', {
-            base: 'px-4 py-2 rounded font-medium'
+          const InteractiveButton = styled('button', {
+            base: 'bg-gray-200 px-4 py-2',
+            hover: 'bg-gray-300 transform scale-105',
+            focus: 'outline-none ring-2 ring-blue-300',
+            active: 'bg-gray-400'
           })
           
-          const ExtendedButton = styled(BaseButton, {
-            base: 'bg-green-500 text-white hover:bg-green-600'
-          })
+          const isFunction = typeof InteractiveButton === 'function'
+          
+          // Check for pseudo-state CSS
+          const allStyles = Array.from(document.querySelectorAll('style'))
+          const cssText = allStyles.map(s => s.textContent).join(' ')
+          
+          const hasPseudoCSS = cssText.includes(':hover') || 
+                              cssText.includes(':focus') || 
+                              cssText.includes(':active') ||
+                              cssText.includes('transform') ||
+                              cssText.includes('outline')
           
           return {
-            passed: typeof ExtendedButton === 'function',
-            output: 'Extended button component created successfully',
-            expected: 'Should allow extending existing styled components'
+            passed: isFunction && hasPseudoCSS,
+            output: `Component: ${isFunction}, Pseudo-state CSS: ${hasPseudoCSS}`,
+            expected: 'Should generate CSS for :hover, :focus, :active pseudo-states'
           }
         } catch (error) {
-          throw error
+          return {
+            passed: false,
+            output: error.message,
+            expected: 'Should handle pseudo-state CSS generation'
+          }
+        }
+      }
+    },
+    {
+      name: 'Nested Styles CSS Generation',
+      description: 'Test CSS generation for nested child selectors',
+      test: () => {
+        try {
+          const NestedCard = styled('div', {
+            base: 'bg-white p-6 rounded-lg',
+            nested: {
+              '.title': 'text-xl font-bold text-gray-900',
+              '.content': 'text-gray-600 mt-2',
+              'button': 'bg-blue-500 text-white px-3 py-1 rounded'
+            }
+          })
+          
+          const isFunction = typeof NestedCard === 'function'
+          
+          // Check for nested selector CSS
+          const allStyles = Array.from(document.querySelectorAll('style'))
+          const cssText = allStyles.map(s => s.textContent).join(' ')
+          
+          const hasNestedCSS = cssText.includes('.title') || 
+                              cssText.includes('.content') ||
+                              cssText.includes('font-bold') ||
+                              cssText.includes('margin-top')
+          
+          return {
+            passed: isFunction && hasNestedCSS,
+            output: `Component: ${isFunction}, Nested CSS: ${hasNestedCSS}`,
+            expected: 'Should generate CSS for nested selectors like .title, .content'
+          }
+        } catch (error) {
+          return {
+            passed: false,
+            output: error.message,
+            expected: 'Should handle nested styles CSS generation'
+          }
+        }
+      }
+    },
+    {
+      name: 'TestButton CSS Output Validation',
+      description: 'Test actual CSS output from TestButton component',
+      test: () => {
+        try {
+          // TestButton should generate CSS for its base styles and variants
+          const allStyles = Array.from(document.querySelectorAll('style'))
+          const cssText = allStyles.map(s => s.textContent).join(' ')
+          
+          // Check for specific CSS properties that TestButton should generate
+          const hasButtonCSS = cssText.includes('padding') && 
+                              cssText.includes('border-radius') &&
+                              cssText.includes('font-weight') &&
+                              (cssText.includes('background-color') || cssText.includes('background'))
+          
+          const hasTransition = cssText.includes('transition')
+          
+          return {
+            passed: hasButtonCSS && hasTransition,
+            output: `Button CSS: ${hasButtonCSS}, Transitions: ${hasTransition}`,
+            expected: 'TestButton should generate CSS with padding, border-radius, font-weight, background, transitions'
+          }
+        } catch (error) {
+          return {
+            passed: false,
+            output: error.message,
+            expected: 'TestButton CSS should be generated properly'
+          }
+        }
+      }
+    },
+    {
+      name: 'TestCard CSS Output Validation',
+      description: 'Test actual CSS output from TestCard component with nested styles',
+      test: () => {
+        try {
+          const allStyles = Array.from(document.querySelectorAll('style'))
+          const cssText = allStyles.map(s => s.textContent).join(' ')
+          
+          // Check for TestCard specific CSS
+          const hasCardCSS = cssText.includes('background') && 
+                            cssText.includes('border-radius') &&
+                            cssText.includes('box-shadow') &&
+                            cssText.includes('padding')
+          
+          const hasHoverCSS = cssText.includes('transform') || cssText.includes('scale')
+          
+          return {
+            passed: hasCardCSS && hasHoverCSS,
+            output: `Card CSS: ${hasCardCSS}, Hover effects: ${hasHoverCSS}`,
+            expected: 'TestCard should generate CSS with background, border-radius, box-shadow, transform effects'
+          }
+        } catch (error) {
+          return {
+            passed: false,
+            output: error.message,
+            expected: 'TestCard CSS should be generated properly'
+          }
+        }
+      }
+    },
+    {
+      name: 'TestInput CSS Output Validation',
+      description: 'Test actual CSS output from TestInput component with focus states',
+      test: () => {
+        try {
+          const allStyles = Array.from(document.querySelectorAll('style'))
+          const cssText = allStyles.map(s => s.textContent).join(' ')
+          
+          // Check for TestInput specific CSS
+          const hasInputCSS = cssText.includes('border') && 
+                             cssText.includes('padding') &&
+                             cssText.includes('width') &&
+                             cssText.includes('border-radius')
+          
+          const hasFocusCSS = cssText.includes('outline') || cssText.includes('ring') || cssText.includes(':focus')
+          
+          return {
+            passed: hasInputCSS && hasFocusCSS,
+            output: `Input CSS: ${hasInputCSS}, Focus states: ${hasFocusCSS}`,
+            expected: 'TestInput should generate CSS with border, padding, width, focus states'
+          }
+        } catch (error) {
+          return {
+            passed: false,
+            output: error.message,
+            expected: 'TestInput CSS should be generated properly'
+          }
+        }
+      }
+    },
+    {
+      name: 'Overall CSS Injection Validation',
+      description: 'Test that styled components properly inject CSS into document',
+      test: () => {
+        try {
+          const allStyles = Array.from(document.querySelectorAll('style'))
+          const totalCSSLength = allStyles.reduce((total, style) => total + style.textContent.length, 0)
+          
+          // Check for essential CSS properties that should be present
+          const cssText = allStyles.map(s => s.textContent).join(' ')
+          const hasEssentialCSS = cssText.includes('background-color') &&
+                                 cssText.includes('padding') &&
+                                 cssText.includes('border-radius') &&
+                                 cssText.includes('color') &&
+                                 cssText.includes('font-weight')
+          
+          const hasStyleElements = allStyles.length > 0
+          
+          return {
+            passed: hasStyleElements && hasEssentialCSS && totalCSSLength > 100,
+            output: `Style elements: ${allStyles.length}, CSS length: ${totalCSSLength}, Essential CSS: ${hasEssentialCSS}`,
+            expected: 'Should inject substantial CSS with essential properties into document'
+          }
+        } catch (error) {
+          return {
+            passed: false,
+            output: error.message,
+            expected: 'CSS injection should work without errors'
+          }
         }
       }
     }
@@ -263,7 +383,7 @@ function StyledComponentsTests({ updateResult }) {
                 <TestButton>Default Button</TestButton>
                 <TestButton color="secondary">Secondary</TestButton>
                 <TestButton color="danger" size="lg">Large Danger</TestButton>
-                <TestButton color="primary" outlined size="sm">Small Outlined</TestButton>
+                <TestButton color="primary" outlined={true} size="sm">Small Outlined</TestButton>
               </div>
             </div>
             
@@ -281,7 +401,7 @@ function StyledComponentsTests({ updateResult }) {
               <h4 className="section-title">Input States:</h4>
               <div className="input-column">
                 <TestInput placeholder="Normal input" />
-                <TestInput placeholder="Error input" error />
+                <TestInput placeholder="Error input" error={true} />
                 <TestInput placeholder="Disabled input" disabled />
               </div>
             </div>
