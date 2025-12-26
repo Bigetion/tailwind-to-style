@@ -47,3 +47,6 @@ temp/
 .cache/
 .npm/
 .eslintcache
+
+# Test applications
+test-app/
