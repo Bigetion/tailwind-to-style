@@ -10,7 +10,7 @@ export {
   useTwsxConfig,
   useUpdateTwsxConfig,
 } from "./TwsxProvider.jsx";
-export { styled } from "./styled.js";
+export { styled, isolatedStyled, createScopedStyled } from "./styled.js";
 export { tv, createVariants } from "../tv.js";
 
 // Re-export core TWSX functions for convenience

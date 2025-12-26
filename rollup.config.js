@@ -130,16 +130,16 @@ export default [
     ]
   },
   
-  // Browser IIFE build
+  // Browser ESM build (for Vite and modern bundlers)
   {
     input: 'src/browser.js', // Use browser-specific entry point
     output: {
       file: 'dist/index.browser.js',
-      format: 'iife',
-      name: 'tailwindToStyle',
+      format: 'esm',
       banner,
       inlineDynamicImports: true
     },
+    external: ['react', 'react-dom'], // Keep React external for bundlers
     plugins: [
       resolve({ 
         browser: true,

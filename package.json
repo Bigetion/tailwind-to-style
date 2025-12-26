@@ -17,6 +17,11 @@
       "import": "./dist/react.esm.js",
       "require": "./dist/react.cjs.js"
     },
+    "./browser": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.browser.js",
+      "require": "./dist/index.browser.js"
+    },
     "./preflight.css": "./preflight.css",
     "./package.json": "./package.json"
   },
