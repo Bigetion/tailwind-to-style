@@ -35,7 +35,8 @@ export default [
     output: {
       file: 'dist/index.esm.js',
       format: 'esm',
-      banner
+      banner,
+      inlineDynamicImports: true
     },
     plugins: [
       resolve({ extensions }),
@@ -75,7 +76,8 @@ export default [
       file: 'dist/index.cjs',
       format: 'cjs',
       banner,
-      exports: 'named'
+      exports: 'named',
+      inlineDynamicImports: true
     },
     plugins: [
       resolve({ extensions }),
@@ -112,7 +114,8 @@ export default [
       name: 'tailwindToStyle',
       banner,
       exports: 'named',
-      sourcemap: true
+      sourcemap: true,
+      inlineDynamicImports: true
     },
     plugins: [
       resolve({ browser: true, extensions }),
@@ -129,15 +132,20 @@ export default [
   
   // Browser IIFE build
   {
-    input,
+    input: 'src/browser.js', // Use browser-specific entry point
     output: {
       file: 'dist/index.browser.js',
       format: 'iife',
       name: 'tailwindToStyle',
-      banner
+      banner,
+      inlineDynamicImports: true
     },
     plugins: [
-      resolve({ browser: true, extensions }),
+      resolve({ 
+        browser: true,
+        extensions,
+        preferBuiltins: false  // Don't try to include Node.js built-ins
+      }),
       commonjs(),
       json(),
       babel(babelConfig)
