@@ -8,7 +8,9 @@ import { useEffect, useMemo } from "react";
 
 // Global CSS cache to prevent duplicate injections
 const globalCssCache = new Map();
+const globalKeyframesCache = new Map(); // Track injected keyframes: name -> css
 let globalStyleElement = null;
+let globalKeyframesElement = null;
 
 /**
  * Simple hash function for CSS content
@@ -26,12 +28,119 @@ function simpleHash(str) {
 }
 
 function getOrCreateGlobalStyleElement() {
+  if (typeof document === "undefined") return null;
+
   if (!globalStyleElement) {
     globalStyleElement = document.createElement("style");
     globalStyleElement.setAttribute("data-twsx-global", "true");
     document.head.appendChild(globalStyleElement);
   }
+
   return globalStyleElement;
+}
+
+function getOrCreateGlobalKeyframesElement() {
+  if (typeof document === "undefined") return null;
+
+  if (!globalKeyframesElement) {
+    globalKeyframesElement = document.createElement("style");
+    globalKeyframesElement.setAttribute("data-twsx-keyframes", "true");
+    document.head.appendChild(globalKeyframesElement);
+  }
+
+  return globalKeyframesElement;
+}
+
+function extractKeyframes(cssString) {
+  const keyframesRegex = /@keyframes\s+([^\s{]+)\s*\{/g;
+  const keyframes = [];
+  let match;
+  let startIndex = 0;
+
+  while ((match = keyframesRegex.exec(cssString)) !== null) {
+    const keyframeName = match[1];
+    const start = match.index;
+
+    // Find matching closing brace
+    let braceCount = 0;
+    let endIndex = start;
+    let inKeyframe = false;
+
+    for (let i = start; i < cssString.length; i++) {
+      if (cssString[i] === "{") {
+        braceCount++;
+        inKeyframe = true;
+      } else if (cssString[i] === "}") {
+        braceCount--;
+        if (inKeyframe && braceCount === 0) {
+          endIndex = i + 1;
+          break;
+        }
+      }
+    }
+
+    const keyframeBlock = cssString.substring(start, endIndex);
+    keyframes.push({ name: keyframeName, css: keyframeBlock });
+  }
+
+  return keyframes;
+}
+
+function removeKeyframes(cssString) {
+  // Remove keyframes but keep the rest
+  let result = cssString;
+  const keyframesRegex = /@keyframes\s+([^\s{]+)\s*\{/g;
+  let match;
+  const toRemove = [];
+
+  while ((match = keyframesRegex.exec(cssString)) !== null) {
+    const start = match.index;
+    let braceCount = 0;
+    let inKeyframe = false;
+
+    for (let i = start; i < cssString.length; i++) {
+      if (cssString[i] === "{") {
+        braceCount++;
+        inKeyframe = true;
+      } else if (cssString[i] === "}") {
+        braceCount--;
+        if (inKeyframe && braceCount === 0) {
+          toRemove.push({ start, end: i + 1 });
+          break;
+        }
+      }
+    }
+  }
+
+  // Remove from end to start to preserve indices
+  for (let i = toRemove.length - 1; i >= 0; i--) {
+    const { start, end } = toRemove[i];
+    result = result.substring(0, start) + result.substring(end);
+  }
+
+  return result.trim();
+}
+
+function updateGlobalKeyframes(keyframes) {
+  if (typeof document === "undefined") return;
+
+  const keyframesElement = getOrCreateGlobalKeyframesElement();
+  let hasNewKeyframes = false;
+
+  for (const { name, css } of keyframes) {
+    if (!globalKeyframesCache.has(name)) {
+      globalKeyframesCache.set(name, css);
+      hasNewKeyframes = true;
+    }
+  }
+
+  if (hasNewKeyframes) {
+    // Rebuild all keyframes CSS from cache
+    const allKeyframesCSS = Array.from(globalKeyframesCache.values()).join(
+      "\n"
+    );
+    keyframesElement.textContent = allKeyframesCSS;
+  }
 }
 
 function updateGlobalCSS() {
@@ -80,9 +189,18 @@ export function useTwsx(styles, options = {}) {
   useEffect(() => {
     if (!css || !cssKey || options.inject === false) return;
 
-    // Only add to cache if not already present
+    // Extract keyframes from CSS
+    const keyframes = extractKeyframes(css);
+    const cssWithoutKeyframes = removeKeyframes(css);
+
+    // Inject keyframes separately (once per keyframe name)
+    if (keyframes.length > 0) {
+      updateGlobalKeyframes(keyframes);
+    }
+
+    // Only add component CSS to cache if not already present
     if (!globalCssCache.has(cssKey)) {
-      globalCssCache.set(cssKey, css);
+      globalCssCache.set(cssKey, cssWithoutKeyframes);
       updateGlobalCSS();
       console.log("useTwsx - Injected NEW CSS with key:", cssKey);
     } else {
