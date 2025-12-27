@@ -1,5 +1,5 @@
 import { getConfigOptions } from "./utils/index.js";
-import { getConfig } from "./config/userConfig.js";
+import { getConfig, setClearConfigCache } from "./config/userConfig.js";
 
 import generateAccentColor from "./generators/accentColor.js";
 import generateAccessibility from "./generators/accessibility.js";
@@ -415,6 +415,17 @@ function resolveCssToClearCss(cssString) {
 
 // Cache for getConfigOptions - use LRU cache
 const configOptionsCache = new LRUCache(500);
+
+/**
+ * Clear config options cache (internal use)
+ * Called when user configuration changes
+ */
+export function clearConfigCache() {
+  configOptionsCache.clear();
+}
+
+// Register clearConfigCache with userConfig module
+setClearConfigCache(clearConfigCache);
 
 function generateTailwindCssString(options = {}) {
   const pluginKeys = Object.keys(plugins);

@@ -4,13 +4,25 @@
  */
 
 import { twsx } from "../index.js";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useContext, createContext } from "react";
+
+// Create context for config change notifications
+export const TwsxConfigContext = createContext(null);
 
 // Global CSS cache to prevent duplicate injections
 const globalCssCache = new Map();
 const globalKeyframesCache = new Map(); // Track injected keyframes: name -> css
 let globalStyleElement = null;
 let globalKeyframesElement = null;
+
+// Export function to clear caches (called when config changes)
+export function clearTwsxCache() {
+  // Clear internal caches so new CSS can be generated
+  globalCssCache.clear();
+  globalKeyframesCache.clear();
+  // DON'T clear DOM content - let new CSS replace it naturally
+  // This prevents white flash when navigating between pages
+}
 
 /**
  * Simple hash function for CSS content
@@ -139,7 +151,11 @@ function updateGlobalKeyframes(keyframes) {
     const allKeyframesCSS = Array.from(globalKeyframesCache.values()).join(
       "\n"
     );
-    keyframesElement.textContent = allKeyframesCSS;
+
+    // Only update if content actually changed
+    if (keyframesElement.textContent !== allKeyframesCSS) {
+      keyframesElement.textContent = allKeyframesCSS;
+    }
   }
 }
 
@@ -147,8 +163,13 @@ function updateGlobalCSS() {
   if (typeof document === "undefined") return;
 
   const styleElement = getOrCreateGlobalStyleElement();
+  // Rebuild CSS from cache - this replaces old content with fresh content
   const allCSS = Array.from(globalCssCache.values()).join("\n");
-  styleElement.textContent = allCSS;
+
+  // Only update if content actually changed to avoid unnecessary reflows
+  if (styleElement.textContent !== allCSS) {
+    styleElement.textContent = allCSS;
+  }
 }
 
 /**
@@ -162,21 +183,32 @@ function updateGlobalCSS() {
  * - Get CSS only: useTwsx({ '.card': 'bg-white p-4' }, { inject: false })
  */
 export function useTwsx(styles, options = {}) {
+  // Get config version from context to trigger re-generation when config changes
+  const configContext = useContext(TwsxConfigContext);
+  const configVersion = configContext?.version || 0;
+
+  // Stable options reference to prevent unnecessary re-renders
+  const injectOption = options.inject !== false; // Default to true
+
+  // Serialize styles for stable dependency checking
+  const stylesKey = useMemo(() => {
+    if (!styles) return null;
+    return typeof styles === "string" ? styles : JSON.stringify(styles);
+  }, [styles]);
+
   // Generate CSS with memoization for performance
+  // Include configVersion in deps to regenerate when config changes
   const css = useMemo(() => {
     if (!styles) return "";
 
-    console.log("useTwsx - Input styles:", styles);
-
     try {
       const result = twsx(styles, { inject: false, ...options });
-      console.log("useTwsx - Generated CSS:", result);
       return result;
     } catch (error) {
       console.error("TWSX Error:", error);
       return "";
     }
-  }, [styles, options]);
+  }, [stylesKey, configVersion]); // Remove options from deps
 
   // Create a unique key for this CSS based on content hash
   const cssKey = useMemo(() => {
@@ -187,7 +219,7 @@ export function useTwsx(styles, options = {}) {
 
   // Auto-inject CSS into global style element (unless inject: false)
   useEffect(() => {
-    if (!css || !cssKey || options.inject === false) return;
+    if (!css || !cssKey || !injectOption) return;
 
     // Extract keyframes from CSS
     const keyframes = extractKeyframes(css);
@@ -202,9 +234,6 @@ export function useTwsx(styles, options = {}) {
     if (!globalCssCache.has(cssKey)) {
       globalCssCache.set(cssKey, cssWithoutKeyframes);
       updateGlobalCSS();
-      console.log("useTwsx - Injected NEW CSS with key:", cssKey);
-    } else {
-      console.log("useTwsx - CSS already cached with key:", cssKey);
     }
 
     // Cleanup function - use ref counting to track usage
@@ -212,7 +241,7 @@ export function useTwsx(styles, options = {}) {
       // Note: We don't delete immediately as other components might use same styles
       // In a production implementation, you'd want ref counting here
     };
-  }, [css, cssKey, options.inject]);
+  }, [css, cssKey, injectOption]); // Stable dependencies
 
   return css;
 }

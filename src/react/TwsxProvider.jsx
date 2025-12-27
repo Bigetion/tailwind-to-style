@@ -3,8 +3,9 @@
  * Provides global configuration and theme management
  */
 
-import { createContext, useContext, useEffect, useState, createElement } from "react";
+import { createContext, useContext, useEffect, useState, createElement, useMemo, useRef } from "react";
 import { configure, getConfig } from "../index.js";
+import { clearTwsxCache, TwsxConfigContext } from "./useTwsx.js";
 
 const TwsxContext = createContext({
   config: null,
@@ -19,24 +20,42 @@ const TwsxContext = createContext({
 export function TwsxProvider({ children, config, onConfigChange }) {
   const [currentConfig, setCurrentConfig] = useState(null);
   const [isConfigured, setIsConfigured] = useState(false);
+  const [configVersion, setConfigVersion] = useState(0);
+  
+  // Use ref to store callback without triggering re-renders
+  const onConfigChangeRef = useRef(onConfigChange);
+  useEffect(() => {
+    onConfigChangeRef.current = onConfigChange;
+  }, [onConfigChange]);
+  
+  // Serialize config for stable comparison
+  const configKey = useMemo(() => {
+    return config ? JSON.stringify(config) : null;
+  }, [config]);
   
   // Apply configuration on mount and when config changes
   useEffect(() => {
-    if (config) {
-      try {
-        configure(config);
-        setCurrentConfig(config);
-        setIsConfigured(true);
-        
-        if (onConfigChange) {
-          onConfigChange(config);
-        }
-      } catch (error) {
-        console.error("TWSX Configuration Error:", error);
-        setIsConfigured(false);
+    if (!config) return;
+    
+    try {
+      // Clear caches before applying new config
+      clearTwsxCache();
+      
+      configure(config);
+      setCurrentConfig(config);
+      setIsConfigured(true);
+      
+      // Increment version to trigger useTwsx re-generation
+      setConfigVersion(prev => prev + 1);
+      
+      if (onConfigChangeRef.current) {
+        onConfigChangeRef.current(config);
       }
+    } catch (error) {
+      console.error("TWSX Configuration Error:", error);
+      setIsConfigured(false);
     }
-  }, [config, onConfigChange]);
+  }, [configKey]); // Only re-run when config actually changes
   
   // Function to update configuration dynamically
   const updateConfig = (newConfig) => {
@@ -59,7 +78,20 @@ export function TwsxProvider({ children, config, onConfigChange }) {
     isConfigured
   };
   
-  return createElement(TwsxContext.Provider, { value: contextValue }, children);
+  // Provide config version for useTwsx to detect changes
+  const configContextValue = {
+    version: configVersion
+  };
+  
+  return createElement(
+    TwsxContext.Provider, 
+    { value: contextValue },
+    createElement(
+      TwsxConfigContext.Provider,
+      { value: configContextValue },
+      children
+    )
+  );
 }
 
 /**

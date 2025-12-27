@@ -6,6 +6,14 @@
 import { resetTailwindCache } from "../utils/tailwindCache.js";
 import { logger } from "../utils/logger.js";
 
+// Import clearConfigCache - will be set after module loads
+let clearConfigCache = null;
+
+// Lazy import to avoid circular dependency
+export function setClearConfigCache(fn) {
+  clearConfigCache = fn;
+}
+
 /**
  * User configuration state
  */
@@ -17,6 +25,9 @@ let userConfig = {
   corePlugins: {},
   prefix: "",
 };
+
+// Cache for extended theme to avoid redundant lookups
+const extendedThemeCache = new Map();
 
 /**
  * Deep merge two objects
@@ -76,6 +87,9 @@ export function configure(config = {}) {
       return;
     }
 
+    // Clear extended theme cache when config changes
+    extendedThemeCache.clear();
+
     // Merge user config with defaults
     if (config.theme) {
       if (config.theme.extend) {
@@ -116,6 +130,11 @@ export function configure(config = {}) {
     // Reset cache to apply new configuration
     resetTailwindCache();
 
+    // Also clear config options cache if available
+    if (clearConfigCache) {
+      clearConfigCache();
+    }
+
     logger.info("Configuration applied successfully");
   } catch (error) {
     logger.error("Error applying configuration:", error);
@@ -143,6 +162,7 @@ export function resetConfig() {
     corePlugins: {},
     prefix: "",
   };
+  extendedThemeCache.clear(); // Clear cache on reset
   resetTailwindCache();
   logger.info("Configuration reset to defaults");
 }
@@ -153,7 +173,17 @@ export function resetConfig() {
  * @returns {Object} Extended theme values
  */
 export function getExtendedTheme(key) {
-  return userConfig.theme.extend[key] || {};
+  // Check cache first
+  if (extendedThemeCache.has(key)) {
+    return extendedThemeCache.get(key);
+  }
+
+  const result = userConfig.theme.extend[key] || {};
+
+  // Cache the result
+  extendedThemeCache.set(key, result);
+
+  return result;
 }
 
 /**
