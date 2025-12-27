@@ -1,7 +1,7 @@
 {
   "name": "tailwind-to-style",
-  "version": "2.11.7",
-  "description": "Zero-runtime Tailwind CSS-in-JS with styled components, variants system, SCSS-like nesting, and React integration",
+  "version": "2.12.0",
+  "description": "Zero-runtime Tailwind CSS-in-JS with styled components, variants system, SCSS-like nesting, optimization suite, and React integration",
   "type": "module",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
@@ -16,6 +16,11 @@
       "types": "./dist/react.d.ts",
       "import": "./dist/react.esm.js",
       "require": "./dist/react.cjs.js"
+    },
+    "./browser": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.browser.js",
+      "require": "./dist/index.browser.js"
     },
     "./preflight.css": "./preflight.css",
     "./package.json": "./package.json"
@@ -63,6 +68,18 @@
     "url": "https://github.com/Bigetion/tailwind-to-style/issues"
   },
   "homepage": "https://github.com/Bigetion/tailwind-to-style#readme",
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@babel/core": "^7.27.4",
     "@babel/plugin-proposal-optional-chaining": "^7.21.0",
@@ -73,12 +90,17 @@
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.0",
     "@rollup/plugin-terser": "^0.4.4",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.1",
     "babel-jest": "^30.0.0",
     "babel-loader": "^10.0.0",
     "chokidar": "^4.0.1",
     "eslint": "^9.15.0",
     "jest": "^30.0.0",
     "prettier": "^3.5.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "rollup": "^4.27.4",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-terser": "^7.0.2",

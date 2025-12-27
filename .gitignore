@@ -11,6 +11,10 @@ yarn.lock
 /coverage
 /react-test
 
+# UI Library
+ui-library/dist/
+ui-library/node_modules/
+
 # Editor directories and files
 .idea/
 .vscode/
@@ -47,3 +51,9 @@ temp/
 .cache/
 .npm/
 .eslintcache
+
+# Test applications
+test-app/
+
+# UI Library
+ui-library/

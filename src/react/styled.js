@@ -37,35 +37,49 @@ function simpleHash(str) {
 }
 
 /**
- * Generate deterministic class name based on config
+ * Generate deterministic class name based on config and component instance
  * @param {Object|Function} config - Style configuration
  * @param {string} componentType - Component type (e.g., 'button', 'div')
+ * @param {string} instanceId - Unique instance identifier (optional)
  * @returns {string} Deterministic class name
  */
-function generateClassName(config, componentType = "component") {
+function generateClassName(
+  config,
+  componentType = "component",
+  instanceId = null
+) {
   // If config is a function (from tv()), use its string representation
   const configStr =
     typeof config === "function" ? config.toString() : JSON.stringify(config);
 
-  const hash = simpleHash(configStr + componentType);
-  return `twsx-${componentType}-${hash}`;
+  // Include instanceId in hash to ensure uniqueness per component
+  const hashInput = configStr + componentType + (instanceId || "");
+  const hash = simpleHash(hashInput);
+
+  // Generate unique class name with instance ID if provided
+  const suffix = instanceId ? `-${instanceId}` : "";
+  return `twsx-${componentType}-${hash}${suffix}`;
 }
 
 /**
  * Create a styled component with Tailwind classes
  * @param {string|React.Component} component - HTML tag or React component
  * @param {Object} config - Style configuration
- * @param {string} config.base - Base classes
- * @param {string} config.hover - Hover state classes
- * @param {string} config.active - Active state classes
- * @param {string} config.focus - Focus state classes
- * @param {string} config.disabled - Disabled state classes
- * @param {Object} config.variants - Variant definitions
- * @param {Object} config.nested - Nested styles (twsx format)
- * @param {Object} config.defaultVariants - Default variant values
+ * @param {Object} options - Additional options
+ * @param {string} options.scope - Component scope for isolation (optional)
+ * @param {boolean} options.isolate - Whether to isolate from other components (default: false)
  * @returns {React.Component} Styled component
  */
-export function styled(component, config = {}) {
+export function styled(component, config = {}, options = {}) {
+  const { scope = null, isolate = false } = options;
+
+  // Generate unique instance ID for isolation - FIXED: Always use scope when provided
+  const instanceId =
+    scope ||
+    (isolate
+      ? `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      : null);
+
   // Handle if config is a function from tv()
   if (typeof config === "function") {
     const tvFunction = config;
@@ -73,7 +87,7 @@ export function styled(component, config = {}) {
     // Generate deterministic class name based on component and config
     const componentType =
       typeof component === "string" ? component : "component";
-    const componentId = generateClassName(config, componentType);
+    const componentId = generateClassName(config, componentType, instanceId);
     const baseClassName = `.${componentId}`;
 
     // Create styled component
@@ -211,7 +225,7 @@ export function styled(component, config = {}) {
 
   // Generate deterministic class name based on component and config
   const componentType = typeof component === "string" ? component : "component";
-  const componentId = generateClassName(config, componentType);
+  const componentId = generateClassName(config, componentType, instanceId);
   const className = `.${componentId}`;
 
   // Create styled component
@@ -358,7 +372,27 @@ export function styled(component, config = {}) {
  * @returns {Function} Styled component factory
  */
 function createStyledTag(tag) {
-  return (config) => styled(tag, config);
+  return (config, options) => styled(tag, config, options);
+}
+
+/**
+ * Create an isolated styled component (automatically scoped)
+ * @param {string|React.Component} component - HTML tag or React component
+ * @param {Object} config - Style configuration
+ * @param {string} scope - Optional scope name
+ * @returns {React.Component} Isolated styled component
+ */
+export function isolatedStyled(component, config = {}, scope = null) {
+  return styled(component, config, { isolate: true, scope });
+}
+
+/**
+ * Create a scoped styled component
+ * @param {string} scope - Scope name for component isolation
+ * @returns {Function} Scoped styled function
+ */
+export function createScopedStyled(scope) {
+  return (component, config = {}) => styled(component, config, { scope });
 }
 
 // Create styled tag helpers

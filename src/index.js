@@ -406,8 +406,9 @@ function resolveCssToClearCss(cssString) {
     );
     props[key] = val;
   });
-  // Build CSS string
-  return Object.entries(props)
+  // Build CSS string - INCLUDE CSS variables so they can be resolved later
+  const allProps = { ...customVars, ...props };
+  return Object.entries(allProps)
     .map(([k, v]) => `${k}: ${v};`)
     .join(" ");
 }
@@ -624,14 +625,43 @@ function resolveVariants(selector, variants) {
 function inlineStyleToJson(styleString) {
   const styles = styleString.split(";").filter((style) => style.trim() !== "");
   const styleObject = {};
+  const cssVariables = {};
 
+  // First pass: collect CSS variables
   styles.forEach((style) => {
     const [key, value] = style.split(":").map((s) => s.trim());
-    if (key && value) {
+    if (key && key.startsWith("--")) {
+      cssVariables[key] = value;
+    }
+  });
+
+  // Helper to resolve CSS variables recursively
+  const resolveVariables = (value) => {
+    if (!value || !value.includes("var(")) return value;
+
+    let resolved = value;
+    let maxIterations = 10; // Prevent infinite loops
+
+    while (resolved.includes("var(") && maxIterations-- > 0) {
+      resolved = resolved.replace(
+        /var\((--[a-zA-Z0-9-]+)(?:,\s*([^)]+))?\)/g,
+        (match, variable, fallback) => {
+          return cssVariables[variable] || fallback || match;
+        }
+      );
+    }
+
+    return resolved;
+  };
+
+  // Second pass: create style object with resolved values
+  styles.forEach((style) => {
+    const [key, value] = style.split(":").map((s) => s.trim());
+    if (key && value && !key.startsWith("--")) {
       const camelCaseKey = key.replace(/-([a-z])/g, (_, letter) =>
         letter.toUpperCase()
       );
-      styleObject[camelCaseKey] = value;
+      styleObject[camelCaseKey] = resolveVariables(value);
     }
   });
 
@@ -714,29 +744,110 @@ function separateAndResolveCSS(arr) {
 
     const resolvedProperties = { ...cssProperties };
 
-    const resolveValue = (value, variables) => {
-      if (!value || !value.includes("var(")) return value;
+    const resolveValue = (value, variables, maxDepth = 10) => {
+      if (!value || !value.includes("var(") || maxDepth <= 0) return value;
 
       try {
-        return value.replace(
-          /var\((--[a-zA-Z0-9-]+)(?:,\s*([^)]+))?\)/g,
-          (match, variable, fallback) => {
-            return variables[variable] || fallback || match;
+        let resolved = value;
+        let hasVariables = true;
+        let depth = 0;
+
+        // Keep resolving until no more variables or max depth reached
+        while (hasVariables && depth < maxDepth) {
+          const before = resolved;
+
+          // Manual parsing to handle nested parentheses in fallback values
+          let result = "";
+          let i = 0;
+
+          while (i < resolved.length) {
+            // Look for var(
+            if (resolved.substr(i, 4) === "var(") {
+              i += 4;
+
+              // Extract variable name
+              let varName = "";
+              while (
+                i < resolved.length &&
+                resolved[i] !== "," &&
+                resolved[i] !== ")"
+              ) {
+                varName += resolved[i];
+                i++;
+              }
+
+              // Check for fallback
+              let fallback = "";
+              if (resolved[i] === ",") {
+                i++; // skip comma
+                // Parse fallback - count parentheses
+                let parenCount = 1; // We're inside var()
+                while (i < resolved.length && parenCount > 0) {
+                  if (resolved[i] === "(") parenCount++;
+                  else if (resolved[i] === ")") {
+                    parenCount--;
+                    if (parenCount === 0) break;
+                  }
+                  fallback += resolved[i];
+                  i++;
+                }
+              }
+
+              // Skip closing )
+              if (resolved[i] === ")") i++;
+
+              // Resolve variable
+              const resolvedVar = variables[varName.trim()];
+              if (resolvedVar) {
+                result += resolvedVar;
+              } else if (fallback) {
+                result += fallback.trim();
+              } else {
+                // Keep original if can't resolve
+                result += `var(${varName}`;
+                if (fallback) result += `,${fallback}`;
+                result += ")";
+              }
+            } else {
+              result += resolved[i];
+              i++;
+            }
           }
-        );
+
+          resolved = result;
+          hasVariables = resolved.includes("var(");
+          depth++;
+
+          // If nothing changed, break to avoid infinite loop
+          if (before === resolved) break;
+        }
+
+        return resolved;
       } catch (error) {
         logger.warn("Error resolving CSS variable:", value, error);
         return value;
       }
     };
 
-    // Resolve variables
-    Object.keys(resolvedProperties).forEach((key) => {
-      resolvedProperties[key] = resolveValue(
-        resolvedProperties[key],
-        resolvedProperties
-      );
-    });
+    // Resolve variables recursively - multiple passes
+    let maxPasses = 5;
+    let hasUnresolved = true;
+
+    while (hasUnresolved && maxPasses-- > 0) {
+      hasUnresolved = false;
+
+      Object.keys(resolvedProperties).forEach((key) => {
+        const resolved = resolveValue(
+          resolvedProperties[key],
+          resolvedProperties
+        );
+
+        if (resolved !== resolvedProperties[key]) {
+          resolvedProperties[key] = resolved;
+          hasUnresolved = true;
+        }
+      });
+    }
 
     // Remove CSS variables after resolution
     Object.keys(resolvedProperties).forEach((key) => {
@@ -1734,6 +1845,19 @@ export {
 
 // Variant system (framework-agnostic)
 export { tv, createVariants } from "./tv.js";
+
+// Optimization system (v2.12.0+)
+export {
+  BundleAnalyzer,
+  BuildTimeExtractor,
+  CriticalCSSExtractor,
+  CSSPurger,
+  PersistentCache,
+  OptimizationManager,
+  optimize,
+} from "./optimization/index.js";
+
+export { createOptimizationManager } from "./optimization/optimizationManager.js";
 
 // React integration (conditional exports)
 // Note: styled components are available via 'tailwind-to-style/react'

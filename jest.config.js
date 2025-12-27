@@ -1,13 +1,17 @@
 export default {
   testEnvironment: 'node',
   transform: {
-    '^.+\\.js$': 'babel-jest',
+    '^.+\\.(js|jsx)$': 'babel-jest',
   },
-  moduleFileExtensions: ['js', 'json'],
+  moduleFileExtensions: ['js', 'jsx', 'json'],
   collectCoverage: true,
-  collectCoverageFrom: ['src/**/*.js'],
+  collectCoverageFrom: ['src/**/*.{js,jsx}'],
   coverageDirectory: 'coverage',
-  testPathIgnorePatterns: ['/node_modules/'],  moduleNameMapper: {
+  testPathIgnorePatterns: ['/node_modules/'],
+  transformIgnorePatterns: [
+    'node_modules/(?!(react|react-dom)/)',
+  ],
+  moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
 };
