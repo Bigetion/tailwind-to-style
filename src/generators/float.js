@@ -8,7 +8,7 @@ export default function generator(configOptions = {}) {
   const propertyOptions = ["left", "right", "none"];
 
   const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    let cssString = getCssByOptions(
+    const cssString = getCssByOptions(
       propertyOptions,
       (key, value) => `
           ${prefix}-${key} {

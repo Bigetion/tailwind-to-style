@@ -67,7 +67,6 @@ function extractKeyframes(cssString) {
   const keyframesRegex = /@keyframes\s+([^\s{]+)\s*\{/g;
   const keyframes = [];
   let match;
-  let startIndex = 0;
 
   while ((match = keyframesRegex.exec(cssString)) !== null) {
     const keyframeName = match[1];

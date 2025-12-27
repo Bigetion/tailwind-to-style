@@ -3,12 +3,12 @@ import { generateCssString } from "../utils/index";
 export default function generator(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
-  let prefix = `${globalPrefix}grid-cols`;
+  const prefix = `${globalPrefix}grid-cols`;
 
   const { gridTemplateColumns = {} } = theme;
 
   const responsiveCssString = generateCssString(({ getCssByOptions }) => {
-    let cssString = getCssByOptions(
+    const cssString = getCssByOptions(
       gridTemplateColumns,
       (key, value) => `
           ${prefix}-${key} {

@@ -3,7 +3,7 @@ import { generateCssString } from "../utils/index";
 export default function generator(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
 
-  let prefix = `${globalPrefix}col-end`;
+  const prefix = `${globalPrefix}col-end`;
 
   const { gridColumnEnd = {} } = theme;
 

@@ -75,7 +75,7 @@ function getConfigOptions(options = {}) {
 }
 
 function generateCssString(getCssString = () => {}) {
-  let orientationPrefix = "";
+  const orientationPrefix = "";
 
   const hexToRgb = (hex) => {
     const rgba = hex
@@ -104,7 +104,7 @@ function generateCssString(getCssString = () => {}) {
     }
     let str = "";
     Object.entries(nOptions).forEach(([key, value]) => {
-      str += getStr(key.replace("/", `\\/`).replace(".", "\\."), value);
+      str += getStr(key.replace("/", "\\/").replace(".", "\\."), value);
     });
     return str;
   };

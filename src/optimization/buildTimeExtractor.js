@@ -72,7 +72,7 @@ export class BuildTimeExtractor {
         }
 
         return [...new Set(files)]; // Remove duplicates
-      } catch (error) {
+      } catch (_error) {
         logger.warn("Glob not available, using direct file paths");
         return this.options.input;
       }
@@ -160,7 +160,7 @@ export class BuildTimeExtractor {
         if (css && !this.extractedCSS.includes(css)) {
           this.extractedCSS += css + "\n";
         }
-      } catch (error) {
+      } catch (_error) {
         // Skip invalid classes
       }
     }

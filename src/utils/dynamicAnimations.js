@@ -3,8 +3,6 @@
  * Uses CSS variables for dynamic keyframe generation
  */
 
-/* eslint-disable no-undef */
-
 let animationStyleElement = null;
 let animationCounter = 0;
 

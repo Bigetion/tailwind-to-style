@@ -85,7 +85,7 @@ export class CSSPurger {
         try {
           const response = await fetch(link.href);
           allCSS += (await response.text()) + "\n";
-        } catch (error) {
+        } catch (_error) {
           logger.warn(`Failed to fetch stylesheet: ${link.href}`);
         }
       }
@@ -128,7 +128,7 @@ export class CSSPurger {
         }
 
         return [...new Set(files)];
-      } catch (error) {
+      } catch (_error) {
         logger.warn("Glob not available, using direct file paths");
         return this.options.content;
       }
@@ -204,7 +204,7 @@ export class CSSPurger {
    */
   purgeCSS(css) {
     let purgedCSS = css;
-    let originalRuleCount = this.countCSSRules(css);
+    const originalRuleCount = this.countCSSRules(css);
 
     // Remove unused rules
     purgedCSS = this.removeUnusedRules(purgedCSS);

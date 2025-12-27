@@ -14,6 +14,11 @@ export default [
         navigator: 'readonly',
         console: 'readonly',
         performance: 'readonly',
+        fetch: 'readonly',
+        Blob: 'readonly',
+        localStorage: 'readonly',
+        sessionStorage: 'readonly',
+        indexedDB: 'readonly',
         // Node.js globals
         process: 'readonly',
         __dirname: 'readonly',

@@ -113,7 +113,7 @@ export class BundleAnalyzer {
   /**
    * Estimate gzip size
    */
-  estimateGzipSize(content) {
+  estimateGzipSize(_content) {
     // Rough estimation: typically 70-80% compression ratio
     // For more accurate results, would need actual gzip compression
     const compressionRatio = 0.25; // Assume 25% of original size

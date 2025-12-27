@@ -120,7 +120,7 @@ export class CriticalCSSExtractor {
         try {
           const response = await fetch(link.href);
           allCSS += (await response.text()) + "\n";
-        } catch (error) {
+        } catch (_error) {
           logger.warn(`Failed to fetch stylesheet: ${link.href}`);
         }
       }
@@ -133,8 +133,6 @@ export class CriticalCSSExtractor {
    * Get selectors for visible elements
    */
   async getVisibleSelectors(html) {
-    const visibleSelectors = new Set();
-
     // Browser environment with DOM access
     if (typeof document !== "undefined") {
       return this.getVisibleSelectorsDOM();
