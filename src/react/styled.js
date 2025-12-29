@@ -20,20 +20,22 @@
 
 import React, { useMemo } from "react";
 import { useTwsx } from "./useTwsx.js";
+import { getConfig } from "../config/userConfig.js";
 
 /**
  * Simple hash function for deterministic class names
  * @param {string} str - String to hash
+ * @param {number} length - Length of hash (default: 6)
  * @returns {string} Hash string
  */
-function simpleHash(str) {
+function simpleHash(str, length = 6) {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
     hash = (hash << 5) - hash + char;
     hash = hash & hash; // Convert to 32bit integer
   }
-  return Math.abs(hash).toString(36).substr(0, 6);
+  return Math.abs(hash).toString(36).substr(0, length);
 }
 
 /**
@@ -41,24 +43,62 @@ function simpleHash(str) {
  * @param {Object|Function} config - Style configuration
  * @param {string} componentType - Component type (e.g., 'button', 'div')
  * @param {string} instanceId - Unique instance identifier (optional)
+ * @param {Object} options - Naming options (prefix, separator, etc)
  * @returns {string} Deterministic class name
  */
 function generateClassName(
   config,
   componentType = "component",
-  instanceId = null
+  instanceId = null,
+  options = {}
 ) {
+  // Get global config
+  const globalConfig = getConfig();
+  const styledConfig = globalConfig.styled || {};
+
+  // Merge options with global config (options override global)
+  const {
+    prefix = styledConfig.prefix || "twsx",
+    separator = styledConfig.separator || "-",
+    hashLength = styledConfig.hashLength || 6,
+    includeComponentName = styledConfig.includeComponentName !== false,
+  } = options;
+
   // If config is a function (from tv()), use its string representation
   const configStr =
     typeof config === "function" ? config.toString() : JSON.stringify(config);
 
   // Include instanceId in hash to ensure uniqueness per component
   const hashInput = configStr + componentType + (instanceId || "");
-  const hash = simpleHash(hashInput);
+  const hash = simpleHash(hashInput, hashLength);
 
-  // Generate unique class name with instance ID if provided
-  const suffix = instanceId ? `-${instanceId}` : "";
-  return `twsx-${componentType}-${hash}${suffix}`;
+  // Build class name parts
+  const parts = [prefix];
+  
+  if (includeComponentName) {
+    parts.push(componentType);
+  }
+  
+  parts.push(hash);
+  
+  if (instanceId) {
+    parts.push(instanceId);
+  }
+
+  return parts.join(separator);
+}
+
+/**
+ * Get variant prefix from config or options
+ * @param {Object} namingOptions - Naming options
+ * @returns {string} Variant prefix
+ */
+function getVariantPrefix(namingOptions = {}) {
+  const globalConfig = getConfig();
+  const styledConfig = globalConfig.styled || {};
+  const prefix = namingOptions.prefix || styledConfig.prefix || "twsx";
+  const separator = namingOptions.separator || styledConfig.separator || "-";
+  return `${prefix}${separator}`;
 }
 
 /**
@@ -68,10 +108,31 @@ function generateClassName(
  * @param {Object} options - Additional options
  * @param {string} options.scope - Component scope for isolation (optional)
  * @param {boolean} options.isolate - Whether to isolate from other components (default: false)
+ * @param {string} options.prefix - Custom prefix for classnames (default: from global config)
+ * @param {string} options.separator - Custom separator (default: from global config)
+ * @param {number} options.hashLength - Custom hash length (default: from global config)
+ * @param {boolean} options.includeComponentName - Include component name in classname (default: from global config)
+ * @param {string} options.displayName - Custom display name for component (optional)
  * @returns {React.Component} Styled component
  */
 export function styled(component, config = {}, options = {}) {
-  const { scope = null, isolate = false } = options;
+  const { 
+    scope = null, 
+    isolate = false,
+    prefix,
+    separator,
+    hashLength,
+    includeComponentName,
+    displayName,
+  } = options;
+
+  // Extract naming options
+  const namingOptions = {
+    ...(prefix !== undefined && { prefix }),
+    ...(separator !== undefined && { separator }),
+    ...(hashLength !== undefined && { hashLength }),
+    ...(includeComponentName !== undefined && { includeComponentName }),
+  };
 
   // Generate unique instance ID for isolation - FIXED: Always use scope when provided
   const instanceId =
@@ -87,7 +148,7 @@ export function styled(component, config = {}, options = {}) {
     // Generate deterministic class name based on component and config
     const componentType =
       typeof component === "string" ? component : "component";
-    const componentId = generateClassName(config, componentType, instanceId);
+    const componentId = generateClassName(config, componentType, instanceId, namingOptions);
     const baseClassName = `.${componentId}`;
 
     // Create styled component
@@ -113,11 +174,12 @@ export function styled(component, config = {}, options = {}) {
       // Apply default variants for keys not provided in props
       const finalVariantProps = { ...defaultVariants, ...variantProps };
 
-      // Generate variant class names with twsx- prefix
+      // Generate variant class names with configurable prefix
+      const variantPrefix = getVariantPrefix(namingOptions);
       const variantClassNames = [];
       Object.entries(finalVariantProps).forEach(([key, value]) => {
         if (value) {
-          variantClassNames.push(`twsx-${key}-${value}`);
+          variantClassNames.push(`${variantPrefix}${key}${separator || "-"}${value}`);
         }
       });
 
@@ -139,7 +201,9 @@ export function styled(component, config = {}, options = {}) {
         Object.entries(variants).forEach(([variantKey, variantValues]) => {
           Object.entries(variantValues).forEach(
             ([variantValue, variantClasses]) => {
-              const variantSelector = `&.twsx-${variantKey}-${variantValue}`;
+              const variantPrefix = getVariantPrefix(namingOptions);
+              const sep = namingOptions.separator || styledConfig.separator || "-";
+              const variantSelector = `&.${variantPrefix}${variantKey}${sep}${variantValue}`;
 
               if (variantClasses && variantClasses.trim()) {
                 nestedVariants[variantSelector] = variantClasses;
@@ -153,8 +217,10 @@ export function styled(component, config = {}, options = {}) {
           const { class: compoundClass, ...conditions } = compound;
 
           // Build selector with all condition classes
+          const variantPrefix = getVariantPrefix(namingOptions);
+          const sep = namingOptions.separator || styledConfig.separator || "-";
           const conditionClasses = Object.entries(conditions)
-            .map(([key, value]) => `twsx-${key}-${value}`)
+            .map(([key, value]) => `${variantPrefix}${key}${sep}${value}`)
             .join(".");
 
           const compoundSelector = `&.${conditionClasses}`;
@@ -201,7 +267,7 @@ export function styled(component, config = {}, options = {}) {
       );
     });
 
-    StyledComponent.displayName = `Styled(${
+    StyledComponent.displayName = displayName || `Styled(${
       typeof component === "string"
         ? component
         : component.displayName || component.name || "Component"
@@ -225,7 +291,7 @@ export function styled(component, config = {}, options = {}) {
 
   // Generate deterministic class name based on component and config
   const componentType = typeof component === "string" ? component : "component";
-  const componentId = generateClassName(config, componentType, instanceId);
+  const componentId = generateClassName(config, componentType, instanceId, namingOptions);
   const className = `.${componentId}`;
 
   // Create styled component
@@ -247,11 +313,13 @@ export function styled(component, config = {}, options = {}) {
     // Apply default variants
     const appliedVariantProps = { ...defaultVariants, ...variantProps };
 
-    // Generate variant class names with twsx- prefix
+    // Generate variant class names with configurable prefix
+    const variantPrefix = getVariantPrefix(namingOptions);
+    const sep = namingOptions.separator || styledConfig.separator || "-";
     const variantClassNames = [];
     Object.entries(appliedVariantProps).forEach(([key, value]) => {
       if (value) {
-        variantClassNames.push(`twsx-${key}-${value}`);
+        variantClassNames.push(`${variantPrefix}${key}${sep}${value}`);
       }
     });
 
@@ -266,7 +334,9 @@ export function styled(component, config = {}, options = {}) {
       Object.entries(variants).forEach(([variantKey, variantValues]) => {
         Object.entries(variantValues).forEach(
           ([variantValue, variantClasses]) => {
-            const variantSelector = `&.twsx-${variantKey}-${variantValue}`;
+            const variantPrefix = getVariantPrefix(namingOptions);
+            const sep = namingOptions.separator || styledConfig.separator || "-";
+            const variantSelector = `&.${variantPrefix}${variantKey}${sep}${variantValue}`;
 
             if (variantClasses && variantClasses.trim()) {
               nestedVariants[variantSelector] = variantClasses;
@@ -282,12 +352,14 @@ export function styled(component, config = {}, options = {}) {
         // Build selector with :not() for false values
         const positiveConditions = [];
         const negativeConditions = [];
+        const variantPrefix = getVariantPrefix(namingOptions);
+        const sep = namingOptions.separator || styledConfig.separator || "-";
 
         Object.entries(conditions).forEach(([key, value]) => {
           if (value === false) {
-            negativeConditions.push(`twsx-${key}-true`);
+            negativeConditions.push(`${variantPrefix}${key}${sep}true`);
           } else {
-            positiveConditions.push(`twsx-${key}-${value}`);
+            positiveConditions.push(`${variantPrefix}${key}${sep}${value}`);
           }
         });
 

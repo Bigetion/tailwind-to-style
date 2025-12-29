@@ -1,7 +1,7 @@
 {
   "name": "tailwind-to-style",
-  "version": "2.12.3",
-  "description": "Zero-runtime Tailwind CSS-in-JS with styled components, variants system, SCSS-like nesting, optimization suite, and React integration",
+  "version": "2.12.4",
+  "description": "Zero-runtime Tailwind CSS-in-JS with styled components, custom classname prefix, variants system, SCSS-like nesting, optimization suite, and React integration",
   "type": "module",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",

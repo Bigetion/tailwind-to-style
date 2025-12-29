@@ -24,6 +24,12 @@ let userConfig = {
   plugins: [],
   corePlugins: {},
   prefix: "",
+  styled: {
+    prefix: "twsx",           // Global prefix for styled components
+    separator: "-",           // Separator between prefix and component
+    hashLength: 6,            // Length of generated hash
+    includeComponentName: true, // Include component type in classname
+  },
 };
 
 // Cache for extended theme to avoid redundant lookups

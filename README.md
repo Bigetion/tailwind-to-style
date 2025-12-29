@@ -15,7 +15,28 @@ The library exposes two main functions and a CLI tool:
 2. **`twsx`**: A more advanced function that allows you to define nested and complex styles similar to SCSS, including support for responsive design, state variants, grouping, and enhanced CSS capabilities.
 3. **`twsx-cli`**: A command-line tool for generating CSS files from `twsx.*.js` files with watch mode support.
 
-## ✨ What's New in v2.12.0
+## ✨ What's New in v2.12.4
+
+- **🏷️ Custom Classname Prefix**: Full control over styled component classnames
+  - **Configurable Prefix**: Change from `twsx-` to any prefix (e.g., `myapp-`)
+  - **Custom Separator**: Use `-`, `_`, `__` or any separator
+  - **Flexible Hash Length**: Adjust uniqueness vs size (4-8 characters)
+  - **Component Name Toggle**: Include/exclude component type in classname
+  - **Per-Component Override**: Different naming for specific components
+  - **Design System Ready**: Perfect for branded design systems
+
+**Example:**
+```javascript
+// Global config
+configure({ styled: { prefix: 'myapp', separator: '_' }})
+
+const Button = styled('button', { base: 'px-4 py-2' })
+// Generates: myapp_button_a3k9x (instead of twsx-button-a3k9x2)
+```
+
+**[📖 See Custom Prefix Guide →](#custom-classname-prefix-configuration)** | **[💻 Examples →](examples/custom-prefix.js)**
+
+### Previous Updates (v2.12.0)
 
 - **🚀 Complete Optimization Suite**: Production-ready performance tools
   - **Bundle Analysis**: Analyze size, get recommendations, export reports
@@ -764,6 +785,124 @@ document.querySelector('.my-button').className = className
 </template>
 ```
 
+### Custom Classname Prefix Configuration
+
+**New in v2.12.4** - Customize how styled components generate classnames with configurable prefix, separator, and naming options.
+
+#### Global Configuration
+
+Set global defaults for all styled components:
+
+```javascript
+import { configure } from 'tailwind-to-style'
+
+configure({
+  styled: {
+    prefix: 'myapp',           // Default: 'twsx'
+    separator: '_',            // Default: '-'
+    hashLength: 5,             // Default: 6
+    includeComponentName: true // Default: true
+  }
+})
+
+const Button = styled('button', {
+  base: 'px-4 py-2 rounded-lg'
+})
+// Generates: myapp_button_a3k9x (instead of twsx-button-a3k9x2)
+// Variants: myapp_color_primary (instead of twsx-color-primary)
+```
+
+#### Per-Component Override
+
+Override naming for specific components:
+
+```javascript
+const CustomButton = styled('button', 
+  {
+    base: 'px-4 py-2 rounded-lg',
+    variants: {
+      variant: {
+        solid: 'bg-blue-500',
+        outline: 'border border-blue-500'
+      }
+    }
+  },
+  {
+    // Component-specific naming options
+    prefix: 'btn',
+    separator: '-',
+    hashLength: 8,
+    includeComponentName: false
+  }
+)
+// Generates: btn-a3k9x2f1 (no component type)
+// Variants: btn-variant-solid
+```
+
+#### Use Cases
+
+**1. Brand-specific Prefix:**
+```javascript
+configure({ styled: { prefix: 'shopify' }})
+// shopify-button-a3k9x2
+```
+
+**2. Minimal Classnames:**
+```javascript
+configure({ 
+  styled: { 
+    prefix: 'c',
+    separator: '',
+    hashLength: 4,
+    includeComponentName: false
+  }
+})
+// c1a2b (super compact!)
+```
+
+**3. Monorepo Isolation:**
+```javascript
+// Admin app
+configure({ styled: { prefix: 'admin' }})
+// admin-button-xxx
+
+// Customer portal
+configure({ styled: { prefix: 'portal' }})
+// portal-button-yyy
+```
+
+**4. BEM-like Convention:**
+```javascript
+configure({ styled: { separator: '__' }})
+// twsx__button__a3k9x2
+```
+
+**5. Design System:**
+```javascript
+configure({ styled: { prefix: 'ds' }})
+const Button = styled('button', config)
+const Card = styled('div', config)
+// ds-button-a3k9x2, ds-card-f8d2k1
+```
+
+#### HTML Output Examples
+
+```html
+<!-- Default (prefix: 'twsx', separator: '-') -->
+<button class="twsx-button-a3k9x2 twsx-color-primary">Click</button>
+
+<!-- Custom (prefix: 'myapp', separator: '_') -->
+<button class="myapp_button_a3k9 myapp_color_primary">Click</button>
+
+<!-- Minimal (prefix: 'c', no component name) -->
+<button class="c-1a2b c-color-primary">Click</button>
+
+<!-- BEM-like (separator: '__') -->
+<button class="twsx__button__a3k9x2 twsx__color__primary">Click</button>
+```
+
+**[📖 Full Example →](examples/custom-prefix.js)**
+
 ### Batch Variant Creation
 
 Create multiple variant functions at once:
@@ -1265,6 +1404,13 @@ export default {
       },
     },
   },
+  // Styled components configuration
+  styled: {
+    prefix: 'myapp',           // Customize classname prefix
+    separator: '-',            // Customize separator
+    hashLength: 6,             // Hash length (4-8 recommended)
+    includeComponentName: true // Include component type in classname
+  }
 };
 ```
 
@@ -1276,6 +1422,65 @@ import config from "./tailwind-to-style.config.js";
 
 configure(config);
 ```
+
+### Configuration Options
+
+```javascript
+configure({
+  // Theme customization
+  theme: {
+    extend: {
+      colors: { /* custom colors */ },
+      spacing: { /* custom spacing */ },
+      borderRadius: { /* custom border radius */ },
+      fontSize: { /* custom font sizes */ },
+      // ... any Tailwind theme property
+    },
+  },
+  
+  // Optional: Add prefix to utility classes
+  prefix: 'tw-',
+  
+  // Optional: Disable specific core plugins
+  corePlugins: {
+    float: false,
+    clear: false,
+  },
+  
+  // NEW: Styled components naming configuration
+  styled: {
+    prefix: 'twsx',            // Global prefix (default: 'twsx')
+    separator: '-',            // Separator between parts (default: '-')
+    hashLength: 6,             // Hash length 4-8 (default: 6)
+    includeComponentName: true // Include component type (default: true)
+  }
+});
+```
+
+**Examples:**
+
+```javascript
+// Brand-specific prefix
+configure({ styled: { prefix: 'myapp' }})
+// Generated: myapp-button-a3k9x2
+
+// Minimal classnames
+configure({ 
+  styled: { 
+    prefix: 'c',
+    separator: '',
+    hashLength: 4,
+    includeComponentName: false
+  }
+})
+// Generated: c1a2b
+
+// BEM-like style
+configure({ styled: { separator: '__' }})
+// Generated: twsx__button__a3k9x2
+```
+
+See [Custom Classname Prefix Configuration](#custom-classname-prefix-configuration) for more details.
 
 ## Custom Plugins (v2.10.0+)
 
