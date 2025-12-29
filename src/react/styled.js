@@ -175,11 +175,14 @@ export function styled(component, config = {}, options = {}) {
       const finalVariantProps = { ...defaultVariants, ...variantProps };
 
       // Generate variant class names with configurable prefix
+      const globalConfig = getConfig();
+      const styledConfig = globalConfig.styled || {};
       const variantPrefix = getVariantPrefix(namingOptions);
+      const sep = namingOptions.separator || styledConfig.separator || "-";
       const variantClassNames = [];
       Object.entries(finalVariantProps).forEach(([key, value]) => {
         if (value) {
-          variantClassNames.push(`${variantPrefix}${key}${separator || "-"}${value}`);
+          variantClassNames.push(`${variantPrefix}${key}${sep}${value}`);
         }
       });
 
@@ -314,6 +317,8 @@ export function styled(component, config = {}, options = {}) {
     const appliedVariantProps = { ...defaultVariants, ...variantProps };
 
     // Generate variant class names with configurable prefix
+    const globalConfig = getConfig();
+    const styledConfig = globalConfig.styled || {};
     const variantPrefix = getVariantPrefix(namingOptions);
     const sep = namingOptions.separator || styledConfig.separator || "-";
     const variantClassNames = [];
@@ -326,6 +331,8 @@ export function styled(component, config = {}, options = {}) {
     // Build twsx styles object with nested structure
     const styles = useMemo(() => {
       const styleObj = {};
+      const globalConfig = getConfig();
+      const styledConfig = globalConfig.styled || {};
 
       // Build nested variants structure
       const nestedVariants = {};
