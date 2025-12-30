@@ -14,4 +14,4 @@ export { styled, isolatedStyled, createScopedStyled } from "./styled.js";
 export { tv, createVariants } from "../tv.js";
 
 // Re-export core TWSX functions for convenience
-export { tws, twsx, configure, createPlugin } from "../index.js";
+export { tws, twsx, configure, createPlugin, resetConfig } from "../index.js";

@@ -74,13 +74,13 @@ function generateClassName(
 
   // Build class name parts
   const parts = [prefix];
-  
+
   if (includeComponentName) {
     parts.push(componentType);
   }
-  
+
   parts.push(hash);
-  
+
   if (instanceId) {
     parts.push(instanceId);
   }
@@ -116,8 +116,8 @@ function getVariantPrefix(namingOptions = {}) {
  * @returns {React.Component} Styled component
  */
 export function styled(component, config = {}, options = {}) {
-  const { 
-    scope = null, 
+  const {
+    scope = null,
     isolate = false,
     prefix,
     separator,
@@ -148,7 +148,12 @@ export function styled(component, config = {}, options = {}) {
     // Generate deterministic class name based on component and config
     const componentType =
       typeof component === "string" ? component : "component";
-    const componentId = generateClassName(config, componentType, instanceId, namingOptions);
+    const componentId = generateClassName(
+      config,
+      componentType,
+      instanceId,
+      namingOptions
+    );
     const baseClassName = `.${componentId}`;
 
     // Create styled component
@@ -205,11 +210,17 @@ export function styled(component, config = {}, options = {}) {
           Object.entries(variantValues).forEach(
             ([variantValue, variantClasses]) => {
               const variantPrefix = getVariantPrefix(namingOptions);
-              const sep = namingOptions.separator || styledConfig.separator || "-";
+              const sep =
+                namingOptions.separator || styledConfig.separator || "-";
               const variantSelector = `&.${variantPrefix}${variantKey}${sep}${variantValue}`;
 
-              if (variantClasses && variantClasses.trim()) {
-                nestedVariants[variantSelector] = variantClasses;
+              // Handle both string and array of classes
+              const normalizedClasses = Array.isArray(variantClasses)
+                ? variantClasses.join(" ")
+                : variantClasses;
+
+              if (normalizedClasses && normalizedClasses.trim()) {
+                nestedVariants[variantSelector] = normalizedClasses;
               }
             }
           );
@@ -228,8 +239,13 @@ export function styled(component, config = {}, options = {}) {
 
           const compoundSelector = `&.${conditionClasses}`;
 
-          if (compoundClass && compoundClass.trim()) {
-            nestedVariants[compoundSelector] = compoundClass;
+          // Handle both string and array of classes
+          const normalizedClass = Array.isArray(compoundClass)
+            ? compoundClass.join(" ")
+            : compoundClass;
+
+          if (normalizedClass && normalizedClass.trim()) {
+            nestedVariants[compoundSelector] = normalizedClass;
           }
         });
 
@@ -237,8 +253,11 @@ export function styled(component, config = {}, options = {}) {
         // This matches the twsx() format exactly
         const styleArray = [];
 
-        if (base.trim()) {
-          styleArray.push(base);
+        // Handle both string and array of classes for base
+        const normalizedBase = Array.isArray(base) ? base.join(" ") : base;
+
+        if (normalizedBase && normalizedBase.trim()) {
+          styleArray.push(normalizedBase);
         }
 
         if (Object.keys(nestedVariants).length > 0) {
@@ -270,11 +289,13 @@ export function styled(component, config = {}, options = {}) {
       );
     });
 
-    StyledComponent.displayName = displayName || `Styled(${
-      typeof component === "string"
-        ? component
-        : component.displayName || component.name || "Component"
-    })`;
+    StyledComponent.displayName =
+      displayName ||
+      `Styled(${
+        typeof component === "string"
+          ? component
+          : component.displayName || component.name || "Component"
+      })`;
 
     return StyledComponent;
   }
@@ -294,7 +315,12 @@ export function styled(component, config = {}, options = {}) {
 
   // Generate deterministic class name based on component and config
   const componentType = typeof component === "string" ? component : "component";
-  const componentId = generateClassName(config, componentType, instanceId, namingOptions);
+  const componentId = generateClassName(
+    config,
+    componentType,
+    instanceId,
+    namingOptions
+  );
   const className = `.${componentId}`;
 
   // Create styled component
@@ -342,11 +368,17 @@ export function styled(component, config = {}, options = {}) {
         Object.entries(variantValues).forEach(
           ([variantValue, variantClasses]) => {
             const variantPrefix = getVariantPrefix(namingOptions);
-            const sep = namingOptions.separator || styledConfig.separator || "-";
+            const sep =
+              namingOptions.separator || styledConfig.separator || "-";
             const variantSelector = `&.${variantPrefix}${variantKey}${sep}${variantValue}`;
 
-            if (variantClasses && variantClasses.trim()) {
-              nestedVariants[variantSelector] = variantClasses;
+            // Handle both string and array of classes
+            const normalizedClasses = Array.isArray(variantClasses)
+              ? variantClasses.join(" ")
+              : variantClasses;
+
+            if (normalizedClasses && normalizedClasses.trim()) {
+              nestedVariants[variantSelector] = normalizedClasses;
             }
           }
         );
@@ -354,7 +386,7 @@ export function styled(component, config = {}, options = {}) {
 
       // Generate compound variant selectors
       compoundVariants.forEach((compound) => {
-        const { className: compoundClass, ...conditions } = compound;
+        const { class: compoundClass, ...conditions } = compound;
 
         // Build selector with :not() for false values
         const positiveConditions = [];
@@ -381,16 +413,24 @@ export function styled(component, config = {}, options = {}) {
           });
         }
 
-        if (compoundClass && compoundClass.trim()) {
-          nestedVariants[compoundSelector] = compoundClass;
+        // Handle both string and array of classes
+        const normalizedClass = Array.isArray(compoundClass)
+          ? compoundClass.join(" ")
+          : compoundClass;
+
+        if (normalizedClass && normalizedClass.trim()) {
+          nestedVariants[compoundSelector] = normalizedClass;
         }
       });
 
       // Build final nested structure: [base, { nested variants }]
       const styleArray = [];
 
-      if (base.trim()) {
-        styleArray.push(base);
+      // Handle both string and array of classes for base
+      const normalizedBase = Array.isArray(base) ? base.join(" ") : base;
+
+      if (normalizedBase && normalizedBase.trim()) {
+        styleArray.push(normalizedBase);
       }
 
       // Add pseudo-state classes to nested
