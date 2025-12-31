@@ -76,15 +76,15 @@ class Logger {
 }
 
 // Create singleton instance with production-safe defaults
-// Use try-catch to safely check for Node.js environment
+// Use multiple safety checks for Node.js environment
 let isProduction = false;
 try {
-  isProduction =
-    typeof process !== "undefined" &&
-    typeof process.env !== "undefined" &&
-    process.env.NODE_ENV === "production";
+  // Safe check with optional chaining equivalent
+  if (typeof process !== "undefined" && process && process.env) {
+    isProduction = process.env.NODE_ENV === "production";
+  }
 } catch (e) {
-  // In browser environment, default to development mode
+  // Silently fail - in browser environment, default to development mode
   isProduction = false;
 }
 

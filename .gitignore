@@ -54,6 +54,10 @@ temp/
 
 # Test applications
 test-app/
+test-react-v3/
+
+# Package tarball
+*.tgz
 
 # UI Library
 ui-library/
