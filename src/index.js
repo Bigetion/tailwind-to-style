@@ -1498,6 +1498,56 @@ function flattenStyleObject(obj, parentSelector = "") {
 
   for (const selector in obj) {
     const val = obj[selector];
+    
+    // Handle media queries specially - don't concatenate with parent
+    if (selector.startsWith('@media')) {
+      if (isSelectorObject(val)) {
+        // Initialize media query in result if not exists
+        if (!result[selector]) {
+          result[selector] = {};
+        }
+        
+        // Process nested selectors within media query
+        for (const innerSel in val) {
+          const innerVal = val[innerSel];
+          
+          // Calculate the target selector within media query context
+          let targetSelector;
+          if (parentSelector) {
+            if (innerSel === '.' || innerSel === '&') {
+              // Self-reference - use parent selector
+              targetSelector = parentSelector;
+            } else if (innerSel.includes('&')) {
+              // Replace & with parent
+              targetSelector = innerSel.replace(/&/g, parentSelector);
+            } else {
+              // Descendant selector
+              targetSelector = `${parentSelector} ${innerSel}`;
+            }
+          } else {
+            targetSelector = innerSel;
+          }
+          
+          // Recursively flatten inner value
+          if (typeof innerVal === 'string') {
+            result[selector][targetSelector] = innerVal;
+          } else if (isSelectorObject(innerVal)) {
+            const nested = flattenStyleObject({ [innerSel]: innerVal }, parentSelector);
+            // Merge nested results into media query
+            for (const nestedSel in nested) {
+              if (nestedSel.startsWith('@media')) {
+                // Nested media query - merge at top level
+                Object.assign(result, nested);
+              } else {
+                result[selector][nestedSel] = nested[nestedSel];
+              }
+            }
+          }
+        }
+      }
+      continue;
+    }
+    
     const currentSelector = parentSelector
       ? selector.includes("&")
         ? selector.replace(/&/g, parentSelector)
@@ -1637,6 +1687,34 @@ export function twsx(obj, options = {}) {
     const processMarker = performanceMonitor.start("twsx:process");
     for (const selector in flattered) {
       const val = flattered[selector];
+      
+      // Handle media queries specially - don't process through walk
+      if (selector.startsWith('@media')) {
+        // Media query should have nested selectors with Tailwind classes
+        if (typeof val === 'object' && !Array.isArray(val)) {
+          // Initialize media query in styles
+          if (!styles[selector]) {
+            styles[selector] = {};
+          }
+          
+          // Process each selector within the media query
+          for (const innerSelector in val) {
+            const innerVal = val[innerSelector];
+            const baseClass = typeof innerVal === 'string' ? expandGroupedClass(innerVal) : '';
+            
+            // Process Tailwind classes for this selector
+            if (baseClass) {
+              for (const cls of baseClass.split(' ')) {
+                if (cls.trim()) {
+                  processClass(cls, innerSelector, styles[selector]);
+                }
+              }
+            }
+          }
+        }
+        continue;
+      }
+      
       let baseClass = "";
       const nested = {};
 

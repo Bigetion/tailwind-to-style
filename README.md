@@ -65,13 +65,15 @@ const css = twsx({
           '&:hover': 'bg-blue-600',
           '&:active': 'bg-blue-700'
         }
-      ],
-      '@media (max-width: 768px)': {
-        '.': 'p-4',
-        '> .title': 'text-xl'
-      }
+      ]
     }
-  ]
+  ],
+  
+  // Media queries at root level
+  '@media (max-width: 768px)': {
+    '.card': 'p-4',
+    '.card > .title': 'text-xl'
+  }
 })
 
 // Inject to document
@@ -129,20 +131,17 @@ const css = twsx({
     }
   ],
   
-  '.card': [
-    'bg-white rounded-xl shadow-lg overflow-hidden',
-    {
-      '> .header': 'p-6 border-b border-gray-200',
-      '> .body': 'p-6',
-      '> .footer': 'p-6 bg-gray-50',
-      
-      '@media (max-width: 768px)': {
-        '.': 'rounded-lg',
-        '> .header': 'p-4',
-        '> .body': 'p-4'
-      }
-    }
-  ]
+  '.card': 'bg-white rounded-xl shadow-lg overflow-hidden',
+  '.card > .header': 'p-6 border-b border-gray-200',
+  '.card > .body': 'p-6',
+  '.card > .footer': 'p-6 bg-gray-50',
+  
+  // Media queries at root level
+  '@media (max-width: 768px)': {
+    '.card': 'rounded-lg',
+    '.card > .header': 'p-4',
+    '.card > .body': 'p-4'
+  }
 })
 
 // Options
@@ -152,10 +151,10 @@ const formatted = twsx(styles, { format: 'pretty' })
 
 **Nesting Syntax:**
 - `'&:hover'` - Pseudo-classes
+- `'&.class'` - Modifiers
 - `'> .child'` - Direct children
 - `'.nested'` - Descendants
-- `'@media ...'` - Media queries
-- `'.'` - Self reference in media queries
+- `'@media ...'` - Media queries (root level only)
 
 ### `configure(config)`
 
