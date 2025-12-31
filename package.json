@@ -1,7 +1,7 @@
 {
   "name": "tailwind-to-style",
-  "version": "2.12.6",
-  "description": "Zero-runtime Tailwind CSS-in-JS with styled components, custom classname prefix, variants system, SCSS-like nesting, optimization suite, and React integration",
+  "version": "3.0.0",
+  "description": "Runtime Tailwind CSS to inline styles converter. Simple, fast, framework-agnostic.",
   "type": "module",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
@@ -12,24 +12,6 @@
       "import": "./dist/index.esm.js",
       "require": "./dist/index.cjs"
     },
-    "./react": {
-      "types": "./dist/react.d.ts",
-      "import": "./dist/react.esm.js",
-      "require": "./dist/react.cjs.js"
-    },
-    "./browser": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.browser.js",
-      "require": "./dist/index.browser.js"
-    },
-    "./plugins/vite-twsx": {
-      "import": "./plugins/vite-twsx.js",
-      "require": "./plugins/vite-twsx.js"
-    },
-    "./plugins/webpack-twsx": {
-      "import": "./plugins/webpack-twsx.js",
-      "require": "./plugins/webpack-twsx.js"
-    },
     "./preflight.css": "./preflight.css",
     "./package.json": "./package.json"
   },
@@ -37,13 +19,8 @@
     "dist",
     "preflight.css",
     "README.md",
-    "LICENSE",
-    "plugins",
-    "lib"
+    "LICENSE"
   ],
-  "bin": {
-    "twsx-cli": "./lib/twsx-cli.js"
-  },
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests",
     "build": "rollup -c rollup.config.js",
@@ -77,18 +54,6 @@
     "url": "https://github.com/Bigetion/tailwind-to-style/issues"
   },
   "homepage": "https://github.com/Bigetion/tailwind-to-style#readme",
-  "peerDependencies": {
-    "react": ">=16.8.0",
-    "react-dom": ">=16.8.0"
-  },
-  "peerDependenciesMeta": {
-    "react": {
-      "optional": true
-    },
-    "react-dom": {
-      "optional": true
-    }
-  },
   "devDependencies": {
     "@babel/core": "^7.27.4",
     "@babel/plugin-proposal-optional-chaining": "^7.21.0",
