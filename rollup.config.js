@@ -11,25 +11,25 @@ const pkg = require('./package.json');
 
 const banner = `/**
  * tailwind-to-style v${pkg.version}
- * Convert tailwind classes to inline style
+ * Runtime Tailwind CSS to inline styles converter
+ * Core only: tws, twsx, configure
  * 
  * @author Bigetion
  * @license MIT
  */`;
 
 const input = 'src/index.js';
-const extensions = ['.js', '.jsx'];
+const extensions = ['.js'];
 
 // Babel configuration for browser compatibility
 const babelConfig = {
   babelHelpers: 'bundled',
   exclude: 'node_modules/**',
-  extensions,
-  presets: ['@babel/preset-react']
+  extensions
 };
 
 export default [
-  // Main ESM build
+  // Main ESM build (primary export)
   {
     input,
     output: {
@@ -45,31 +45,13 @@ export default [
       babel(babelConfig),
       copy({
         targets: [
-          { src: 'types/index.d.ts', dest: 'dist/' },
-          { src: 'types/react.d.ts', dest: 'dist/' }
+          { src: 'types/index.d.ts', dest: 'dist/' }
         ]
       })
     ]
   },
   
-  // React hooks ESM build
-  {
-    input: 'src/react/index.js',
-    output: {
-      file: 'dist/react.esm.js',
-      format: 'esm',
-      banner
-    },
-    external: ['react', 'react-dom'],
-    plugins: [
-      resolve({ extensions: ['.js', '.jsx'] }),
-      babel(babelConfig),
-      commonjs(),
-      json()
-    ]
-  },
-  
-  // Main CommonJS build
+  // Main CommonJS build (for Node.js compatibility)
   {
     input,
     output: {
@@ -87,25 +69,7 @@ export default [
     ]
   },
   
-  // React hooks CommonJS build
-  {
-    input: 'src/react/index.js',
-    output: {
-      file: 'dist/react.cjs.js',
-      format: 'cjs',
-      banner,
-      exports: 'named'
-    },
-    external: ['react', 'react-dom'],
-    plugins: [
-      resolve({ extensions: ['.js', '.jsx'] }),
-      babel(babelConfig),
-      commonjs(),
-      json()
-    ]
-  },
-  
-  // Minified UMD build
+  // Minified UMD build (for CDN usage)
   {
     input,
     output: {
@@ -127,28 +91,6 @@ export default [
           comments: /^\/\*\*.*@preserve.*\*\/$/
         }
       })
-    ]
-  },
-  
-  // Browser ESM build (for Vite and modern bundlers)
-  {
-    input: 'src/browser.js', // Use browser-specific entry point
-    output: {
-      file: 'dist/index.browser.js',
-      format: 'esm',
-      banner,
-      inlineDynamicImports: true
-    },
-    external: ['react', 'react-dom', 'fs/promises', 'path', 'fs', 'assert', 'util', 'glob'], // Keep React and Node.js modules external
-    plugins: [
-      resolve({ 
-        browser: true,
-        extensions,
-        preferBuiltins: false  // Don't try to include Node.js built-ins
-      }),
-      commonjs(),
-      json(),
-      babel(babelConfig)
     ]
   }
 ];

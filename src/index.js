@@ -1854,21 +1854,4 @@ export {
   INLINE_ANIMATIONS,
 } from "./utils/inlineAnimations.js";
 
-// Variant system (framework-agnostic)
-export { tv, createVariants } from "./tv.js";
-
-// Optimization system (v2.12.0+)
-export {
-  BundleAnalyzer,
-  BuildTimeExtractor,
-  CriticalCSSExtractor,
-  CSSPurger,
-  PersistentCache,
-  OptimizationManager,
-  optimize,
-} from "./optimization/index.js";
-
-export { createOptimizationManager } from "./optimization/optimizationManager.js";
-
-// React integration (conditional exports)
-// Note: styled components are available via 'tailwind-to-style/react'
+// End of exports - v3.0.0 core only (tws, twsx, configure)
