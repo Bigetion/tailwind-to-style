@@ -139,7 +139,7 @@ export default [
       banner,
       inlineDynamicImports: true
     },
-    external: ['react', 'react-dom'], // Keep React external for bundlers
+    external: ['react', 'react-dom', 'fs/promises', 'path', 'fs', 'assert', 'util', 'glob'], // Keep React and Node.js modules external
     plugins: [
       resolve({ 
         browser: true,

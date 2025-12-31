@@ -22,6 +22,14 @@
       "import": "./dist/index.browser.js",
       "require": "./dist/index.browser.js"
     },
+    "./plugins/vite-twsx": {
+      "import": "./plugins/vite-twsx.js",
+      "require": "./plugins/vite-twsx.js"
+    },
+    "./plugins/webpack-twsx": {
+      "import": "./plugins/webpack-twsx.js",
+      "require": "./plugins/webpack-twsx.js"
+    },
     "./preflight.css": "./preflight.css",
     "./package.json": "./package.json"
   },

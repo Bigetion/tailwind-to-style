@@ -76,8 +76,18 @@ class Logger {
 }
 
 // Create singleton instance with production-safe defaults
-const isProduction =
-  typeof process !== "undefined" && process.env?.NODE_ENV === "production";
+// Use try-catch to safely check for Node.js environment
+let isProduction = false;
+try {
+  isProduction =
+    typeof process !== "undefined" &&
+    typeof process.env !== "undefined" &&
+    process.env.NODE_ENV === "production";
+} catch (e) {
+  // In browser environment, default to development mode
+  isProduction = false;
+}
+
 export const logger = new Logger(isProduction ? "error" : "warn");
 
 // Export Logger class for custom instances
