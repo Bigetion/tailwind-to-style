@@ -1,6 +1,64 @@
 import { getConfigOptions } from "./utils/index.js";
 import { getConfig, setClearConfigCache } from "./config/userConfig.js";
 
+// Global registry to track injected keyframes (prevents duplication)
+const _injectedKeyframes = new Set();
+
+// Mapping of animation names to their keyframe definitions
+const BUILTIN_KEYFRAMES = {
+  spin: {
+    "0%": { transform: "rotate(0deg)" },
+    "100%": { transform: "rotate(360deg)" },
+  },
+  ping: {
+    "75%, 100%": { transform: "scale(2)", opacity: "0" },
+  },
+  pulse: {
+    "50%": { opacity: ".5" },
+  },
+  bounce: {
+    "0%, 100%": {
+      transform: "translateY(-25%)",
+      animationTimingFunction: "cubic-bezier(0.8,0,1,1)",
+    },
+    "50%": {
+      transform: "none",
+      animationTimingFunction: "cubic-bezier(0,0,0.2,1)",
+    },
+  },
+  fadeIn: {
+    "0%": { opacity: "0" },
+    "50%": { opacity: "1" },
+    "100%": { opacity: "0" },
+  },
+  slideUp: {
+    "0%": { transform: "translateY(20px)", opacity: "0" },
+    "50%": { transform: "translateY(0)", opacity: "1" },
+    "100%": { transform: "translateY(-20px)", opacity: "0" },
+  },
+};
+
+// Generate minified keyframes CSS
+function generateMinifiedKeyframes(animationNames) {
+  let css = "";
+  for (const name of animationNames) {
+    const keyframe = BUILTIN_KEYFRAMES[name];
+    if (!keyframe) continue;
+
+    css += `@keyframes ${name}{`;
+    for (const [percentage, styles] of Object.entries(keyframe)) {
+      css += `${percentage}{`;
+      for (const [prop, value] of Object.entries(styles)) {
+        const cssProp = prop.replace(/([A-Z])/g, "-$1").toLowerCase();
+        css += `${cssProp}:${value};`;
+      }
+      css += "}";
+    }
+    css += "}";
+  }
+  return css;
+}
+
 import generateAccentColor from "./generators/accentColor.js";
 import generateAccessibility from "./generators/accessibility.js";
 import generateAlignContent from "./generators/alignContent.js";
@@ -1387,10 +1445,12 @@ function processNestedSelectors(nested, selector, styles, walk) {
       // For @css directive, use raw CSS values without any processing
       const cssDeclarations = Object.entries(nestedVal)
         .map(([key, value]) => {
+          // Convert camelCase to kebab-case (e.g., borderTopColor -> border-top-color)
+          const cssKey = key.replace(/([A-Z])/g, "-$1").toLowerCase();
           // Ensure CSS values are properly formatted and not processed through Tailwind conversion
           const cleanValue =
             typeof value === "string" ? value.trim() : String(value);
-          return `${key}: ${cleanValue};`;
+          return `${cssKey}: ${cleanValue};`;
         })
         .join(" ");
 
@@ -1461,10 +1521,12 @@ function walkStyleTree(selector, val, styles, walk) {
       // Handle object with @css directive - process the @css part specially
       const cssDeclarations = Object.entries(val["@css"])
         .map(([key, value]) => {
+          // Convert camelCase to kebab-case (e.g., borderTopColor -> border-top-color)
+          const cssKey = key.replace(/([A-Z])/g, "-$1").toLowerCase();
           // Keep CSS values intact without any processing
           const cleanValue =
             typeof value === "string" ? value.trim() : String(value);
-          return `${key}: ${cleanValue};`;
+          return `${cssKey}: ${cleanValue};`;
         })
         .join(" ");
 
@@ -1498,26 +1560,26 @@ function flattenStyleObject(obj, parentSelector = "") {
 
   for (const selector in obj) {
     const val = obj[selector];
-    
+
     // Handle media queries specially - don't concatenate with parent
-    if (selector.startsWith('@media')) {
+    if (selector.startsWith("@media")) {
       if (isSelectorObject(val)) {
         // Initialize media query in result if not exists
         if (!result[selector]) {
           result[selector] = {};
         }
-        
+
         // Process nested selectors within media query
         for (const innerSel in val) {
           const innerVal = val[innerSel];
-          
+
           // Calculate the target selector within media query context
           let targetSelector;
           if (parentSelector) {
-            if (innerSel === '.' || innerSel === '&') {
+            if (innerSel === "." || innerSel === "&") {
               // Self-reference - use parent selector
               targetSelector = parentSelector;
-            } else if (innerSel.includes('&')) {
+            } else if (innerSel.includes("&")) {
               // Replace & with parent
               targetSelector = innerSel.replace(/&/g, parentSelector);
             } else {
@@ -1527,15 +1589,18 @@ function flattenStyleObject(obj, parentSelector = "") {
           } else {
             targetSelector = innerSel;
           }
-          
+
           // Recursively flatten inner value
-          if (typeof innerVal === 'string') {
+          if (typeof innerVal === "string") {
             result[selector][targetSelector] = innerVal;
           } else if (isSelectorObject(innerVal)) {
-            const nested = flattenStyleObject({ [innerSel]: innerVal }, parentSelector);
+            const nested = flattenStyleObject(
+              { [innerSel]: innerVal },
+              parentSelector
+            );
             // Merge nested results into media query
             for (const nestedSel in nested) {
-              if (nestedSel.startsWith('@media')) {
+              if (nestedSel.startsWith("@media")) {
                 // Nested media query - merge at top level
                 Object.assign(result, nested);
               } else {
@@ -1547,7 +1612,7 @@ function flattenStyleObject(obj, parentSelector = "") {
       }
       continue;
     }
-    
+
     const currentSelector = parentSelector
       ? selector.includes("&")
         ? selector.replace(/&/g, parentSelector)
@@ -1687,24 +1752,25 @@ export function twsx(obj, options = {}) {
     const processMarker = performanceMonitor.start("twsx:process");
     for (const selector in flattered) {
       const val = flattered[selector];
-      
+
       // Handle media queries specially - don't process through walk
-      if (selector.startsWith('@media')) {
+      if (selector.startsWith("@media")) {
         // Media query should have nested selectors with Tailwind classes
-        if (typeof val === 'object' && !Array.isArray(val)) {
+        if (typeof val === "object" && !Array.isArray(val)) {
           // Initialize media query in styles
           if (!styles[selector]) {
             styles[selector] = {};
           }
-          
+
           // Process each selector within the media query
           for (const innerSelector in val) {
             const innerVal = val[innerSelector];
-            const baseClass = typeof innerVal === 'string' ? expandGroupedClass(innerVal) : '';
-            
+            const baseClass =
+              typeof innerVal === "string" ? expandGroupedClass(innerVal) : "";
+
             // Process Tailwind classes for this selector
             if (baseClass) {
-              for (const cls of baseClass.split(' ')) {
+              for (const cls of baseClass.split(" ")) {
                 if (cls.trim()) {
                   processClass(cls, innerSelector, styles[selector]);
                 }
@@ -1714,7 +1780,7 @@ export function twsx(obj, options = {}) {
         }
         continue;
       }
-      
+
       let baseClass = "";
       const nested = {};
 
@@ -1747,8 +1813,35 @@ export function twsx(obj, options = {}) {
       "twsx:generate"
     );
 
-    // Generate keyframes CSS separately
+    // Smart keyframe injection - only inject what's used and not already injected
     const keyframesMarker = performanceMonitor.start("twsx:keyframes");
+
+    // Scan CSS for animation names (support camelCase like fadeIn, slideUp)
+    const usedAnimations = new Set();
+    const animationRegex = /animation(?:-name)?:\s*([a-zA-Z0-9-]+)/gi;
+    let match;
+    while ((match = animationRegex.exec(cssString)) !== null) {
+      const animName = match[1];
+      // Check both original case and lowercase
+      if (BUILTIN_KEYFRAMES[animName]) {
+        usedAnimations.add(animName);
+      } else if (BUILTIN_KEYFRAMES[animName.toLowerCase()]) {
+        usedAnimations.add(animName.toLowerCase());
+      }
+    }
+
+    // Filter out already injected keyframes
+    const newKeyframes = [...usedAnimations].filter(
+      (name) => !_injectedKeyframes.has(name)
+    );
+
+    // Mark as injected
+    newKeyframes.forEach((name) => _injectedKeyframes.add(name));
+
+    // Generate minified keyframes CSS only for new ones
+    const keyframesCSS = generateMinifiedKeyframes(newKeyframes);
+
+    // Also check for custom keyframes from user config
     const userConfigData = getConfig();
     const mergedOptions = {
       ...options,
@@ -1764,23 +1857,33 @@ export function twsx(obj, options = {}) {
     const configOptions = getConfigOptions(mergedOptions, Object.keys(plugins));
     const { keyframes = {} } = configOptions.theme || {};
 
-    let keyframesCSS = "";
+    let customKeyframesCSS = "";
     for (const [name, keyframe] of Object.entries(keyframes)) {
-      keyframesCSS += `@keyframes ${name} {\n`;
+      // Skip if already in built-in keyframes or already injected
+      if (BUILTIN_KEYFRAMES[name] || _injectedKeyframes.has(name)) continue;
+
+      // Check if this custom keyframe is used
+      const customRegex = new RegExp(`animation(?:-name)?:\\s*${name}`, "i");
+      if (!customRegex.test(cssString)) continue;
+
+      _injectedKeyframes.add(name);
+
+      // Generate minified custom keyframe
+      customKeyframesCSS += `@keyframes ${name}{`;
       for (const [percentage, styles] of Object.entries(keyframe)) {
-        keyframesCSS += `  ${percentage} {\n`;
+        customKeyframesCSS += `${percentage}{`;
         for (const [prop, value] of Object.entries(styles)) {
           const cssProp = prop.replace(/([A-Z])/g, "-$1").toLowerCase();
-          keyframesCSS += `    ${cssProp}: ${value};\n`;
+          customKeyframesCSS += `${cssProp}:${value};`;
         }
-        keyframesCSS += "  }\n";
+        customKeyframesCSS += "}";
       }
-      keyframesCSS += "}\n";
+      customKeyframesCSS += "}";
     }
     performanceMonitor.end(keyframesMarker);
 
     // Combine keyframes and regular CSS
-    const finalCSS = keyframesCSS + cssString;
+    const finalCSS = keyframesCSS + customKeyframesCSS + cssString;
 
     // Auto-inject if needed
     if (
