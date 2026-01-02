@@ -142,8 +142,33 @@ export interface PerformanceUtils {
   enablePerformanceLogging(enabled?: boolean): void;
 }
 
+// Variants System Types
+export interface VariantOptions {
+  [optionName: string]: string;
+}
+
+export interface Variants {
+  [variantType: string]: VariantOptions;
+}
+
+export interface CompoundVariant {
+  [variantType: string]: string;
+  class: string;
+}
+
+export interface DefaultVariants {
+  [variantType: string]: string;
+}
+
+export interface VariantsStructure {
+  base: string;
+  variants?: Variants;
+  compounds?: CompoundVariant[];
+  defaultVariants?: DefaultVariants;
+}
+
 export interface StyleObject {
-  [selector: string]: string | StyleObject | Array<string | StyleObject>;
+  [selector: string]: string | StyleObject | Array<string | StyleObject> | VariantsStructure;
 }
 
 /**

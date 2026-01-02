@@ -346,6 +346,115 @@ const styles = tws('!bg-red-500 !text-white')
 // Forces these styles to take precedence
 ```
 
+## 🎨 Variants System (New in v3.1)
+
+The variants system provides a powerful way to define component styles with multiple variations, similar to libraries like CVA (Class Variance Authority) but integrated directly into `twsx`.
+
+### Basic Variants
+
+```javascript
+const buttonStyles = twsx({
+  '.btn': {
+    base: 'px-4 py-2 rounded-lg font-medium transition-colors',
+    variants: {
+      color: {
+        primary: 'bg-blue-500 text-white hover:bg-blue-600',
+        secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300',
+        danger: 'bg-red-500 text-white hover:bg-red-600'
+      },
+      size: {
+        sm: 'px-2 py-1 text-sm',
+        md: 'px-4 py-2 text-base',
+        lg: 'px-6 py-3 text-lg'
+      }
+    },
+    defaultVariants: {
+      color: 'primary',
+      size: 'md'
+    }
+  }
+})
+```
+
+### Compound Variants
+
+Handle specific combinations of variants:
+
+```javascript
+const cardStyles = twsx({
+  '.card': {
+    base: 'p-6 rounded-lg border',
+    variants: {
+      color: {
+        primary: 'border-blue-200 bg-blue-50',
+        danger: 'border-red-200 bg-red-50'
+      },
+      elevation: {
+        flat: 'shadow-none',
+        elevated: 'shadow-lg'
+      }
+    },
+    compounds: [
+      {
+        color: 'primary',
+        elevation: 'elevated',
+        class: 'shadow-blue-200/50'
+      },
+      {
+        color: 'danger',
+        elevation: 'elevated',
+        class: 'shadow-red-200/50'
+      }
+    ]
+  }
+})
+```
+
+### Usage in HTML
+
+The variants system generates class-based CSS that you can use in any framework:
+
+```html
+<!-- Default variants (primary + md) -->
+<button class="btn">Default Button</button>
+
+<!-- Specific variants -->
+<button class="btn btn-secondary btn-lg">Large Secondary</button>
+
+<!-- Compound variants automatically apply -->
+<div class="card card-primary card-elevated">Primary Elevated Card</div>
+```
+
+### Mixed Usage
+
+You can mix variants with classic `twsx` syntax:
+
+```javascript
+const styles = twsx({
+  // Classic syntax
+  '.header': 'p-4 bg-white shadow',
+  '.nav': ['flex items-center', { '& a': 'text-blue-500' }],
+  
+  // Variants syntax
+  '.btn': {
+    base: 'px-4 py-2 rounded',
+    variants: {
+      color: {
+        primary: 'bg-blue-500 text-white hover:bg-blue-600'
+      }
+    }
+  }
+})
+```
+
+### Benefits
+
+- **Maintainable**: Define variants once, use everywhere
+- **Scalable**: No exponential growth of CSS classes
+- **Type-safe**: Full TypeScript support
+- **Framework agnostic**: Works with React, Vue, Angular, etc.
+- **Backward compatible**: Doesn't break existing code
+
 ## 🎭 Framework Integration
 
 ### React

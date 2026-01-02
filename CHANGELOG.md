@@ -1,6 +1,72 @@
 # Changelog
 
-## [2.11.0] - 2025-12-22
+## [3.1.0] - 2025-01-03
+
+### 🎨 New Features: Variants System
+
+#### **🎭 Variants System for `twsx()`**
+Powerful component variants system integrated directly into `twsx()`:
+
+```javascript
+const buttonStyles = twsx({
+  '.btn': {
+    base: 'px-4 py-2 rounded-lg font-medium transition-colors',
+    variants: {
+      color: {
+        primary: 'bg-blue-500 text-white hover:bg-blue-600',
+        secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300',
+        danger: 'bg-red-500 text-white hover:bg-red-600'
+      },
+      size: {
+        sm: 'px-2 py-1 text-sm',
+        md: 'px-4 py-2 text-base',
+        lg: 'px-6 py-3 text-lg'
+      }
+    },
+    compounds: [
+      {
+        color: 'primary',
+        size: 'lg',
+        class: 'font-bold'
+      }
+    ],
+    defaultVariants: {
+      color: 'primary',
+      size: 'md'
+    }
+  }
+})
+```
+
+**Features:**
+- ✅ **Variants**: Define multiple style variations for components
+- ✅ **Compound Variants**: Handle specific combinations of variants
+- ✅ **Default Variants**: Set default values for variants
+- ✅ **Mixed Usage**: Use alongside classic `twsx()` syntax
+- ✅ **Framework Agnostic**: Works with React, Vue, Angular, vanilla JS
+- ✅ **Backward Compatible**: Doesn't break existing code
+- ✅ **Type-safe**: Full TypeScript support
+- ✅ **Performance**: Optimized processing with caching
+
+**Benefits:**
+- **Maintainable**: Define variants once, use everywhere
+- **Scalable**: No exponential growth of CSS classes
+- **DX**: Better developer experience vs manual combinations
+
+### 🔧 Internal Improvements
+- Added `variantsProcessor.js` utility module
+- Enhanced TypeScript definitions for variants
+- Comprehensive test coverage for variants system
+- Performance monitoring for variants processing
+
+### 📚 Documentation
+- Updated README with variants system documentation
+- Added variants demo examples
+- Enhanced TypeScript definitions
+
+---
+
+## [3.0.0] - 2024-12-22
 
 ### 🎨 New Features: Styled Components & Variants System
 

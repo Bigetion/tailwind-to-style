@@ -245,6 +245,7 @@ import { getTailwindCache } from "./utils/tailwindCache.js";
 import { getPlugins } from "./config/userConfig.js";
 import { pluginToLookup } from "./plugins/pluginAPI.js";
 import patterns from "./patterns/index.js";
+import { expandVariantsObject } from "./utils/variantsProcessor.js";
 
 const plugins = {
   accentColor: generateAccentColor,
@@ -1702,6 +1703,11 @@ export function twsx(obj, options = {}) {
     const { inject = true } = options;
     const styles = {};
 
+    // NEW: Process variants structure first
+    const variantsMarker = performanceMonitor.start("twsx:variants");
+    const processedObj = expandVariantsObject(obj);
+    performanceMonitor.end(variantsMarker);
+
     // Create walk function with closure over styles
     function walk(selector, val) {
       walkStyleTree(selector, val, styles, walk);
@@ -1710,8 +1716,13 @@ export function twsx(obj, options = {}) {
     // Enhanced selector processing to handle responsive breakpoints
     const enhancedObj = {};
 
-    for (const selector in obj) {
-      const val = obj[selector];
+    for (const selector in processedObj) {
+      const val = processedObj[selector];
+
+      // Skip internal variant metadata
+      if (selector.includes('__defaults')) {
+        continue;
+      }
 
       // Check if selector starts with breakpoint (e.g., 'md:.title')
       const breakpointMatch = selector.match(/^(sm|md|lg|xl|2xl):(.+)$/);
