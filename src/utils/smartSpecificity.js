@@ -1,9 +1,121 @@
 /**
  * Smart Specificity Handler for twsx Variants System
- * Handles CSS specificity conflicts intelligently without requiring !important
+ * Handles CSS specificity conflicts intelligently using conflict resolver
  */
 
 import { logger } from "./logger.js";
+import {
+  resolveClassConflicts,
+  mergeClasses,
+  injectImportantForConflicts,
+} from "./conflictResolver.js";
+
+/**
+ * Check if classes indicate a non-solid/transparent variant
+ * A variant is transparent if:
+ * 1. Explicitly has bg-transparent
+ * 2. Is an outline style (has border but explicitly no background)
+ * 3. Only has bg-opacity without actual bg color (modifier only)
+ *
+ * NOT transparent if:
+ * - Has no bg property at all (might inherit from other variants)
+ * - Only has border-transparent (solid variant pattern)
+ *
+ * @param {string} classes - Tailwind classes
+ * @returns {boolean} True if variant should have transparent background
+ */
+function isTransparentVariant(classes) {
+  if (!classes || typeof classes !== "string") return false;
+
+  // 1. Explicitly has bg-transparent → TRUE
+  if (classes.includes("bg-transparent")) return true;
+
+  // 2. Check for explicit background color (bg-blue-500, bg-red-600, etc.)
+  const hasSolidBgClass =
+    /\bbg-(?!transparent|opacity|gradient-|none)[a-z]+-\d+/.test(classes);
+  if (hasSolidBgClass) return false; // Has solid bg → NOT transparent
+
+  // 3. Check for outline pattern: has border-2/border-4/etc + no solid bg
+  const hasOutlineBorder = /\bborder-(?:[2-9]|1[0-9])\b/.test(classes);
+  if (hasOutlineBorder && !hasSolidBgClass) return true; // Outline style → transparent
+
+  // 4. Check for border-style classes (outline pattern)
+  const hasBorderStyle = /\bborder-(solid|dashed|dotted)/.test(classes);
+  if (hasBorderStyle && !hasSolidBgClass) return true;
+
+  // 5. Default: if no bg property and no border indicators → NOT transparent
+  // This handles solid variant which only has border-transparent
+  return false;
+}
+
+/**
+ * Get overriding classes for compound variants
+ * NOW USES CONFLICT RESOLVER + SMART !IMPORTANT INJECTION!
+ *
+ * @param {string} baseClasses - Classes from base variants
+ * @param {string} compoundClasses - Classes from compound variant
+ * @param {boolean} shouldHaveTransparentBg - Whether this compound should have transparent bg
+ * @returns {string} Enhanced compound classes with conflicts resolved and !important injected
+ */
+function getOverridingClasses(
+  baseClasses,
+  compoundClasses,
+  shouldHaveTransparentBg = false
+) {
+  // Use conflict resolver to merge classes (compound wins conflicts)
+  const { resolvedCompound, conflictingGroups } = resolveClassConflicts(
+    baseClasses,
+    compoundClasses
+  );
+
+  logger.debug("[Smart Specificity] Conflict resolution:", {
+    base: baseClasses,
+    compound: compoundClasses,
+    conflictingGroups,
+    shouldHaveTransparentBg,
+  });
+
+  // Special case: If this should be transparent but compound doesn't specify bg
+  let finalCompound = resolvedCompound;
+  const finalConflictingGroups = [...conflictingGroups];
+
+  console.log('\n🔍 [DEBUG] getOverridingClasses called:');
+  console.log('  shouldHaveTransparentBg:', shouldHaveTransparentBg);
+  console.log('  compoundClasses:', compoundClasses);
+  console.log('  conflictingGroups:', conflictingGroups);
+
+  if (shouldHaveTransparentBg) {
+    // Always ensure bg-transparent is marked as conflicting for transparent variants
+    // This is because solid color variants have bg-blue-500, etc that need to be overridden
+    if (!finalConflictingGroups.includes("bg-color")) {
+      finalConflictingGroups.push("bg-color");
+    }
+
+    // Add bg-transparent if not present in compound (check base bg only, not modifiers like hover:bg-)
+    // Regex matches: "bg-blue-500" YES, "hover:bg-blue-50" NO, "bg-transparent" YES, "bg-opacity-50" NO
+    const hasBaseBg = /(?:^|\s)bg-(?!opacity)[\w-]+(?=\s|$)/.test(compoundClasses);
+    if (!hasBaseBg) {
+      finalCompound = mergeClasses(resolvedCompound, "bg-transparent");
+    }
+  }
+
+  // 🔥 SMART !IMPORTANT INJECTION
+  // Inject !important ONLY for classes that conflict with base variants
+  // This ensures compound ALWAYS wins, mimicking tv() + twMerge behavior
+  const withImportant = injectImportantForConflicts(
+    finalCompound,
+    finalConflictingGroups
+  );
+
+  logger.debug("[Smart Specificity] Final compound classes:", {
+    original: compoundClasses,
+    resolved: finalCompound,
+    withImportant,
+    conflictingGroups: finalConflictingGroups,
+  });
+
+  return withImportant;
+}
 
 /**
  * Calculate CSS specificity score
@@ -43,7 +155,7 @@ function generateSpecificSelector(baseSelector, variants = [], options = {}) {
   const {
     forceHighSpecificity = false,
     isCompound = false,
-    targetSpecificity = null,
+    _targetSpecificity = null,
   } = options;
 
   // Base selector without dot
@@ -114,7 +226,7 @@ export function processVariantsWithSmartSpecificity(
     base,
     variants = {},
     compounds = [],
-    defaultVariants = {},
+    _defaultVariants = {},
   } = variantsObj;
 
   const { enableSmartSpecificity = true, preventImportant = true } = options;
@@ -126,7 +238,7 @@ export function processVariantsWithSmartSpecificity(
     cssRules[selector] = base;
 
     // Process individual variants with calculated specificity
-    for (const [variantType, options] of Object.entries(variants)) {
+    for (const [_variantType, options] of Object.entries(variants)) {
       for (const [optionName, classes] of Object.entries(options)) {
         const variantSelector = generateSpecificSelector(
           selector,
@@ -160,13 +272,37 @@ export function processVariantsWithSmartSpecificity(
           }
         );
 
-        // Clean compound class - remove !important if preventImportant is true
-        let cleanCompoundClass = compoundClass;
-        if (preventImportant && enableSmartSpecificity) {
-          cleanCompoundClass = compoundClass.replace(/\s*!important/g, "");
+        // Get classes from variants to detect conflicts
+        let allVariantClasses = "";
+        const variantClassesByType = {};
+
+        Object.entries(conditions).forEach(([variantType, optionName]) => {
+          if (variants[variantType] && variants[variantType][optionName]) {
+            const classes = variants[variantType][optionName];
+            allVariantClasses += " " + classes;
+            variantClassesByType[variantType] = classes;
+          }
+        });
+
+        // Detect if ANY of the individual variants is transparent
+        const hasTransparentVariant = Object.values(variantClassesByType).some(
+          (classes) => isTransparentVariant(classes)
+        );
+
+        // Smart override - automatically add transparent/none for conflicting properties
+        let enhancedCompoundClass = compoundClass;
+        if (enableSmartSpecificity) {
+          enhancedCompoundClass = getOverridingClasses(
+            allVariantClasses,
+            compoundClass,
+            hasTransparentVariant
+          );
         }
 
-        cssRules[compoundSelector] = cleanCompoundClass;
+        // NOTE: We do NOT strip !important here anymore
+        // The !important flags are intentionally injected by conflict resolver
+        // to ensure compound variants override base variants reliably
+        cssRules[compoundSelector] = enhancedCompoundClass;
       } catch (error) {
         logger.error(`Error processing compound variant ${index}:`, error);
       }
