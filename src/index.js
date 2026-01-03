@@ -1903,6 +1903,455 @@ export function twsx(obj, options = {}) {
   }
 }
 
+/**
+ * Create a variant-based style generator (similar to tailwind-variants)
+ * Supports base styles, variants, compound variants, and default variants
+ *
+ * @param {Object} config - Configuration object
+ * @param {string} config.base - Base Tailwind classes applied to all variants
+ * @param {Object} config.variants - Variant definitions with their options
+ * @param {Array} config.compoundVariants - Compound variant rules for multi-variant combinations
+ * @param {Object} config.defaultVariants - Default variant values
+ * @returns {Function} A function that accepts variant props and returns merged classes
+ *
+ * @example
+ * const button = twsxVariants({
+ *   base: 'px-4 py-2 rounded font-medium',
+ *   variants: {
+ *     color: {
+ *       primary: 'bg-blue-500 text-white',
+ *       secondary: 'bg-gray-500 text-white'
+ *     },
+ *     size: {
+ *       sm: 'text-sm',
+ *       lg: 'text-lg'
+ *     }
+ *   },
+ *   compoundVariants: [
+ *     { color: 'primary', size: 'lg', class: 'font-bold shadow-lg' }
+ *   ],
+ *   defaultVariants: {
+ *     color: 'primary',
+ *     size: 'sm'
+ *   }
+ * });
+ *
+ * // Usage:
+ * button({ color: 'primary', size: 'lg' }) // Returns merged classes
+ */
+export function twsxVariants(config) {
+  const {
+    className,
+    base = "",
+    variants = {},
+    compoundVariants = [],
+    defaultVariants = {},
+  } = config;
+
+  /**
+   * Check if a compound variant matches the current props
+   * @param {Object} compound - Compound variant definition
+   * @param {Object} props - Current variant props
+   * @returns {boolean}
+   */
+  function matchesCompoundVariant(compound, props) {
+    for (const key in compound) {
+      if (key === "class" || key === "className") continue;
+
+      const compoundValue = compound[key];
+      const propValue = props[key];
+
+      // Handle array values in compound (match any)
+      if (Array.isArray(compoundValue)) {
+        if (!compoundValue.includes(propValue)) return false;
+      } else {
+        // Handle boolean variants - convert string 'true'/'false' to boolean
+        const normalizedCompound =
+          compoundValue === "true"
+            ? true
+            : compoundValue === "false"
+              ? false
+              : compoundValue;
+        const normalizedProp =
+          propValue === "true"
+            ? true
+            : propValue === "false"
+              ? false
+              : propValue;
+
+        if (normalizedCompound !== normalizedProp) return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Merge multiple class strings with conflict resolution
+   * Later classes override earlier ones for the same CSS property
+   * @param  {...string} classStrings - Class strings to merge
+   * @returns {string}
+   */
+  function mergeClasses(...classStrings) {
+    const result = [];
+    const propertyMap = new Map(); // Track index by conflict key
+
+    /**
+     * Extract conflict key from Tailwind class
+     * Classes that affect the same CSS property should have the same key
+     */
+    function getConflictKey(cls) {
+      // Extract variant prefix (hover:, focus:, etc.)
+      const variantMatch = cls.match(/^((?:[a-z-]+:)*)/);
+      const variant = variantMatch ? variantMatch[1] : "";
+      const baseClass = cls.slice(variant.length);
+
+      // Check if it's a prefixed standalone (e.g., bg-transparent, text-transparent)
+      const prefixedStandalone = baseClass.match(
+        /^([a-z]+)-(transparent|current|inherit|auto)$/
+      );
+      if (prefixedStandalone) {
+        const prefix = prefixedStandalone[1];
+        return variant + prefix;
+      }
+
+      // Handle standalone utilities (no prefix)
+      const standaloneGroups = {
+        "inline-flex": "display",
+        "inline-block": "display",
+        inline: "display",
+        block: "display",
+        flex: "display",
+        grid: "display",
+        hidden: "display",
+        static: "position",
+        fixed: "position",
+        absolute: "position",
+        relative: "position",
+        sticky: "position",
+        visible: "visibility",
+        invisible: "visibility",
+        underline: "text-decoration",
+        "line-through": "text-decoration",
+        "no-underline": "text-decoration",
+        uppercase: "text-transform",
+        lowercase: "text-transform",
+        capitalize: "text-transform",
+        "normal-case": "text-transform",
+        truncate: "text-overflow",
+        italic: "font-style",
+        "not-italic": "font-style",
+        antialiased: "font-smoothing",
+        "subpixel-antialiased": "font-smoothing",
+      };
+
+      if (standaloneGroups[baseClass]) {
+        return variant + standaloneGroups[baseClass];
+      }
+
+      // Match pattern: prefix-value or prefix-modifier-value
+      // bg-blue-500, text-xl, px-4, rounded-lg, shadow-md, border-2, etc.
+      const match = baseClass.match(/^([a-z]+)-(.+)$/);
+
+      if (match) {
+        const prefix = match[1];
+        const value = match[2];
+
+        // Group related prefixes
+        const prefixGroups = {
+          // Background
+          bg: "bg",
+          // Text color vs text size
+          text: /^(xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|6xl|7xl|8xl|9xl)$/.test(
+            value
+          )
+            ? "text-size"
+            : "text-color",
+          // Padding
+          p: "p",
+          px: "px",
+          py: "py",
+          pt: "pt",
+          pb: "pb",
+          pl: "pl",
+          pr: "pr",
+          // Margin
+          m: "m",
+          mx: "mx",
+          my: "my",
+          mt: "mt",
+          mb: "mb",
+          ml: "ml",
+          mr: "mr",
+          // Sizing
+          w: "w",
+          h: "h",
+          min: baseClass.startsWith("min-w") ? "min-w" : "min-h",
+          max: baseClass.startsWith("max-w") ? "max-w" : "max-h",
+          // Border width vs color
+          border: /^(\d|t-|b-|l-|r-|x-|y-)/.test(value)
+            ? "border-width"
+            : /^(solid|dashed|dotted|double|none|hidden)$/.test(value)
+              ? "border-style"
+              : "border-color",
+          rounded: "rounded",
+          // Effects
+          shadow: "shadow",
+          opacity: "opacity",
+          // Typography
+          font: /^(sans|serif|mono)$/.test(value)
+            ? "font-family"
+            : "font-weight",
+          leading: "leading",
+          tracking: "tracking",
+          // Layout
+          flex: "flex",
+          grid: "grid",
+          gap: "gap",
+          justify: "justify",
+          items: "items",
+          self: "self",
+          place: "place",
+          // Position
+          top: "top",
+          bottom: "bottom",
+          left: "left",
+          right: "right",
+          inset: "inset",
+          z: "z",
+          // Cursor
+          cursor: "cursor",
+          // Pointer events
+          pointer: "pointer-events",
+          // Transform
+          scale: "scale",
+          rotate: "rotate",
+          translate: "translate",
+          skew: "skew",
+          // Transition
+          transition: "transition",
+          duration: "duration",
+          ease: "ease",
+          delay: "delay",
+          // Ring
+          ring: /^(\d|inset)/.test(value)
+            ? "ring-width"
+            : /^offset/.test(value)
+              ? "ring-offset"
+              : "ring-color",
+          // Outline
+          outline: /^(\d|none)/.test(value)
+            ? "outline-width"
+            : /^(dashed|dotted|double|solid)$/.test(value)
+              ? "outline-style"
+              : /^offset/.test(value)
+                ? "outline-offset"
+                : "outline-color",
+          // Overflow
+          overflow: "overflow",
+          // Object
+          object: "object",
+          // Aspect
+          aspect: "aspect",
+          // Underline
+          underline: "underline-offset",
+          // Decoration
+          decoration: "decoration",
+          // Accent
+          accent: "accent",
+          // Caret
+          caret: "caret",
+          // Fill & Stroke
+          fill: "fill",
+          stroke: /^\d/.test(value) ? "stroke-width" : "stroke-color",
+          // Backdrop
+          backdrop: "backdrop",
+          // Columns
+          columns: "columns",
+          col: "col",
+          row: "row",
+          // Order
+          order: "order",
+          // Grow/Shrink
+          grow: "grow",
+          shrink: "shrink",
+          basis: "basis",
+          // Content
+          content: "content",
+          // List
+          list: "list",
+          // Scroll
+          scroll: "scroll",
+          // Snap
+          snap: "snap",
+          // Touch
+          touch: "touch",
+          // Select
+          select: "select",
+          // Will change
+          will: "will-change",
+          // Appearance
+          appearance: "appearance",
+          // Break
+          break: "break",
+          // Hyphens
+          hyphens: "hyphens",
+          // Whitespace
+          whitespace: "whitespace",
+          // Word break
+          word: "word-break",
+          // Overscroll
+          overscroll: "overscroll",
+          // Resize
+          resize: "resize",
+          // Float
+          float: "float",
+          // Clear
+          clear: "clear",
+          // Isolation
+          isolation: "isolation",
+          // Mix blend
+          mix: "mix-blend",
+          // Background blend
+          bg: "bg",
+          // Filter
+          filter: "filter",
+          blur: "blur",
+          brightness: "brightness",
+          contrast: "contrast",
+          grayscale: "grayscale",
+          hue: "hue-rotate",
+          invert: "invert",
+          saturate: "saturate",
+          sepia: "sepia",
+          drop: "drop-shadow",
+        };
+
+        const group = prefixGroups[prefix] || prefix;
+        return variant + group;
+      }
+
+      return null; // No conflict tracking
+    }
+
+    for (const str of classStrings) {
+      if (!str) continue;
+
+      const classes = str.trim().split(/\s+/);
+      for (const cls of classes) {
+        if (!cls) continue;
+
+        const conflictKey = getConflictKey(cls);
+
+        if (conflictKey) {
+          // Remove previous class with same conflict key
+          const prevIndex = propertyMap.get(conflictKey);
+          if (prevIndex !== undefined) {
+            result[prevIndex] = null; // Mark for removal
+          }
+          propertyMap.set(conflictKey, result.length);
+        }
+
+        result.push(cls);
+      }
+    }
+
+    return result.filter(Boolean).join(" ");
+  }
+
+  /**
+   * Generate classes for a specific variant combination
+   * @param {Object} props - Variant props
+   * @returns {string} Merged Tailwind classes
+   */
+  function generateClasses(props = {}) {
+    // Merge props with defaults
+    const mergedProps = { ...defaultVariants, ...props };
+
+    // Start with base classes
+    const classes = [base];
+
+    // Add variant classes
+    for (const variantKey in variants) {
+      const variantValue = mergedProps[variantKey];
+      const variantOptions = variants[variantKey];
+
+      if (variantValue !== undefined && variantOptions[variantValue]) {
+        classes.push(variantOptions[variantValue]);
+      }
+    }
+
+    // Add compound variant classes
+    for (const compound of compoundVariants) {
+      if (matchesCompoundVariant(compound, mergedProps)) {
+        classes.push(compound.class || compound.className || "");
+      }
+    }
+
+    // Merge all classes
+    return mergeClasses(...classes);
+  }
+
+  // If className is provided, auto-generate and inject CSS
+  if (className) {
+    const baseClassName = className.startsWith(".")
+      ? className.slice(1)
+      : className;
+    const cssObj = {};
+
+    // Get all variant keys and their options
+    const variantKeys = Object.keys(variants);
+
+    // Helper to generate all combinations
+    function generateCombinations(keys, current = {}) {
+      if (keys.length === 0) {
+        // Generate class name from current combination
+        const parts = [baseClassName];
+        for (const key of variantKeys) {
+          if (
+            current[key] !== undefined &&
+            current[key] !== defaultVariants[key]
+          ) {
+            // Skip boolean 'false' values
+            if (current[key] === false || current[key] === "false") continue;
+            // For boolean 'true', just add the key name
+            if (current[key] === true || current[key] === "true") {
+              parts.push(key);
+            } else {
+              parts.push(current[key]);
+            }
+          }
+        }
+
+        const selector = "." + parts.join("-");
+        const classes = generateClasses(current);
+        cssObj[selector] = classes;
+        return;
+      }
+
+      const [firstKey, ...restKeys] = keys;
+      const options = variants[firstKey];
+
+      for (const optionValue of Object.keys(options)) {
+        generateCombinations(restKeys, { ...current, [firstKey]: optionValue });
+      }
+    }
+
+    // Generate all combinations
+    generateCombinations(variantKeys);
+
+    // Inject CSS using twsx
+    twsx(cssObj);
+
+    // No return value
+    return;
+  }
+
+  // If no className, return the variant function (backward compatible)
+  return function variantFn(props = {}) {
+    return generateClasses(props);
+  };
+}
+
 // Simple hashCode function for CSS deduplication
 function getCssHash(str) {
   let hash = 0,
@@ -2035,4 +2484,4 @@ export {
   INLINE_ANIMATIONS,
 } from "./utils/inlineAnimations.js";
 
-// End of exports - v3.0.0 core only (tws, twsx, configure)
+// End of exports - v3.0.0 core only (tws, twsx, twsxVariants, configure)

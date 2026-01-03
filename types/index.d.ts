@@ -181,6 +181,116 @@ export const debouncedTws: typeof tws;
  */
 export const debouncedTwsx: typeof twsx;
 
+// Variant System Types (similar to tailwind-variants)
+
+/**
+ * Variant option values - can be string classes or nested object
+ */
+export type VariantValue = string;
+
+/**
+ * Variant options definition
+ */
+export interface VariantOptions {
+  [optionKey: string]: VariantValue;
+}
+
+/**
+ * Variants definition object
+ */
+export interface VariantsDefinition {
+  [variantName: string]: VariantOptions;
+}
+
+/**
+ * Compound variant definition
+ */
+export interface CompoundVariant {
+  [variantName: string]: string | boolean | string[];
+  class?: string;
+  className?: string;
+}
+
+/**
+ * Default variants definition
+ */
+export interface DefaultVariants {
+  [variantName: string]: string | boolean;
+}
+
+/**
+ * Configuration for twsxVariants
+ */
+export interface TwsxVariantsConfig {
+  /** 
+   * CSS class name for auto-injection mode.
+   * When provided, CSS is auto-generated for all variant combinations.
+   * Class names follow pattern: .{className}-{variant}-{color}-{size}
+   * Default values are omitted from class name.
+   * @example className: '.btn' generates .btn, .btn-outline, .btn-danger, etc.
+   */
+  className?: string;
+  /** Base Tailwind classes applied to all variants */
+  base?: string;
+  /** Variant definitions with their options */
+  variants?: VariantsDefinition;
+  /** Compound variant rules for multi-variant combinations */
+  compoundVariants?: CompoundVariant[];
+  /** Default variant values */
+  defaultVariants?: DefaultVariants;
+}
+
+/**
+ * Props type for variant function
+ */
+export interface VariantProps {
+  [variantName: string]: string | boolean | undefined;
+}
+
+/**
+ * Variant function returned by twsxVariants
+ */
+export type VariantFunction = (props?: VariantProps) => string;
+
+/**
+ * Create a variant-based style generator (similar to tailwind-variants)
+ * Supports base styles, variants, compound variants, and default variants
+ * 
+ * Two modes:
+ * 1. With className: Auto-injects CSS for all variant combinations, returns void
+ * 2. Without className: Returns a function that generates class strings
+ * 
+ * @param config - Configuration object with base, variants, compoundVariants, defaultVariants
+ * @returns When className is provided: void (CSS is auto-injected)
+ *          When className is not provided: A function that accepts variant props and returns merged Tailwind classes
+ * 
+ * @example
+ * // Mode 1: Auto-inject CSS (no return value)
+ * twsxVariants({
+ *   className: '.btn',
+ *   base: 'px-4 py-2 rounded font-medium',
+ *   variants: {
+ *     variant: { solid: 'bg-blue-500', outline: 'bg-transparent border-2' },
+ *     size: { sm: 'text-sm', md: 'text-base', lg: 'text-lg' }
+ *   },
+ *   defaultVariants: { variant: 'solid', size: 'md' }
+ * });
+ * // Generates: .btn, .btn-sm, .btn-lg, .btn-outline, .btn-outline-sm, etc.
+ * 
+ * @example
+ * // Mode 2: Return variant function
+ * const button = twsxVariants({
+ *   base: 'px-4 py-2 rounded font-medium',
+ *   variants: {
+ *     color: { primary: 'bg-blue-500', secondary: 'bg-gray-500' }
+ *   },
+ *   defaultVariants: { color: 'primary' }
+ * });
+ * button({ color: 'secondary' }) // Returns: "px-4 py-2 rounded font-medium bg-gray-500"
+ */
+export function twsxVariants(config: TwsxVariantsConfig & { className: string }): void;
+export function twsxVariants(config: TwsxVariantsConfig): VariantFunction;
+
 /**
  * Performance utilities for debugging and monitoring
  */
@@ -190,6 +300,7 @@ export const performanceUtils: PerformanceUtils;
 declare const tailwindToStyle: {
   tws: typeof tws;
   twsx: typeof twsx;
+  twsxVariants: typeof twsxVariants;
   debouncedTws: typeof debouncedTws;
   debouncedTwsx: typeof debouncedTwsx;
   performanceUtils: typeof performanceUtils;
