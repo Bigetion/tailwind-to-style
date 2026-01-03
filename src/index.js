@@ -1720,7 +1720,7 @@ export function twsx(obj, options = {}) {
       const val = processedObj[selector];
 
       // Skip internal variant metadata
-      if (selector.includes('__defaults')) {
+      if (selector.includes("__defaults")) {
         continue;
       }
 
