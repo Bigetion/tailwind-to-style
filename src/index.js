@@ -1946,6 +1946,7 @@ export function twsxVariants(config) {
     variants = {},
     compoundVariants = [],
     defaultVariants = {},
+    nested = {},
   } = config;
 
   /**
@@ -2296,7 +2297,8 @@ export function twsxVariants(config) {
     const baseClassName = className.startsWith(".")
       ? className.slice(1)
       : className;
-    const cssObj = {};
+    const baseCss = {};
+    const variantCss = {};
 
     // Get all variant keys and their options
     const variantKeys = Object.keys(variants);
@@ -2306,11 +2308,14 @@ export function twsxVariants(config) {
       if (keys.length === 0) {
         // Generate class name from current combination
         const parts = [baseClassName];
+        let isBaseOnly = true;
+
         for (const key of variantKeys) {
           if (
             current[key] !== undefined &&
             current[key] !== defaultVariants[key]
           ) {
+            isBaseOnly = false;
             // Skip boolean 'false' values
             if (current[key] === false || current[key] === "false") continue;
             // For boolean 'true', just add the key name
@@ -2324,12 +2329,25 @@ export function twsxVariants(config) {
 
         const selector = "." + parts.join("-");
         const classes = generateClasses(current);
-        cssObj[selector] = classes;
+
+        // Separate base class from variant classes
+        if (isBaseOnly) {
+          baseCss[selector] = classes;
+        } else {
+          variantCss[selector] = classes;
+        }
         return;
       }
 
       const [firstKey, ...restKeys] = keys;
       const options = variants[firstKey];
+
+      // If this variant has no default, also generate without it (undefined)
+      const hasDefault = defaultVariants[firstKey] !== undefined;
+      if (!hasDefault) {
+        // Generate combinations without this variant
+        generateCombinations(restKeys, current);
+      }
 
       for (const optionValue of Object.keys(options)) {
         generateCombinations(restKeys, { ...current, [firstKey]: optionValue });
@@ -2339,17 +2357,73 @@ export function twsxVariants(config) {
     // Generate all combinations
     generateCombinations(variantKeys);
 
-    // Inject CSS using twsx
-    twsx(cssObj);
+    // Inject base CSS first, then variant CSS (order matters for specificity)
+    twsx(baseCss);
+    twsx(variantCss);
 
-    // No return value
-    return;
+    // Handle nested selectors - generate CSS for child elements
+    if (Object.keys(nested).length > 0) {
+      const nestedCss = {};
+      for (const [nestedSelector, nestedClasses] of Object.entries(nested)) {
+        // Build full selector: .alert .icon or .alert.icon (if starts with &)
+        let fullSelector;
+        if (nestedSelector.startsWith("&")) {
+          // &.active -> .alert.active (attached to parent)
+          fullSelector = className + nestedSelector.slice(1);
+        } else {
+          // .icon -> .alert .icon (descendant)
+          fullSelector = className + " " + nestedSelector;
+        }
+        nestedCss[fullSelector] = nestedClasses;
+      }
+      twsx(nestedCss);
+    }
   }
 
-  // If no className, return the variant function (backward compatible)
-  return function variantFn(props = {}) {
-    return generateClasses(props);
-  };
+  /**
+   * Build class name string from props (for component usage)
+   * @param {Object} props - Variant props
+   * @returns {string} Class name string like "alert alert-warning" or "btn btn-outline-danger"
+   */
+  function buildClassName(props = {}) {
+    if (!className) {
+      // No className defined, return generated classes directly
+      return generateClasses(props);
+    }
+
+    const baseClass = className.startsWith(".")
+      ? className.slice(1)
+      : className;
+    const variantParts = [baseClass];
+
+    for (const key of Object.keys(variants)) {
+      const value = props[key];
+      if (value === undefined || value === null) continue;
+
+      // Skip if it's the default value
+      if (value === defaultVariants[key]) continue;
+
+      // Handle boolean variants
+      if (value === true || value === "true") {
+        variantParts.push(key);
+      } else if (value !== false && value !== "false") {
+        variantParts.push(value);
+      }
+    }
+
+    const variantClass = variantParts.join("-");
+
+    // Always include base class for consistency and nested selector support
+    // e.g., "btn btn-outline-danger" instead of just "btn-outline-danger"
+    if (variantClass !== baseClass) {
+      return baseClass + " " + variantClass;
+    }
+
+    return variantClass;
+  }
+
+  // Always return the buildClassName function
+  return buildClassName;
 }
 
 // Simple hashCode function for CSS deduplication

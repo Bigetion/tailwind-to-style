@@ -238,6 +238,19 @@ export interface TwsxVariantsConfig {
   compoundVariants?: CompoundVariant[];
   /** Default variant values */
   defaultVariants?: DefaultVariants;
+  /**
+   * Nested selectors for child elements.
+   * Keys are CSS selectors relative to the parent className.
+   * Use '&' prefix for attached selectors (e.g., '&.active' -> '.alert.active')
+   * Without '&', creates descendant selector (e.g., '.icon' -> '.alert .icon')
+   * @example
+   * nested: {
+   *   '.icon': 'flex-shrink-0 mt-0.5',
+   *   '.content': 'flex-1',
+   *   '&.dismissable': 'pr-10'
+   * }
+   */
+  nested?: Record<string, string>;
 }
 
 /**
@@ -256,17 +269,15 @@ export type VariantFunction = (props?: VariantProps) => string;
  * Create a variant-based style generator (similar to tailwind-variants)
  * Supports base styles, variants, compound variants, and default variants
  * 
- * Two modes:
- * 1. With className: Auto-injects CSS for all variant combinations, returns void
- * 2. Without className: Returns a function that generates class strings
+ * When className is provided: Auto-injects CSS for all variant combinations
+ * Always returns a function to build class names from props
  * 
  * @param config - Configuration object with base, variants, compoundVariants, defaultVariants
- * @returns When className is provided: void (CSS is auto-injected)
- *          When className is not provided: A function that accepts variant props and returns merged Tailwind classes
+ * @returns A function that accepts variant props and returns the class name string
  * 
  * @example
- * // Mode 1: Auto-inject CSS (no return value)
- * twsxVariants({
+ * // With className: Auto-inject CSS + return class builder
+ * const btn = twsxVariants({
  *   className: '.btn',
  *   base: 'px-4 py-2 rounded font-medium',
  *   variants: {
@@ -275,10 +286,11 @@ export type VariantFunction = (props?: VariantProps) => string;
  *   },
  *   defaultVariants: { variant: 'solid', size: 'md' }
  * });
- * // Generates: .btn, .btn-sm, .btn-lg, .btn-outline, .btn-outline-sm, etc.
+ * // CSS generated: .btn, .btn-sm, .btn-lg, .btn-outline, .btn-outline-sm, etc.
+ * btn({ variant: 'outline', size: 'lg' }) // Returns: "btn-outline-lg"
  * 
  * @example
- * // Mode 2: Return variant function
+ * // Without className: Return class string generator
  * const button = twsxVariants({
  *   base: 'px-4 py-2 rounded font-medium',
  *   variants: {
@@ -288,7 +300,6 @@ export type VariantFunction = (props?: VariantProps) => string;
  * });
  * button({ color: 'secondary' }) // Returns: "px-4 py-2 rounded font-medium bg-gray-500"
  */
-export function twsxVariants(config: TwsxVariantsConfig & { className: string }): void;
 export function twsxVariants(config: TwsxVariantsConfig): VariantFunction;
 
 /**
