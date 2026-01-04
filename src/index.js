@@ -1939,9 +1939,8 @@ export function twsx(obj, options = {}) {
  * // Usage:
  * button({ color: 'primary', size: 'lg' }) // Returns merged classes
  */
-export function twsxVariants(config) {
+export function twsxVariants(className, config = {}) {
   const {
-    className,
     base = "",
     variants = {},
     compoundVariants = [],

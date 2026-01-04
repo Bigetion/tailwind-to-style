@@ -222,14 +222,6 @@ export interface DefaultVariants {
  * Configuration for twsxVariants
  */
 export interface TwsxVariantsConfig {
-  /** 
-   * CSS class name for auto-injection mode.
-   * When provided, CSS is auto-generated for all variant combinations.
-   * Class names follow pattern: .{className}-{variant}-{color}-{size}
-   * Default values are omitted from class name.
-   * @example className: '.btn' generates .btn, .btn-outline, .btn-danger, etc.
-   */
-  className?: string;
   /** Base Tailwind classes applied to all variants */
   base?: string;
   /** Variant definitions with their options */
@@ -269,16 +261,14 @@ export type VariantFunction = (props?: VariantProps) => string;
  * Create a variant-based style generator (similar to tailwind-variants)
  * Supports base styles, variants, compound variants, and default variants
  * 
- * When className is provided: Auto-injects CSS for all variant combinations
- * Always returns a function to build class names from props
+ * Auto-injects CSS for all variant combinations and returns a function to build class names
  * 
+ * @param className - CSS class name (e.g., '.btn' or 'btn')
  * @param config - Configuration object with base, variants, compoundVariants, defaultVariants
  * @returns A function that accepts variant props and returns the class name string
  * 
  * @example
- * // With className: Auto-inject CSS + return class builder
- * const btn = twsxVariants({
- *   className: '.btn',
+ * const btn = twsxVariants('.btn', {
  *   base: 'px-4 py-2 rounded font-medium',
  *   variants: {
  *     variant: { solid: 'bg-blue-500', outline: 'bg-transparent border-2' },
@@ -287,20 +277,9 @@ export type VariantFunction = (props?: VariantProps) => string;
  *   defaultVariants: { variant: 'solid', size: 'md' }
  * });
  * // CSS generated: .btn, .btn-sm, .btn-lg, .btn-outline, .btn-outline-sm, etc.
- * btn({ variant: 'outline', size: 'lg' }) // Returns: "btn-outline-lg"
- * 
- * @example
- * // Without className: Return class string generator
- * const button = twsxVariants({
- *   base: 'px-4 py-2 rounded font-medium',
- *   variants: {
- *     color: { primary: 'bg-blue-500', secondary: 'bg-gray-500' }
- *   },
- *   defaultVariants: { color: 'primary' }
- * });
- * button({ color: 'secondary' }) // Returns: "px-4 py-2 rounded font-medium bg-gray-500"
+ * btn({ variant: 'outline', size: 'lg' }) // Returns: "btn btn-outline-lg"
  */
-export function twsxVariants(config: TwsxVariantsConfig): VariantFunction;
+export function twsxVariants(className: string, config?: TwsxVariantsConfig): VariantFunction;
 
 /**
  * Performance utilities for debugging and monitoring
