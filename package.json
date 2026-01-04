@@ -1,6 +1,6 @@
 {
   "name": "tailwind-to-style",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Runtime Tailwind CSS to inline styles converter. Simple, fast, framework-agnostic.",
   "type": "module",
   "main": "dist/index.cjs",

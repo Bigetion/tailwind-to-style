@@ -1,5 +1,100 @@
 # Changelog
 
+## [3.1.0] - 2026-01-04
+
+### 🎨 New Feature: `twsxVariants()` - Compound Variants System
+
+A powerful variant-based styling system similar to `tailwind-variants`, but with automatic CSS generation and injection.
+
+#### **Basic Usage**
+```javascript
+import { twsxVariants } from 'tailwind-to-style';
+
+const btn = twsxVariants('.btn', {
+  base: 'px-4 py-2 rounded-lg font-medium transition-all',
+  variants: {
+    variant: {
+      solid: 'border-transparent',
+      outline: 'bg-transparent border-2',
+      ghost: 'bg-transparent',
+    },
+    color: {
+      primary: 'bg-blue-500 text-white hover:bg-blue-600',
+      danger: 'bg-red-500 text-white hover:bg-red-600',
+    },
+    size: {
+      sm: 'px-3 py-1.5 text-sm',
+      md: 'px-4 py-2 text-base',
+      lg: 'px-6 py-3 text-lg',
+    },
+  },
+  compoundVariants: [
+    { variant: 'outline', color: 'primary', class: 'border-blue-500 text-blue-600 hover:bg-blue-50' },
+    { variant: 'outline', color: 'danger', class: 'border-red-500 text-red-600 hover:bg-red-50' },
+    { variant: 'ghost', color: 'primary', class: 'text-blue-600 hover:bg-blue-100' },
+  ],
+  defaultVariants: { variant: 'solid', color: 'primary', size: 'md' }
+});
+
+// Usage in React
+const Button = ({ variant, color, size, children, ...props }) => (
+  <button className={btn({ variant, color, size })} {...props}>{children}</button>
+);
+
+// Renders: class="btn btn-outline-danger-lg"
+<Button variant="outline" color="danger" size="lg">Delete</Button>
+```
+
+#### **Features**
+- ✅ **Auto CSS Generation**: Generates all variant combinations automatically
+- ✅ **Class Name Builder**: Returns function to build class names from props
+- ✅ **Compound Variants**: Apply styles when multiple variants match
+- ✅ **Default Variants**: Set default values for variants
+- ✅ **Nested Selectors**: Style child elements within the component
+- ✅ **Smart Class Names**: Base class always included (e.g., `btn btn-outline`)
+- ✅ **CSS Specificity**: Proper injection order ensures variants override base
+
+#### **Nested Selectors**
+Style child elements without inline Tailwind classes:
+```javascript
+const alert = twsxVariants('.alert', {
+  base: 'p-4 rounded-lg border flex gap-3',
+  variants: {
+    status: {
+      info: 'bg-blue-50 border-blue-200 text-blue-800',
+      error: 'bg-red-50 border-red-200 text-red-800',
+    },
+  },
+  defaultVariants: { status: 'info' },
+  nested: {
+    '.alert-icon': 'flex-shrink-0 mt-0.5',
+    '.alert-content': 'flex-1',
+    '.alert-dismiss': 'p-1 rounded hover:bg-black/10 cursor-pointer',
+  }
+});
+
+// Generated CSS:
+// .alert .alert-icon { ... }
+// .alert .alert-content { ... }
+// .alert .alert-dismiss { ... }
+```
+
+#### **Class Naming Convention**
+- `.btn` = all defaults (solid + primary + md)
+- `.btn-outline` = outline (non-default) + primary (default) + md (default)
+- `.btn-danger` = solid (default) + danger (non-default) + md (default)
+- `.btn-outline-danger-lg` = outline + danger + lg (all non-default)
+
+### 🔧 API Changes
+- **New signature**: `twsxVariants(className, config)` instead of `twsxVariants({ className, ...config })`
+- **Always returns function**: Returns class name builder function
+- **Base class included**: Renders `btn btn-outline` instead of just `btn-outline`
+
+### 📦 TypeScript
+Full TypeScript support with proper type inference for variants.
+
+---
+
 ## [2.11.0] - 2025-12-22
 
 ### 🎨 New Features: Styled Components & Variants System

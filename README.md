@@ -156,6 +156,80 @@ const formatted = twsx(styles, { format: 'pretty' })
 - `'.nested'` - Descendants
 - `'@media ...'` - Media queries (root level only)
 
+### `twsxVariants(className, config)`
+
+Create variant-based component styles with automatic CSS generation. Similar to `tailwind-variants` but with auto-injection.
+
+```javascript
+import { twsxVariants } from 'tailwind-to-style'
+
+const btn = twsxVariants('.btn', {
+  base: 'px-4 py-2 rounded-lg font-medium transition-all',
+  variants: {
+    variant: {
+      solid: 'border-transparent',
+      outline: 'bg-transparent border-2',
+      ghost: 'bg-transparent',
+    },
+    color: {
+      primary: 'bg-blue-500 text-white hover:bg-blue-600',
+      danger: 'bg-red-500 text-white hover:bg-red-600',
+    },
+    size: {
+      sm: 'px-3 py-1.5 text-sm',
+      md: 'px-4 py-2 text-base',
+      lg: 'px-6 py-3 text-lg',
+    },
+  },
+  compoundVariants: [
+    { variant: 'outline', color: 'primary', class: 'border-blue-500 text-blue-600' },
+    { variant: 'outline', color: 'danger', class: 'border-red-500 text-red-600' },
+  ],
+  defaultVariants: { variant: 'solid', color: 'primary', size: 'md' }
+})
+
+// Usage - returns class name string
+btn()                                    // "btn"
+btn({ color: 'danger' })                 // "btn btn-danger"
+btn({ variant: 'outline', size: 'lg' })  // "btn btn-outline-lg"
+
+// In React
+const Button = ({ variant, color, size, children, ...props }) => (
+  <button className={btn({ variant, color, size })} {...props}>
+    {children}
+  </button>
+)
+```
+
+**Nested Selectors** - Style child elements:
+
+```javascript
+const alert = twsxVariants('.alert', {
+  base: 'p-4 rounded-lg border flex gap-3',
+  variants: {
+    status: {
+      info: 'bg-blue-50 text-blue-800',
+      error: 'bg-red-50 text-red-800',
+    },
+  },
+  defaultVariants: { status: 'info' },
+  nested: {
+    '.alert-icon': 'flex-shrink-0 mt-0.5',
+    '.alert-content': 'flex-1',
+    '.alert-dismiss': 'p-1 rounded hover:bg-black/10',
+  }
+})
+
+// Generates CSS:
+// .alert .alert-icon { ... }
+// .alert .alert-content { ... }
+```
+
+**Class Naming Convention:**
+- `.btn` = all defaults
+- `.btn-outline` = outline variant (non-default)
+- `.btn-outline-danger-lg` = multiple non-defaults
+
 ### `configure(config)`
 
 Customize theme with your colors, spacing, fonts, and more.
