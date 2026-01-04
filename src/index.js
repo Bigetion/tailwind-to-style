@@ -1700,6 +1700,37 @@ export function twsx(obj, options = {}) {
     }
 
     const { inject = true } = options;
+
+    // Generate input hash for caching
+    const inputHash = getInputHash(obj, options);
+
+    // Check generation cache first
+    const cacheCheckMarker = performanceMonitor.start("twsx:cacheCheck");
+    const isCached = generatedCssCache.has(inputHash);
+    performanceMonitor.end(cacheCheckMarker);
+
+    if (isCached) {
+      const cachedCSS = generatedCssCache.get(inputHash);
+
+      // Check if needs injection
+      if (inject && !injectedInputHashSet.has(inputHash)) {
+        if (typeof window !== "undefined" && typeof document !== "undefined") {
+          performanceMonitor.measure(
+            () => autoInjectCss(cachedCSS),
+            "twsx:inject"
+          );
+          injectedInputHashSet.add(inputHash);
+        }
+      }
+
+      performanceMonitor.end(totalMarker);
+      logger.debug(`twsx: Cache hit - skipped generation (hash: ${inputHash})`);
+      return cachedCSS;
+    }
+
+    // Cache miss - generate CSS
+    logger.debug(`twsx: Cache miss - generating CSS (hash: ${inputHash})`);
+
     const styles = {};
 
     // Create walk function with closure over styles
@@ -1885,6 +1916,12 @@ export function twsx(obj, options = {}) {
     // Combine keyframes and regular CSS
     const finalCSS = keyframesCSS + customKeyframesCSS + cssString;
 
+    // Cache the generated CSS
+    generatedCssCache.set(inputHash, finalCSS);
+    logger.debug(
+      `twsx: CSS cached (hash: ${inputHash}, size: ${finalCSS.length} bytes)`
+    );
+
     // Auto-inject if needed
     if (
       inject &&
@@ -1892,6 +1929,7 @@ export function twsx(obj, options = {}) {
       typeof document !== "undefined"
     ) {
       performanceMonitor.measure(() => autoInjectCss(finalCSS), "twsx:inject");
+      injectedInputHashSet.add(inputHash);
     }
 
     performanceMonitor.end(totalMarker);
@@ -2439,8 +2477,66 @@ function getCssHash(str) {
   return hash;
 }
 
-// Enhanced auto-inject CSS with performance monitoring
+/**
+ * Normalize style object for consistent hashing
+ * Handles whitespace, duplicate classes, and deterministic ordering
+ */
+function normalizeStyleValue(value) {
+  if (typeof value === "string") {
+    // Normalize: trim, dedupe classes, sort for consistency
+    const classes = value.trim().split(/\s+/).filter(Boolean);
+    const uniqueClasses = [...new Set(classes)];
+    return uniqueClasses.sort().join(" ");
+  } else if (Array.isArray(value)) {
+    return value.map((item) => normalizeStyleValue(item));
+  } else if (typeof value === "object" && value !== null) {
+    const normalized = {};
+    // Sort keys for deterministic order
+    const sortedKeys = Object.keys(value).sort();
+    for (const key of sortedKeys) {
+      normalized[key] = normalizeStyleValue(value[key]);
+    }
+    return normalized;
+  }
+  return value;
+}
+
+/**
+ * Generate hash from input object and options
+ * This allows caching at the input level instead of output level
+ */
+function getInputHash(obj, options = {}) {
+  try {
+    // Normalize the style object
+    const normalized = normalizeStyleValue(obj);
+
+    // Create input representation including relevant options
+    const input = {
+      styles: normalized,
+      // Only include options that affect CSS generation
+      inject: options.inject ?? true,
+    };
+
+    // Serialize with sorted keys for consistency
+    const serialized = JSON.stringify(input, Object.keys(input).sort());
+    return getCssHash(serialized);
+  } catch (error) {
+    // Fallback to stringifying original object if normalization fails
+    logger.warn("Failed to normalize input, using fallback hash:", error);
+    return getCssHash(JSON.stringify({ obj, options }));
+  }
+}
+
+// CSS generation cache (input hash -> generated CSS)
+const generatedCssCache = new Map();
+
+// CSS injection tracking (input hash -> boolean)
+const injectedInputHashSet = new Set();
+
+// Legacy: CSS output hash tracking (for backward compatibility)
 const injectedCssHashSet = new Set();
+
+// Enhanced auto-inject CSS with performance monitoring
 function autoInjectCss(cssString) {
   const marker = performanceMonitor.start("css:inject");
 
@@ -2502,9 +2598,11 @@ export const performanceUtils = {
         parseSelector: parseSelectorCache.size,
         encodeBracket: encodeBracketCache.size,
         decodeBracket: decodeBracketCache.size,
+        generatedCss: generatedCssCache.size, // New: input-based cache
       },
       injectionStats: {
-        uniqueStylesheets: injectedCssHashSet.size,
+        uniqueStylesheets: injectedCssHashSet.size, // Legacy output hash
+        uniqueInputs: injectedInputHashSet.size, // New: input hash tracking
       },
     };
   },
@@ -2516,6 +2614,43 @@ export const performanceUtils = {
     encodeBracketCache.clear();
     decodeBracketCache.clear();
     logger.info("All caches cleared");
+    performanceMonitor.end(marker);
+  },
+
+  clearGenerationCache() {
+    const marker = performanceMonitor.start("performance:clearGenerationCache");
+    const previousSize = generatedCssCache.size;
+    generatedCssCache.clear();
+    logger.info(`Generation cache cleared (${previousSize} entries removed)`);
+    performanceMonitor.end(marker);
+  },
+
+  clearInjectionCache() {
+    const marker = performanceMonitor.start("performance:clearInjectionCache");
+    const previousInputs = injectedInputHashSet.size;
+    const previousOutputs = injectedCssHashSet.size;
+    injectedInputHashSet.clear();
+    injectedCssHashSet.clear();
+    logger.info(
+      `Injection cache cleared (${previousInputs} input hashes, ${previousOutputs} output hashes)`
+    );
+    performanceMonitor.end(marker);
+  },
+
+  resetStyles() {
+    const marker = performanceMonitor.start("performance:resetStyles");
+    // Remove style tag from DOM
+    if (typeof document !== "undefined") {
+      const styleTag = document.getElementById("twsx-auto-style");
+      if (styleTag) {
+        styleTag.remove();
+        logger.info("Style tag removed from DOM");
+      }
+    }
+    // Clear all caches
+    this.clearGenerationCache();
+    this.clearInjectionCache();
+    logger.info("All styles and caches reset");
     performanceMonitor.end(marker);
   },
 
