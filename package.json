@@ -1,10 +1,13 @@
 {
   "name": "tailwind-to-style",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "Runtime Tailwind CSS to inline styles converter. Simple, fast, framework-agnostic.",
   "type": "module",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
+  "browser": "dist/index.min.js",
+  "unpkg": "dist/index.min.js",
+  "jsdelivr": "dist/index.min.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
