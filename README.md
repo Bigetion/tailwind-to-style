@@ -488,6 +488,43 @@ document.head.appendChild(Object.assign(document.createElement('style'), {
 - **No build step** - Instant development workflow
 - **Tree-shakeable** - Only import what you use
 
+## 🐛 Debugging & Logging
+
+By default, all logs are disabled. Enable logging via environment variable:
+
+```bash
+# Enable warnings (performance, cache misses)
+TWSX_LOG_LEVEL=warn npm start
+
+# Enable debug logs (detailed processing info)
+TWSX_LOG_LEVEL=debug npm test
+
+# Enable only errors
+TWSX_LOG_LEVEL=error npm run dev
+
+# Disable all logs (default)
+TWSX_LOG_LEVEL=silent npm start
+```
+
+Or programmatically:
+
+```javascript
+import { logger } from 'tailwind-to-style'
+
+// Enable debug logging
+logger.setLevel('debug')  // 'debug' | 'info' | 'warn' | 'error' | 'silent'
+
+// Check current level
+console.log(logger.getLevel()) // → 'debug'
+```
+
+**Available log levels:**
+- `debug` - Detailed processing information
+- `info` - General information
+- `warn` - Performance warnings, slow operations
+- `error` - Error messages only
+- `silent` - No logging (default)
+
 ## 🆚 Comparison
 
 | Feature | tailwind-to-style | Tailwind CSS | CSS-in-JS |

@@ -75,20 +75,21 @@ class Logger {
   }
 }
 
-// Create singleton instance with production-safe defaults
-// Use multiple safety checks for Node.js environment
-let isProduction = false;
+// Create singleton instance with silent defaults
+// Can be enabled via TWSX_LOG_LEVEL environment variable
+let logLevel = "silent";
 try {
-  // Safe check with optional chaining equivalent
   if (typeof process !== "undefined" && process && process.env) {
-    isProduction = process.env.NODE_ENV === "production";
+    // Allow explicit log level override via environment variable
+    // e.g., TWSX_LOG_LEVEL=debug or TWSX_LOG_LEVEL=warn
+    logLevel = process.env.TWSX_LOG_LEVEL || "silent";
   }
-} catch (e) {
-  // Silently fail - in browser environment, default to development mode
-  isProduction = false;
+} catch {
+  // Silently fail - in browser environment, default to silent
+  logLevel = "silent";
 }
 
-export const logger = new Logger(isProduction ? "error" : "warn");
+export const logger = new Logger(logLevel);
 
 // Export Logger class for custom instances
 export { Logger };
