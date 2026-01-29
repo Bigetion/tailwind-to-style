@@ -1,0 +1,15 @@
+{
+  "name": "tailwind-to-style-benchmarks",
+  "version": "1.0.0",
+  "description": "Performance benchmarks for tailwind-to-style",
+  "type": "module",
+  "scripts": {
+    "bench:tws": "node tws-benchmark.js",
+    "bench:twsx": "node twsx-benchmark.js",
+    "bench:variants": "node variants-benchmark.js",
+    "bench:all": "npm run bench:tws && npm run bench:twsx && npm run bench:variants",
+    "bench:compare": "node compare-benchmark.js"
+  },
+  "keywords": ["benchmark", "performance"],
+  "author": "Bigetion"
+}
