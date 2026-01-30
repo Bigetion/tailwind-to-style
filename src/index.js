@@ -2833,4 +2833,172 @@ export {
   INLINE_ANIMATIONS,
 } from "./utils/inlineAnimations.js";
 
-// End of exports - v3.0.0 core only (tws, twsx, twsxVariants, configure)
+// =============================================================================
+// v3.2.0 Advanced Features Exports
+// =============================================================================
+
+// Plugin System
+export {
+  PluginRegistry,
+  createUtilityPlugin,
+  createComponentPlugin,
+  usePlugin,
+  defineUtility,
+  gradientPlugin,
+  animationPlugin,
+  typographyPlugin,
+  aspectRatioPlugin,
+  containerQueriesPlugin,
+} from "./core/plugin-system.js";
+
+// Preset System
+export {
+  materialPreset,
+  antDesignPreset,
+  bootstrapPreset,
+  chakraPreset,
+  glassmorphismPreset,
+  neumorphismPreset,
+  applyPreset,
+  mergePresets,
+  createPreset,
+} from "./core/presets.js";
+
+// Class Optimizer
+export {
+  removeDuplicates,
+  resolveConflicts,
+  sortByPriority,
+  optimizeClasses,
+  findConflicts,
+  analyzeClasses,
+  mergeClasses,
+  createOptimizer,
+  classOptimizer,
+} from "./core/class-optimizer.js";
+
+// Animation Builder
+export {
+  AnimationBuilder,
+  createAnimation,
+  animations,
+  easings,
+  AnimationSequence,
+  createSequence,
+  AnimationTimeline,
+  createTimeline,
+} from "./core/animation-builder.js";
+
+// Composition API
+export {
+  createStyled,
+  box,
+  flex,
+  grid,
+  stack,
+  hstack,
+  vstack,
+  center,
+  container,
+  card,
+  button,
+  badge,
+  input,
+  text,
+  heading,
+  divider,
+  spacer,
+  createVariants,
+  createResponsive,
+  systemProps,
+  compose,
+  createComponent,
+} from "./core/composition-api.js";
+
+// SSR Utilities
+export {
+  extractCriticalCss,
+  generateStyleTag,
+  StyleCollector,
+  createStyleCollector,
+  SSRContext,
+  createSSRContext,
+  inlineCriticalStyles,
+  preloadStyles,
+  getPreloadedClasses,
+  hydrateStyles,
+  generateStaticCss,
+  StyleStream,
+  createStyleStream,
+  extractUsedClasses,
+  purgeUnusedStyles,
+  getStyleStats,
+  createSSRCache,
+  renderWithStyles,
+} from "./core/ssr-utilities.js";
+
+// Class Validation
+export {
+  ValidationError,
+  validateClassName,
+  validateClasses,
+  validateStrict,
+  validateWithWarnings,
+  createValidator,
+  checkConflicts,
+  autoFix,
+  createReport,
+  validator,
+} from "./core/validator.js";
+
+// DevTools
+export {
+  enableDevTools,
+  disableDevTools,
+  isDevToolsEnabled,
+  logClassName,
+  logStyles,
+  logPerformance,
+  showWarning,
+  highlightConflicts,
+  inspectElement,
+  getCacheStats,
+  clearDevCache,
+  trackUsage,
+  getUsageStats,
+  createDebugPanel,
+  devTools,
+} from "./core/devtools.js";
+
+// Enhanced Features (from previous update)
+export {
+  autoPrefixStyles,
+  smartMerge,
+  classVariants,
+  responsive,
+  stateVariants,
+  conditionalClasses,
+  themeClasses,
+  extractCssVariables,
+} from "./core/enhanced-features.js";
+
+// Core Infrastructure (from previous update)
+export { CacheManager } from "./core/cache-manager.js";
+export { hashString, fastObjectHash, getCssHash } from "./core/hashing.js";
+export { autoInjectCss, generateMinifiedKeyframes } from "./core/injector.js";
+export { performanceMonitor, debounce } from "./core/performance.js";
+export {
+  encodeBracketValues,
+  decodeBracketValues,
+  expandGroupedClass,
+  resolveVariants,
+} from "./core/parser.js";
+export {
+  CLASS_PARSER_REGEX,
+  ARBITRARY_VALUE_REGEX,
+  breakpoints,
+  pseudoVariants,
+  BUILTIN_KEYFRAMES,
+} from "./core/constants.js";
+
+// End of exports - v3.2.0 with advanced features

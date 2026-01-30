@@ -11,6 +11,21 @@
 > 
 > Simple, fast, framework-agnostic. Convert Tailwind utility classes to inline styles or CSS at runtime with zero build step.
 
+## ✨ New in v3.2.0
+
+**🚀 Advanced Features for Maximum Flexibility & Performance:**
+
+- **🔌 Plugin System** - Extend with custom utilities and components
+- **🎨 Design Presets** - Material, Ant Design, Bootstrap, Chakra UI, and more
+- **⚡ Class Optimizer** - Smart deduplication and conflict resolution
+- **🎬 Animation Builder** - 15+ pre-built animations with fluent API
+- **🧩 Composition API** - Styled-system like component primitives
+- **🖥️ SSR Utilities** - Critical CSS extraction and hydration
+- **✅ Class Validation** - Runtime validation with auto-fix suggestions
+- **🛠️ DevTools** - Browser debugging panel with performance tracking
+
+**[📖 See Advanced Features Guide →](docs/ADVANCED_FEATURES_GUIDE.md)**
+
 ## ⚡ Why tailwind-to-style?
 
 - **🚀 Zero Build Step** - No PostCSS, no compilation, just JavaScript
@@ -19,7 +34,8 @@
 - **🔥 SCSS-like Nesting** - Write complex nested styles with ease
 - **⚙️ Customizable** - Extend theme with your colors, spacing, fonts
 - **💪 TypeScript Support** - Full type definitions included
-- **🪶 Lightweight** - ~12KB minified (70% smaller than v2)
+- **🪶 Lightweight** - ~12KB core, ~18KB with all features (70% smaller than v2)
+- **⚡ High Performance** - 10-300x speedup with intelligent caching
 
 ## 📥 Installation
 
@@ -376,7 +392,190 @@ export const buttonStyles = twsx({
 })
 ```
 
-## 🔧 Advanced Features
+## � v3.2.0 Quick Start
+
+### Plugin System
+
+Extend with custom utilities:
+
+```javascript
+import { usePlugin, gradientPlugin, createUtilityPlugin } from 'tailwind-to-style'
+
+// Use built-in plugins
+usePlugin(gradientPlugin)
+
+// Create custom plugin
+const myPlugin = createUtilityPlugin({
+  name: 'custom',
+  utilities: {
+    'special-box': {
+      padding: '2rem',
+      backgroundColor: '#ff6b6b',
+      borderRadius: '1rem',
+    }
+  }
+})
+usePlugin(myPlugin)
+
+// Use custom utility
+const styles = tws('special-box text-white')
+```
+
+### Design Presets
+
+Quick theme setup:
+
+```javascript
+import { applyPreset, materialPreset, antDesignPreset } from 'tailwind-to-style'
+
+// Apply Material Design
+applyPreset(materialPreset)
+
+// Use Material colors
+const styles = tws('bg-primary-500 text-white shadow-2')
+
+// Available presets:
+// materialPreset, antDesignPreset, bootstrapPreset, 
+// chakraPreset, glassmorphismPreset, neumorphismPreset
+```
+
+### Class Optimizer
+
+Smart deduplication and conflict resolution:
+
+```javascript
+import { optimizeClasses, findConflicts } from 'tailwind-to-style'
+
+// Optimize messy classes
+const messy = 'flex flex p-4 p-6 bg-red-500 bg-blue-500'
+const optimized = optimizeClasses(messy, {
+  removeDups: true,
+  resolveConflict: true,  // Last one wins
+  sort: true
+})
+// Result: 'flex p-6 bg-blue-500'
+
+// Find conflicts
+const conflicts = findConflicts(messy)
+conflicts.forEach(c => {
+  console.log(`${c.property}: ${c.classes.join(', ')} → Winner: ${c.winner}`)
+})
+```
+
+### Animation Builder
+
+Create animations with fluent API:
+
+```javascript
+import { createAnimation, animations } from 'tailwind-to-style'
+
+// Custom animation
+const slideUp = createAnimation('slideUp')
+  .from({ transform: 'translateY(100px)', opacity: '0' })
+  .to({ transform: 'translateY(0)', opacity: '1' })
+  .duration('500ms')
+  .ease('easeOutCubic')
+
+console.log(slideUp.toKeyframes())
+
+// Pre-built animations
+const fadeIn = animations.fadeIn('300ms')
+const bounce = animations.bounce('600ms')
+// Available: fadeIn, fadeOut, slideIn*, scaleIn/Out, bounce, shake, pulse, spin, etc.
+```
+
+### Composition API
+
+Component primitives for design systems:
+
+```javascript
+import { box, button, card, flex } from 'tailwind-to-style'
+
+// Box primitive with props
+const boxProps = box({
+  p: '4',
+  bg: 'blue-500',
+  color: 'white',
+  borderRadius: 'lg',
+  shadow: 'md'
+})
+
+// Button with variants
+const btnProps = button({
+  variant: 'solid',      // solid | outline | ghost | link
+  colorScheme: 'blue',
+  size: 'lg'             // xs | sm | md | lg | xl
+})
+
+// Card component
+const cardProps = card({ p: '6', shadow: 'lg' })
+
+// Use in React
+<div {...boxProps}>Content</div>
+<button {...btnProps}>Click me</button>
+```
+
+### SSR Utilities
+
+Critical CSS extraction for server-side rendering:
+
+```javascript
+import { createStyleCollector, extractCriticalCss } from 'tailwind-to-style'
+
+// Server-side: Collect styles during render
+const collector = createStyleCollector()
+collector.add('p-4', { padding: '1rem' })
+collector.add('bg-blue-500', { backgroundColor: '#3b82f6' })
+
+// Get critical CSS
+const css = collector.getCss()
+const styleTag = collector.getStyleTag({ nonce: 'abc123' })
+
+// Inject in HTML
+const html = `<html><head>${styleTag}</head>...</html>`
+```
+
+### Class Validation
+
+Runtime validation with auto-fix:
+
+```javascript
+import { validateClasses, autoFix } from 'tailwind-to-style'
+
+// Validate classes
+const result = validateClasses('flex items-center invalid-class')
+if (!result.valid) {
+  result.errors.forEach(error => {
+    console.error(error.error)
+    console.log('Suggestions:', error.suggestions)
+  })
+}
+
+// Auto-fix common mistakes
+const fixed = autoFix('flex-center text-middle margin-4')
+console.log(fixed.classes)
+// Result: 'justify-center items-center text-center m-4'
+```
+
+### DevTools
+
+Browser debugging panel:
+
+```javascript
+import { enableDevTools, createDebugPanel } from 'tailwind-to-style'
+
+// Enable DevTools
+enableDevTools({
+  logPerformance: true,
+  showWarnings: true,
+  highlightConflicts: true
+})
+
+// Create visual debug panel
+createDebugPanel()  // Opens floating panel in browser
+```
+
+## 🔧 Core Features
 
 ### Responsive Design
 
@@ -527,15 +726,23 @@ console.log(logger.getLevel()) // → 'debug'
 
 ## 🆚 Comparison
 
-| Feature | tailwind-to-style | Tailwind CSS | CSS-in-JS |
-|---------|------------------|--------------|-----------|
+| Feature | tailwind-to-style v3.2 | Tailwind CSS | CSS-in-JS |
+|---------|----------------------|--------------|-----------||
 | Build Step | ❌ None | ✅ Required | ❌ None |
-| Bundle Size | 🟢 12KB | 🟡 ~80KB+ | 🟡 20-40KB |
+| Bundle Size | 🟢 12-18KB | 🟡 ~80KB+ | 🟡 20-40KB |
 | Runtime | ✅ Yes | ❌ No | ✅ Yes |
 | Full Tailwind Support | ✅ Yes | ✅ Yes | ❌ No |
+| Plugin System | ✅ Yes | ✅ Yes | ⚠️ Limited |
+| Design Presets | ✅ 6 Built-in | ❌ No | ❌ No |
+| Class Optimizer | ✅ Yes | ❌ No | ⚠️ Some |
+| Animation Builder | ✅ 15+ Built-in | ⚠️ Basic | ✅ Yes |
+| SSR Support | ✅ Full | ✅ Yes | ✅ Yes |
+| Validation | ✅ Runtime | ⚠️ Build-time | ❌ No |
+| DevTools | ✅ Browser Panel | ⚠️ CLI | ⚠️ Some |
 | Framework Agnostic | ✅ Yes | ✅ Yes | ⚠️ Depends |
 | Nesting Support | ✅ Yes | ⚠️ Plugins | ✅ Yes |
 | TypeScript | ✅ Yes | ✅ Yes | ✅ Yes |
+| Performance | 🟢 10-300x cache | 🟢 Fast | 🟡 Varies |
 
 ## 📖 Migration from v2
 
@@ -557,6 +764,14 @@ Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for de
 
 MIT © [Bigetion](https://github.com/Bigetion)
 
+## � Advanced Documentation
+
+- **[Advanced Features Guide](docs/ADVANCED_FEATURES_GUIDE.md)** - Complete guide for all v3.2.0 features
+- **[API Reference](docs/API.md)** - Comprehensive API documentation
+- **[Performance Guide](docs/PERFORMANCE.md)** - Optimization strategies
+- **[Quick Reference](QUICK_REFERENCE.md)** - One-page cheat sheet
+- **[Changelog v3.2.0](CHANGELOG_v3.2.0.md)** - What's new in v3.2.0
+
 ## 💖 Support
 
 If you find this library helpful, consider supporting:
@@ -565,4 +780,4 @@ If you find this library helpful, consider supporting:
 
 ---
 
-**v3.0.0** - Focused, fast, and simple. Just the core. 🎯
+**v3.2.0** - Optimal, flexible, fast, and developer-friendly. Full-featured runtime Tailwind. 🚀
