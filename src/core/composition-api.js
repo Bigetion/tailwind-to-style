@@ -170,8 +170,10 @@ export function box(props = {}) {
   // Custom classes
   if (className) classes.push(className);
 
+  const twsResult = tws(classes.join(" "));
+  
   return {
-    style: tws(classes.join(" ")),
+    style: twsResult.style,
     ...rest,
   };
 }
