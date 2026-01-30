@@ -8,7 +8,7 @@ import { logger } from "../utils/logger.js";
 /**
  * Plugin registry
  */
-class PluginRegistry {
+export class PluginRegistry {
   constructor() {
     this.plugins = new Map();
     this.utilities = new Map();

@@ -3,8 +3,6 @@
  * Removes duplicates, resolves conflicts, and optimizes class ordering
  */
 
-import { parseClassName } from "./parser.js";
-
 /**
  * Priority map for CSS properties (higher = more specific)
  */

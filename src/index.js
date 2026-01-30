@@ -2840,7 +2840,6 @@ export {
 // Plugin System
 export {
   PluginRegistry,
-  createUtilityPlugin,
   createComponentPlugin,
   usePlugin,
   defineUtility,
@@ -2995,7 +2994,6 @@ export {
 } from "./core/parser.js";
 export {
   CLASS_PARSER_REGEX,
-  ARBITRARY_VALUE_REGEX,
   breakpoints,
   pseudoVariants,
   BUILTIN_KEYFRAMES,
