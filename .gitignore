@@ -52,8 +52,7 @@ temp/
 .npm/
 .eslintcache
 
-# Test applications
-test-app/
+# Test applications (legacy - keep test-react-v3)
 test-react-v3/
 
 # Package tarball
