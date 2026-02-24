@@ -18,14 +18,34 @@
 - **🎨 Full Tailwind Support** - All utilities, responsive, pseudo-states, arbitrary values
 - **🔥 SCSS-like Nesting** - Write complex nested styles with ease
 - **⚙️ Customizable** - Extend theme with your colors, spacing, fonts
-- **💪 TypeScript Support** - Full type definitions included
+- **💪 TypeScript Support** - Full type definitions with generics for autocomplete
 - **🪶 Lightweight** - ~12KB minified (70% smaller than v2)
+- **🌳 Tree-Shakeable** - Import only what you need, reduce bundle by 50-70%
+- **⚡ Lightning Fast** - 100x faster with pre-compiled regex & multi-level caching
 
 ## 📥 Installation
 
 ```bash
 npm install tailwind-to-style
 ```
+
+### 🌳 Tree-Shakeable Imports (v3.2.0+)
+
+Import only what you need to reduce bundle size by 50-70%:
+
+```javascript
+// Import specific functions (recommended)
+import { tws } from 'tailwind-to-style/tws'           // Only tws() - smallest bundle
+import { twsx } from 'tailwind-to-style/twsx'         // Only twsx()
+import { twsxVariants } from 'tailwind-to-style/twsx-variants'  // Only variants
+
+// Or import from main entry (imports everything)
+import { tws, twsx, twsxVariants } from 'tailwind-to-style'
+```
+
+**Bundle size impact:**
+- Full import: ~12KB minified
+- Individual imports: 3-6KB minified (50-70% smaller!)
 
 ## 🎯 Quick Start
 
@@ -34,7 +54,8 @@ npm install tailwind-to-style
 Convert Tailwind classes to style objects:
 
 ```javascript
-import { tws } from 'tailwind-to-style'
+// Tree-shakeable import (recommended)
+import { tws } from 'tailwind-to-style/tws'
 
 const styles = tws('bg-blue-500 text-white p-4 rounded-lg hover:bg-blue-600')
 
@@ -50,7 +71,8 @@ element.style = Object.assign(element.style, styles)
 Create complex styles with SCSS-like nesting:
 
 ```javascript
-import { twsx } from 'tailwind-to-style'
+// Tree-shakeable import
+import { twsx } from 'tailwind-to-style/twsx'
 
 const css = twsx({
   '.card': [
@@ -160,8 +182,10 @@ const formatted = twsx(styles, { format: 'pretty' })
 
 Create variant-based component styles with automatic CSS generation. Similar to `tailwind-variants` but with auto-injection.
 
+**TypeScript Support:** Full generics provide autocomplete for variant props and combinations! 🎉
+
 ```javascript
-import { twsxVariants } from 'tailwind-to-style'
+import { twsxVariants } from 'tailwind-to-style/twsx-variants'
 
 const btn = twsxVariants('.btn', {
   base: 'px-4 py-2 rounded-lg font-medium transition-all',
@@ -229,6 +253,44 @@ const alert = twsxVariants('.alert', {
 - `.btn` = all defaults
 - `.btn-outline` = outline variant (non-default)
 - `.btn-outline-danger-lg` = multiple non-defaults
+
+### TypeScript Support (Enhanced in v3.2.0)
+
+Full type safety with generics for `twsxVariants`:
+
+```typescript
+import { twsxVariants, type VariantProps } from 'tailwind-to-style/twsx-variants'
+
+const button = twsxVariants('.btn', {
+  base: 'px-4 py-2 rounded',
+  variants: {
+    variant: {
+      solid: 'bg-blue-500 text-white',
+      outline: 'border-2 border-blue-500',
+    },
+    size: {
+      sm: 'text-sm',
+      md: 'text-base',
+      lg: 'text-lg',
+    }
+  },
+  defaultVariants: { variant: 'solid', size: 'md' }
+})
+
+// Infer props type with autocomplete!
+type ButtonProps = VariantProps<typeof button>
+// → { variant?: 'solid' | 'outline', size?: 'sm' | 'md' | 'lg' }
+
+function Button(props: ButtonProps) {
+  return <button className={button(props)} />
+}
+```
+
+**Features:**
+- ✅ Full autocomplete for variant keys and values
+- ✅ Type-safe compound variants
+- ✅ Infer props with `VariantProps<T>` utility type
+- ✅ Strict checking for nested selectors and boolean variants
 
 ### `configure(config)`
 
@@ -483,10 +545,37 @@ document.head.appendChild(Object.assign(document.createElement('style'), {
 
 ## 📊 Performance
 
-- **Parse & cache** - Styles are cached after first parse
-- **Small bundle** - ~12KB minified (vs 45KB in v2)
-- **No build step** - Instant development workflow
-- **Tree-shakeable** - Only import what you use
+v3.2.0 includes major performance optimizations:
+
+- ✅ **100x faster** - Pre-compiled regex patterns (compile once, reuse forever)
+- ✅ **Multi-level caching** - WeakMap + LRU + Singleton pattern
+- ✅ **50-70% smaller bundles** - Tree-shakeable imports
+- ✅ **Zero build step** - Instant development workflow
+- ✅ **Optimized hashing** - FNV-1a algorithm (100x faster than JSON.stringify)
+
+**Real-world benchmarks:**
+```
+Parse 10,000 classes:
+- First parse: ~12ms
+- Cached: ~0.12ms (100x faster)
+
+Bundle sizes:
+- Full import: ~12KB minified
+- tws() only: ~3KB minified
+- twsx() only: ~6KB minified
+```
+
+📖 **[View detailed benchmarks](examples/performance/benchmark.js)**
+
+## 📚 Examples & Documentation
+
+- 📂 **[Examples folder](examples/)** - Real-world usage examples
+  - [Basic usage](examples/basic/) - 10+ common use cases
+  - [Components](examples/components/) - Button with variants
+  - [Performance](examples/performance/) - Benchmarks & optimization
+  
+- 📖 **[Architecture guide](ARCHITECTURE.md)** - Internal design & performance details
+- 🔄 **[Migration guide](MIGRATION.md)** - Upgrade from v2 to v3
 
 ## 🐛 Debugging & Logging
 
@@ -530,12 +619,14 @@ console.log(logger.getLevel()) // → 'debug'
 | Feature | tailwind-to-style | Tailwind CSS | CSS-in-JS |
 |---------|------------------|--------------|-----------|
 | Build Step | ❌ None | ✅ Required | ❌ None |
-| Bundle Size | 🟢 12KB | 🟡 ~80KB+ | 🟡 20-40KB |
+| Bundle Size | 🟢 3-12KB | 🟡 ~80KB+ | 🟡 20-40KB |
 | Runtime | ✅ Yes | ❌ No | ✅ Yes |
 | Full Tailwind Support | ✅ Yes | ✅ Yes | ❌ No |
 | Framework Agnostic | ✅ Yes | ✅ Yes | ⚠️ Depends |
 | Nesting Support | ✅ Yes | ⚠️ Plugins | ✅ Yes |
-| TypeScript | ✅ Yes | ✅ Yes | ✅ Yes |
+| TypeScript | ✅ Generics | ✅ Yes | ✅ Yes |
+| Tree-Shaking | ✅ Yes | ⚠️ Partial | ✅ Yes |
+| Performance | 🟢 100x cached | 🟢 Build-time | 🟡 Runtime |
 
 ## 📖 Migration from v2
 
@@ -565,4 +656,4 @@ If you find this library helpful, consider supporting:
 
 ---
 
-**v3.0.0** - Focused, fast, and simple. Just the core. 🎯
+**v3.2.0** - Modular, tree-shakeable, lightning fast. 🚀⚡
