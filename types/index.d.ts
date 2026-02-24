@@ -202,34 +202,44 @@ export interface VariantsDefinition {
   [variantName: string]: VariantOptions;
 }
 
-/**
- * Compound variant definition
+/** * Compound variant definition - strict typing for better autocomplete
  */
-export interface CompoundVariant {
-  [variantName: string]: string | boolean | string[];
+export interface CompoundVariant<V extends VariantsDefinition = VariantsDefinition> {
+  [K in keyof V]?: keyof V[K] | (keyof V[K])[];
+}
+
+export interface CompoundVariantWithClass<V extends VariantsDefinition = VariantsDefinition> 
+  extends CompoundVariant<V> {
   class?: string;
   className?: string;
 }
 
 /**
- * Default variants definition
+ * Default variants definition - ensures only valid variant keys and values
  */
-export interface DefaultVariants {
-  [variantName: string]: string | boolean;
-}
+export type DefaultVariants<V extends VariantsDefinition> = {
+  [K in keyof V]?: keyof V[K];
+};
 
 /**
- * Configuration for twsxVariants
+ * Variant props - infers types from variants definition
  */
-export interface TwsxVariantsConfig {
+export type VariantProps<V extends VariantsDefinition> = {
+  [K in keyof V]?: keyof V[K] | (keyof V[K])[];
+};
+
+/**
+ * Configuration for twsxVariants with strict typing
+ */
+export interface TwsxVariantsConfig<V extends VariantsDefinition = VariantsDefinition> {
   /** Base Tailwind classes applied to all variants */
   base?: string;
   /** Variant definitions with their options */
-  variants?: VariantsDefinition;
+  variants?: V;
   /** Compound variant rules for multi-variant combinations */
-  compoundVariants?: CompoundVariant[];
+  compoundVariants?: CompoundVariantWithClass<V>[];
   /** Default variant values */
-  defaultVariants?: DefaultVariants;
+  defaultVariants?: DefaultVariants<V>;
   /**
    * Nested selectors for child elements.
    * Keys are CSS selectors relative to the parent className.
@@ -246,26 +256,29 @@ export interface TwsxVariantsConfig {
 }
 
 /**
- * Props type for variant function
+ * Props type for variant function - DEPRECATED, use VariantProps<V> instead
  */
-export interface VariantProps {
+export interface VariantPropsLegacy {
   [variantName: string]: string | boolean | undefined;
 }
 
 /**
  * Variant function returned by twsxVariants
+ * Generic type V allows for type-safe variant props
  */
-export type VariantFunction = (props?: VariantProps) => string;
+export type VariantFunction<V extends VariantsDefinition = VariantsDefinition> = 
+  (props?: Partial<VariantProps<V>>) => string;
 
 /**
- * Create a variant-based style generator (similar to tailwind-variants)
+ * Create a variant-based style generator with full type safety
  * Supports base styles, variants, compound variants, and default variants
  * 
  * Auto-injects CSS for all variant combinations and returns a function to build class names
  * 
+ * @template V - Variants definition type for type-safe props
  * @param className - CSS class name (e.g., '.btn' or 'btn')
  * @param config - Configuration object with base, variants, compoundVariants, defaultVariants
- * @returns A function that accepts variant props and returns the class name string
+ * @returns A type-safe function that accepts variant props and returns the class name string
  * 
  * @example
  * const btn = twsxVariants('.btn', {
@@ -274,12 +287,28 @@ export type VariantFunction = (props?: VariantProps) => string;
  *     variant: { solid: 'bg-blue-500', outline: 'bg-transparent border-2' },
  *     size: { sm: 'text-sm', md: 'text-base', lg: 'text-lg' }
  *   },
+ *   compoundVariants: [
+ *     { variant: 'outline', size: 'lg', class: 'border-4' }
+ *   ],
  *   defaultVariants: { variant: 'solid', size: 'md' }
  * });
- * // CSS generated: .btn, .btn-sm, .btn-lg, .btn-outline, .btn-outline-sm, etc.
+ * 
+ * // CSS auto-generated for all combinations
+ * // Type-safe usage with autocomplete:
  * btn({ variant: 'outline', size: 'lg' }) // Returns: "btn btn-outline-lg"
+ * btn({ variant: 'solid' })                // Returns: "btn btn-solid"
+ * btn()                                    // Returns: "btn" (uses defaults)
  */
-export function twsxVariants(className: string, config?: TwsxVariantsConfig): VariantFunction;
+export function twsxVariants<V extends VariantsDefinition>(
+  className: string, 
+  config?: TwsxVariantsConfig<V>
+): VariantFunction<V>;
+
+// Overload for legacy support without generics
+export function twsxVariants(
+  className: string, 
+  config?: TwsxVariantsConfig
+): VariantFunction;
 
 /**
  * Performance utilities for debugging and monitoring

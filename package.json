@@ -15,9 +15,30 @@
       "import": "./dist/index.esm.js",
       "require": "./dist/index.cjs"
     },
+    "./tws": {
+      "types": "./dist/core/tws.d.ts",
+      "import": "./dist/core/tws.esm.js",
+      "require": "./dist/core/tws.cjs"
+    },
+    "./twsx": {
+      "types": "./dist/core/twsx.d.ts",
+      "import": "./dist/core/twsx.esm.js",
+      "require": "./dist/core/twsx.cjs"
+    },
+    "./twsx-variants": {
+      "types": "./dist/core/twsxVariants.d.ts",
+      "import": "./dist/core/twsxVariants.esm.js",
+      "require": "./dist/core/twsxVariants.cjs"
+    },
+    "./utils": {
+      "types": "./dist/utils/index.d.ts",
+      "import": "./dist/utils/index.esm.js",
+      "require": "./dist/utils/index.cjs"
+    },
     "./preflight.css": "./preflight.css",
     "./package.json": "./package.json"
   },
+  "sideEffects": false,
   "files": [
     "dist",
     "preflight.css",
@@ -25,17 +46,22 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests",
     "build": "rollup -c rollup.config.js",
+    "build:watch": "rollup -c rollup.config.js --watch",
     "dev": "rollup -c rollup.config.js --watch",
     "lint": "eslint src/**/*.js",
     "lint:fix": "eslint src/**/*.js --fix",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
+    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
     "test:examples": "node examples/test/node-test.js",
-    "prepublishOnly": "npm run lint && npm run build",
+    "prepublishOnly": "npm run lint && npm run test && npm run build",
     "version": "git add -A",
     "postversion": "git push && git push --tags",
+    "prettify": "prettier --write \"src/**/*.js\" \"examples/**/*.js\" \"tests/**/*.js\"",
     "prettify:src": "prettier --write \"src/**/*.js\"",
-    "prettify:examples": "prettier --write \"examples/**/*.js\""
+    "prettify:examples": "prettier --write \"examples/**/*.js\"",
+    "analyze": "rollup -c rollup.config.js --environment ANALYZE"
   },
   "repository": {
     "type": "git",
