@@ -19,6 +19,12 @@ export default [
         localStorage: 'readonly',
         sessionStorage: 'readonly',
         indexedDB: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        requestAnimationFrame: 'readonly',
+        cancelAnimationFrame: 'readonly',
         // Node.js globals
         process: 'readonly',
         __dirname: 'readonly',
