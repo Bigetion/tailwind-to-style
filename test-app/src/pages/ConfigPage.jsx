@@ -114,6 +114,16 @@ export default function ConfigPage() {
         Extend the theme, register plugins, manage config lifecycle, and collect SSR styles.
       </p>
 
+      <div className="callout callout-info">
+        <span className="callout-icon">⚙️</span>
+        <div className="callout-content">
+          <strong>Configuration System</strong>
+          <code>configure()</code> lets you extend the default Tailwind theme with custom colors, spacing, fonts, and plugins.
+          Changes take effect immediately — any subsequent <code>tws()</code>/<code>twsx()</code> calls will use the new config.
+          Use <code>resetConfig()</code> to restore defaults.
+        </div>
+      </div>
+
       {/* ── Current Config ── */}
       <div className="section">
         <h3 className="section-title">Current Config</h3>
@@ -185,7 +195,7 @@ clearConfigCache()  // → purge internal caches`} />
       {/* ── Plugin Demo ── */}
       <div className="section">
         <h3 className="section-title">Custom Plugins</h3>
-        <p className="section-desc">Create reusable utility and component plugins</p>
+        <p className="section-desc">Two plugin types: <code>createUtilityPlugin()</code> for simple value-based utilities, and <code>createPlugin()</code> for full component-style plugins</p>
         <CodeBlock label="js" code={`import { createPlugin, createUtilityPlugin } from 'tailwind-to-style'
 
 // Utility plugin — auto-generates .text-shadow-sm, .text-shadow-md, etc.
@@ -217,7 +227,7 @@ configure({ plugins: [textShadowPlugin, glassPlugin] })`} />
       {/* ── SSR Demo ── */}
       <div className="section">
         <h3 className="section-title">SSR — Server-Side Rendering</h3>
-        <p className="section-desc">Collect all generated CSS for injection into SSR HTML</p>
+        <p className="section-desc">Collect all generated CSS during server render for injection into HTML. Prevents FOUC (Flash of Unstyled Content).</p>
         <div className="controls">
           <button
             style={tws('bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold border-0 cursor-pointer', true)}

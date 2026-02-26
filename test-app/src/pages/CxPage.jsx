@@ -38,6 +38,51 @@ export default function CxPage() {
         Supports strings, objects, arrays, and falsy values. Includes <code>cx.with()</code> for base class composition.
       </p>
 
+      <div className="callout callout-info">
+        <span className="callout-icon">💡</span>
+        <div className="callout-content">
+          <strong>Why cx()?</strong>
+          Instead of messy template literals like <code>{`\`btn \${isActive ? 'active' : ''} \${isLarge ? 'lg' : ''}\``}</code>,
+          use <code>cx('btn', isActive && 'active', isLarge && 'lg')</code>. Cleaner, safer, no extra spaces.
+        </div>
+      </div>
+
+      <div className="section">
+        <h3 className="section-title">Accepted Input Types</h3>
+        <table className="compare-table">
+          <thead>
+            <tr><th>Type</th><th>Example</th><th>Result</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span className="tag tag-blue">String</span></td>
+              <td className="mono">cx('a', 'b', 'c')</td>
+              <td className="mono">"a b c"</td>
+            </tr>
+            <tr>
+              <td><span className="tag tag-green">Conditional</span></td>
+              <td className="mono">cx('a', true && 'b')</td>
+              <td className="mono">"a b"</td>
+            </tr>
+            <tr>
+              <td><span className="tag tag-purple">Object</span></td>
+              <td className="mono">cx({'{'}a: true, b: false{'}'})</td>
+              <td className="mono">"a"</td>
+            </tr>
+            <tr>
+              <td><span className="tag tag-amber">Array</span></td>
+              <td className="mono">cx(['a', 'b'], 'c')</td>
+              <td className="mono">"a b c"</td>
+            </tr>
+            <tr>
+              <td><span className="tag">Falsy</span></td>
+              <td className="mono">cx('a', null, false, 'b')</td>
+              <td className="mono">"a b"</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
       {/* ── Interactive Demo ── */}
       <div className="section">
         <h3 className="section-title">Interactive cx() Demo</h3>
@@ -110,8 +155,17 @@ export default function CxPage() {
       <div className="section">
         <h3 className="section-title">cx.with() — Base Class Composition</h3>
         <p className="section-desc">
-          Pre-bind base classes and extend with additional ones. Great for component APIs.
+          Pre-bind base classes and extend with additional ones. Great for creating consistent component APIs
+          where all buttons share the same base but differ in color/size.
         </p>
+        <div className="callout callout-tip">
+          <span className="callout-icon">📦</span>
+          <div className="callout-content">
+            <strong>Think of it as a factory</strong>
+            <code>cx.with('base-classes')</code> returns a <em>new function</em> that always includes the base, plus whatever you pass later.
+            Perfect for design system component APIs.
+          </div>
+        </div>
         <CodeBlock label="js" code={`const baseBtn = cx.with(
   'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 cursor-pointer'
 )

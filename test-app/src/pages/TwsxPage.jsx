@@ -65,13 +65,38 @@ export default function TwsxPage() {
         Handles nested selectors, hover/focus/active states, and <code>@css</code> for raw CSS injection.
       </p>
 
+      {/* ── When to use twsx() ── */}
+      <div className="callout callout-info">
+        <span className="callout-icon">💡</span>
+        <div className="callout-content">
+          <strong>tws() vs twsx() — When to use which?</strong>
+          Use <code>tws()</code> for inline styles (React <code>style</code> prop, emails).
+          Use <code>twsx()</code> when you need <strong>real CSS</strong> with selectors, pseudo-classes (<code>:hover</code>, <code>:focus</code>),
+          child selectors (<code>&gt; .child</code>), or need to inject a <code>&lt;style&gt;</code> tag. twsx() returns a CSS string and auto-injects it into the DOM.
+        </div>
+      </div>
+
+      <div className="callout callout-api">
+        <span className="callout-icon">📝</span>
+        <div className="callout-content">
+          <strong>API Signature</strong>
+          <code>twsx({'{ selector: "tailwind classes", ... }'})</code> — returns generated CSS string and auto-injects a <code>&lt;style&gt;</code> tag into the document head.
+        </div>
+      </div>
+
       {/* ── Button Component ── */}
       <div className="section">
         <h3 className="section-title">Button with States</h3>
-        <p className="section-desc">Hover, active, and focus states via pseudo-selectors</p>
+        <p className="section-desc">Hover, active, and focus states via pseudo-selectors. <strong>Try hovering and clicking!</strong></p>
         <div className="preview">
           <button className="demo-btn">Click Me</button>
           <button className="demo-btn" style={{ opacity: 0.5, pointerEvents: 'none' }}>Disabled</button>
+        </div>
+        <div className="callout callout-tip" style={{ marginTop: 0 }}>
+          <span className="callout-icon">✅</span>
+          <div className="callout-content">
+            Unlike <code>tws()</code>, <code>twsx()</code> supports <code>:hover</code>, <code>:focus</code>, <code>:active</code>, and other pseudo-selectors because it generates real CSS rules, not inline styles.
+          </div>
         </div>
         <CodeBlock label="js" code={`twsx({
   '.demo-btn': 'inline-flex items-center px-5 py-2.5 bg-indigo-600 text-white font-semibold rounded-lg shadow-md transition-all duration-200 cursor-pointer',
@@ -155,6 +180,57 @@ export default function TwsxPage() {
         <CodeBlock label="js" code={`twsx({
   '.gradient-text': '@css { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }',
 })`} />
+        <div className="callout callout-warning">
+          <span className="callout-icon">⚠️</span>
+          <div className="callout-content">
+            <strong>When to use @css</strong>
+            The <code>@css</code> directive bypasses Tailwind class resolution and injects raw CSS verbatim.
+            Use it for vendor-specific properties, complex selectors, or CSS features that Tailwind doesn't cover.
+          </div>
+        </div>
+      </div>
+
+      {/* ── Selector Patterns Reference ── */}
+      <div className="section">
+        <h3 className="section-title">Selector Patterns Reference</h3>
+        <p className="section-desc">All the selector patterns twsx() supports</p>
+        <table className="compare-table">
+          <thead>
+            <tr><th>Pattern</th><th>Selector Example</th><th>Use Case</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span className="tag tag-blue">Base</span></td>
+              <td className="mono">.my-btn</td>
+              <td style={{ fontSize: '.75rem' }}>Base element styles</td>
+            </tr>
+            <tr>
+              <td><span className="tag tag-purple">Pseudo-class</span></td>
+              <td className="mono">.my-btn:hover</td>
+              <td style={{ fontSize: '.75rem' }}>Hover, focus, active states</td>
+            </tr>
+            <tr>
+              <td><span className="tag tag-green">Child</span></td>
+              <td className="mono">.card &gt; .header</td>
+              <td style={{ fontSize: '.75rem' }}>Direct child elements</td>
+            </tr>
+            <tr>
+              <td><span className="tag tag-amber">Modifier</span></td>
+              <td className="mono">.input.error</td>
+              <td style={{ fontSize: '.75rem' }}>Conditional class variants</td>
+            </tr>
+            <tr>
+              <td><span className="tag">Disabled</span></td>
+              <td className="mono">.input:disabled</td>
+              <td style={{ fontSize: '.75rem' }}>Disabled/read-only states</td>
+            </tr>
+            <tr>
+              <td><span className="tag tag-purple">@css</span></td>
+              <td className="mono">'@css {"{ ... }"}'</td>
+              <td style={{ fontSize: '.75rem' }}>Raw CSS escape hatch</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   )

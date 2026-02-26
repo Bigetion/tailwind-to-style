@@ -16,14 +16,35 @@ export default function FiltersPage() {
         CSS filter utilities: blur, brightness, contrast, grayscale, hue-rotate, invert, saturate, sepia — and their backdrop counterparts.
       </p>
 
+      <div className="callout callout-info">
+        <span className="callout-icon">🔍</span>
+        <div className="callout-content">
+          <strong>filter vs backdrop-filter</strong>
+          <code>filter</code> applies effects to the element itself (e.g., blurring an image).
+          <code>backdrop-filter</code> applies effects to the content <em>behind</em> the element (e.g., glass morphism).
+          Both compile to the same CSS property names.
+        </div>
+      </div>
+
       {/* ── Blur ── */}
       <div className="section">
         <h3 className="section-title">Blur</h3>
+        <p className="section-desc">Maps to CSS <code>filter: blur(Xpx)</code>. Values range from 0 to 64px.</p>
         <div className="grid-4">
-          {['blur-none', 'blur-sm', 'blur', 'blur-md', 'blur-lg', 'blur-xl', 'blur-2xl', 'blur-3xl'].map(cls => (
+          {[
+            ['blur-none', '0px'],
+            ['blur-sm', '4px'],
+            ['blur', '8px'],
+            ['blur-md', '12px'],
+            ['blur-lg', '16px'],
+            ['blur-xl', '24px'],
+            ['blur-2xl', '40px'],
+            ['blur-3xl', '64px'],
+          ].map(([cls, val]) => (
             <div key={cls} style={{ textAlign: 'center' }}>
               <div style={{ ...tws(`${cls} w-full h-20 bg-indigo-500 rounded-lg`, true) }} />
-              <span className="text-xs font-mono text-muted" style={{ display: 'block', marginTop: 4 }}>{cls}</span>
+              <span style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: '.6rem', color: '#6366f1', marginTop: 4 }}>{val}</span>
+              <span style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: '.6rem', color: '#94a3b8', marginTop: 1 }}>{cls}</span>
             </div>
           ))}
         </div>
@@ -33,6 +54,7 @@ export default function FiltersPage() {
       {/* ── Brightness ── */}
       <div className="section">
         <h3 className="section-title">Brightness</h3>
+        <p className="section-desc">Maps to <code>filter: brightness(X)</code>. 100 = normal, {'<'}100 = darker, {'>'}100 = brighter.</p>
         <div className="grid-4">
           {['brightness-50', 'brightness-75', 'brightness-100', 'brightness-125', 'brightness-150', 'brightness-200'].map(cls => (
             <div key={cls} style={{ textAlign: 'center' }}>
@@ -98,8 +120,8 @@ export default function FiltersPage() {
 
       {/* ── Backdrop Blur ── */}
       <div className="section">
-        <h3 className="section-title">Backdrop Filters</h3>
-        <p className="section-desc">Apply filters to the content behind an element (glass morphism effect)</p>
+        <h3 className="section-title">Backdrop Filters (Glass Morphism)</h3>
+        <p className="section-desc">Apply filters to content <strong>behind</strong> the element. Combined with <code>bg-white/30</code> for the glass effect.</p>
         <div className="preview" style={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           minHeight: 200,

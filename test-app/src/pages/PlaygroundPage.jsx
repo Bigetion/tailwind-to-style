@@ -55,6 +55,15 @@ export default function PlaygroundPage() {
         Experiment with any Tailwind class in real-time. Type classes and see the generated CSS and JS object output instantly.
       </p>
 
+      <div className="callout callout-tip">
+        <span className="callout-icon">🎮</span>
+        <div className="callout-content">
+          <strong>Try it out!</strong>
+          Type any Tailwind class below and see the result. Use the preset buttons for quick examples.
+          Toggle "Show JS Object" to see the React <code>style</code> prop format.
+        </div>
+      </div>
+
       {/* ── Mode Toggle ── */}
       <div className="section">
         <div className="controls">

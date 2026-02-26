@@ -330,6 +330,120 @@ body {
   margin: 1.5rem 0;
 }
 
+/* ─── Info / Tip / Warning Callouts ───────────────────────────────────────── */
+.callout {
+  display: flex;
+  gap: .75rem;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  font-size: .85rem;
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+  border: 1px solid transparent;
+}
+.callout-icon {
+  flex-shrink: 0;
+  font-size: 1.1rem;
+  margin-top: 1px;
+}
+.callout-content { flex: 1; }
+.callout-content strong { display: block; margin-bottom: 2px; font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
+.callout-content code { background: rgba(0,0,0,.06); padding: 1px 5px; border-radius: 3px; font-size: .8rem; font-family: var(--font-mono); }
+
+.callout-info {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1e40af;
+}
+.callout-tip {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #065f46;
+}
+.callout-warning {
+  background: #fffbeb;
+  border-color: #fde68a;
+  color: #92400e;
+}
+.callout-api {
+  background: #f5f3ff;
+  border-color: #c4b5fd;
+  color: #5b21b6;
+}
+
+/* ─── Annotation Labels ───────────────────────────────────────────────────── */
+.annotation {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  font-size: .65rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  border-radius: 4px;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+.annotation-arrow {
+  color: #94a3b8;
+  margin: 0 2px;
+}
+
+/* ─── Comparison Table ────────────────────────────────────────────────────── */
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .8rem;
+  margin-bottom: 1rem;
+}
+.compare-table th {
+  text-align: left;
+  padding: .5rem .75rem;
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--c-muted);
+  border-bottom: 2px solid var(--c-border);
+}
+.compare-table td {
+  padding: .5rem .75rem;
+  border-bottom: 1px solid var(--c-border);
+  vertical-align: middle;
+}
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table .mono { font-family: var(--font-mono); font-size: .75rem; color: var(--c-accent); }
+
+/* ─── Feature Badge Row ───────────────────────────────────────────────────── */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: .5rem;
+}
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: .5rem .75rem;
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  font-size: .8rem;
+}
+.feature-item .feat-icon {
+  font-size: .9rem;
+  flex-shrink: 0;
+}
+.feature-item .feat-label {
+  font-weight: 600;
+  font-size: .75rem;
+}
+.feature-item .feat-desc {
+  font-size: .7rem;
+  color: var(--c-muted);
+}
+
 /* ─── Stats / Perf Panel ─────────────────────────────────────────────────── */
 .stat-grid {
   display: grid;

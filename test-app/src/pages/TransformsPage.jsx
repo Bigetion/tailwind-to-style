@@ -28,6 +28,16 @@ export default function TransformsPage() {
         Scale, rotate, translate and skew — transform any element with utility classes.
       </p>
 
+      <div className="callout callout-info">
+        <span className="callout-icon">🔄</span>
+        <div className="callout-content">
+          <strong>CSS Transform Property</strong>
+          All transform utilities compile to the CSS <code>transform</code> property.
+          Multiple transforms can be combined: <code>scale-110 rotate-6 translate-x-4</code> → <code>transform: scale(1.1) rotate(6deg) translateX(1rem)</code>.
+          Order matters!
+        </div>
+      </div>
+
       {/* ── Interactive Builder ── */}
       <div className="section">
         <h3 className="section-title">Interactive Transform Builder</h3>
@@ -86,6 +96,7 @@ export default function TransformsPage() {
       {/* ── Scale Gallery ── */}
       <div className="section">
         <h3 className="section-title">Scale</h3>
+        <p className="section-desc">Maps to <code>transform: scale(X)</code>. 100 = normal, {'<'}100 = smaller, {'>'}100 = larger.</p>
         <div className="grid-4">
           {['scale-50', 'scale-75', 'scale-100', 'scale-125', 'scale-150'].map(cls => (
             <div key={cls} style={{ textAlign: 'center', padding: '1.5rem 0' }}>
@@ -103,6 +114,7 @@ export default function TransformsPage() {
       {/* ── Rotate Gallery ── */}
       <div className="section">
         <h3 className="section-title">Rotate</h3>
+        <p className="section-desc">Maps to <code>transform: rotate(Xdeg)</code>. Positive = clockwise, negative = counter-clockwise.</p>
         <div className="grid-4">
           {['rotate-0', 'rotate-3', 'rotate-6', 'rotate-12', 'rotate-45', 'rotate-90', 'rotate-180'].map(cls => (
             <div key={cls} style={{ textAlign: 'center', padding: '1.5rem 0' }}>
@@ -137,6 +149,7 @@ export default function TransformsPage() {
       {/* ── Translate ── */}
       <div className="section">
         <h3 className="section-title">Translate</h3>
+        <p className="section-desc">Move elements along X/Y axes. Dashed outline = original position, green = translated position.</p>
         <div className="grid-3">
           {['translate-x-2', 'translate-x-8', 'translate-x-16', 'translate-y-2', 'translate-y-8', '-translate-x-4'].map(cls => (
             <div key={cls} style={{ textAlign: 'center', padding: '1rem', position: 'relative' }}>
@@ -165,6 +178,7 @@ export default function TransformsPage() {
       {/* ── Skew ── */}
       <div className="section">
         <h3 className="section-title">Skew</h3>
+        <p className="section-desc">Distort elements along X/Y axes with <code>transform: skewX(Xdeg)</code></p>
         <div className="grid-4">
           {['skew-x-1', 'skew-x-3', 'skew-x-6', 'skew-x-12', 'skew-y-3', 'skew-y-6', '-skew-x-6', '-skew-y-6'].map(cls => (
             <div key={cls} style={{ textAlign: 'center', padding: '1.5rem 0' }}>

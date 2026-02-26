@@ -89,10 +89,22 @@ export default function AnimationsPage() {
         Built-in CSS animations plus the Web Animations API, inline transitions, chained sequences and staggered effects.
       </p>
 
+      <div className="callout callout-info">
+        <span className="callout-icon">✨</span>
+        <div className="callout-content">
+          <strong>Animation APIs Overview</strong>
+          This library provides 4 animation approaches:
+          <strong>1)</strong> CSS Animations via <code>tws('animate-spin')</code> — generates <code>animation</code> shorthand.
+          <strong>2)</strong> Web Animations API via <code>applyWebAnimation(el, name)</code> — uses native browser API.
+          <strong>3)</strong> Inline Animations via <code>applyInlineAnimation(el, name)</code> — CSS transition-based.
+          <strong>4)</strong> Chain/Stagger via <code>chainAnimations()</code> / <code>staggerAnimations()</code> — sequential & cascading.
+        </div>
+      </div>
+
       {/* ── Built-in CSS Animations ── */}
       <div className="section">
         <h3 className="section-title">Built-in CSS Animations</h3>
-        <p className="section-desc">These classes generate @keyframes + animation shorthand</p>
+        <p className="section-desc">Click to toggle. These generate <code>animation</code> CSS shorthand with @keyframes. tws() returns the property, but you need to inject keyframes separately (twsx() does it automatically).</p>
         <div className="grid-4">
           {[
             ['animate-spin', '🔄', 'Spin'],
@@ -208,7 +220,7 @@ applyInlineAnimation(el, 'zoom-in')
       <div className="section">
         <h3 className="section-title">Chained Animations</h3>
         <p className="section-desc">
-          <code>chainAnimations(el, steps)</code> — run multiple animations sequentially
+          <code>chainAnimations(el, steps)</code> — run multiple animations sequentially. Each step completes before the next starts. Returns a Promise.
         </p>
         <div className="preview" style={{ justifyContent: 'center', minHeight: 140 }}>
           <div
@@ -245,7 +257,7 @@ await chainAnimations(element, [
       <div className="section">
         <h3 className="section-title">Staggered Animations</h3>
         <p className="section-desc">
-          <code>staggerAnimations(elements, name, {'{ delay }'} )</code> — animate a list with cascade timing
+          <code>staggerAnimations(elements, name, {'{ staggerDelay }'})</code> — animate a list with cascade timing. Each element starts <code>staggerDelay</code> ms after the previous.
         </p>
         <div className="preview" style={{ justifyContent: 'center', minHeight: 80, gap: 12 }} ref={staggerContainerRef}>
           {Array.from({ length: 8 }).map((_, i) => (

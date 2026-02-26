@@ -93,6 +93,16 @@ export default function PerformancePage() {
         Monitor cache utilization, run benchmarks, and manage internal caches.
       </p>
 
+      <div className="callout callout-info">
+        <span className="callout-icon">📊</span>
+        <div className="callout-content">
+          <strong>How Caching Works</strong>
+          Every <code>tws()</code>/<code>twsx()</code> call caches its result.
+          The first call (cold) parses and resolves the CSS. Subsequent calls with the same input (warm) return instantly from cache.
+          This typically gives a <strong>5–20× speedup</strong> for repeated calls.
+        </div>
+      </div>
+
       {/* ── Controls ── */}
       <div className="section">
         <div className="controls">

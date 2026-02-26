@@ -104,6 +104,52 @@ export default function VariantsPage() {
         Define variants, compound variants, and defaults — get auto-generated CSS + class names.
       </p>
 
+      {/* ── Concept Explanation ── */}
+      <div className="callout callout-info">
+        <span className="callout-icon">💡</span>
+        <div className="callout-content">
+          <strong>What are Variants?</strong>
+          Variants let you define multiple visual styles for a single component (like button sizes, colors, states) in a structured way.
+          Instead of manually concatenating class names, you declare them once and get a function that returns the correct class for any combination.
+        </div>
+      </div>
+
+      <div className="section">
+        <h3 className="section-title">How It Works</h3>
+        <table className="compare-table">
+          <thead>
+            <tr><th>Concept</th><th>Description</th><th>Example</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span className="tag tag-blue">base</span></td>
+              <td style={{ fontSize: '.75rem' }}>Styles always applied</td>
+              <td className="mono" style={{ fontSize: '.7rem' }}>font-medium rounded-lg</td>
+            </tr>
+            <tr>
+              <td><span className="tag tag-green">variants</span></td>
+              <td style={{ fontSize: '.75rem' }}>Named style groups with options</td>
+              <td className="mono" style={{ fontSize: '.7rem' }}>size: sm | md | lg</td>
+            </tr>
+            <tr>
+              <td><span className="tag tag-purple">compound</span></td>
+              <td style={{ fontSize: '.75rem' }}>Override when multiple variants match</td>
+              <td className="mono" style={{ fontSize: '.7rem' }}>outline + primary → text-blue</td>
+            </tr>
+            <tr>
+              <td><span className="tag tag-amber">defaults</span></td>
+              <td style={{ fontSize: '.75rem' }}>Fallback when no variant is specified</td>
+              <td className="mono" style={{ fontSize: '.7rem' }}>variant: solid, size: md</td>
+            </tr>
+            <tr>
+              <td><span className="tag">boolean</span></td>
+              <td style={{ fontSize: '.75rem' }}>Toggle-based variants</td>
+              <td className="mono" style={{ fontSize: '.7rem' }}>disabled: true | false</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
       {/* ── Interactive Button Builder ── */}
       <div className="section">
         <h3 className="section-title">Interactive Button Builder</h3>
@@ -187,7 +233,7 @@ export default function VariantsPage() {
       {/* ── Alert Variants ── */}
       <div className="section">
         <h3 className="section-title">Alert Variants with Nested Selectors</h3>
-        <p className="section-desc">Uses <code>nested</code> config for child element styling</p>
+        <p className="section-desc">Uses <code>nested</code> config to style child elements like <code>.valert-icon</code>, <code>.valert-title</code>, etc.</p>
         <div className="col">
           {['info', 'success', 'warning', 'error'].map(s => (
             <div key={s} className={alert({ status: s })}>
@@ -198,6 +244,16 @@ export default function VariantsPage() {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* ── Compound Variants Explanation ── */}
+      <div className="callout callout-warning">
+        <span className="callout-icon">⚠️</span>
+        <div className="callout-content">
+          <strong>Why Compound Variants?</strong>
+          Without compound variants, <code>outline + primary</code> would show a blue filled button (because <code>color: primary</code> sets <code>bg-indigo-600</code>).
+          The compound variant overrides this specific combination to use <code>bg-transparent text-indigo-600</code> instead.
         </div>
       </div>
 
