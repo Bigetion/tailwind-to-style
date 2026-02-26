@@ -8,298 +8,387 @@
 [![bundle size](https://img.shields.io/bundlephobia/minzip/tailwind-to-style)](https://bundlephobia.com/package/tailwind-to-style)
 [![license](https://img.shields.io/npm/l/tailwind-to-style.svg)](https://github.com/Bigetion/tailwind-to-style/blob/main/LICENSE)
 
-> **Runtime Tailwind CSS to inline styles converter**
-> 
+> **Runtime Tailwind CSS to inline styles converter.**
 > Zero build step. SSR-ready. Tree-shakeable. Works everywhere — React, Vue, Svelte, Node.js, vanilla JS.
 
-## ⚡ Why tailwind-to-style?
+---
 
-- **🚀 Zero Build Step** — No PostCSS, no compilation, just JavaScript
-- **📦 Framework Agnostic** — Works with React, Vue, Svelte, vanilla JS
-- **🎨 Full Tailwind Support** — All utilities, responsive, pseudo-states, arbitrary values
-- **🔥 SCSS-like Nesting** — Write complex nested styles with ease
-- **🎛️ Variant System** — Type-safe component variants (like CVA/tailwind-variants)
-- **🧩 Conditional Classes** — Built-in `cx()` utility (like clsx/classnames)
-- **🌐 SSR Support** — Server-side rendering with `startSSR()`/`stopSSR()`
-- **⚙️ Customizable** — Extend theme with your colors, spacing, fonts
-- **💪 TypeScript Support** — Full type definitions with generics for autocomplete
-- **🪶 Lightweight** — ~12KB minified, zero dependencies
-- **🌳 Tree-Shakeable** — Import only what you need, reduce bundle by 50-70%
-- **⚡ Lightning Fast** — 100x faster with pre-compiled regex & multi-level caching
+## Table of Contents
 
-## 📥 Installation
+- [Why tailwind-to-style?](#why-tailwind-to-style)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Core API](#core-api)
+  - [`tws()` — Tailwind to Inline Styles](#tws--tailwind-to-inline-styles)
+  - [`twsx()` — CSS-in-JS Engine](#twsx--css-in-js-engine)
+  - [`twsxVariants()` — Component Variant System](#twsxvariants--component-variant-system)
+  - [`cx()` — Conditional Class Builder](#cx--conditional-class-builder)
+- [Configuration & Plugins](#configuration--plugins)
+  - [`configure()` — Custom Theme](#configure--custom-theme)
+  - [Plugin System](#plugin-system)
+- [SSR (Server-Side Rendering)](#ssr-server-side-rendering)
+- [Animation System](#animation-system)
+- [Tree-Shakeable Imports](#tree-shakeable-imports)
+- [Preflight CSS](#preflight-css)
+- [Framework Integration](#framework-integration)
+- [Performance](#performance)
+- [Debugging & Logging](#debugging--logging)
+- [Comparison](#comparison)
+- [Migration from v2](#migration-from-v2)
+- [Contributing](#contributing)
+- [License](#license)
+
+---
+
+## Why tailwind-to-style?
+
+| Feature | Description |
+|---|---|
+| **Zero Build Step** | No PostCSS, no compilation — just JavaScript |
+| **Framework Agnostic** | React, Vue, Svelte, vanilla JS |
+| **Full Tailwind Support** | All utilities, responsive, pseudo-states, arbitrary values |
+| **SCSS-like Nesting** | `twsx()` for complex nested selector-based styles |
+| **Variant System** | Type-safe component variants like CVA/tailwind-variants |
+| **Conditional Classes** | Built-in `cx()` utility (like clsx/classnames) |
+| **SSR Support** | Server-side rendering with `startSSR()`/`stopSSR()` |
+| **@css Directive** | Inject raw CSS for vendor-specific or complex properties |
+| **Customizable** | Extend theme with colors, spacing, fonts, plugins |
+| **TypeScript** | Full type definitions with generics for autocomplete |
+| **Tree-Shakeable** | Import only what you need — reduce bundle by 50-70% |
+| **Lightweight** | ~12KB minified, zero runtime dependencies |
+| **Lightning Fast** | Pre-compiled regex + multi-level LRU caching |
+
+---
+
+## Installation
 
 ```bash
 npm install tailwind-to-style
 ```
 
-### 🌳 Tree-Shakeable Imports (v3.2.0+)
+```bash
+yarn add tailwind-to-style
+```
 
-Import only what you need to reduce bundle size by 50-70%:
+```bash
+pnpm add tailwind-to-style
+```
+
+**CDN (browser):**
+
+```html
+<script src="https://unpkg.com/tailwind-to-style"></script>
+<script>
+  const { tws, twsx } = tailwindToStyle
+</script>
+```
+
+---
+
+## Quick Start
 
 ```javascript
-// Import specific functions (recommended)
-import { tws } from 'tailwind-to-style/tws'           // Only tws() - smallest bundle
-import { twsx } from 'tailwind-to-style/twsx'          // Only twsx()
-import { twsxVariants } from 'tailwind-to-style/twsx-variants'  // Only variants
-import { cx } from 'tailwind-to-style/cx'              // Only cx() - conditional classes
-
-// Or import from main entry (imports everything)
 import { tws, twsx, twsxVariants, cx } from 'tailwind-to-style'
-```
 
-**Bundle size impact:**
-- Full import: ~12KB minified
-- Individual imports: 3-6KB minified (50-70% smaller!)
+// 1. Inline styles
+const style = tws('bg-blue-500 text-white p-4 rounded-lg', true)
+// → { backgroundColor: '#3b82f6', color: '#fff', padding: '1rem', borderRadius: '0.5rem' }
 
-## 🎯 Quick Start
-
-### Simple Conversion with `tws()`
-
-Convert Tailwind classes to style objects:
-
-```javascript
-// Tree-shakeable import (recommended)
-import { tws } from 'tailwind-to-style/tws'
-
-const styles = tws('bg-blue-500 text-white p-4 rounded-lg hover:bg-blue-600')
-
-// Use in React
-<div style={styles}>Hello World</div>
-
-// Use in vanilla JS
-element.style = Object.assign(element.style, styles)
-```
-
-### Nested Styles with `twsx()`
-
-Create complex styles with SCSS-like nesting:
-
-```javascript
-// Tree-shakeable import
-import { twsx } from 'tailwind-to-style/twsx'
-
-const css = twsx({
-  '.card': [
-    'bg-white p-6 rounded-lg shadow-md',
-    {
-      '&:hover': 'shadow-xl transform scale-105',
-      '> .title': 'text-2xl font-bold text-gray-900 mb-2',
-      '> .description': 'text-gray-600 leading-relaxed',
-      '> .button': [
-        'bg-blue-500 text-white px-4 py-2 rounded',
-        {
-          '&:hover': 'bg-blue-600',
-          '&:active': 'bg-blue-700'
-        }
-      ]
-    }
-  ],
-  
-  // Media queries at root level
-  '@media (max-width: 768px)': {
-    '.card': 'p-4',
-    '.card > .title': 'text-xl'
-  }
+// 2. Real CSS with selectors
+twsx({
+  '.card': ['bg-white p-6 rounded-xl shadow-md', {
+    '&:hover': 'shadow-xl',
+    '> .title': 'text-xl font-bold text-gray-900',
+  }]
 })
+// → auto-injects <style> with .card { ... } .card:hover { ... }
 
-// Inject to document
-const style = document.createElement('style')
-style.textContent = css
-document.head.appendChild(style)
+// 3. Component variants
+const btn = twsxVariants('.btn', {
+  base: 'px-4 py-2 rounded-lg font-medium',
+  variants: {
+    color: { primary: 'bg-blue-500 text-white', danger: 'bg-red-500 text-white' },
+    size:  { sm: 'text-sm', md: 'text-base', lg: 'text-lg' },
+  },
+  defaultVariants: { color: 'primary', size: 'md' },
+})
+btn({ color: 'danger', size: 'lg' })  // → "btn btn-danger-lg"
+
+// 4. Conditional classes
+cx('p-4', isActive && 'bg-blue-500', { 'opacity-50': isDisabled })
+// → 'p-4 bg-blue-500'
 ```
 
-## 📚 Core API
+---
 
-### `tws(classes, options?)`
+## Core API
 
-Convert Tailwind classes to inline style object.
+### `tws()` — Tailwind to Inline Styles
+
+Converts Tailwind CSS class strings into CSS string or JSON style objects at runtime.
 
 ```javascript
 import { tws } from 'tailwind-to-style'
 
-// Basic usage
-const styles = tws('flex items-center gap-4')
+// CSS string (default)
+tws('bg-blue-500 p-4 rounded-lg')
+// → "background-color: #3b82f6; padding: 1rem; border-radius: 0.5rem;"
+
+// JSON object (pass `true` as 2nd argument)
+tws('flex items-center gap-4', true)
 // → { display: 'flex', alignItems: 'center', gap: '1rem' }
-
-// Responsive classes
-const styles = tws('text-sm md:text-base lg:text-lg')
-
-// Pseudo-states
-const styles = tws('bg-blue-500 hover:bg-blue-600 focus:ring-2')
-
-// Arbitrary values
-const styles = tws('w-[123px] text-[#abc] m-[1.5rem]')
-
-// Important modifier
-const styles = tws('!bg-red-500')
-
-// Return as JSON string
-const json = tws('p-4 m-2', { format: 'json' })
-// → '{"padding":"1rem","margin":"0.5rem"}'
 ```
 
-### `twsx(styleObject, options?)`
+**Supported features:**
 
-Generate CSS from nested style definitions with Tailwind classes.
+```javascript
+// Responsive breakpoints
+tws('text-sm md:text-base lg:text-lg')
+
+// Pseudo-states
+tws('bg-blue-500 hover:bg-blue-600 focus:ring-2')
+
+// Arbitrary values
+tws('w-[123px] text-[#abc] mt-[2.5rem] grid-cols-[1fr,2fr]')
+
+// Important modifier
+tws('!bg-red-500 !text-white')
+
+// Negative values
+tws('-mt-4 -translate-x-2')
+
+// Opacity modifier
+tws('bg-blue-500/50 text-black/75')
+
+// Decimal spacing
+tws('p-0.5 m-1.5 gap-2.5')
+```
+
+**Use in React:**
+
+```jsx
+<div style={tws('flex items-center gap-4 bg-white p-6 rounded-xl shadow-md', true)}>
+  <h1 style={tws('text-2xl font-bold text-gray-900', true)}>Hello</h1>
+</div>
+```
+
+---
+
+### `twsx()` — CSS-in-JS Engine
+
+Generates real CSS from Tailwind classes with full selector support, SCSS-like nesting, and auto-injects a `<style>` tag into the DOM.
 
 ```javascript
 import { twsx } from 'tailwind-to-style'
 
-const css = twsx({
+twsx({
   '.button': [
     'bg-blue-500 text-white px-6 py-3 rounded-lg font-medium transition-all',
     {
-      '&:hover': 'bg-blue-600 transform scale-105',
+      '&:hover': 'bg-blue-600 shadow-lg transform scale-105',
       '&:active': 'bg-blue-700 scale-95',
       '&:disabled': 'bg-gray-400 opacity-50 cursor-not-allowed',
       '&.large': 'px-8 py-4 text-lg',
-      '&.small': 'px-3 py-1.5 text-sm'
     }
   ],
-  
+
   '.card': 'bg-white rounded-xl shadow-lg overflow-hidden',
   '.card > .header': 'p-6 border-b border-gray-200',
   '.card > .body': 'p-6',
-  '.card > .footer': 'p-6 bg-gray-50',
-  
-  // Media queries at root level
+
+  // Media queries
   '@media (max-width: 768px)': {
     '.card': 'rounded-lg',
     '.card > .header': 'p-4',
-    '.card > .body': 'p-4'
   }
 })
-
-// Options
-const minified = twsx(styles, { minify: true })
-const formatted = twsx(styles, { format: 'pretty' })
 ```
 
-**Nesting Syntax:**
-- `'&:hover'` - Pseudo-classes
-- `'&.class'` - Modifiers
-- `'> .child'` - Direct children
-- `'.nested'` - Descendants
-- `'@media ...'` - Media queries (root level only)
+**Nesting syntax:**
 
-### `twsxVariants(className, config)`
+| Pattern | Example | Description |
+|---|---|---|
+| `&:pseudo` | `'&:hover': 'bg-blue-600'` | Pseudo-classes |
+| `&.modifier` | `'&.active': 'ring-2'` | Class modifiers |
+| `> .child` | `'> .title': 'text-xl'` | Direct children |
+| `.descendant` | `'.icon': 'w-5 h-5'` | Descendants |
+| `@media` | `'@media (max-width: 768px)': { ... }` | Media queries |
 
-Create variant-based component styles with automatic CSS generation. Similar to `tailwind-variants` but with auto-injection.
-
-**TypeScript Support:** Full generics provide autocomplete for variant props and combinations! 🎉
+**Options:**
 
 ```javascript
-import { twsxVariants } from 'tailwind-to-style/twsx-variants'
+// Disable auto-injection (returns CSS string only)
+const css = twsx({ '.btn': 'bg-blue-500 text-white' }, { inject: false })
+```
+
+#### `@css` Directive — Raw CSS Escape Hatch
+
+For CSS that Tailwind can't express, use the `@css` directive:
+
+**String form:**
+
+```javascript
+twsx({
+  '.gradient-text': '@css { background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }',
+})
+```
+
+**Object form (within arrays):**
+
+```javascript
+twsx({
+  '.gradient-text': [
+    'text-3xl font-bold',
+    {
+      '@css': {
+        'background': 'linear-gradient(90deg, #ff6b6b, #feca57)',
+        '-webkit-background-clip': 'text',
+        '-webkit-text-fill-color': 'transparent',
+      },
+    },
+  ],
+})
+```
+
+---
+
+### `twsxVariants()` — Component Variant System
+
+A CVA-like API for building type-safe component variants. Auto-generates CSS for all combinations and returns a class name builder function.
+
+```javascript
+import { twsxVariants } from 'tailwind-to-style'
 
 const btn = twsxVariants('.btn', {
-  base: 'px-4 py-2 rounded-lg font-medium transition-all',
+  base: 'px-4 py-2 rounded-lg font-medium transition-all border',
   variants: {
     variant: {
-      solid: 'border-transparent',
+      solid: 'shadow-sm',
       outline: 'bg-transparent border-2',
-      ghost: 'bg-transparent',
+      ghost: 'bg-transparent border-transparent',
     },
     color: {
-      primary: 'bg-blue-500 text-white hover:bg-blue-600',
-      danger: 'bg-red-500 text-white hover:bg-red-600',
+      primary: 'bg-blue-500 text-white border-blue-500',
+      danger: 'bg-red-500 text-white border-red-500',
+      neutral: 'bg-gray-100 text-gray-900 border-gray-300',
     },
     size: {
       sm: 'px-3 py-1.5 text-sm',
       md: 'px-4 py-2 text-base',
       lg: 'px-6 py-3 text-lg',
     },
+    disabled: {
+      true: 'opacity-50 cursor-not-allowed pointer-events-none',
+    },
   },
   compoundVariants: [
-    { variant: 'outline', color: 'primary', class: 'border-blue-500 text-blue-600' },
-    { variant: 'outline', color: 'danger', class: 'border-red-500 text-red-600' },
+    { variant: 'outline', color: 'primary', class: 'bg-transparent text-blue-600 border-blue-500' },
+    { variant: 'outline', color: 'danger', class: 'bg-transparent text-red-600 border-red-500' },
   ],
-  defaultVariants: { variant: 'solid', color: 'primary', size: 'md' }
+  defaultVariants: { variant: 'solid', color: 'primary', size: 'md' },
 })
 
-// Usage - returns class name string
+// Usage — returns class name string
 btn()                                    // "btn"
 btn({ color: 'danger' })                 // "btn btn-danger"
 btn({ variant: 'outline', size: 'lg' })  // "btn btn-outline-lg"
-
-// In React
-const Button = ({ variant, color, size, children, ...props }) => (
-  <button className={btn({ variant, color, size })} {...props}>
-    {children}
-  </button>
-)
 ```
 
-**Nested Selectors** - Style child elements:
+**Nested selectors** — style child elements:
 
 ```javascript
 const alert = twsxVariants('.alert', {
   base: 'p-4 rounded-lg border flex gap-3',
   variants: {
     status: {
-      info: 'bg-blue-50 text-blue-800',
-      error: 'bg-red-50 text-red-800',
+      info: 'bg-blue-50 border-blue-200 text-blue-800',
+      error: 'bg-red-50 border-red-200 text-red-800',
     },
   },
   defaultVariants: { status: 'info' },
   nested: {
     '.alert-icon': 'flex-shrink-0 mt-0.5',
     '.alert-content': 'flex-1',
-    '.alert-dismiss': 'p-1 rounded hover:bg-black/10',
+    '.alert-dismiss': 'p-1 rounded hover:bg-black/10 cursor-pointer',
   }
 })
-
-// Generates CSS:
-// .alert .alert-icon { ... }
-// .alert .alert-content { ... }
+// Generates: .alert .alert-icon { ... }, .alert .alert-content { ... }, etc.
 ```
 
-**Class Naming Convention:**
-- `.btn` = all defaults
-- `.btn-outline` = outline variant (non-default)
-- `.btn-outline-danger-lg` = multiple non-defaults
+**Class naming convention:**
 
-### TypeScript Support (Enhanced in v3.2.0)
+| Call | Returns | Why |
+|---|---|---|
+| `btn()` | `"btn"` | All defaults |
+| `btn({ color: 'danger' })` | `"btn btn-danger"` | One non-default |
+| `btn({ variant: 'outline', color: 'danger', size: 'lg' })` | `"btn btn-outline-danger-lg"` | All non-defaults |
 
-Full type safety with generics for `twsxVariants`:
+**TypeScript — full generics support:**
 
 ```typescript
-import { twsxVariants, type VariantProps } from 'tailwind-to-style/twsx-variants'
+import { twsxVariants, type VariantProps } from 'tailwind-to-style'
 
 const button = twsxVariants('.btn', {
   base: 'px-4 py-2 rounded',
   variants: {
-    variant: {
-      solid: 'bg-blue-500 text-white',
-      outline: 'border-2 border-blue-500',
-    },
-    size: {
-      sm: 'text-sm',
-      md: 'text-base',
-      lg: 'text-lg',
-    }
+    variant: { solid: 'bg-blue-500', outline: 'border-2' },
+    size: { sm: 'text-sm', md: 'text-base', lg: 'text-lg' },
   },
-  defaultVariants: { variant: 'solid', size: 'md' }
+  defaultVariants: { variant: 'solid', size: 'md' },
 })
 
-// Infer props type with autocomplete!
 type ButtonProps = VariantProps<typeof button>
 // → { variant?: 'solid' | 'outline', size?: 'sm' | 'md' | 'lg' }
-
-function Button(props: ButtonProps) {
-  return <button className={button(props)} />
-}
 ```
 
-**Features:**
-- ✅ Full autocomplete for variant keys and values
-- ✅ Type-safe compound variants
-- ✅ Infer props with `VariantProps<T>` utility type
-- ✅ Strict checking for nested selectors and boolean variants
+---
 
-### `configure(config)`
+### `cx()` — Conditional Class Builder
 
-Customize theme with your colors, spacing, fonts, and more.
+A built-in utility for conditionally joining class names — replaces `clsx`/`classnames`:
+
+```javascript
+import { cx } from 'tailwind-to-style'
+
+// Strings
+cx('bg-blue-500', 'text-white')
+// → 'bg-blue-500 text-white'
+
+// Conditionals
+cx('p-4', isActive && 'bg-blue-500', isDisabled && 'opacity-50')
+// → 'p-4 bg-blue-500'
+
+// Object syntax
+cx('p-4', { 'bg-blue-500': isActive, 'opacity-50': isDisabled })
+// → 'p-4 bg-blue-500'
+
+// Arrays
+cx(['p-4', 'bg-white'], isActive && ['ring-2', 'ring-blue-500'])
+// → 'p-4 bg-white ring-2 ring-blue-500'
+
+// Combined with tws()
+const styles = tws(cx('p-4', isLarge && 'p-8', { 'bg-blue-500': isPrimary }))
+```
+
+**`cx.with()` — Base class factory:**
+
+```javascript
+const btnClass = cx.with('px-4 py-2 rounded font-medium transition-colors')
+
+btnClass('bg-blue-500 text-white')
+// → 'px-4 py-2 rounded font-medium transition-colors bg-blue-500 text-white'
+
+btnClass({ 'opacity-50': disabled })
+// → 'px-4 py-2 rounded font-medium transition-colors opacity-50'
+```
+
+---
+
+## Configuration & Plugins
+
+### `configure()` — Custom Theme
+
+Extend the default Tailwind theme with custom colors, spacing, fonts, and more.
 
 ```javascript
 import { configure } from 'tailwind-to-style'
@@ -313,121 +402,87 @@ configure({
           100: '#dbeafe',
           500: '#3b82f6',
           600: '#2563eb',
-          900: '#1e3a8a'
+          900: '#1e3a8a',
         },
-        accent: '#f59e0b'
+        accent: '#f59e0b',
       },
       spacing: {
         '128': '32rem',
-        '144': '36rem'
+        '144': '36rem',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['Fira Code', 'monospace']
-      }
-    }
-  }
+      },
+    },
+  },
 })
 
-// Now use your custom theme
-const styles = tws('bg-brand-500 text-brand-50 p-128 font-sans')
+// Now use custom values
+tws('bg-brand-500 text-brand-50 p-128 font-sans')
 ```
 
-**Configuration File:**
+**Config API:**
 
-Create `tailwind-to-style.config.js` in your project root:
+| Function | Description |
+|---|---|
+| `configure(config)` | Apply custom configuration |
+| `getConfig()` | Get current configuration |
+| `resetConfig()` | Reset to defaults |
+| `clearConfigCache()` | Clear cached config lookups |
+
+### Plugin System
+
+Create reusable plugins to extend the utility set:
 
 ```javascript
-export default {
-  theme: {
-    extend: {
-      colors: {
-        primary: '#3b82f6',
-        secondary: '#10b981'
-      }
-    }
-  }
-}
+import { configure, createPlugin, createUtilityPlugin } from 'tailwind-to-style'
+
+// Simple plugin — static utilities
+const textShadow = createPlugin('text-shadow', {
+  utilities: {
+    'text-shadow-sm': { textShadow: '0 1px 2px rgba(0,0,0,0.05)' },
+    'text-shadow-md': { textShadow: '0 2px 4px rgba(0,0,0,0.1)' },
+    'text-shadow-lg': { textShadow: '0 4px 8px rgba(0,0,0,0.15)' },
+  },
+})
+
+// Dynamic plugin — value-based utilities
+const glass = createUtilityPlugin('glass', {
+  prefix: 'glass',
+  values: { sm: '4px', md: '8px', lg: '16px' },
+  formatter: (value) => ({
+    backdropFilter: `blur(${value})`,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+  }),
+})
+
+configure({ plugins: [textShadow, glass] })
+
+// Now use custom utilities
+tws('text-shadow-md glass-lg')
 ```
 
-## 🎨 Preflight CSS (Base Styles)
+---
 
-For best results, import Tailwind's preflight (base styles):
+## SSR (Server-Side Rendering)
+
+Collect CSS during server-side rendering instead of injecting into the DOM:
 
 ```javascript
-// In your main entry file
-import 'tailwind-to-style/preflight.css'
-```
+import { startSSR, stopSSR, getSSRStyles, twsx } from 'tailwind-to-style'
 
-```html
-<!-- Or in HTML -->
-<link rel="stylesheet" href="node_modules/tailwind-to-style/preflight.css">
-```
-
-The preflight CSS provides:
-- Consistent box-sizing
-- Reset margins and paddings
-- Normalized form elements
-- Better default font rendering
-
-**Note:** Skip this if you're already using Tailwind CSS in your project.
-
-## 🧩 Conditional Classes with `cx()`
-
-A built-in utility for conditionally joining class names — no need for `clsx` or `classnames`:
-
-```javascript
-import { cx } from 'tailwind-to-style/cx'
-
-// Strings
-cx('bg-blue-500', 'text-white')
-// → 'bg-blue-500 text-white'
-
-// Conditionals
-cx('p-4', isActive && 'bg-blue-500', isDisabled && 'opacity-50')
-// → 'p-4 bg-blue-500' (if isActive=true, isDisabled=false)
-
-// Object syntax
-cx('p-4', { 'bg-blue-500': isActive, 'opacity-50': isDisabled })
-// → 'p-4 bg-blue-500'
-
-// Arrays
-cx(['p-4', 'bg-white'], isActive && ['ring-2', 'ring-blue-500'])
-// → 'p-4 bg-white ring-2 ring-blue-500'
-
-// Use with tws() for inline styles
-const styles = tws(cx('p-4', isLarge && 'p-8', { 'bg-blue-500': isPrimary }))
-```
-
-**`cx.with()` — Base class composition:**
-
-```javascript
-const btn = cx.with('px-4 py-2 rounded font-medium transition-colors')
-
-btn('bg-blue-500 text-white')   // → 'px-4 py-2 rounded font-medium transition-colors bg-blue-500 text-white'
-btn({ 'opacity-50': disabled }) // → 'px-4 py-2 rounded font-medium transition-colors opacity-50'
-```
-
-## 🌐 SSR (Server-Side Rendering)
-
-Use `twsx()` on the server to collect CSS during rendering:
-
-```javascript
-import { startSSR, stopSSR, twsx } from 'tailwind-to-style'
-
-// Before rendering
+// 1. Start collecting
 startSSR()
 
-// Your rendering code (e.g., React renderToString, Vue renderToString)
-const buttonStyles = twsx({
-  '.btn': 'bg-blue-500 text-white px-4 py-2 rounded'
-})
+// 2. Render your app (twsx() collects CSS instead of injecting)
+twsx({ '.card': 'bg-white p-6 rounded-lg shadow-md' })
+twsx({ '.btn': 'bg-blue-500 text-white px-4 py-2 rounded' })
 const html = renderToString(<App />)
 
-// After rendering — get all collected CSS
+// 3. Get collected CSS
 const css = stopSSR()
 
-// Inject into your HTML response
+// 4. Inject into HTML response
 const fullHtml = `
   <html>
     <head><style>${css}</style></head>
@@ -437,155 +492,125 @@ const fullHtml = `
 ```
 
 **SSR API:**
-- `startSSR()` — Begin collecting CSS (call before rendering)
-- `stopSSR()` — Stop collecting and return all CSS as a string
-- `getSSRStyles()` — Get currently collected CSS without stopping
 
-**Environment detection:**
-```javascript
-import { IS_BROWSER, IS_SERVER } from 'tailwind-to-style'
+| Function | Description |
+|---|---|
+| `startSSR()` | Begin collecting CSS |
+| `stopSSR()` | Stop collecting, return all CSS as string |
+| `getSSRStyles()` | Peek at collected CSS without stopping |
+| `IS_BROWSER` | `true` in browser environment |
+| `IS_SERVER` | `true` in Node.js/server environment |
 
-if (IS_SERVER) {
-  // SSR code path
-}
-```
+---
 
-## 💡 Use Cases
+## Animation System
 
-### 1. Dynamic Styling
-
-Generate styles from user input or runtime data:
+### Built-in CSS Animations
 
 ```javascript
-import { tws } from 'tailwind-to-style'
-
-function UserCard({ user }) {
-  const styles = tws(`bg-${user.color}-500 p-4 rounded-lg`)
-  return <div style={styles}>{user.name}</div>
-}
+tws('animate-spin')    // → animation: spin 1s linear infinite
+tws('animate-bounce')  // → animation: bounce 1s infinite
+tws('animate-pulse')   // → animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite
+tws('animate-ping')    // → animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite
 ```
 
-### 2. Email Templates
-
-Generate inline styles for email HTML:
+### Web Animations API
 
 ```javascript
-import { tws } from 'tailwind-to-style'
+import { applyWebAnimation } from 'tailwind-to-style'
 
-const emailHTML = `
-  <div style="${tws('bg-white p-8 text-center', { format: 'css' })}">
-    <h1 style="${tws('text-2xl font-bold mb-4', { format: 'css' })}">
-      Welcome!
-    </h1>
-  </div>
-`
+// Apply a named animation to a DOM element
+applyWebAnimation(element, 'fadeIn')
+applyWebAnimation(element, 'slideUp')
 ```
 
-### 3. CSS-in-JS Alternative
+### Inline Animations
 
 ```javascript
-import { twsx } from 'tailwind-to-style'
+import { applyInlineAnimation, animateElement, chainAnimations, staggerAnimations } from 'tailwind-to-style'
 
-const styles = twsx({
-  '.app': [
-    'min-h-screen bg-gray-50',
-    {
-      '> .header': 'bg-white shadow-sm p-4',
-      '> .main': 'container mx-auto py-8',
-      '> .footer': 'bg-gray-900 text-white p-8'
-    }
-  ]
-})
+// Single animation
+applyInlineAnimation(element, 'fadeIn')
 
-// Inject once at app startup
-document.head.appendChild(Object.assign(document.createElement('style'), {
-  textContent: styles
-}))
+// Programmatic animation
+animateElement(element, { opacity: [0, 1] }, { duration: 300 })
+
+// Sequential chain
+chainAnimations(element, ['fadeIn', 'slideUp', 'bounceIn'])
+
+// Staggered across multiple elements
+staggerAnimations('.card', 'fadeIn', { delay: 100 })
 ```
 
-### 4. Component Library Styling
+---
+
+## Tree-Shakeable Imports
+
+Import only what you need to reduce bundle size by **50-70%**:
 
 ```javascript
-import { twsx } from 'tailwind-to-style'
+// Individual imports (recommended for production)
+import { tws } from 'tailwind-to-style/tws'                    // ~3KB
+import { twsx } from 'tailwind-to-style/twsx'                   // ~6KB
+import { twsxVariants } from 'tailwind-to-style/twsx-variants'  // ~6KB
+import { cx } from 'tailwind-to-style/cx'                       // <1KB
 
-export const buttonStyles = twsx({
-  '.btn': [
-    'px-4 py-2 rounded-lg font-medium transition-colors',
-    {
-      '&.btn-primary': 'bg-blue-500 text-white hover:bg-blue-600',
-      '&.btn-secondary': 'bg-gray-200 text-gray-900 hover:bg-gray-300',
-      '&.btn-lg': 'px-6 py-3 text-lg',
-      '&.btn-sm': 'px-2 py-1 text-sm'
-    }
-  ]
-})
+// Full import (everything)
+import { tws, twsx, twsxVariants, cx } from 'tailwind-to-style' // ~12KB
 ```
 
-## 🔧 Advanced Features
+| Import Path | Includes | Size (minified) |
+|---|---|---|
+| `tailwind-to-style` | Everything | ~12KB |
+| `tailwind-to-style/tws` | `tws()` only | ~3KB |
+| `tailwind-to-style/twsx` | `twsx()` | ~6KB |
+| `tailwind-to-style/twsx-variants` | `twsxVariants()` | ~6KB |
+| `tailwind-to-style/cx` | `cx()` | <1KB |
+| `tailwind-to-style/utils` | Logger, LRUCache, error handler | ~2KB |
 
-### Responsive Design
+All sub-paths provide ESM + CJS bundles with TypeScript type definitions.
 
-All Tailwind breakpoints work out of the box:
+---
+
+## Preflight CSS
+
+For best results, import Tailwind's preflight (base/reset styles):
 
 ```javascript
-const styles = tws('text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl')
+import 'tailwind-to-style/preflight.css'
 ```
 
-### Arbitrary Values
-
-Use any custom value with square brackets:
-
-```javascript
-const styles = tws(`
-  w-[123px]
-  h-[calc(100vh-64px)]
-  text-[#abc123]
-  bg-[url('/image.png')]
-  grid-cols-[1fr,2fr,1fr]
-`)
+```html
+<!-- Or in HTML -->
+<link rel="stylesheet" href="node_modules/tailwind-to-style/preflight.css">
 ```
 
-### State Variants
+Provides consistent box-sizing, reset margins/paddings, normalized form elements, and better default font rendering. Skip this if you're already using Tailwind CSS in your project.
 
-```javascript
-const styles = tws(`
-  bg-blue-500
-  hover:bg-blue-600
-  focus:ring-2
-  active:scale-95
-  disabled:opacity-50
-  group-hover:text-white
-`)
-```
+---
 
-### Important Modifier
-
-```javascript
-const styles = tws('!bg-red-500 !text-white')
-// Forces these styles to take precedence
-```
-
-## 🎭 Framework Integration
+## Framework Integration
 
 ### React
 
-```javascript
+```jsx
 import { tws, twsx } from 'tailwind-to-style'
 import { useEffect } from 'react'
 
 function App() {
+  // Inject CSS on mount
   useEffect(() => {
-    const css = twsx({
-      '.custom': 'bg-blue-500 text-white p-4'
+    twsx({
+      '.card': ['bg-white rounded-xl shadow-md p-6', {
+        '&:hover': 'shadow-xl',
+        '> .title': 'text-xl font-bold',
+      }]
     })
-    const style = document.createElement('style')
-    style.textContent = css
-    document.head.appendChild(style)
   }, [])
 
   return (
-    <div style={tws('flex items-center gap-4')}>
-      <button style={tws('bg-blue-500 text-white px-4 py-2 rounded')}>
+    <div style={tws('flex items-center gap-4', true)}>
+      <button style={tws('bg-blue-500 text-white px-4 py-2 rounded-lg', true)}>
         Click me
       </button>
     </div>
@@ -598,13 +623,25 @@ function App() {
 ```vue
 <script setup>
 import { tws } from 'tailwind-to-style'
-
-const buttonStyle = tws('bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600')
+const btnStyle = tws('bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600', true)
 </script>
 
 <template>
-  <button :style="buttonStyle">Click me</button>
+  <button :style="btnStyle">Click me</button>
 </template>
+```
+
+### Svelte
+
+```svelte
+<script>
+  import { tws } from 'tailwind-to-style'
+  const style = tws('bg-blue-500 text-white px-4 py-2 rounded-lg', true)
+</script>
+
+<button style={Object.entries(style).map(([k,v]) => `${k}:${v}`).join(';')}>
+  Click me
+</button>
 ```
 
 ### Vanilla JS
@@ -612,135 +649,127 @@ const buttonStyle = tws('bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-
 ```javascript
 import { tws, twsx } from 'tailwind-to-style'
 
-// Create element with styles
-const button = document.createElement('button')
-Object.assign(button.style, tws('bg-blue-500 text-white px-4 py-2 rounded'))
-button.textContent = 'Click me'
+// Inline styles
+const el = document.createElement('button')
+Object.assign(el.style, tws('bg-blue-500 text-white px-4 py-2 rounded-lg', true))
 
 // Inject global styles
-const css = twsx({
-  '.card': 'bg-white p-6 rounded-lg shadow-md'
+twsx({
+  '.card': 'bg-white p-6 rounded-lg shadow-md',
+  '.card:hover': 'shadow-xl',
 })
-document.head.appendChild(Object.assign(document.createElement('style'), {
-  textContent: css
-}))
 ```
 
-## 📊 Performance
+---
+
+## Performance
 
 v3.2.0 includes major performance optimizations:
 
-- ✅ **100x faster** - Pre-compiled regex patterns (compile once, reuse forever)
-- ✅ **Multi-level caching** - WeakMap + LRU + Singleton pattern
-- ✅ **50-70% smaller bundles** - Tree-shakeable imports
-- ✅ **Zero build step** - Instant development workflow
-- ✅ **Optimized hashing** - FNV-1a algorithm (100x faster than JSON.stringify)
+- **Pre-compiled regex** — compiled once at module load, reused for every call
+- **Multi-level LRU caching** — class resolution, CSS generation, config lookups
+- **Bounded caches** — Maps capped at 5,000 entries, Sets at 10,000 to prevent memory leaks
+- **`sheet.insertRule()` injection** — avoids full stylesheet reparsing on each call
+- **FNV-1a hashing** — 100x faster than `JSON.stringify` for cache keys
 
-**Real-world benchmarks:**
 ```
 Parse 10,000 classes:
-- First parse: ~12ms
-- Cached: ~0.12ms (100x faster)
+  Cold:   ~12ms
+  Cached: ~0.12ms  (100x faster)
 
 Bundle sizes:
-- Full import: ~12KB minified
-- tws() only: ~3KB minified
-- twsx() only: ~6KB minified
+  Full import: ~12KB minified
+  tws() only:  ~3KB minified
+  twsx() only: ~6KB minified
 ```
 
-📖 **[View detailed benchmarks](examples/performance/benchmark.js)**
+**Performance utilities:**
 
-## 📚 Examples & Documentation
+```javascript
+import { performanceUtils } from 'tailwind-to-style'
 
-- 📂 **[Examples folder](examples/)** - Real-world usage examples
-  - [Basic usage](examples/basic/) - 10+ common use cases
-  - [Components](examples/components/) - Button with variants
-  - [Performance](examples/performance/) - Benchmarks & optimization
-  
-- 📖 **[Architecture guide](ARCHITECTURE.md)** - Internal design & performance details
-- 🔄 **[Migration guide](MIGRATION.md)** - Upgrade from v2 to v3
+// View cache stats
+performanceUtils.getStats()
 
-## 🐛 Debugging & Logging
+// Clear all caches
+performanceUtils.clearCaches()
 
-By default, all logs are disabled. Enable logging via environment variable:
+// Enable performance logging
+performanceUtils.enablePerformanceLogging(true)
+```
+
+---
+
+## Debugging & Logging
+
+Logging is disabled by default. Enable via environment variable or programmatically:
 
 ```bash
-# Enable warnings (performance, cache misses)
-TWSX_LOG_LEVEL=warn npm start
-
-# Enable debug logs (detailed processing info)
-TWSX_LOG_LEVEL=debug npm test
-
-# Enable only errors
-TWSX_LOG_LEVEL=error npm run dev
-
-# Disable all logs (default)
-TWSX_LOG_LEVEL=silent npm start
+TWSX_LOG_LEVEL=debug npm start   # debug, info, warn, error, silent
 ```
-
-Or programmatically:
 
 ```javascript
 import { logger } from 'tailwind-to-style'
 
-// Enable debug logging
-logger.setLevel('debug')  // 'debug' | 'info' | 'warn' | 'error' | 'silent'
-
-// Check current level
+logger.setLevel('debug')
 console.log(logger.getLevel()) // → 'debug'
 ```
 
-**Available log levels:**
-- `debug` - Detailed processing information
-- `info` - General information
-- `warn` - Performance warnings, slow operations
-- `error` - Error messages only
-- `silent` - No logging (default)
-
-## 🆚 Comparison
-
-| Feature | tailwind-to-style | Tailwind CSS | CSS-in-JS | tailwind-variants |
-|---------|:-:|:-:|:-:|:-:|
-| Build Step | ❌ None | ✅ Required | ❌ None | ✅ Required |
-| Bundle Size | 🟢 3-12KB | 🟡 ~80KB+ | 🟡 20-40KB | 🟡 ~15KB |
-| Runtime Styles | ✅ Yes | ❌ No | ✅ Yes | Partial |
-| Full Tailwind Support | ✅ Yes | ✅ Yes | ❌ No | ⚠️ Classes only |
-| SSR Support | ✅ Yes | ✅ Yes | ⚠️ Depends | ✅ Yes |
-| Variant System | ✅ Built-in | ❌ No | ❌ No | ✅ Yes |
-| Conditional Classes | ✅ `cx()` | ❌ No | ❌ No | ✅ `tv()` |
-| SCSS-like Nesting | ✅ Yes | ⚠️ Plugins | ✅ Yes | ❌ No |
-| Framework Agnostic | ✅ Yes | ✅ Yes | ⚠️ Depends | ✅ Yes |
-| Tree-Shaking | ✅ Yes | ⚠️ Partial | ✅ Yes | ✅ Yes |
-| TypeScript Generics | ✅ Yes | ✅ Yes | ✅ Yes | ✅ Yes |
-| Performance | 🟢 100x cached | 🟢 Build-time | 🟡 Runtime | 🟡 Runtime |
-| Zero Dependencies | ✅ Yes | ❌ PostCSS | ❌ No | ❌ tailwind-merge |
-
-## 📖 Migration from v2
-
-See [MIGRATION.md](MIGRATION.md) for detailed migration guide from v2.x to v3.x.
-
-**Quick summary:**
-- ✅ `tws()` - No changes
-- ✅ `twsx()` - No changes  
-- ✅ `configure()` - No changes
-- ❌ `styled()`, `tv()` - Removed (use emotion/styled-components)
-- ❌ `useTwsx()`, `TwsxProvider` - Removed (use `twsx()` directly)
-- ❌ CLI tools & plugins - Removed (not needed for runtime library)
-
-## 🤝 Contributing
-
-Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details.
-
-## 📄 License
-
-MIT © [Bigetion](https://github.com/Bigetion)
-
-## 💖 Support
-
-If you find this library helpful, consider supporting:
-
-[☕ Buy me a coffee](https://buymeacoffee.com/bigetion)
+| Level | Description |
+|---|---|
+| `debug` | Detailed processing info |
+| `info` | General information |
+| `warn` | Performance warnings |
+| `error` | Errors only |
+| `silent` | No logging (default) |
 
 ---
 
-**v3.2.0** — SSR support, `cx()` utility, tree-shakeable sub-paths, bounded caches, faster CSS injection. 🚀⚡
+## Comparison
+
+| Feature | tailwind-to-style | Tailwind CSS | CSS-in-JS | tailwind-variants |
+|---|:---:|:---:|:---:|:---:|
+| Build Step | None | Required | None | Required |
+| Bundle Size | 3-12KB | ~80KB+ | 20-40KB | ~15KB |
+| Runtime Styles | Yes | No | Yes | Partial |
+| Full Tailwind Support | Yes | Yes | No | Classes only |
+| SSR Support | Yes | Yes | Depends | Yes |
+| Variant System | Built-in | No | No | Yes |
+| Conditional Classes | `cx()` | No | No | `tv()` |
+| SCSS-like Nesting | Yes | Plugins | Yes | No |
+| @css Raw Injection | Yes | No | Yes | No |
+| Framework Agnostic | Yes | Yes | Depends | Yes |
+| Tree-Shaking | Yes | Partial | Yes | Yes |
+| TypeScript Generics | Yes | Yes | Yes | Yes |
+| Zero Dependencies | Yes | PostCSS | No | tailwind-merge |
+
+---
+
+## Migration from v2
+
+See [MIGRATION.md](MIGRATION.md) for the detailed guide from v2.x to v3.x.
+
+**Quick summary:**
+
+| Status | API |
+|---|---|
+| No changes | `tws()`, `twsx()`, `configure()` |
+| New in v3.1 | `twsxVariants()` |
+| New in v3.2 | `cx()`, SSR, tree-shakeable imports |
+| Removed | `styled()`, `tv()`, `useTwsx()`, `TwsxProvider`, CLI tools |
+
+---
+
+## Contributing
+
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for architecture overview, testing guidelines, and build output docs.
+
+---
+
+## License
+
+MIT © [Bigetion](https://github.com/Bigetion)
+
+---
+
+**v3.2.0** — [Changelog](CHANGELOG.md) · [Architecture](ARCHITECTURE.md) · [Migration Guide](MIGRATION.md)
