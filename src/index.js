@@ -366,8 +366,8 @@ const VARIANT_GROUP_REGEX = /(\w+):\(([^()]+(?:\((?:[^()]+)\))?[^()]*)\)/g;
 const WHITESPACE_SPLIT_REGEX = /\s+/;
 const VARIANT_COLON_SPLIT_REGEX = /:/;
 
-// CSS variable resolution
-const CSS_VAR_REGEX = /var\((--[\w-]+)(?:,\s*([^)]+))?\)/g;
+// CSS variable resolution — supports nested parens in fallback (e.g. rgba(...))
+const CSS_VAR_REGEX = /var\((--[\w-]+)(?:,\s*((?:[^()]+|\([^()]*\))*))?\)/g;
 const CAMEL_CASE_REGEX = /-([a-z])/g;
 
 // Animation detection
@@ -1035,6 +1035,13 @@ function separateAndResolveCSS(arr) {
           if (key && value) {
             // Prioritize more specific values (e.g., !important)
             if (value.includes("!important") || !cssProperties[key]) {
+              cssProperties[key] = value;
+            } else if (
+              key === "--gradient-color-stops" &&
+              value.includes("--gradient-via-color") &&
+              !cssProperties[key].includes("--gradient-via-color")
+            ) {
+              // Allow 3-stop gradient (with via) to overwrite 2-stop version
               cssProperties[key] = value;
             }
           }

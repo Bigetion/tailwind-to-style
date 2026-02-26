@@ -126,6 +126,16 @@ export function separateAndResolveCSS(arr) {
           const value = decl.substring(colonIndex + 1).trim();
 
           if (!prop || !value) continue;
+
+          // Keep 3-stop gradient (with via) — don't let from/to overwrite it
+          if (
+            prop === "--gradient-color-stops" &&
+            cssProperties[prop] &&
+            cssProperties[prop].includes("--gradient-via-color") &&
+            !value.includes("--gradient-via-color")
+          ) {
+            continue;
+          }
           cssProperties[prop] = value;
         }
       } catch (error) {

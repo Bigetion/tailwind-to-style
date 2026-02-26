@@ -79,8 +79,8 @@ export const VARIANT_COLON_SPLIT_REGEX = /:/;
 // CSS VARIABLE RESOLUTION
 // ============================================================================
 
-/** Regex for CSS custom property (var) resolution */
-export const CSS_VAR_REGEX = /var\((--[\w-]+)(?:,\s*([^)]+))?\)/g;
+/** Regex for CSS custom property (var) resolution — supports nested parens in fallback (e.g. rgba(...)) */
+export const CSS_VAR_REGEX = /var\((--[\w-]+)(?:,\s*((?:[^()]+|\([^()]*\))*))?\)/g;
 export const CAMEL_CASE_REGEX = /-([a-z])/g;
 
 // ============================================================================
