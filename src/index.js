@@ -1690,6 +1690,17 @@ function walkStyleTree(selector, val, styles, walk) {
     processNestedSelectors(nested, selector, styles, walk);
   } else if (typeof val === "string") {
     if (val.trim() === "") return;
+    // Handle @css string directive: '@css { ... }'
+    const trimmedVal = val.trim();
+    if (trimmedVal.startsWith('@css')) {
+      const cssMatch = trimmedVal.match(/^@css\s*\{([\s\S]*)\}\s*$/);
+      if (cssMatch) {
+        const rawCss = cssMatch[1].trim();
+        styles[selector] = styles[selector] || '';
+        styles[selector] += rawCss.split(';').filter(d => d.trim()).map(d => d.trim() + ';').join(' ') + '\n';
+        return;
+      }
+    }
     walk(selector, [expandGroupedClass(val)]);
   } else if (typeof val === "object" && val !== null) {
     const { baseSelector, cssProperty } = parseSelector(selector);
@@ -1970,6 +1981,17 @@ function twsxNoCache(obj, options = {}) {
       const nested = {};
 
       if (typeof val === "string") {
+        // Handle @css string directive: '@css { ... }'
+        const trimmedVal = val.trim();
+        if (trimmedVal.startsWith('@css')) {
+          const cssMatch = trimmedVal.match(/^@css\s*\{([\s\S]*)\}\s*$/);
+          if (cssMatch) {
+            const rawCss = cssMatch[1].trim();
+            styles[selector] = styles[selector] || '';
+            styles[selector] += rawCss.split(';').filter(d => d.trim()).map(d => d.trim() + ';').join(' ') + '\n';
+            continue;
+          }
+        }
         // Check if this is a @css property value - if so, don't process through expandGroupedClass
         if (selector.includes(" @css ")) {
           // This is a CSS property value from @css flattening - keep as-is
