@@ -3,14 +3,33 @@
  * Demonstrates: animate-spin/bounce/pulse/ping, Web Animations API,
  * inline animations, dynamic animations
  */
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { tws, applyWebAnimation, applyInlineAnimation, animateElement, chainAnimations, staggerAnimations, INLINE_ANIMATIONS } from 'tailwind-to-style'
 import CodeBlock from '../components/CodeBlock'
+
+/* @keyframes that tws() references but doesn't inject (only twsx does auto-inject) */
+const KEYFRAMES_CSS = `
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes bounce { 0%,100% { transform: translateY(-25%); animation-timing-function: cubic-bezier(0.8,0,1,1); } 50% { transform: none; animation-timing-function: cubic-bezier(0,0,0.2,1); } }
+@keyframes pulse { 50% { opacity: .5; } }
+@keyframes ping { 75%,100% { transform: scale(2); opacity: 0; } }
+`
 
 export default function AnimationsPage() {
   const [playing, setPlaying] = useState({})
   const boxRefs = useRef({})
   const staggerContainerRef = useRef(null)
+
+  /* Inject @keyframes once on mount */
+  useEffect(() => {
+    const id = 'tws-animation-keyframes'
+    if (!document.getElementById(id)) {
+      const style = document.createElement('style')
+      style.id = id
+      style.textContent = KEYFRAMES_CSS
+      document.head.appendChild(style)
+    }
+  }, [])
 
   const toggle = (name) => setPlaying(p => ({ ...p, [name]: !p[name] }))
 
@@ -20,10 +39,18 @@ export default function AnimationsPage() {
     if (el) applyWebAnimation(el, name)
   }, [])
 
-  /* Inline animation helper */
+  /* Inline animation helper — reset first so replay works */
   const playInlineAnimation = useCallback((name) => {
     const el = boxRefs.current[`inline-${name}`]
-    if (el) applyInlineAnimation(el, name, { duration: 600, autoPlay: true })
+    if (!el) return
+    const anim = INLINE_ANIMATIONS[name]
+    if (!anim) return
+    // Reset to initial state instantly (no transition)
+    el.style.transition = 'none'
+    Object.assign(el.style, anim.initial)
+    // Force reflow, then animate
+    void el.offsetHeight
+    applyInlineAnimation(el, name)
   }, [])
 
   /* Chain animations demo */
@@ -38,12 +65,21 @@ export default function AnimationsPage() {
     }
   }, [])
 
-  /* Stagger demo */
+  /* Stagger demo — reset all items first so replay works */
   const playStagger = useCallback(() => {
     const container = staggerContainerRef.current
     if (!container) return
     const items = container.querySelectorAll('.stagger-item')
-    if (items.length) staggerAnimations(Array.from(items), 'fade-in', { delay: 80 })
+    if (!items.length) return
+    // Reset all items to invisible
+    items.forEach(el => {
+      el.style.transition = 'none'
+      el.style.opacity = '0'
+      el.style.transform = 'translateY(20px)'
+    })
+    // Force reflow then stagger
+    void container.offsetHeight
+    staggerAnimations(Array.from(items), 'fade-in', { staggerDelay: 80 })
   }, [])
 
   return (
