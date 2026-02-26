@@ -145,18 +145,14 @@ export default function PlaygroundPage() {
       {/* ── CSS Output ── */}
       <div className="section">
         <h3 className="section-title">CSS Output</h3>
-        <div className="output-panel css">
-          <pre>{cssOutput || '(empty)'}</pre>
-        </div>
+        <CodeBlock label="css" code={cssOutput || '(empty)'} />
       </div>
 
       {/* ── JS Object Output ── */}
       {showObject && (
         <div className="section">
           <h3 className="section-title">JS Object Output</h3>
-          <div className="output-panel json">
-            <pre>{output || '(empty)'}</pre>
-          </div>
+          <CodeBlock label="json" code={output || '(empty)'} />
         </div>
       )}
 
