@@ -329,8 +329,8 @@ import { handleError } from "./utils/errorHandler.js";
 // by avoiding repeated regex object creation in hot code paths
 // ============================================================================
 
-// Class parsing
-const CLASS_PARSER_REGEX = /[\w-\/]+(?:\/\d+)?(?:\[[^\]]+\])?/g;
+// Class parsing (includes . for decimal values like p-0.5)
+const CLASS_PARSER_REGEX = /[\w.\-\/]+(?:\/\d+)?(?:\[[^\]]+\])?/g;
 
 // Opacity modifiers
 const OPACITY_MODIFIER_REGEX = /\/(\d+)$/;

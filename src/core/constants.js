@@ -11,8 +11,8 @@
 // CLASS PARSING
 // ============================================================================
 
-/** Regex for parsing Tailwind class names */
-export const CLASS_PARSER_REGEX = /[\w-\/]+(?:\/\d+)?(?:\[[^\]]+\])?/g;
+/** Regex for parsing Tailwind class names (includes . for decimal values like p-0.5) */
+export const CLASS_PARSER_REGEX = /[\w.\-\/]+(?:\/\d+)?(?:\[[^\]]+\])?/g;
 
 // ============================================================================
 // OPACITY MODIFIERS
