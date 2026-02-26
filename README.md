@@ -36,6 +36,7 @@
 - [Comparison](#comparison)
 - [Migration from v2](#migration-from-v2)
 - [Contributing](#contributing)
+- [Support](#-support)
 - [License](#license)
 
 ---
@@ -763,6 +764,14 @@ See [MIGRATION.md](MIGRATION.md) for the detailed guide from v2.x to v3.x.
 ## Contributing
 
 Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for architecture overview, testing guidelines, and build output docs.
+
+---
+
+## 💖 Support
+
+If you find this library helpful, consider supporting:
+
+[☕ Buy me a coffee](https://buymeacoffee.com/bigetion)
 
 ---
 
