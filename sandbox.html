@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tailwind-to-style Sandbox 🎮</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 2rem;
+    }
+    .header h1 {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    .header p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+    }
+    .sandbox {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    .panel {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+    .panel h2 {
+      margin-bottom: 1rem;
+      color: #333;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .editor {
+      width: 100%;
+      min-height: 300px;
+      padding: 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      resize: vertical;
+      background: #f9fafb;
+    }
+    .editor:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+    }
+    .preview {
+      min-height: 300px;
+      padding: 1.5rem;
+      border: 2px dashed #e5e7eb;
+      border-radius: 8px;
+      background: #f9fafb;
+    }
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 0.5rem;
+    }
+    .tab {
+      padding: 0.5rem 1rem;
+      border: none;
+      background: #f3f4f6;
+      border-radius: 6px 6px 0 0;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .tab:hover {
+      background: #e5e7eb;
+    }
+    .tab.active {
+      background: #667eea;
+      color: white;
+    }
+    .examples {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .example-btn {
+      padding: 0.75rem 1rem;
+      border: 2px solid #667eea;
+      background: white;
+      color: #667eea;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .example-btn:hover {
+      background: #667eea;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+    .code-output {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 1rem;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      max-height: 400px;
+      overflow-y: auto;
+      margin-top: 1rem;
+    }
+    .btn-primary {
+      background: #667eea;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 1rem;
+    }
+    .btn-primary:hover {
+      background: #5568d3;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    .info {
+      background: #eff6ff;
+      border-left: 4px solid #3b82f6;
+      padding: 1rem;
+      border-radius: 4px;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #1e40af;
+    }
+    @media (max-width: 968px) {
+      .sandbox {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎮 tailwind-to-style Sandbox</h1>
+      <p>Interactive playground - test your library in real-time!</p>
+    </div>
+
+    <div class="sandbox">
+      <!-- Left Panel: Input -->
+      <div class="panel">
+        <h2>📝 Input</h2>
+        
+        <div class="tabs">
+          <button class="tab active" onclick="switchMode('tws')">tws()</button>
+          <button class="tab" onclick="switchMode('twsx')">twsx()</button>
+          <button class="tab" onclick="switchMode('variants')">twsxVariants()</button>
+        </div>
+
+        <!-- tws() mode -->
+        <div id="mode-tws">
+          <textarea 
+            class="editor" 
+            id="input-tws" 
+            placeholder="Enter Tailwind classes here...">bg-blue-500 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-600 transition-all shadow-lg hover:shadow-xl transform hover:scale-105</textarea>
+          
+          <div class="examples">
+            <button class="example-btn" onclick="loadExample('button')">Button</button>
+            <button class="example-btn" onclick="loadExample('card')">Card</button>
+            <button class="example-btn" onclick="loadExample('responsive')">Responsive</button>
+            <button class="example-btn" onclick="loadExample('animation')">Animation</button>
+          </div>
+        </div>
+
+        <!-- twsx() mode -->
+        <div id="mode-twsx" style="display: none;">
+          <textarea 
+            class="editor" 
+            id="input-twsx" 
+            placeholder="Enter twsx() object...">const styles = {
+  '.card': [
+    'bg-white rounded-xl shadow-lg p-6',
+    {
+      '&:hover': 'shadow-2xl transform scale-105',
+      '> .title': 'text-2xl font-bold text-gray-900 mb-2',
+      '> .text': 'text-gray-600 leading-relaxed'
+    }
+  ]
+}</textarea>
+          
+          <div class="examples">
+            <button class="example-btn" onclick="loadExample('twsx-button')">Button Component</button>
+            <button class="example-btn" onclick="loadExample('twsx-card')">Card Component</button>
+            <button class="example-btn" onclick="loadExample('twsx-responsive')">With Media Query</button>
+          </div>
+        </div>
+
+        <!-- twsxVariants() mode -->
+        <div id="mode-variants" style="display: none;">
+          <textarea 
+            class="editor" 
+            id="input-variants" 
+            placeholder="Enter variants config...">const button = twsxVariants('.btn', {
+  base: 'px-4 py-2 rounded-lg font-medium transition-all',
+  variants: {
+    variant: {
+      solid: 'border-transparent',
+      outline: 'bg-transparent border-2',
+      ghost: 'bg-transparent'
+    },
+    color: {
+      primary: 'bg-blue-500 text-white hover:bg-blue-600',
+      danger: 'bg-red-500 text-white hover:bg-red-600',
+      success: 'bg-green-500 text-white hover:bg-green-600'
+    },
+    size: {
+      sm: 'px-3 py-1.5 text-sm',
+      md: 'px-4 py-2 text-base',
+      lg: 'px-6 py-3 text-lg'
+    }
+  },
+  defaultVariants: {
+    variant: 'solid',
+    color: 'primary',
+    size: 'md'
+  }
+})</textarea>
+          
+          <div class="examples">
+            <button class="example-btn" onclick="loadExample('variants-button')">Button Variants</button>
+            <button class="example-btn" onclick="loadExample('variants-badge')">Badge Variants</button>
+            <button class="example-btn" onclick="loadExample('variants-alert')">Alert Component</button>
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="runCode()">▶️ Run Code</button>
+        
+        <div class="info">
+          💡 Edit the code above and click "Run Code" to see the result!
+        </div>
+      </div>
+
+      <!-- Right Panel: Output -->
+      <div class="panel">
+        <h2>🎨 Output</h2>
+        
+        <div id="preview" class="preview">
+          <p style="text-align: center; color: #9ca3af; padding: 2rem;">
+            Preview will appear here...
+          </p>
+        </div>
+
+        <div id="code-output" class="code-output" style="display: none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load library from dist -->
+  <script src="dist/index.min.js"></script>
+  
+  <script>
+    const { tws, twsx, twsxVariants, configure } = window.TailwindToStyle;
+    
+    let currentMode = 'tws';
+    
+    // Switch between modes
+    function switchMode(mode) {
+      currentMode = mode;
+      
+      // Update active tab
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      // Show/hide mode panels
+      document.getElementById('mode-tws').style.display = mode === 'tws' ? 'block' : 'none';
+      document.getElementById('mode-twsx').style.display = mode === 'twsx' ? 'block' : 'none';
+      document.getElementById('mode-variants').style.display = mode === 'variants' ? 'block' : 'none';
+      
+      // Clear preview
+      document.getElementById('preview').innerHTML = '<p style="text-align: center; color: #9ca3af; padding: 2rem;">Preview will appear here...</p>';
+      document.getElementById('code-output').style.display = 'none';
+    }
+    
+    // Example templates
+    const examples = {
+      // tws() examples
+      button: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-full font-bold text-lg shadow-2xl hover:shadow-purple-500/50 transform hover:scale-110 transition-all duration-300',
+      card: 'bg-white rounded-2xl shadow-xl p-8 border border-gray-100 hover:shadow-2xl transition-shadow duration-300',
+      responsive: 'text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl p-2 sm:p-4 md:p-6 lg:p-8',
+      animation: 'animate-bounce bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg',
+      
+      // twsx() examples
+      'twsx-button': `{
+  '.cool-btn': [
+    'bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-2xl',
+    {
+      '&:hover': 'from-cyan-600 to-blue-600 shadow-cyan-500/50 transform scale-105',
+      '&:active': 'scale-95',
+      '&.large': 'px-12 py-6 text-2xl',
+      '&.small': 'px-4 py-2 text-sm'
+    }
+  ]
+}`,
+      'twsx-card': `{
+  '.product-card': [
+    'bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-300',
+    {
+      '&:hover': 'shadow-2xl transform -translate-y-2',
+      '> .image': 'w-full h-48 object-cover',
+      '> .content': 'p-6',
+      '> .content > .title': 'text-2xl font-bold text-gray-900 mb-2',
+      '> .content > .price': 'text-3xl font-bold text-blue-600',
+      '> .content > .button': 'mt-4 w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600'
+    }
+  ]
+}`,
+      'twsx-responsive': `{
+  '.responsive-grid': 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4',
+  '@media (max-width: 768px)': {
+    '.responsive-grid': 'gap-4 p-2',
+    '.card': 'p-4'
+  }
+}`,
+      
+      // Variants examples
+      'variants-button': `twsxVariants('.btn', {
+  base: 'px-4 py-2 rounded-lg font-medium transition-all inline-block',
+  variants: {
+    variant: {
+      solid: 'border-transparent shadow-md hover:shadow-lg',
+      outline: 'bg-transparent border-2',
+      ghost: 'bg-transparent hover:bg-gray-100'
+    },
+    color: {
+      primary: 'bg-blue-500 text-white hover:bg-blue-600 border-blue-500',
+      danger: 'bg-red-500 text-white hover:bg-red-600 border-red-500',
+      success: 'bg-green-500 text-white hover:bg-green-600 border-green-500'
+    },
+    size: {
+      sm: 'px-3 py-1.5 text-sm',
+      md: 'px-4 py-2 text-base',
+      lg: 'px-6 py-3 text-lg'
+    }
+  },
+  compoundVariants: [
+    { variant: 'outline', color: 'primary', class: 'text-blue-600 hover:bg-blue-50' },
+    { variant: 'outline', color: 'danger', class: 'text-red-600 hover:bg-red-50' }
+  ],
+  defaultVariants: { variant: 'solid', color: 'primary', size: 'md' }
+})`,
+      'variants-badge': `twsxVariants('.badge', {
+  base: 'inline-block px-3 py-1 rounded-full text-sm font-semibold',
+  variants: {
+    color: {
+      blue: 'bg-blue-100 text-blue-800',
+      green: 'bg-green-100 text-green-800',
+      red: 'bg-red-100 text-red-800',
+      yellow: 'bg-yellow-100 text-yellow-800'
+    },
+    size: {
+      sm: 'px-2 py-0.5 text-xs',
+      md: 'px-3 py-1 text-sm',
+      lg: 'px-4 py-2 text-base'
+    }
+  },
+  defaultVariants: { color: 'blue', size: 'md' }
+})`,
+      'variants-alert': `twsxVariants('.alert', {
+  base: 'p-4 rounded-lg border flex gap-3',
+  variants: {
+    status: {
+      info: 'bg-blue-50 border-blue-200 text-blue-800',
+      success: 'bg-green-50 border-green-200 text-green-800',
+      warning: 'bg-yellow-50 border-yellow-200 text-yellow-800',
+      error: 'bg-red-50 border-red-200 text-red-800'
+    }
+  },
+  defaultVariants: { status: 'info' },
+  nested: {
+    '.alert-icon': 'flex-shrink-0 mt-0.5',
+    '.alert-content': 'flex-1',
+    '.alert-title': 'font-bold mb-1'
+  }
+})`
+    };
+    
+    function loadExample(name) {
+      const example = examples[name];
+      if (!example) return;
+      
+      if (currentMode === 'tws') {
+        document.getElementById('input-tws').value = example;
+      } else if (currentMode === 'twsx') {
+        document.getElementById('input-twsx').value = example;
+      } else if (currentMode === 'variants') {
+        document.getElementById('input-variants').value = example;
+      }
+      
+      runCode();
+    }
+    
+    function runCode() {
+      const preview = document.getElementById('preview');
+      const codeOutput = document.getElementById('code-output');
+      
+      try {
+        if (currentMode === 'tws') {
+          const input = document.getElementById('input-tws').value.trim();
+          const result = tws(input);
+          
+          // Show live preview
+          preview.innerHTML = `
+            <div style="margin-bottom: 1rem;">
+              <button style="${Object.entries(result).map(([k,v]) => k + ':' + v).join(';')}">
+                Live Preview Button
+              </button>
+            </div>
+            <div style="margin-top: 1rem; padding: 1rem; background: #f3f4f6; border-radius: 8px;">
+              <strong>Style Object:</strong>
+              <div style="margin-top: 0.5rem; font-family: monospace; font-size: 13px;">
+                ${JSON.stringify(result, null, 2)}
+              </div>
+            </div>
+          `;
+          
+          codeOutput.textContent = `// Result:\n${JSON.stringify(result, null, 2)}`;
+          codeOutput.style.display = 'block';
+          
+        } else if (currentMode === 'twsx') {
+          const input = document.getElementById('input-twsx').value.trim();
+          
+          // Extract object from input
+          let styleObj;
+          if (input.startsWith('const') || input.startsWith('let') || input.startsWith('var')) {
+            const match = input.match(/=\s*(\{[\s\S]*\})/);
+            if (match) {
+              styleObj = eval('(' + match[1] + ')');
+            }
+          } else {
+            styleObj = eval('(' + input + ')');
+          }
+          
+          const css = twsx(styleObj);
+          
+          // Inject CSS and show preview
+          const styleEl = document.createElement('style');
+          styleEl.textContent = css;
+          document.head.appendChild(styleEl);
+          
+          // Create preview based on selectors
+          let previewHTML = '<div style="margin-bottom: 1rem;"><strong>Live Preview:</strong></div>';
+          
+          if (css.includes('.cool-btn')) {
+            previewHTML += '<button class="cool-btn">Cool Button</button> ';
+            previewHTML += '<button class="cool-btn large">Large</button> ';
+            previewHTML += '<button class="cool-btn small">Small</button>';
+          } else if (css.includes('.product-card')) {
+            previewHTML += `
+              <div class="product-card" style="max-width: 300px;">
+                <div class="content">
+                  <div class="title">Product Name</div>
+                  <div class="price">$99.99</div>
+                  <button class="button">Add to Cart</button>
+                </div>
+              </div>
+            `;
+          } else if (css.includes('.card')) {
+            previewHTML += '<div class="card"><p>This is a card element</p></div>';
+          } else {
+            previewHTML += '<p style="color: #6b7280;">✅ CSS injected to document head</p>';
+          }
+          
+          preview.innerHTML = previewHTML;
+          codeOutput.textContent = `// Generated CSS:\n${css}`;
+          codeOutput.style.display = 'block';
+          
+        } else if (currentMode === 'variants') {
+          const input = document.getElementById('input-variants').value.trim();
+          
+          // Execute variant definition
+          const variantFn = eval(input);
+          
+          // Show different variant combinations
+          preview.innerHTML = `
+            <div style="margin-bottom: 1rem;"><strong>Live Preview with Variants:</strong></div>
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+              <button class="${variantFn()}">Default</button>
+              <button class="${variantFn({ color: 'danger' })}">Danger</button>
+              <button class="${variantFn({ color: 'success' })}">Success</button>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+              <button class="${variantFn({ size: 'sm' })}">Small</button>
+              <button class="${variantFn({ size: 'md' })}">Medium</button>
+              <button class="${variantFn({ size: 'lg' })}">Large</button>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+              <button class="${variantFn({ variant: 'outline' })}">Outline</button>
+              <button class="${variantFn({ variant: 'ghost' })}">Ghost</button>
+              <button class="${variantFn({ variant: 'outline', color: 'danger' })}">Outline Danger</button>
+            </div>
+          `;
+          
+          codeOutput.textContent = `// Variant function created!\n\n// Usage examples:\nvariantFn() // "${variantFn()}"\nvariantFn({ color: 'danger' }) // "${variantFn({ color: 'danger' })}"\nvariantFn({ variant: 'outline', size: 'lg' }) // "${variantFn({ variant: 'outline', size: 'lg' })}"`;
+          codeOutput.style.display = 'block';
+        }
+        
+      } catch (error) {
+        preview.innerHTML = `
+          <div style="color: #ef4444; padding: 1rem; background: #fee2e2; border-radius: 8px;">
+            <strong>❌ Error:</strong><br>
+            ${error.message}
+          </div>
+        `;
+        codeOutput.textContent = `// Error:\n${error.stack}`;
+        codeOutput.style.display = 'block';
+      }
+    }
+    
+    // Auto-run on load
+    runCode();
+  </script>
+</body>
+</html>

@@ -1,5 +1,76 @@
 # Changelog
 
+## [3.2.0] - 2026-02-26
+
+### 🚀 New Features
+
+#### SSR (Server-Side Rendering) Support
+- Added `startSSR()`, `stopSSR()`, `getSSRStyles()` for server-side CSS collection
+- Added `IS_BROWSER` and `IS_SERVER` environment detection constants
+- `twsx()` now collects CSS instead of injecting into DOM when SSR is active
+
+```javascript
+import { startSSR, stopSSR, twsx } from 'tailwind-to-style'
+
+startSSR()
+// ... render your app
+const css = stopSSR()
+// → inject into HTML response
+```
+
+#### `cx()` — Conditional Class Name Builder
+- New built-in utility for conditionally joining class names (like clsx/classnames)
+- Supports strings, objects, arrays, and nested combinations
+- `cx.with()` for creating base-class-bound functions
+- Tree-shakeable import: `import { cx } from 'tailwind-to-style/cx'`
+
+```javascript
+import { cx } from 'tailwind-to-style/cx'
+
+cx('p-4', isActive && 'bg-blue-500', { 'opacity-50': isDisabled })
+// → 'p-4 bg-blue-500'
+```
+
+#### Tree-Shakeable Sub-Path Builds (Fixed)
+- All sub-path exports (`/tws`, `/twsx`, `/twsx-variants`, `/utils`, `/cx`) now actually build correctly
+- Each sub-path gets ESM + CJS bundles with proper TypeScript type definitions
+- Bundle size: 3-6KB per sub-path (50-70% smaller than full import)
+
+### 🔧 Improvements
+
+#### Performance
+- **`autoInjectCss()`** now uses `sheet.insertRule()` instead of `textContent +=` — avoids full stylesheet reparsing on every injection
+- **Bounded caches** — All `Map` and `Set` caches now have eviction limits (5,000 entries for Maps, 10,000 for Sets) to prevent memory leaks in long-running SPAs
+- **`tws()` input validation** cleaned up — replaced unidiomatic `[].includes(true)` pattern with simple `||` chain
+
+#### Configuration
+- `configure()` now validates config structure and warns about unrecognized keys
+- Invalid `theme`, `plugins`, and `prefix` types are caught with helpful warnings
+
+#### TypeScript
+- Added full type definitions for `cx()`, SSR functions, `IS_BROWSER`, `IS_SERVER`
+- Added sub-path type definitions (`types/core/tws.d.ts`, `types/core/twsx.d.ts`, etc.)
+- Added `InferVariantProps<T>` utility type for extracting variant props from twsxVariants
+
+#### DX (Developer Experience)
+- Expanded `package.json` keywords for better npm discoverability (16 keywords vs 4)
+- Bundlephobia badge added to README
+- **CONTRIBUTING.md** significantly expanded with architecture overview, testing guidelines, build output docs
+- Comparison table updated to include tailwind-variants
+
+### 📦 Build Changes
+- Rollup config refactored — generates sub-path entry points for all exports
+- Source maps enabled for ESM builds
+- Removed deprecated `rollup-plugin-terser` (using `@rollup/plugin-terser` only)
+- `types/` directory now included in npm package
+
+### 🧪 Testing
+- Added `tws.test.js` — 32 comprehensive unit tests for core `tws()` function
+- Added `cx.test.js` — 31 tests covering all cx() features
+- Total: 63 new tests
+
+---
+
 ## [3.1.0] - 2026-01-04
 
 ### 🎨 New Feature: `twsxVariants()` - Compound Variants System
