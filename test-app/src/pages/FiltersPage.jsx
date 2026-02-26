@@ -5,6 +5,7 @@
  */
 import { tws } from 'tailwind-to-style'
 import CodeBlock from '../components/CodeBlock'
+import { SlidersHorizontal } from 'lucide-react'
 
 const SAMPLE_IMG = 'https://picsum.photos/seed/tws/400/250'
 
@@ -17,7 +18,7 @@ export default function FiltersPage() {
       </p>
 
       <div className="callout callout-info">
-        <span className="callout-icon">🔍</span>
+        <span className="callout-icon"><SlidersHorizontal size={18} /></span>
         <div className="callout-content">
           <strong>filter vs backdrop-filter</strong>
           <code>filter</code> applies effects to the element itself (e.g., blurring an image).

@@ -6,6 +6,7 @@
 import { useState } from 'react'
 import { tws } from 'tailwind-to-style'
 import CodeBlock from '../components/CodeBlock'
+import { Lightbulb, CheckCircle, RulerIcon, Palette, Type, LayoutGrid, Square, Sparkles, RotateCw, Rainbow, Maximize2, Wrench, Minus, Hash } from 'lucide-react'
 
 /* Spacing scale with actual px/rem values */
 const SPACING = [
@@ -51,7 +52,7 @@ export default function TwsPage() {
 
       {/* ── What is tws()? ── */}
       <div className="callout callout-info">
-        <span className="callout-icon">💡</span>
+        <span className="callout-icon"><Lightbulb size={18} /></span>
         <div className="callout-content">
           <strong>How it works</strong>
           <code>tws('bg-blue-500 p-4')</code> returns a CSS string. Add <code>true</code> as the second
@@ -131,7 +132,7 @@ export default function TwsPage() {
           ))}
         </div>
         <div className="callout callout-tip" style={{ marginTop: '1rem' }}>
-          <span className="callout-icon">✅</span>
+          <span className="callout-icon"><CheckCircle size={18} /></span>
           <div className="callout-content">
             Tailwind uses <code>rem</code> units for font sizes. <code>1rem = 16px</code> (browser default).
             This ensures consistent, accessible scaling.
@@ -260,7 +261,7 @@ tws('text-red-600/75', true)
           </tbody>
         </table>
         <div className="callout callout-tip">
-          <span className="callout-icon">💡</span>
+          <span className="callout-icon"><Lightbulb size={18} /></span>
           <div className="callout-content">
             Arbitrary values work with almost any utility: <code>w-[…]</code>, <code>h-[…]</code>, <code>p-[…]</code>, <code>m-[…]</code>, <code>text-[…]</code>, <code>bg-[…]</code>, <code>rounded-[…]</code>, <code>top/left/right/bottom-[…]</code>, etc.
           </div>
@@ -382,21 +383,21 @@ tws('text-red-600/75', true)
         <h3 className="section-title">What tws() Supports</h3>
         <div className="feature-grid">
           {[
-            ['📐', 'Spacing', 'p, m, gap, w, h'],
-            ['🎨', 'Colors', 'bg, text, border, ring'],
-            ['📝', 'Typography', 'text, font, tracking, leading'],
-            ['📦', 'Layout', 'flex, grid, display, position'],
-            ['🔲', 'Borders', 'border, rounded, ring, outline'],
-            ['✨', 'Effects', 'shadow, opacity, blur, backdrop'],
-            ['🔄', 'Transforms', 'scale, rotate, translate, skew'],
-            ['🌈', 'Gradients', 'from, via, to color stops'],
-            ['📏', 'Sizing', 'w, h, min-w, max-w, min-h, max-h'],
-            ['🏗️', 'Arbitrary', '[value] for any CSS property'],
-            ['➖', 'Negatives', '-mt, -ml, -translate, -rotate'],
-            ['🔣', 'Opacity mod', 'bg-blue-500/50 alpha syntax'],
-          ].map(([icon, label, desc]) => (
+            [RulerIcon,    'Spacing', 'p, m, gap, w, h'],
+            [Palette,      'Colors', 'bg, text, border, ring'],
+            [Type,         'Typography', 'text, font, tracking, leading'],
+            [LayoutGrid,   'Layout', 'flex, grid, display, position'],
+            [Square,       'Borders', 'border, rounded, ring, outline'],
+            [Sparkles,     'Effects', 'shadow, opacity, blur, backdrop'],
+            [RotateCw,     'Transforms', 'scale, rotate, translate, skew'],
+            [Rainbow,      'Gradients', 'from, via, to color stops'],
+            [Maximize2,    'Sizing', 'w, h, min-w, max-w, min-h, max-h'],
+            [Wrench,       'Arbitrary', '[value] for any CSS property'],
+            [Minus,        'Negatives', '-mt, -ml, -translate, -rotate'],
+            [Hash,         'Opacity mod', 'bg-blue-500/50 alpha syntax'],
+          ].map(([Icon, label, desc]) => (
             <div key={label} className="feature-item">
-              <span className="feat-icon">{icon}</span>
+              <span className="feat-icon"><Icon size={16} /></span>
               <div>
                 <div className="feat-label">{label}</div>
                 <div className="feat-desc">{desc}</div>

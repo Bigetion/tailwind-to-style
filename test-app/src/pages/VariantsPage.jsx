@@ -6,6 +6,7 @@
 import { useState } from 'react'
 import { twsxVariants } from 'tailwind-to-style'
 import CodeBlock from '../components/CodeBlock'
+import { Lightbulb, AlertTriangle, Info, CheckCircle, XCircle } from 'lucide-react'
 
 // ── Button Variants ─────────────────────────────────────────────────────────
 const button = twsxVariants('.vbtn', {
@@ -86,7 +87,7 @@ const alert = twsxVariants('.valert', {
   },
 })
 
-const ICONS = { info: 'ℹ️', success: '✅', warning: '⚠️', error: '❌' }
+const ICONS = { info: Info, success: CheckCircle, warning: AlertTriangle, error: XCircle }
 
 export default function VariantsPage() {
   const [variant, setVariant] = useState('solid')
@@ -106,7 +107,7 @@ export default function VariantsPage() {
 
       {/* ── Concept Explanation ── */}
       <div className="callout callout-info">
-        <span className="callout-icon">💡</span>
+        <span className="callout-icon"><Lightbulb size={18} /></span>
         <div className="callout-content">
           <strong>What are Variants?</strong>
           Variants let you define multiple visual styles for a single component (like button sizes, colors, states) in a structured way.
@@ -235,21 +236,23 @@ export default function VariantsPage() {
         <h3 className="section-title">Alert Variants with Nested Selectors</h3>
         <p className="section-desc">Uses <code>nested</code> config to style child elements like <code>.valert-icon</code>, <code>.valert-title</code>, etc.</p>
         <div className="col">
-          {['info', 'success', 'warning', 'error'].map(s => (
+          {['info', 'success', 'warning', 'error'].map(s => {
+            const IconComp = ICONS[s]
+            return (
             <div key={s} className={alert({ status: s })}>
-              <span className="valert-icon">{ICONS[s]}</span>
+              <span className="valert-icon"><IconComp size={18} /></span>
               <div className="valert-content">
                 <div className="valert-title">{s.charAt(0).toUpperCase() + s.slice(1)}</div>
                 <p style={{ fontSize: '.85rem' }}>This is a {s} alert with nested child selectors.</p>
               </div>
             </div>
-          ))}
+          )})}
         </div>
       </div>
 
       {/* ── Compound Variants Explanation ── */}
       <div className="callout callout-warning">
-        <span className="callout-icon">⚠️</span>
+        <span className="callout-icon"><AlertTriangle size={18} /></span>
         <div className="callout-content">
           <strong>Why Compound Variants?</strong>
           Without compound variants, <code>outline + primary</code> would show a blue filled button (because <code>color: primary</code> sets <code>bg-indigo-600</code>).

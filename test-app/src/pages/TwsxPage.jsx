@@ -6,6 +6,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { twsx } from 'tailwind-to-style'
 import CodeBlock from '../components/CodeBlock'
+import { Lightbulb, FileCode, CheckCircle, AlertTriangle } from 'lucide-react'
 
 export default function TwsxPage() {
   // ── Demo 1: Button Component ──────────────────────────────────────────
@@ -67,7 +68,7 @@ export default function TwsxPage() {
 
       {/* ── When to use twsx() ── */}
       <div className="callout callout-info">
-        <span className="callout-icon">💡</span>
+        <span className="callout-icon"><Lightbulb size={18} /></span>
         <div className="callout-content">
           <strong>tws() vs twsx() — When to use which?</strong>
           Use <code>tws()</code> for inline styles (React <code>style</code> prop, emails).
@@ -77,7 +78,7 @@ export default function TwsxPage() {
       </div>
 
       <div className="callout callout-api">
-        <span className="callout-icon">📝</span>
+        <span className="callout-icon"><FileCode size={18} /></span>
         <div className="callout-content">
           <strong>API Signature</strong>
           <code>twsx({'{ selector: "tailwind classes", ... }'})</code> — returns generated CSS string and auto-injects a <code>&lt;style&gt;</code> tag into the document head.
@@ -93,7 +94,7 @@ export default function TwsxPage() {
           <button className="demo-btn" style={{ opacity: 0.5, pointerEvents: 'none' }}>Disabled</button>
         </div>
         <div className="callout callout-tip" style={{ marginTop: 0 }}>
-          <span className="callout-icon">✅</span>
+          <span className="callout-icon"><CheckCircle size={18} /></span>
           <div className="callout-content">
             Unlike <code>tws()</code>, <code>twsx()</code> supports <code>:hover</code>, <code>:focus</code>, <code>:active</code>, and other pseudo-selectors because it generates real CSS rules, not inline styles.
           </div>
@@ -181,7 +182,7 @@ export default function TwsxPage() {
   '.gradient-text': '@css { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }',
 })`} />
         <div className="callout callout-warning">
-          <span className="callout-icon">⚠️</span>
+          <span className="callout-icon"><AlertTriangle size={18} /></span>
           <div className="callout-content">
             <strong>When to use @css</strong>
             The <code>@css</code> directive bypasses Tailwind class resolution and injects raw CSS verbatim.

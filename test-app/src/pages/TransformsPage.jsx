@@ -5,6 +5,7 @@
 import { useState } from 'react'
 import { tws } from 'tailwind-to-style'
 import CodeBlock from '../components/CodeBlock'
+import { RotateCw } from 'lucide-react'
 
 export default function TransformsPage() {
   const [scale, setScale] = useState('100')
@@ -29,7 +30,7 @@ export default function TransformsPage() {
       </p>
 
       <div className="callout callout-info">
-        <span className="callout-icon">🔄</span>
+        <span className="callout-icon"><RotateCw size={18} /></span>
         <div className="callout-content">
           <strong>CSS Transform Property</strong>
           All transform utilities compile to the CSS <code>transform</code> property.

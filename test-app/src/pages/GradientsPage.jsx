@@ -4,6 +4,7 @@
  */
 import { tws } from 'tailwind-to-style'
 import CodeBlock from '../components/CodeBlock'
+import { Palette, CheckCircle } from 'lucide-react'
 
 const DIRECTIONS = [
   ['bg-gradient-to-r',  '→'],
@@ -36,7 +37,7 @@ export default function GradientsPage() {
       </p>
 
       <div className="callout callout-info">
-        <span className="callout-icon">🎨</span>
+        <span className="callout-icon"><Palette size={18} /></span>
         <div className="callout-content">
           <strong>How Gradients Work</strong>
           Tailwind gradients use three parts: <code>bg-gradient-to-{'{dir}'}</code> for direction,
@@ -136,7 +137,7 @@ export default function GradientsPage() {
           ))}
         </div>
         <div className="callout callout-tip" style={{ marginTop: '1rem' }}>
-          <span className="callout-icon">✅</span>
+          <span className="callout-icon"><CheckCircle size={18} /></span>
           <div className="callout-content">
             Without <code>via-*</code>, the gradient transitions directly from start to end.
             Adding a middle stop creates a more natural color flow, especially when the start and end colors are far apart on the spectrum.

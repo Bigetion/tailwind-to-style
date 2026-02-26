@@ -5,6 +5,7 @@
 import { useState } from 'react'
 import { tws, twsx, cx } from 'tailwind-to-style'
 import CodeBlock from '../components/CodeBlock'
+import { Gamepad2 } from 'lucide-react'
 
 const PRESETS = {
   'Card': 'bg-white rounded-xl shadow-lg p-6 max-w-sm',
@@ -56,7 +57,7 @@ export default function PlaygroundPage() {
       </p>
 
       <div className="callout callout-tip">
-        <span className="callout-icon">🎮</span>
+        <span className="callout-icon"><Gamepad2 size={18} /></span>
         <div className="callout-content">
           <strong>Try it out!</strong>
           Type any Tailwind class below and see the result. Use the preset buttons for quick examples.

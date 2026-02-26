@@ -6,6 +6,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { tws, applyWebAnimation, applyInlineAnimation, animateElement, chainAnimations, staggerAnimations, INLINE_ANIMATIONS } from 'tailwind-to-style'
 import CodeBlock from '../components/CodeBlock'
+import { Sparkles, RotateCw, ArrowUp, Activity, Radio } from 'lucide-react'
 
 /* @keyframes that tws() references but doesn't inject (only twsx does auto-inject) */
 const KEYFRAMES_CSS = `
@@ -90,7 +91,7 @@ export default function AnimationsPage() {
       </p>
 
       <div className="callout callout-info">
-        <span className="callout-icon">✨</span>
+        <span className="callout-icon"><Sparkles size={18} /></span>
         <div className="callout-content">
           <strong>Animation APIs Overview</strong>
           This library provides 4 animation approaches:
@@ -107,11 +108,11 @@ export default function AnimationsPage() {
         <p className="section-desc">Click to toggle. These generate <code>animation</code> CSS shorthand with @keyframes. tws() returns the property, but you need to inject keyframes separately (twsx() does it automatically).</p>
         <div className="grid-4">
           {[
-            ['animate-spin', '🔄', 'Spin'],
-            ['animate-bounce', '⬆️', 'Bounce'],
-            ['animate-pulse', '💓', 'Pulse'],
-            ['animate-ping', '📡', 'Ping'],
-          ].map(([cls, icon, label]) => (
+            ['animate-spin', RotateCw, 'Spin'],
+            ['animate-bounce', ArrowUp, 'Bounce'],
+            ['animate-pulse', Activity, 'Pulse'],
+            ['animate-ping', Radio, 'Ping'],
+          ].map(([cls, Icon, label]) => (
             <div key={cls} style={{ textAlign: 'center' }}>
               <button
                 style={{
@@ -126,11 +127,10 @@ export default function AnimationsPage() {
                 onClick={() => toggle(cls)}
               >
                 <span style={{
-                  fontSize: '2rem',
                   display: 'inline-block',
                   ...(playing[cls] ? tws(cls, true) : {}),
                 }}>
-                  {icon}
+                  <Icon size={32} />
                 </span>
                 <span style={tws('text-sm font-semibold text-gray-700', true)}>{label}</span>
               </button>

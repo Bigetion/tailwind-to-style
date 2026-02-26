@@ -1,5 +1,10 @@
 import { useState } from 'react'
 import { performanceUtils } from 'tailwind-to-style'
+import {
+  Zap, Paintbrush, Puzzle, Link2,
+  Rainbow, SlidersHorizontal, RotateCw, Sparkles,
+  Settings, BarChart3, Gamepad2, Palette
+} from 'lucide-react'
 
 // Pages
 import TwsPage from './pages/TwsPage'
@@ -18,32 +23,32 @@ const NAV = [
   {
     label: 'Core API',
     items: [
-      { id: 'tws',      icon: '⚡', name: 'tws()' },
-      { id: 'twsx',     icon: '🎨', name: 'twsx()' },
-      { id: 'variants', icon: '🧩', name: 'twsxVariants()' },
-      { id: 'cx',       icon: '🔗', name: 'cx()' },
+      { id: 'tws',      icon: Zap,                name: 'tws()' },
+      { id: 'twsx',     icon: Paintbrush,          name: 'twsx()' },
+      { id: 'variants', icon: Puzzle,              name: 'twsxVariants()' },
+      { id: 'cx',       icon: Link2,               name: 'cx()' },
     ],
   },
   {
     label: 'Visual Features',
     items: [
-      { id: 'gradients',  icon: '🌈', name: 'Gradients' },
-      { id: 'filters',    icon: '🔍', name: 'Filters & Backdrop' },
-      { id: 'transforms', icon: '🔄', name: 'Transforms' },
-      { id: 'animations', icon: '✨', name: 'Animations' },
+      { id: 'gradients',  icon: Rainbow,             name: 'Gradients' },
+      { id: 'filters',    icon: SlidersHorizontal,   name: 'Filters & Backdrop' },
+      { id: 'transforms', icon: RotateCw,             name: 'Transforms' },
+      { id: 'animations', icon: Sparkles,            name: 'Animations' },
     ],
   },
   {
     label: 'Advanced',
     items: [
-      { id: 'config',      icon: '⚙️', name: 'configure()' },
-      { id: 'performance', icon: '📊', name: 'Performance' },
+      { id: 'config',      icon: Settings,            name: 'configure()' },
+      { id: 'performance', icon: BarChart3,            name: 'Performance' },
     ],
   },
   {
     label: 'Tools',
     items: [
-      { id: 'playground', icon: '🎮', name: 'Playground' },
+      { id: 'playground', icon: Gamepad2,             name: 'Playground' },
     ],
   },
 ]
@@ -71,7 +76,7 @@ export default function App() {
       {/* ── Topbar ── */}
       <header className="topbar">
         <div className="topbar-brand">
-          <span>🎨</span> tailwind-to-style
+          <Palette size={20} /> tailwind-to-style
         </div>
         <div className="topbar-meta">
           <span className="topbar-badge">v3.2.0</span>
@@ -90,7 +95,7 @@ export default function App() {
                 className={`sidebar-item ${page === item.id ? 'active' : ''}`}
                 onClick={() => setPage(item.id)}
               >
-                <span className="sidebar-icon">{item.icon}</span>
+                <span className="sidebar-icon"><item.icon size={16} /></span>
                 {item.name}
               </button>
             ))}

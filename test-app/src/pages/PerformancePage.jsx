@@ -5,6 +5,7 @@
 import { useState, useCallback } from 'react'
 import { tws, twsx, performanceUtils } from 'tailwind-to-style'
 import CodeBlock from '../components/CodeBlock'
+import { BarChart3 } from 'lucide-react'
 
 function StatCard({ label, value, color = '#6366f1' }) {
   return (
@@ -94,7 +95,7 @@ export default function PerformancePage() {
       </p>
 
       <div className="callout callout-info">
-        <span className="callout-icon">📊</span>
+        <span className="callout-icon"><BarChart3 size={18} /></span>
         <div className="callout-content">
           <strong>How Caching Works</strong>
           Every <code>tws()</code>/<code>twsx()</code> call caches its result.

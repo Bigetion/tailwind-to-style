@@ -6,6 +6,7 @@
 import { useState, useCallback } from 'react'
 import { tws, configure, getConfig, resetConfig, clearConfigCache, createPlugin, createUtilityPlugin, startSSR, stopSSR, getSSRStyles } from 'tailwind-to-style'
 import CodeBlock from '../components/CodeBlock'
+import { Settings } from 'lucide-react'
 
 /* Pre-built demo plugin */
 const textShadowPlugin = createUtilityPlugin('text-shadow', {
@@ -77,7 +78,7 @@ export default function ConfigPage() {
     })
     setCustomApplied(true)
     setConfig(getConfig())
-    addLog('✅ configure() called with custom colors, spacing & plugins')
+    addLog('[OK] configure() called with custom colors, spacing & plugins')
   }, [])
 
   /* Reset config */
@@ -86,22 +87,22 @@ export default function ConfigPage() {
     clearConfigCache()
     setCustomApplied(false)
     setConfig(getConfig())
-    addLog('🔄 resetConfig() + clearConfigCache() called')
+    addLog('[RESET] resetConfig() + clearConfigCache() called')
   }, [])
 
   /* SSR Demo */
   const runSSRDemo = useCallback(() => {
     startSSR()
-    addLog('🟢 startSSR() — collecting CSS')
+    addLog('[START] startSSR() — collecting CSS')
     // Generate some styles during SSR
     tws('bg-blue-500 text-white p-4 rounded-lg')
     tws('flex items-center gap-2')
     tws('text-2xl font-bold')
     const peek = getSSRStyles()
-    addLog(`👀 getSSRStyles() — ${peek.length} chars collected so far`)
+    addLog(`[PEEK] getSSRStyles() — ${peek.length} chars collected so far`)
     const collected = stopSSR()
     setSsrCSS(collected)
-    addLog(`🔴 stopSSR() — returned ${collected.length} chars of CSS`)
+    addLog(`[STOP] stopSSR() — returned ${collected.length} chars of CSS`)
   }, [])
 
   /* Test custom color */
@@ -115,7 +116,7 @@ export default function ConfigPage() {
       </p>
 
       <div className="callout callout-info">
-        <span className="callout-icon">⚙️</span>
+        <span className="callout-icon"><Settings size={18} /></span>
         <div className="callout-content">
           <strong>Configuration System</strong>
           <code>configure()</code> lets you extend the default Tailwind theme with custom colors, spacing, fonts, and plugins.

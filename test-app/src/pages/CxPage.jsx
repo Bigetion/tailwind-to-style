@@ -5,6 +5,7 @@
 import { useState } from 'react'
 import { cx, twsx, tws } from 'tailwind-to-style'
 import CodeBlock from '../components/CodeBlock'
+import { Lightbulb, Package } from 'lucide-react'
 
 // Inject some example classes
 twsx({
@@ -39,7 +40,7 @@ export default function CxPage() {
       </p>
 
       <div className="callout callout-info">
-        <span className="callout-icon">💡</span>
+        <span className="callout-icon"><Lightbulb size={18} /></span>
         <div className="callout-content">
           <strong>Why cx()?</strong>
           Instead of messy template literals like <code>{`\`btn \${isActive ? 'active' : ''} \${isLarge ? 'lg' : ''}\``}</code>,
@@ -159,7 +160,7 @@ export default function CxPage() {
           where all buttons share the same base but differ in color/size.
         </p>
         <div className="callout callout-tip">
-          <span className="callout-icon">📦</span>
+          <span className="callout-icon"><Package size={18} /></span>
           <div className="callout-content">
             <strong>Think of it as a factory</strong>
             <code>cx.with('base-classes')</code> returns a <em>new function</em> that always includes the base, plus whatever you pass later.
