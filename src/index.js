@@ -1823,11 +1823,26 @@ function flattenStyleObject(obj, parentSelector = "") {
           flatArray.push(item);
         } else if (isSelectorObject(item)) {
           const nested = flattenStyleObject(item, currentSelector);
-          Object.assign(result, nested);
+          // Merge nested results, handling & that resolves to same selector
+          for (const ns in nested) {
+            if (ns === currentSelector) {
+              // & resolved to same selector — include in this array
+              if (Array.isArray(nested[ns])) {
+                flatArray.push(...nested[ns]);
+              } else {
+                flatArray.push(nested[ns]);
+              }
+            } else {
+              result[ns] = nested[ns];
+            }
+          }
         }
       }
       if (flatArray.length > 0) {
         result[currentSelector] = result[currentSelector] || [];
+        if (!Array.isArray(result[currentSelector])) {
+          result[currentSelector] = [result[currentSelector]];
+        }
         result[currentSelector].push(...flatArray);
       }
     } else if (isSelectorObject(val)) {
@@ -1961,6 +1976,21 @@ function twsxNoCache(obj, options = {}) {
           // Process each selector within the media query
           for (const innerSelector in val) {
             const innerVal = val[innerSelector];
+
+            // Handle @css string directive inside media queries
+            if (typeof innerVal === "string") {
+              const trimmedInner = innerVal.trim();
+              if (trimmedInner.startsWith('@css')) {
+                const cssMatch = trimmedInner.match(/^@css\s*\{([\s\S]*)\}\s*$/);
+                if (cssMatch) {
+                  const rawCss = cssMatch[1].trim();
+                  styles[selector][innerSelector] = styles[selector][innerSelector] || '';
+                  styles[selector][innerSelector] += rawCss.split(';').filter(d => d.trim()).map(d => d.trim() + ';').join(' ') + '\n';
+                  continue;
+                }
+              }
+            }
+
             const baseClass =
               typeof innerVal === "string" ? expandGroupedClass(innerVal) : "";
 
@@ -2003,6 +2033,17 @@ function twsxNoCache(obj, options = {}) {
       } else if (Array.isArray(val)) {
         for (const item of val) {
           if (typeof item === "string") {
+            // Handle @css strings inside arrays
+            const trimmedItem = item.trim();
+            if (trimmedItem.startsWith('@css')) {
+              const cssMatch = trimmedItem.match(/^@css\s*\{([\s\S]*)\}\s*$/);
+              if (cssMatch) {
+                const rawCss = cssMatch[1].trim();
+                styles[selector] = styles[selector] || '';
+                styles[selector] += rawCss.split(';').filter(d => d.trim()).map(d => d.trim() + ';').join(' ') + '\n';
+                continue;
+              }
+            }
             baseClass += (baseClass ? " " : "") + expandGroupedClass(item);
           } else if (typeof item === "object" && item !== null) {
             Object.assign(nested, item);
@@ -2842,30 +2883,11 @@ function autoInjectCss(cssString) {
         document.head.appendChild(styleTag);
       }
 
-      // Use insertRule for better performance (avoids full stylesheet reparse)
-      try {
-        const sheet = styleTag.sheet;
-        if (sheet) {
-          // Split CSS by closing brace to insert individual rules
-          const rules = cssString.split('}').filter(r => r.trim());
-          for (const rule of rules) {
-            const trimmed = rule.trim();
-            if (trimmed) {
-              try {
-                sheet.insertRule(trimmed + '}', sheet.cssRules.length);
-              } catch (e) {
-                // Fallback for complex rules (e.g., @keyframes, @media)
-                styleTag.textContent += `\n${trimmed}}`;
-              }
-            }
-          }
-        } else {
-          styleTag.textContent += `\n${cssString}`;
-        }
-      } catch (e) {
-        // Ultimate fallback
-        styleTag.textContent += `\n${cssString}`;
-      }
+      // Append CSS to style tag using textContent for reliability
+      // Note: insertRule + textContent mixing destroys CSSOM rules,
+      // so we use textContent exclusively for consistent behavior
+      // with @keyframes, @media, and other nested CSS blocks.
+      styleTag.textContent += `\n${cssString}`;
 
       // Log injection stats periodically
       if (injectedCssHashSet.size % 10 === 0) {
