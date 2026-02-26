@@ -2,7 +2,61 @@
 // Project: https://github.com/Bigetion/tailwind-to-style
 // Definitions by: Bigetion
 
+// ============================================================================
+// Environment Detection
+// ============================================================================
+
+/** True when running in a browser environment (window & document available) */
+export const IS_BROWSER: boolean;
+/** True when running in a server/Node.js environment */
+export const IS_SERVER: boolean;
+
+// ============================================================================
+// SSR (Server-Side Rendering) Support
+// ============================================================================
+
+/**
+ * Start collecting CSS for server-side rendering.
+ * Call before rendering your application.
+ */
+export function startSSR(): void;
+
+/**
+ * Stop collecting CSS and return all collected CSS as a single string.
+ * Call after rendering your application.
+ */
+export function stopSSR(): string;
+
+/**
+ * Get currently collected CSS without stopping collection.
+ */
+export function getSSRStyles(): string;
+
+// ============================================================================
+// Conditional Class Name Builder
+// ============================================================================
+
+type ClassValue = string | number | boolean | null | undefined | ClassObject | ClassArray;
+type ClassObject = Record<string, any>;
+type ClassArray = ClassValue[];
+
+/**
+ * Conditionally join class names into a single string.
+ * Similar to clsx/classnames but built-in.
+ * 
+ * @example
+ * cx('bg-blue-500', isActive && 'ring-2', { 'opacity-50': isDisabled })
+ */
+export function cx(...args: ClassValue[]): string;
+
+export namespace cx {
+  function with_(...baseArgs: ClassValue[]): (...args: ClassValue[]) => string;
+  export { with_ as with };
+}
+
+// ============================================================================
 // Logger types
+// ============================================================================
 export class Logger {
   constructor(level?: 'debug' | 'info' | 'warn' | 'error' | 'silent');
   setLevel(level: 'debug' | 'info' | 'warn' | 'error' | 'silent'): void;

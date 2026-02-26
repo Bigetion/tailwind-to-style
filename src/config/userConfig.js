@@ -93,6 +93,43 @@ export function configure(config = {}) {
       return;
     }
 
+    // Validate config structure
+    const validTopKeys = ['theme', 'plugins', 'corePlugins', 'prefix', 'styled'];
+    const invalidKeys = Object.keys(config).filter(k => !validTopKeys.includes(k));
+    if (invalidKeys.length > 0) {
+      logger.warn(
+        `configure: Unrecognized config keys: ${invalidKeys.join(', ')}. ` +
+        `Valid keys are: ${validTopKeys.join(', ')}`
+      );
+    }
+
+    if (config.theme) {
+      if (typeof config.theme !== 'object' || Array.isArray(config.theme)) {
+        logger.warn('configure: theme must be an object');
+        return;
+      }
+      const validThemeKeys = ['extend', 'colors', 'spacing', 'borderRadius', 'fontSize', 'fontFamily', 'screens', 'breakpoints'];
+      const invalidThemeKeys = Object.keys(config.theme).filter(
+        k => !validThemeKeys.includes(k) && typeof config.theme[k] !== 'object'
+      );
+      if (invalidThemeKeys.length > 0) {
+        logger.warn(
+          `configure: Unrecognized theme keys: ${invalidThemeKeys.join(', ')}. ` +
+          `Common keys are: ${validThemeKeys.join(', ')}`
+        );
+      }
+    }
+
+    if (config.plugins !== undefined && !Array.isArray(config.plugins)) {
+      logger.warn('configure: plugins must be an array');
+      return;
+    }
+
+    if (config.prefix !== undefined && typeof config.prefix !== 'string') {
+      logger.warn('configure: prefix must be a string');
+      return;
+    }
+
     // Clear extended theme cache when config changes
     extendedThemeCache.clear();
 

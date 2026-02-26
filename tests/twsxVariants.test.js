@@ -148,12 +148,13 @@ describe('twsxVariants', () => {
           {
             variant: 'outline',
             color: 'primary',
-            class: 'border-blue-500 text-blue-600 hover:bg-blue-50',
+            // bg-transparent must be included to re-override color's bg-blue-500
+            class: 'bg-transparent border-blue-500 text-blue-600 hover:bg-blue-50',
           },
           {
             variant: 'outline',
             color: 'danger',
-            class: 'border-red-500 text-red-600 hover:bg-red-50',
+            class: 'bg-transparent border-red-500 text-red-600 hover:bg-red-50',
           },
         ],
       });
@@ -379,12 +380,13 @@ describe('twsxVariants', () => {
           {
             variant: 'outline',
             color: 'primary',
-            class: 'border-blue-600 text-blue-600 hover:bg-blue-50',
+            // bg-transparent re-overrides color's bg-blue-600
+            class: 'bg-transparent border-blue-600 text-blue-600 hover:bg-blue-50',
           },
           {
             variant: 'outline',
             color: 'danger',
-            class: 'border-red-600 text-red-600 hover:bg-red-50',
+            class: 'bg-transparent border-red-600 text-red-600 hover:bg-red-50',
           },
           {
             size: 'lg',

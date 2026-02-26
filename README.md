@@ -5,23 +5,27 @@
 [![npm version](https://img.shields.io/npm/v/tailwind-to-style.svg)](https://www.npmjs.com/package/tailwind-to-style)
 [![Build Status](https://github.com/Bigetion/tailwind-to-style/workflows/CI%2FCD/badge.svg)](https://github.com/Bigetion/tailwind-to-style/actions)
 [![npm downloads](https://img.shields.io/npm/dm/tailwind-to-style.svg)](https://www.npmjs.com/package/tailwind-to-style)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/tailwind-to-style)](https://bundlephobia.com/package/tailwind-to-style)
 [![license](https://img.shields.io/npm/l/tailwind-to-style.svg)](https://github.com/Bigetion/tailwind-to-style/blob/main/LICENSE)
 
 > **Runtime Tailwind CSS to inline styles converter**
 > 
-> Simple, fast, framework-agnostic. Convert Tailwind utility classes to inline styles or CSS at runtime with zero build step.
+> Zero build step. SSR-ready. Tree-shakeable. Works everywhere — React, Vue, Svelte, Node.js, vanilla JS.
 
 ## ⚡ Why tailwind-to-style?
 
-- **🚀 Zero Build Step** - No PostCSS, no compilation, just JavaScript
-- **📦 Framework Agnostic** - Works with React, Vue, Svelte, vanilla JS
-- **🎨 Full Tailwind Support** - All utilities, responsive, pseudo-states, arbitrary values
-- **🔥 SCSS-like Nesting** - Write complex nested styles with ease
-- **⚙️ Customizable** - Extend theme with your colors, spacing, fonts
-- **💪 TypeScript Support** - Full type definitions with generics for autocomplete
-- **🪶 Lightweight** - ~12KB minified (70% smaller than v2)
-- **🌳 Tree-Shakeable** - Import only what you need, reduce bundle by 50-70%
-- **⚡ Lightning Fast** - 100x faster with pre-compiled regex & multi-level caching
+- **🚀 Zero Build Step** — No PostCSS, no compilation, just JavaScript
+- **📦 Framework Agnostic** — Works with React, Vue, Svelte, vanilla JS
+- **🎨 Full Tailwind Support** — All utilities, responsive, pseudo-states, arbitrary values
+- **🔥 SCSS-like Nesting** — Write complex nested styles with ease
+- **🎛️ Variant System** — Type-safe component variants (like CVA/tailwind-variants)
+- **🧩 Conditional Classes** — Built-in `cx()` utility (like clsx/classnames)
+- **🌐 SSR Support** — Server-side rendering with `startSSR()`/`stopSSR()`
+- **⚙️ Customizable** — Extend theme with your colors, spacing, fonts
+- **💪 TypeScript Support** — Full type definitions with generics for autocomplete
+- **🪶 Lightweight** — ~12KB minified, zero dependencies
+- **🌳 Tree-Shakeable** — Import only what you need, reduce bundle by 50-70%
+- **⚡ Lightning Fast** — 100x faster with pre-compiled regex & multi-level caching
 
 ## 📥 Installation
 
@@ -36,11 +40,12 @@ Import only what you need to reduce bundle size by 50-70%:
 ```javascript
 // Import specific functions (recommended)
 import { tws } from 'tailwind-to-style/tws'           // Only tws() - smallest bundle
-import { twsx } from 'tailwind-to-style/twsx'         // Only twsx()
+import { twsx } from 'tailwind-to-style/twsx'          // Only twsx()
 import { twsxVariants } from 'tailwind-to-style/twsx-variants'  // Only variants
+import { cx } from 'tailwind-to-style/cx'              // Only cx() - conditional classes
 
 // Or import from main entry (imports everything)
-import { tws, twsx, twsxVariants } from 'tailwind-to-style'
+import { tws, twsx, twsxVariants, cx } from 'tailwind-to-style'
 ```
 
 **Bundle size impact:**
@@ -367,6 +372,84 @@ The preflight CSS provides:
 
 **Note:** Skip this if you're already using Tailwind CSS in your project.
 
+## 🧩 Conditional Classes with `cx()`
+
+A built-in utility for conditionally joining class names — no need for `clsx` or `classnames`:
+
+```javascript
+import { cx } from 'tailwind-to-style/cx'
+
+// Strings
+cx('bg-blue-500', 'text-white')
+// → 'bg-blue-500 text-white'
+
+// Conditionals
+cx('p-4', isActive && 'bg-blue-500', isDisabled && 'opacity-50')
+// → 'p-4 bg-blue-500' (if isActive=true, isDisabled=false)
+
+// Object syntax
+cx('p-4', { 'bg-blue-500': isActive, 'opacity-50': isDisabled })
+// → 'p-4 bg-blue-500'
+
+// Arrays
+cx(['p-4', 'bg-white'], isActive && ['ring-2', 'ring-blue-500'])
+// → 'p-4 bg-white ring-2 ring-blue-500'
+
+// Use with tws() for inline styles
+const styles = tws(cx('p-4', isLarge && 'p-8', { 'bg-blue-500': isPrimary }))
+```
+
+**`cx.with()` — Base class composition:**
+
+```javascript
+const btn = cx.with('px-4 py-2 rounded font-medium transition-colors')
+
+btn('bg-blue-500 text-white')   // → 'px-4 py-2 rounded font-medium transition-colors bg-blue-500 text-white'
+btn({ 'opacity-50': disabled }) // → 'px-4 py-2 rounded font-medium transition-colors opacity-50'
+```
+
+## 🌐 SSR (Server-Side Rendering)
+
+Use `twsx()` on the server to collect CSS during rendering:
+
+```javascript
+import { startSSR, stopSSR, twsx } from 'tailwind-to-style'
+
+// Before rendering
+startSSR()
+
+// Your rendering code (e.g., React renderToString, Vue renderToString)
+const buttonStyles = twsx({
+  '.btn': 'bg-blue-500 text-white px-4 py-2 rounded'
+})
+const html = renderToString(<App />)
+
+// After rendering — get all collected CSS
+const css = stopSSR()
+
+// Inject into your HTML response
+const fullHtml = `
+  <html>
+    <head><style>${css}</style></head>
+    <body>${html}</body>
+  </html>
+`
+```
+
+**SSR API:**
+- `startSSR()` — Begin collecting CSS (call before rendering)
+- `stopSSR()` — Stop collecting and return all CSS as a string
+- `getSSRStyles()` — Get currently collected CSS without stopping
+
+**Environment detection:**
+```javascript
+import { IS_BROWSER, IS_SERVER } from 'tailwind-to-style'
+
+if (IS_SERVER) {
+  // SSR code path
+}
+```
+
 ## 💡 Use Cases
 
 ### 1. Dynamic Styling
@@ -616,17 +699,21 @@ console.log(logger.getLevel()) // → 'debug'
 
 ## 🆚 Comparison
 
-| Feature | tailwind-to-style | Tailwind CSS | CSS-in-JS |
-|---------|------------------|--------------|-----------|
-| Build Step | ❌ None | ✅ Required | ❌ None |
-| Bundle Size | 🟢 3-12KB | 🟡 ~80KB+ | 🟡 20-40KB |
-| Runtime | ✅ Yes | ❌ No | ✅ Yes |
-| Full Tailwind Support | ✅ Yes | ✅ Yes | ❌ No |
-| Framework Agnostic | ✅ Yes | ✅ Yes | ⚠️ Depends |
-| Nesting Support | ✅ Yes | ⚠️ Plugins | ✅ Yes |
-| TypeScript | ✅ Generics | ✅ Yes | ✅ Yes |
-| Tree-Shaking | ✅ Yes | ⚠️ Partial | ✅ Yes |
-| Performance | 🟢 100x cached | 🟢 Build-time | 🟡 Runtime |
+| Feature | tailwind-to-style | Tailwind CSS | CSS-in-JS | tailwind-variants |
+|---------|:-:|:-:|:-:|:-:|
+| Build Step | ❌ None | ✅ Required | ❌ None | ✅ Required |
+| Bundle Size | 🟢 3-12KB | 🟡 ~80KB+ | 🟡 20-40KB | 🟡 ~15KB |
+| Runtime Styles | ✅ Yes | ❌ No | ✅ Yes | Partial |
+| Full Tailwind Support | ✅ Yes | ✅ Yes | ❌ No | ⚠️ Classes only |
+| SSR Support | ✅ Yes | ✅ Yes | ⚠️ Depends | ✅ Yes |
+| Variant System | ✅ Built-in | ❌ No | ❌ No | ✅ Yes |
+| Conditional Classes | ✅ `cx()` | ❌ No | ❌ No | ✅ `tv()` |
+| SCSS-like Nesting | ✅ Yes | ⚠️ Plugins | ✅ Yes | ❌ No |
+| Framework Agnostic | ✅ Yes | ✅ Yes | ⚠️ Depends | ✅ Yes |
+| Tree-Shaking | ✅ Yes | ⚠️ Partial | ✅ Yes | ✅ Yes |
+| TypeScript Generics | ✅ Yes | ✅ Yes | ✅ Yes | ✅ Yes |
+| Performance | 🟢 100x cached | 🟢 Build-time | 🟡 Runtime | 🟡 Runtime |
+| Zero Dependencies | ✅ Yes | ❌ PostCSS | ❌ No | ❌ tailwind-merge |
 
 ## 📖 Migration from v2
 
@@ -656,4 +743,4 @@ If you find this library helpful, consider supporting:
 
 ---
 
-**v3.2.0** - Modular, tree-shakeable, lightning fast. 🚀⚡
+**v3.2.0** — SSR support, `cx()` utility, tree-shakeable sub-paths, bounded caches, faster CSS injection. 🚀⚡

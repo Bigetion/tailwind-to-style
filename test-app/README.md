@@ -1,184 +1,95 @@
-# 🎮 tailwind-to-style Test App
+# 🎮 tailwind-to-style — Interactive Playground
 
-Interactive React playground for testing all **tailwind-to-style** library functions.
+A comprehensive React playground that demonstrates **every feature** of the `tailwind-to-style` library.
 
 ## 🚀 Quick Start
 
 ```bash
-# 1. Install dependencies
 cd test-app
 npm install
-
-# 2. Start dev server
 npm run dev
-
-# 3. Open browser (automatically opens at http://localhost:3000)
 ```
 
-## 📦 What's Included
+Opens at `http://localhost:5173`
 
-### 3 Interactive Testing Modes
+## 📐 Architecture
 
-#### 1. **tws() Demo**
-Test inline style conversion with:
-- 6 built-in examples (Button, Gradient, Responsive, etc.)
-- Custom class input
-- Live preview rendering
-- Generated style object display
-- Usage code examples
-
-#### 2. **twsx() Demo**
-Test CSS generation with:
-- 4 component examples (Button, Card, Nav, Form)
-- JSON configuration editor
-- Live preview with actual DOM elements
-- Generated CSS output
-- Auto-injection into document
-
-#### 3. **twsxVariants() Demo**
-Test variant system with:
-- 3 component types (Button, Badge, Alert)
-- Interactive variant controls
-- Real-time class generation
-- Compound variants showcase
-- Full configuration display
-
-## 🎨 Features
-
-### Beautiful UI
-- Gradient background design
-- Tabbed navigation
-- Responsive layout
-- Smooth animations
-- Code syntax display
-
-### Interactive Controls
-- Radio buttons for examples vs custom input
-- Dropdowns for variant selection
-- Text areas for custom code
-- Live preview updates
-- Copy to clipboard functionality
-
-### Code Examples
-- Input configuration display
-- Generated output (styles/CSS/classes)
-- Usage examples in multiple formats
-- Full variant configuration reference
-
-## 🛠️ Technology Stack
-
-- **React 18** - UI library
-- **Vite** - Build tool & dev server
-- **tailwind-to-style** - The library being tested (linked from parent)
-
-## 📁 Project Structure
+Sidebar-based SPA with 11 dedicated pages across 4 groups:
 
 ```
-test-app/
-├── src/
-│   ├── main.jsx              # Entry point
-│   ├── App.jsx               # Main app with tabs
-│   ├── components/
-│   │   ├── TwsDemo.jsx       # tws() testing
-│   │   ├── TwsxDemo.jsx      # twsx() testing
-│   │   ├── VariantsDemo.jsx  # twsxVariants() testing
-│   │   └── CodePreview.jsx   # Code display component
-│   └── styles/
-│       └── app.css           # Global styles
-├── package.json              # Dependencies
-├── vite.config.js            # Vite configuration
-└── index.html                # HTML entry
+src/
+├── App.jsx                 # Sidebar layout + page router
+├── main.jsx                # Entry point (imports preflight.css + playground.css)
+├── components/
+│   └── CodeBlock.jsx       # Reusable code display with copy-to-clipboard
+├── pages/
+│   ├── TwsPage.jsx         # tws() — interactive input, typography, spacing, colors, arbitrary values, shadows
+│   ├── TwsxPage.jsx        # twsx() — pseudo-selectors, nested selectors, child selectors, @css directive
+│   ├── VariantsPage.jsx    # twsxVariants() — interactive builder, all combos grid, badges, alerts
+│   ├── CxPage.jsx          # cx() — conditional classes, all syntax forms, cx.with() composition
+│   ├── GradientsPage.jsx   # Gradients — 8 directions, gallery, via color stops
+│   ├── FiltersPage.jsx     # Filters — blur, brightness, contrast, grayscale, hue-rotate, backdrop
+│   ├── TransformsPage.jsx  # Transforms — scale, rotate, translate, skew, origin (interactive builder)
+│   ├── AnimationsPage.jsx  # Animations — CSS animations, Web Animations API, chain, stagger
+│   ├── ConfigPage.jsx      # configure() — custom themes, plugins, SSR demo
+│   ├── PerformancePage.jsx # performanceUtils — cache stats, benchmarks, clear caches
+│   └── PlaygroundPage.jsx  # Free-form playground with presets
+└── styles/
+    └── playground.css      # Full layout + utility styles
 ```
 
-## 🎯 Usage Examples
+## 📦 Pages Overview
 
-### Testing tws()
-1. Select "tws()" tab
-2. Choose an example or enter custom classes
-3. Click input, see live preview
-4. Check generated style object
-5. Copy usage code
+### Core API
+| Page | API | What it demonstrates |
+|------|-----|---------------------|
+| **tws()** | `tws(classes, asObject?)` | Interactive class → CSS/object converter, typography scale, spacing, colors with opacity modifiers, arbitrary values, negative values, border-radius, box shadows |
+| **twsx()** | `twsx(name, config)` | Button hover/active/focus, card with child selectors, form input states, nav tabs, `@css` raw CSS directive |
+| **twsxVariants()** | `twsxVariants(config)` | Interactive button builder (variant/color/size), full combinations grid, badge variants, alert with nested selectors, compound variants |
+| **cx()** | `cx(...args)` | Conditional toggles, all syntax forms (strings, booleans, objects, arrays, falsy, nested), `cx.with()` base class composition |
 
-### Testing twsx()
-1. Select "twsx()" tab
-2. Choose component example
-3. See live rendered component
-4. Check generated CSS
-5. Modify config if needed
+### Visual Features
+| Page | What it demonstrates |
+|------|---------------------|
+| **Gradients** | All 8 directions, 8 named gradient gallery, via color stops comparison |
+| **Filters** | blur, brightness, grayscale/sepia/invert, contrast/saturate, hue-rotate, backdrop-blur (glass morphism) |
+| **Transforms** | Interactive transform builder, scale/rotate/translate/skew galleries, negative transforms, transform-origin |
+| **Animations** | animate-spin/bounce/pulse/ping, `applyWebAnimation()`, `applyInlineAnimation()`, `chainAnimations()`, `staggerAnimations()` |
 
-### Testing twsxVariants()
-1. Select "twsxVariants()" tab
-2. Choose component type
-3. Adjust variant controls (color, size, etc.)
-4. See live component with variants
-5. Check generated class names
+### Advanced
+| Page | API | What it demonstrates |
+|------|-----|---------------------|
+| **configure()** | `configure()`, `getConfig()`, `resetConfig()`, `clearConfigCache()` | Custom theme with brand colors/spacing, plugin registration, config lifecycle, SSR with `startSSR()`/`stopSSR()`/`getSSRStyles()` |
+| **Performance** | `performanceUtils` | Cache statistics dashboard (9 cache counters), cold vs warm benchmarks, cache speedup measurement, `clearCaches()` |
 
-## 🐛 Debugging
+### Tools
+| Page | What it demonstrates |
+|------|---------------------|
+| **Playground** | Free-form input for tws()/cx(), 8 quick presets, live preview, CSS + JSON output, twsx() code examples |
 
-### Browser DevTools
-- **Console**: Check library logs
-- **Elements**: Inspect generated styles/classes
-- **Network**: Check if library loaded
+## 🔌 Library APIs Covered
 
-### Common Issues
+- `tws()` / `tws(classes, true)` — CSS string / JS object
+- `twsx()` — styled component with nested selectors
+- `twsxVariants()` — design system variant factory
+- `cx()` / `cx.with()` — conditional class merging & composition
+- `configure()` / `getConfig()` / `resetConfig()` / `clearConfigCache()`
+- `createPlugin()` / `createUtilityPlugin()`
+- `startSSR()` / `stopSSR()` / `getSSRStyles()`
+- `performanceUtils.getStats()` / `.clearCaches()` / `.enablePerformanceLogging()`
+- `applyWebAnimation()` / `applyInlineAnimation()` / `animateElement()`
+- `chainAnimations()` / `staggerAnimations()`
+- `debouncedTws` / `debouncedTwsx`
+- Opacity modifiers (`bg-blue-500/50`)
+- Arbitrary values (`w-[200px]`)
+- Negative values (`-mt-4`)
+- Gradients (`bg-gradient-to-r from-* via-* to-*`)
+- Filters & backdrop filters
+- Transforms & transform-origin
+- `@css` raw CSS directive
 
-**Library not found:**
-```bash
-# Rebuild parent library
-cd ..
-npm run build
-cd test-app
-npm install
-```
+## ⚙️ Tech Stack
 
-**Port already in use:**
-```bash
-# Change port in vite.config.js or run:
-npm run dev -- --port 3001
-```
-
-**Changes not reflecting:**
-- Hard refresh: Ctrl+F5 (Windows) or Cmd+Shift+R (Mac)
-- Clear cache and reload
-
-## 🎓 Learning Path
-
-1. **Start with tws()** - Understand basic class-to-style conversion
-2. **Try twsx()** - Learn CSS generation and nesting
-3. **Explore variants()** - Master component variant system
-4. **Experiment** - Modify examples, try edge cases
-5. **Build** - Create your own components
-
-## 📊 Testing Checklist
-
-- [ ] tws() converts classes correctly
-- [ ] Responsive classes work
-- [ ] Custom arbitrary values work
-- [ ] twsx() generates valid CSS
-- [ ] Nested selectors work
-- [ ] CSS injection works
-- [ ] twsxVariants() returns correct classes
-- [ ] Compound variants apply
-- [ ] Default variants work
-- [ ] Boolean variants work
-- [ ] Nested selectors in variants work
-
-## 🚀 Next Steps
-
-After testing here:
-- Check `../examples/` for production code examples
-- Run `npm test` in parent for full test suite
-- See `../ARCHITECTURE.md` for library internals
-- Build your own components using the library
-
-## 💡 Tips
-
-- Keep DevTools open while testing
-- Try edge cases (empty input, invalid JSON, etc.)
-- Check console for errors/warnings
-- Copy working examples for your projects
-- Experiment with different combinations
-
----
-
-**Happy Testing!** 🎉 If you find bugs, report them in the main repo.
+- **Vite 5** + **React 18**
+- Library linked via `"tailwind-to-style": "file:.."`
+- Zero external UI dependencies — all styling via `tws()` + `playground.css`

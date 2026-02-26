@@ -1,15 +1,87 @@
 import { getConfigOptions } from "./utils/index.js";
 import { getConfig, setClearConfigCache } from "./config/userConfig.js";
 
+// ============================================================================
+// SSR (Server-Side Rendering) Support
+// Detect environment once at module load for zero-cost runtime checks
+// ============================================================================
+const IS_BROWSER =
+  typeof window !== "undefined" && typeof document !== "undefined";
+const IS_SERVER = !IS_BROWSER;
+
+// SSR CSS collector - accumulates CSS strings during server rendering
+let _ssrCollectedCss = [];
+let _ssrCollecting = false;
+
+/**
+ * Start collecting CSS for SSR. Call before rendering.
+ * @returns {void}
+ * @example
+ * import { startSSR, stopSSR } from 'tailwind-to-style'
+ * startSSR()
+ * const html = renderToString(<App />)
+ * const css = stopSSR()
+ * // Inject css into <head> of your HTML response
+ */
+export function startSSR() {
+  _ssrCollectedCss = [];
+  _ssrCollecting = true;
+}
+
+/**
+ * Stop collecting CSS and return all collected CSS as a single string.
+ * @returns {string} All CSS collected during SSR
+ */
+export function stopSSR() {
+  _ssrCollecting = false;
+  const css = _ssrCollectedCss.join('\n');
+  _ssrCollectedCss = [];
+  return css;
+}
+
+/**
+ * Get collected CSS without stopping collection.
+ * @returns {string} Currently collected CSS
+ */
+export function getSSRStyles() {
+  return _ssrCollectedCss.join('\n');
+}
+
+// ============================================================================
+// Bounded Caches (prevent memory leaks in long-running SPAs)
+// ============================================================================
+const MAX_CACHE_SIZE = 5000;
+const MAX_SET_SIZE = 10000;
+
 // Global registry to track injected keyframes (prevents duplication)
 const _injectedKeyframes = new Set();
 
-// Global cache Maps for cached versions (twsxCache, twsxVariantsCache functions)
+// Global cache Maps with bounded eviction
 const _twsxInputCache = new Map();
 const _twsxVariantsResultCache = new Map();
 
 // WeakMap for object identity-based caching (fast lookup for repeated objects)
 const _objectIdentityCache = new WeakMap();
+
+/** Evict oldest entries from a Map when it exceeds maxSize */
+function evictMap(map, maxSize = MAX_CACHE_SIZE) {
+  if (map.size <= maxSize) return;
+  const excess = map.size - maxSize;
+  const iter = map.keys();
+  for (let i = 0; i < excess; i++) {
+    map.delete(iter.next().value);
+  }
+}
+
+/** Evict oldest entries from a Set when it exceeds maxSize */
+function evictSet(set, maxSize = MAX_SET_SIZE) {
+  if (set.size <= maxSize) return;
+  const excess = set.size - maxSize;
+  const iter = set.values();
+  for (let i = 0; i < excess; i++) {
+    set.delete(iter.next().value);
+  }
+}
 
 // Mapping of animation names to their keyframe definitions
 const BUILTIN_KEYFRAMES = {
@@ -1184,11 +1256,9 @@ export function tws(classNames, convertToJson) {
     );
 
     if (
-      [
-        !classNames,
-        typeof classNames !== "string",
-        classNames.trim() === "",
-      ].includes(true)
+      !classNames ||
+      typeof classNames !== "string" ||
+      classNames.trim() === ""
     ) {
       performanceMonitor.end(totalMarker);
       return convertToJson ? {} : "";
@@ -2640,11 +2710,7 @@ export function twsx(obj, options = {}) {
 
     // Handle injection for cached result
     const { inject = true } = options;
-    if (
-      inject &&
-      typeof window !== "undefined" &&
-      typeof document !== "undefined"
-    ) {
+    if (inject && (IS_BROWSER || _ssrCollecting)) {
       autoInjectCss(cached);
     }
 
@@ -2654,6 +2720,7 @@ export function twsx(obj, options = {}) {
   // Cache miss: call original twsxNoCache and cache result
   const result = twsxNoCache(obj, options);
   _twsxInputCache.set(cacheKey, result);
+  evictMap(_twsxInputCache);
 
   return result;
 }
@@ -2689,6 +2756,7 @@ export function twsxVariants(className, config = {}) {
   // Cache miss: call original twsxVariantsNoCache and cache result
   const result = twsxVariantsNoCache(className, config);
   _twsxVariantsResultCache.set(cacheKey, result);
+  evictMap(_twsxVariantsResultCache);
 
   return result;
 }
@@ -2707,13 +2775,27 @@ function getCssHash(str) {
   return hash;
 }
 
-// Enhanced auto-inject CSS with performance monitoring
+// Enhanced auto-inject CSS with performance monitoring & SSR support
 const injectedCssHashSet = new Set();
 function autoInjectCss(cssString) {
   const marker = performanceMonitor.start("css:inject");
 
   try {
-    if (typeof window !== "undefined" && typeof document !== "undefined") {
+    // SSR mode: collect CSS strings instead of DOM injection
+    if (_ssrCollecting) {
+      const cssHash = getCssHash(cssString);
+      if (injectedCssHashSet.has(cssHash)) {
+        performanceMonitor.end(marker);
+        return;
+      }
+      injectedCssHashSet.add(cssHash);
+      evictSet(injectedCssHashSet);
+      _ssrCollectedCss.push(cssString);
+      performanceMonitor.end(marker);
+      return;
+    }
+
+    if (IS_BROWSER) {
       const cssHash = getCssHash(cssString);
       if (injectedCssHashSet.has(cssHash)) {
         performanceMonitor.end(marker);
@@ -2721,13 +2803,40 @@ function autoInjectCss(cssString) {
       }
 
       injectedCssHashSet.add(cssHash);
+      evictSet(injectedCssHashSet);
+
       let styleTag = document.getElementById("twsx-auto-style");
       if (!styleTag) {
         styleTag = document.createElement("style");
         styleTag.id = "twsx-auto-style";
+        styleTag.setAttribute("data-twsx", "");
         document.head.appendChild(styleTag);
       }
-      styleTag.textContent += `\n${cssString}`;
+
+      // Use insertRule for better performance (avoids full stylesheet reparse)
+      try {
+        const sheet = styleTag.sheet;
+        if (sheet) {
+          // Split CSS by closing brace to insert individual rules
+          const rules = cssString.split('}').filter(r => r.trim());
+          for (const rule of rules) {
+            const trimmed = rule.trim();
+            if (trimmed) {
+              try {
+                sheet.insertRule(trimmed + '}', sheet.cssRules.length);
+              } catch (e) {
+                // Fallback for complex rules (e.g., @keyframes, @media)
+                styleTag.textContent += `\n${trimmed}}`;
+              }
+            }
+          }
+        } else {
+          styleTag.textContent += `\n${cssString}`;
+        }
+      } catch (e) {
+        // Ultimate fallback
+        styleTag.textContent += `\n${cssString}`;
+      }
 
       // Log injection stats periodically
       if (injectedCssHashSet.size % 10 === 0) {
@@ -2807,6 +2916,9 @@ export { LRUCache } from "./utils/lruCache.js";
 export { TwsError, onError, handleError } from "./utils/errorHandler.js";
 export { getTailwindCache, resetTailwindCache } from "./utils/tailwindCache.js";
 
+// Export conditional class name builder
+export { cx } from "./cx.js";
+
 // Export configuration and plugin system
 export { configure, getConfig, resetConfig } from "./config/userConfig.js";
 export {
@@ -2814,6 +2926,11 @@ export {
   createUtilityPlugin,
   createVariantPlugin,
 } from "./plugins/pluginAPI.js";
+
+// Export SSR utilities (startSSR, stopSSR, getSSRStyles are already exported above via function declaration)
+
+// Export environment detection
+export { IS_BROWSER, IS_SERVER };
 
 // Export dynamic animation utilities
 export { applyWebAnimation, initWebAnimations } from "./utils/webAnimations.js";
@@ -2833,4 +2950,3 @@ export {
   INLINE_ANIMATIONS,
 } from "./utils/inlineAnimations.js";
 
-// End of exports - v3.0.0 core only (tws, twsx, twsxVariants, configure)
