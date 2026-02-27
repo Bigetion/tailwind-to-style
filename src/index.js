@@ -1553,7 +1553,7 @@ function processClass(cls, selector, styles) {
 
   let declarations =
     cssObject[baseClassName] ||
-    cssObject[baseClassName.replace(ESCAPE_SLASH_REGEX, "\\$1")] ||
+    cssObject[baseClassName.replace(ESCAPE_SLASH_REGEX, "\\/")] ||
     cssObject[baseClassName.replace(ESCAPE_DOT_REGEX, "\\.")];
 
   if (!declarations && baseClassName.includes("[")) {
@@ -2652,6 +2652,9 @@ function twsxVariantsNoCache(className, config = {}) {
 
       // Skip if it's the default value
       if (value === defaultVariants[key]) continue;
+
+      // Skip if the variant value doesn't exist in the variant options
+      if (!variants[key].hasOwnProperty(value) && value !== true && value !== "true" && value !== false && value !== "false") continue;
 
       // Handle boolean variants
       if (value === true || value === "true") {

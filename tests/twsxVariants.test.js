@@ -82,7 +82,8 @@ describe('twsxVariants', () => {
         },
       });
 
-      // When calling without props, should use defaults      const className = button();
+      // When calling without props, should use defaults
+      const className = button();
       expect(className).toBe('btn');
     });
 
