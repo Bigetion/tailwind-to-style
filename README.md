@@ -1,7 +1,7 @@
 # tailwind-to-style
 
 [📦 View on npm](https://www.npmjs.com/package/tailwind-to-style)
-| [🌐 Landing Page](https://bigetion.github.io/tailwind-to-style/)
+| [🌐 Landing Page](https://bigetion.github.io/tailwind-to-style/landing.html)
 | [🛝 Playground](https://bigetion.github.io/tailwind-to-style/sandbox.html)
 
 [![npm version](https://img.shields.io/npm/v/tailwind-to-style.svg)](https://www.npmjs.com/package/tailwind-to-style)
