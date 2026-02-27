@@ -1,551 +1,1453 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>tailwind-to-style Sandbox 🎮</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tailwind-to-style Playground</title>
+  <meta name="description" content="Interactive playground for tailwind-to-style — test tws(), twsx(), and twsxVariants() in real-time." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/tailwind-to-style@3.2.1/preflight.css" />
+  <script src="https://unpkg.com/tailwind-to-style@3.2.1/dist/index.min.js"></script>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { height: 100%; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      padding: 2rem;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #0c0c14;
+      color: #e2e8f0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
     }
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-    }
+    code, .mono { font-family: 'JetBrains Mono', monospace; }
+    ::selection { background: rgba(139,92,246,0.3); color: #fff; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.3); border-radius: 3px; }
+
+    /* ── Header ── */
     .header {
-      text-align: center;
-      color: white;
-      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem 1.2rem;
+      background: #12121c;
+      border-bottom: 1px solid #1e1e2e;
+      flex-shrink: 0;
     }
-    .header h1 {
-      font-size: 3rem;
-      margin-bottom: 0.5rem;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
     }
-    .header p {
-      font-size: 1.2rem;
-      opacity: 0.9;
-    }
-    .sandbox {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-      margin-bottom: 2rem;
-    }
-    .panel {
-      background: white;
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-    }
-    .panel h2 {
-      margin-bottom: 1rem;
-      color: #333;
-      font-size: 1.5rem;
+    .logo {
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #c4b5fd;
+      text-decoration: none;
+    }
+    .logo-icon { font-size: 1.2rem; }
+    .badge {
+      font-size: 0.65rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 99px;
+      background: rgba(139,92,246,0.15);
+      color: #a78bfa;
+      font-weight: 600;
+    }
+    .header-links {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .header-links a {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      text-decoration: none;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      transition: all 0.15s;
+    }
+    .header-links a:hover { color: #e2e8f0; background: rgba(255,255,255,0.05); }
+
+    /* ── Mode Tabs ── */
+    .mode-bar {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 0 1.2rem;
+      background: #12121c;
+      border-bottom: 1px solid #1e1e2e;
+      flex-shrink: 0;
+    }
+    .mode-tab {
+      padding: 0.6rem 1.2rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #64748b;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .mode-tab:hover { color: #94a3b8; }
+    .mode-tab.active { color: #c4b5fd; border-bottom-color: #8b5cf6; }
+    .mode-sep { flex: 1; }
+    .run-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 1rem;
+      background: #8b5cf6;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: 'Inter', sans-serif;
+    }
+    .run-btn:hover { background: #7c3aed; }
+    .run-btn kbd {
+      font-size: 0.65rem;
+      background: rgba(255,255,255,0.15);
+      padding: 0.1rem 0.35rem;
+      border-radius: 3px;
+      font-family: 'Inter', sans-serif;
+    }
+    /* ── Main Layout ── */
+    .main {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+    .pane {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .pane-editor { flex: 1; border-right: 1px solid #1e1e2e; }
+    .pane-output { flex: 1; }
+
+    /* ── Resize Handle ── */
+    .resize-handle {
+      width: 4px;
+      cursor: col-resize;
+      background: #1e1e2e;
+      transition: background 0.15s;
+      flex-shrink: 0;
+    }
+    .resize-handle:hover, .resize-handle.dragging { background: #8b5cf6; }
+
+    /* ── Pane Headers ── */
+    .pane-header {
+      display: flex;
+      align-items: center;
+      padding: 0 0.8rem;
+      height: 34px;
+      background: #16161f;
+      border-bottom: 1px solid #1e1e2e;
+      flex-shrink: 0;
+      gap: 0.4rem;
+    }
+    .pane-title {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .pane-actions {
+      margin-left: auto;
+      display: flex;
+      gap: 0.3rem;
+    }
+    .pane-btn {
+      padding: 0.2rem 0.5rem;
+      font-size: 0.68rem;
+      color: #64748b;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: 'Inter', sans-serif;
+    }
+    .pane-btn:hover { color: #e2e8f0; border-color: #2e2e3e; background: rgba(255,255,255,0.03); }
+
+    /* ── Editor ── */
+    .editor-wrap {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
     }
     .editor {
       width: 100%;
-      min-height: 300px;
+      height: 100%;
       padding: 1rem;
-      border: 2px solid #e5e7eb;
-      border-radius: 8px;
-      font-family: 'Courier New', monospace;
-      font-size: 14px;
-      resize: vertical;
-      background: #f9fafb;
-    }
-    .editor:focus {
-      outline: none;
-      border-color: #667eea;
-      background: white;
-    }
-    .preview {
-      min-height: 300px;
-      padding: 1.5rem;
-      border: 2px dashed #e5e7eb;
-      border-radius: 8px;
-      background: #f9fafb;
-    }
-    .tabs {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-      border-bottom: 2px solid #e5e7eb;
-      padding-bottom: 0.5rem;
-    }
-    .tab {
-      padding: 0.5rem 1rem;
-      border: none;
-      background: #f3f4f6;
-      border-radius: 6px 6px 0 0;
-      cursor: pointer;
-      font-weight: 500;
-      transition: all 0.2s;
-    }
-    .tab:hover {
-      background: #e5e7eb;
-    }
-    .tab.active {
-      background: #667eea;
-      color: white;
-    }
-    .examples {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-    .example-btn {
-      padding: 0.75rem 1rem;
-      border: 2px solid #667eea;
-      background: white;
-      color: #667eea;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: all 0.2s;
-    }
-    .example-btn:hover {
-      background: #667eea;
-      color: white;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-    }
-    .code-output {
-      background: #1e293b;
+      background: #0c0c14;
       color: #e2e8f0;
-      padding: 1rem;
-      border-radius: 8px;
-      font-family: 'Courier New', monospace;
+      border: none;
+      outline: none;
+      resize: none;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 13px;
+      line-height: 1.6;
+      tab-size: 2;
+    }
+    .editor::placeholder { color: #334155; }
+
+    /* ── Output Tabs ── */
+    .output-tabs {
+      display: flex;
+      gap: 0;
+      flex-shrink: 0;
+    }
+    .output-tab {
+      padding: 0.45rem 0.9rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #475569;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .output-tab:hover { color: #94a3b8; }
+    .output-tab.active { color: #c4b5fd; border-bottom-color: #8b5cf6; }
+
+    /* ── Output Content ── */
+    .output-content {
+      flex: 1;
+      overflow: auto;
+      background: #0c0c14;
+    }
+    .output-panel { display: none; height: 100%; }
+    .output-panel.active { display: flex; flex-direction: column; }
+
+    .code-block {
+      flex: 1;
+      padding: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      line-height: 1.6;
       white-space: pre-wrap;
       word-wrap: break-word;
-      max-height: 400px;
-      overflow-y: auto;
-      margin-top: 1rem;
+      overflow: auto;
+      color: #cbd5e1;
     }
-    .btn-primary {
-      background: #667eea;
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      margin-top: 1rem;
+
+    /* ── Preview ── */
+    .preview-frame {
+      flex: 1;
+      background: #ffffff;
+      overflow: auto;
     }
-    .btn-primary:hover {
-      background: #5568d3;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    .preview-inner {
+      padding: 2rem;
+      min-height: 100%;
     }
-    .info {
-      background: #eff6ff;
-      border-left: 4px solid #3b82f6;
-      padding: 1rem;
+    .preview-dark .preview-frame { background: #1e293b; }
+
+    .preview-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.8rem;
+      background: #16161f;
+      border-bottom: 1px solid #1e1e2e;
+      flex-shrink: 0;
+    }
+    .preview-toggle {
+      padding: 0.2rem 0.5rem;
+      font-size: 0.68rem;
+      color: #64748b;
+      background: transparent;
+      border: 1px solid #2e2e3e;
       border-radius: 4px;
-      margin-top: 1rem;
-      font-size: 0.9rem;
-      color: #1e40af;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: 'Inter', sans-serif;
     }
-    @media (max-width: 968px) {
-      .sandbox {
-        grid-template-columns: 1fr;
-      }
+    .preview-toggle:hover { color: #e2e8f0; background: rgba(255,255,255,0.05); }
+    .preview-toggle.active { color: #c4b5fd; border-color: #8b5cf6; background: rgba(139,92,246,0.1); }
+
+    /* ── Examples Panel ── */
+    .examples-bar {
+      display: flex;
+      align-items: center;
+      padding: 0.5rem 1.2rem;
+      background: #12121c;
+      border-top: 1px solid #1e1e2e;
+      flex-shrink: 0;
+      gap: 0.5rem;
+      overflow-x: auto;
+    }
+    .examples-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .example-chip {
+      padding: 0.3rem 0.7rem;
+      font-size: 0.72rem;
+      color: #94a3b8;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid #1e1e2e;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+      flex-shrink: 0;
+      font-family: 'Inter', sans-serif;
+    }
+    .example-chip:hover { color: #e2e8f0; border-color: #8b5cf6; background: rgba(139,92,246,0.08); }
+
+    /* ── Error ── */
+    .error-output {
+      padding: 1rem;
+      color: #fca5a5;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      background: rgba(239,68,68,0.05);
+      border-left: 3px solid #ef4444;
+    }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      padding: 0.6rem 1.2rem;
+      background: #1e293b;
+      color: #e2e8f0;
+      font-size: 0.8rem;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.25s;
+      pointer-events: none;
+      z-index: 999;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ── Status Bar ── */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      padding: 0.2rem 1.2rem;
+      background: #12121c;
+      border-top: 1px solid #1e1e2e;
+      flex-shrink: 0;
+      font-size: 0.65rem;
+      color: #475569;
+      gap: 1.2rem;
+    }
+    .status-item { display: flex; align-items: center; gap: 0.3rem; }
+    .status-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #22c55e;
+      display: inline-block;
+    }
+    .status-dot.error { background: #ef4444; }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .main { flex-direction: column; }
+      .pane-editor { border-right: none; border-bottom: 1px solid #1e1e2e; }
+      .resize-handle { display: none; }
+      .pane { height: 50%; }
+      .header-links { display: none; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>🎮 tailwind-to-style Sandbox</h1>
-      <p>Interactive playground - test your library in real-time!</p>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <a href="landing.html" class="logo">
+        <span class="logo-icon">⚡</span>
+        <span>tws playground</span>
+      </a>
+      <span class="badge">v3.2.1</span>
     </div>
+    <div class="header-links">
+      <a href="landing.html">Landing Page</a>
+      <a href="https://github.com/Bigetion/tailwind-to-style" target="_blank">GitHub</a>
+      <a href="https://www.npmjs.com/package/tailwind-to-style" target="_blank">npm</a>
+      <a href="https://github.com/Bigetion/tailwind-to-style#readme" target="_blank">Docs</a>
+    </div>
+  </div>
 
-    <div class="sandbox">
-      <!-- Left Panel: Input -->
-      <div class="panel">
-        <h2>📝 Input</h2>
-        
-        <div class="tabs">
-          <button class="tab active" onclick="switchMode('tws')">tws()</button>
-          <button class="tab" onclick="switchMode('twsx')">twsx()</button>
-          <button class="tab" onclick="switchMode('variants')">twsxVariants()</button>
-        </div>
+  <!-- Mode Tabs -->
+  <div class="mode-bar">
+    <button class="mode-tab active" data-mode="tws" onclick="switchMode('tws', this)">tws()</button>
+    <button class="mode-tab" data-mode="twsx" onclick="switchMode('twsx', this)">twsx()</button>
+    <button class="mode-tab" data-mode="variants" onclick="switchMode('variants', this)">twsxVariants()</button>
+    <div class="mode-sep"></div>
+    <button class="run-btn" onclick="runCode()" title="Run code">
+      ▶ Run <kbd>Ctrl+Enter</kbd>
+    </button>
+  </div>
 
-        <!-- tws() mode -->
-        <div id="mode-tws">
-          <textarea 
-            class="editor" 
-            id="input-tws" 
-            placeholder="Enter Tailwind classes here...">bg-blue-500 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-600 transition-all shadow-lg hover:shadow-xl transform hover:scale-105</textarea>
-          
-          <div class="examples">
-            <button class="example-btn" onclick="loadExample('button')">Button</button>
-            <button class="example-btn" onclick="loadExample('card')">Card</button>
-            <button class="example-btn" onclick="loadExample('responsive')">Responsive</button>
-            <button class="example-btn" onclick="loadExample('animation')">Animation</button>
-          </div>
-        </div>
-
-        <!-- twsx() mode -->
-        <div id="mode-twsx" style="display: none;">
-          <textarea 
-            class="editor" 
-            id="input-twsx" 
-            placeholder="Enter twsx() object...">const styles = {
-  '.card': [
-    'bg-white rounded-xl shadow-lg p-6',
-    {
-      '&:hover': 'shadow-2xl transform scale-105',
-      '> .title': 'text-2xl font-bold text-gray-900 mb-2',
-      '> .text': 'text-gray-600 leading-relaxed'
-    }
-  ]
-}</textarea>
-          
-          <div class="examples">
-            <button class="example-btn" onclick="loadExample('twsx-button')">Button Component</button>
-            <button class="example-btn" onclick="loadExample('twsx-card')">Card Component</button>
-            <button class="example-btn" onclick="loadExample('twsx-responsive')">With Media Query</button>
-          </div>
-        </div>
-
-        <!-- twsxVariants() mode -->
-        <div id="mode-variants" style="display: none;">
-          <textarea 
-            class="editor" 
-            id="input-variants" 
-            placeholder="Enter variants config...">const button = twsxVariants('.btn', {
-  base: 'px-4 py-2 rounded-lg font-medium transition-all',
-  variants: {
-    variant: {
-      solid: 'border-transparent',
-      outline: 'bg-transparent border-2',
-      ghost: 'bg-transparent'
-    },
-    color: {
-      primary: 'bg-blue-500 text-white hover:bg-blue-600',
-      danger: 'bg-red-500 text-white hover:bg-red-600',
-      success: 'bg-green-500 text-white hover:bg-green-600'
-    },
-    size: {
-      sm: 'px-3 py-1.5 text-sm',
-      md: 'px-4 py-2 text-base',
-      lg: 'px-6 py-3 text-lg'
-    }
-  },
-  defaultVariants: {
-    variant: 'solid',
-    color: 'primary',
-    size: 'md'
-  }
-})</textarea>
-          
-          <div class="examples">
-            <button class="example-btn" onclick="loadExample('variants-button')">Button Variants</button>
-            <button class="example-btn" onclick="loadExample('variants-badge')">Badge Variants</button>
-            <button class="example-btn" onclick="loadExample('variants-alert')">Alert Component</button>
-          </div>
-        </div>
-
-        <button class="btn-primary" onclick="runCode()">▶️ Run Code</button>
-        
-        <div class="info">
-          💡 Edit the code above and click "Run Code" to see the result!
+  <!-- Main -->
+  <div class="main">
+    <!-- Editor Pane -->
+    <div class="pane pane-editor" id="editorPane">
+      <div class="pane-header">
+        <span class="pane-title">Input</span>
+        <div class="pane-actions">
+          <button class="pane-btn" onclick="formatEditor()">Format</button>
+          <button class="pane-btn" onclick="clearEditor()">Clear</button>
+          <button class="pane-btn" onclick="copyEditor()">Copy</button>
+          <button class="pane-btn" onclick="shareCode()">Share</button>
         </div>
       </div>
+      <div class="editor-wrap">
+        <textarea class="editor" id="editor" spellcheck="false"></textarea>
+      </div>
+    </div>
 
-      <!-- Right Panel: Output -->
-      <div class="panel">
-        <h2>🎨 Output</h2>
-        
-        <div id="preview" class="preview">
-          <p style="text-align: center; color: #9ca3af; padding: 2rem;">
-            Preview will appear here...
-          </p>
+    <!-- Resize Handle -->
+    <div class="resize-handle" id="resizeHandle"></div>
+
+    <!-- Output Pane -->
+    <div class="pane pane-output" id="outputPane">
+      <div class="pane-header">
+        <div class="output-tabs">
+          <button class="output-tab active" data-tab="styleObj" onclick="switchOutputTab('styleObj', this)">Style Object</button>
+          <button class="output-tab" data-tab="css" onclick="switchOutputTab('css', this)">CSS Output</button>
+          <button class="output-tab" data-tab="preview" onclick="switchOutputTab('preview', this)">Preview</button>
         </div>
-
-        <div id="code-output" class="code-output" style="display: none;"></div>
+        <div class="pane-actions">
+          <button class="pane-btn" onclick="copyOutput()">Copy</button>
+        </div>
+      </div>
+      <div class="output-content">
+        <!-- Style Object -->
+        <div class="output-panel active" id="tab-styleObj">
+          <div class="code-block" id="out-styleObj">
+            <span style="color:#475569">Run code to see the style object...</span>
+          </div>
+        </div>
+        <!-- CSS Output -->
+        <div class="output-panel" id="tab-css">
+          <div class="code-block" id="out-css">
+            <span style="color:#475569">Run code to see CSS output...</span>
+          </div>
+        </div>
+        <!-- Preview -->
+        <div class="output-panel" id="tab-preview">
+          <div class="preview-toolbar">
+            <span id="elementPickerGroup" style="display:contents;">
+              <span style="font-size:0.65rem;color:#475569;margin-right:0.2rem;">Element:</span>
+              <button class="preview-toggle active" onclick="setPreviewTag('div', this)" title="Preview as div">div</button>
+              <button class="preview-toggle" onclick="setPreviewTag('button', this)" title="Preview as button">button</button>
+              <button class="preview-toggle" onclick="setPreviewTag('a', this)" title="Preview as anchor">a</button>
+              <button class="preview-toggle" onclick="setPreviewTag('span', this)" title="Preview as span">span</button>
+              <button class="preview-toggle" onclick="setPreviewTag('input', this)" title="Preview as input">input</button>
+              <button class="preview-toggle" onclick="setPreviewTag('textarea', this)" title="Preview as textarea">textarea</button>
+            </span>
+            <div style="flex:1"></div>
+            <button class="preview-toggle" onclick="togglePreviewBg(this)" title="Toggle dark background">Dark BG</button>
+            <button class="preview-toggle" onclick="resetPreview()" title="Reset preview">Reset</button>
+          </div>
+          <div class="preview-frame" id="previewFrame">
+            <div class="preview-inner" id="previewInner">
+              <p style="text-align:center;color:#9ca3af;padding:3rem;font-size:0.9rem;">
+                Preview will appear here after running code...
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Load library from dist -->
-  <script src="dist/index.min.js"></script>
-  
+  <!-- Examples Bar -->
+  <div class="examples-bar" id="examplesBar"></div>
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <div class="status-item">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">Ready</span>
+    </div>
+    <div class="status-item" id="execTime" style="display:none">
+      ⏱ <span id="execTimeVal"></span>
+    </div>
+    <div class="status-item" id="cssSize" style="display:none">
+      📦 <span id="cssSizeVal"></span>
+    </div>
+    <div style="flex:1"></div>
+    <div class="status-item">tailwind-to-style v3.2.1</div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
   <script>
-    const { tws, twsx, twsxVariants, configure } = window.TailwindToStyle;
-    
+    // ── Library ──
+    const {
+      tws, twsx, twsxVariants,
+      configure, getConfig, resetConfig, cx
+    } = window.tailwindToStyle;
+
+    // ── State ──
     let currentMode = 'tws';
-    
-    // Switch between modes
-    function switchMode(mode) {
-      currentMode = mode;
-      
-      // Update active tab
-      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-      event.target.classList.add('active');
-      
-      // Show/hide mode panels
-      document.getElementById('mode-tws').style.display = mode === 'tws' ? 'block' : 'none';
-      document.getElementById('mode-twsx').style.display = mode === 'twsx' ? 'block' : 'none';
-      document.getElementById('mode-variants').style.display = mode === 'variants' ? 'block' : 'none';
-      
-      // Clear preview
-      document.getElementById('preview').innerHTML = '<p style="text-align: center; color: #9ca3af; padding: 2rem;">Preview will appear here...</p>';
-      document.getElementById('code-output').style.display = 'none';
-    }
-    
-    // Example templates
+    let currentOutputTab = 'styleObj';
+    let previewTag = 'div';
+    let lastResult = { styleObj: null, css: '', error: null, inlineStyle: '', classes: '' };
+    let injectedStyleEl = null;
+
+    // ── Examples ──
     const examples = {
-      // tws() examples
-      button: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-full font-bold text-lg shadow-2xl hover:shadow-purple-500/50 transform hover:scale-110 transition-all duration-300',
-      card: 'bg-white rounded-2xl shadow-xl p-8 border border-gray-100 hover:shadow-2xl transition-shadow duration-300',
-      responsive: 'text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl p-2 sm:p-4 md:p-6 lg:p-8',
-      animation: 'animate-bounce bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg',
-      
-      // twsx() examples
-      'twsx-button': `{
-  '.cool-btn': [
-    'bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-2xl',
+      tws: [
+        {
+          name: 'Button',
+          code: 'bg-blue-500 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-600 focus:ring-2 focus:ring-blue-300 transition-all shadow-lg'
+        },
+        {
+          name: 'Card',
+          code: 'bg-white rounded-2xl p-8 border border-gray-100'
+        },
+        {
+          name: 'Responsive Text',
+          code: 'text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-semibold text-gray-800'
+        },
+        {
+          name: 'Flex Layout',
+          code: 'flex items-center justify-between gap-4 p-4 bg-gray-50 rounded-lg'
+        },
+        {
+          name: 'Badge',
+          code: 'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800'
+        },
+        {
+          name: 'Input Field',
+          code: 'w-full px-4 py-2.5 border border-gray-300 rounded-lg text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all'
+        },
+        {
+          name: 'States',
+          code: 'bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 active:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed'
+        },
+        {
+          name: 'Grid',
+          code: 'grid grid-cols-3 gap-6 p-6 bg-white rounded-xl'
+        },
+        {
+          name: 'Typography',
+          code: 'text-4xl font-extrabold tracking-tight leading-tight text-gray-900'
+        },
+        {
+          name: 'Dark Theme',
+          code: 'bg-gray-900 text-gray-100 p-6 rounded-xl border border-gray-700'
+        }
+      ],
+      twsx: [
+        {
+          name: 'Button Component',
+          code: `{
+  '.btn': [
+    'bg-gray-600 hover:bg-gray-700 text-white inline-flex items-center justify-center px-5 py-2.5 rounded-lg font-semibold text-sm transition-all',
     {
-      '&:hover': 'from-cyan-600 to-blue-600 shadow-cyan-500/50 transform scale-105',
-      '&:active': 'scale-95',
-      '&.large': 'px-12 py-6 text-2xl',
-      '&.small': 'px-4 py-2 text-sm'
+      '&:hover': 'transform -translate-y-0.5',
+      '&:active': 'transform translate-y-0',
+      '&.btn-primary': 'bg-blue-600 text-white hover:bg-blue-700',
+      '&.btn-secondary': 'bg-green-600 text-white hover:bg-green-700',
+      '&.btn-danger': 'bg-red-500 text-white hover:bg-red-600',
+      '&.btn-sm': 'px-3 py-1.5 text-xs',
+      '&.btn-lg': 'px-8 py-4 text-base'
     }
   ]
-}`,
-      'twsx-card': `{
-  '.product-card': [
-    'bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-300',
+}`
+        },
+        {
+          name: 'Card Layout',
+          code: `{
+  '.card': [
+    'bg-white rounded-xl overflow-hidden transition-all',
     {
-      '&:hover': 'shadow-2xl transform -translate-y-2',
-      '> .image': 'w-full h-48 object-cover',
-      '> .content': 'p-6',
-      '> .content > .title': 'text-2xl font-bold text-gray-900 mb-2',
-      '> .content > .price': 'text-3xl font-bold text-blue-600',
-      '> .content > .button': 'mt-4 w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600'
+      '&:hover': 'transform -translate-y-1',
+      '> .card-img': 'w-full h-48 object-cover',
+      '> .card-body': 'p-5',
+      '> .card-body > .card-title': 'text-xl font-bold text-gray-900 mb-2',
+      '> .card-body > .card-text': 'text-gray-600 text-sm leading-relaxed',
+      '> .card-footer': 'px-5 py-3 border-t border-gray-100 bg-gray-50'
     }
   ]
-}`,
-      'twsx-responsive': `{
-  '.responsive-grid': 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4',
-  '@media (max-width: 768px)': {
-    '.responsive-grid': 'gap-4 p-2',
-    '.card': 'p-4'
+}`
+        },
+        {
+          name: 'Navigation',
+          code: `{
+  '.nav': 'flex items-center gap-1 bg-white rounded-lg p-1',
+  '.nav-item': [
+    'px-4 py-2 rounded-md text-sm font-medium text-gray-600 cursor-pointer transition-all',
+    {
+      '&:hover': 'text-gray-900 bg-gray-100',
+      '&.active': 'bg-blue-500 text-white'
+    }
+  ]
+}`
+        },
+        {
+          name: 'Form Group',
+          code: `{
+  '.form-group': 'mb-4',
+  '.form-label': 'block text-sm font-medium text-gray-700 mb-1',
+  '.form-input': [
+    'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm transition-all',
+    {
+      '&:focus': 'border-blue-500 ring-2 ring-blue-200 outline-none',
+      '&.error': 'border-red-500 ring-2 ring-red-200',
+      '&.error + .form-hint': 'text-red-600'
+    }
+  ],
+  '.form-hint': 'mt-1 text-xs text-gray-500'
+}`
+        },
+        {
+          name: 'Alert Boxes',
+          code: `{
+  '.alert': [
+    'flex gap-3 p-4 rounded-lg border text-sm',
+    {
+      '> .alert-icon': 'flex-shrink-0 text-lg',
+      '> .alert-body > .alert-title': 'font-bold mb-0.5',
+      '&.alert-info': 'bg-blue-50 border-blue-200 text-blue-800',
+      '&.alert-success': 'bg-green-50 border-green-200 text-green-800',
+      '&.alert-warning': 'bg-yellow-50 border-yellow-200 text-yellow-800',
+      '&.alert-error': 'bg-red-50 border-red-200 text-red-800'
+    }
+  ]
+}`
+        },
+        {
+          name: 'With @css',
+          code: `{
+  '.glow-card': [
+    'relative p-8 rounded-2xl bg-gray-900 text-white overflow-hidden',
+    {
+      '&': '@css { box-shadow: 0 0 40px rgba(139,92,246,0.3); }',
+      '> .title': 'relative text-2xl font-bold mb-2',
+      '> .desc': 'relative text-gray-400 text-sm leading-relaxed'
+    }
+  ]
+}`
+        },
+        {
+          name: 'Media Queries',
+          code: `{
+  '.container': 'mx-auto px-4',
+  '.grid-layout': 'grid grid-cols-1 gap-4',
+  '@media (min-width: 640px)': {
+    '.container': 'px-6',
+    '.grid-layout': 'grid-cols-2 gap-6'
+  },
+  '@media (min-width: 1024px)': {
+    '.container': 'px-8',
+    '.grid-layout': 'grid-cols-3 gap-8'
   }
-}`,
-      
-      // Variants examples
-      'variants-button': `twsxVariants('.btn', {
-  base: 'px-4 py-2 rounded-lg font-medium transition-all inline-block',
+}`
+        }
+      ],
+      variants: [
+        {
+          name: 'Button Variants',
+          code: `// Define button variants
+const button = twsxVariants('.btn', {
+  base: 'inline-flex items-center justify-center rounded-lg font-semibold transition-all',
   variants: {
-    variant: {
-      solid: 'border-transparent shadow-md hover:shadow-lg',
-      outline: 'bg-transparent border-2',
-      ghost: 'bg-transparent hover:bg-gray-100'
-    },
-    color: {
-      primary: 'bg-blue-500 text-white hover:bg-blue-600 border-blue-500',
-      danger: 'bg-red-500 text-white hover:bg-red-600 border-red-500',
-      success: 'bg-green-500 text-white hover:bg-green-600 border-green-500'
+    intent: {
+      primary: 'bg-blue-500 text-white hover:bg-blue-600',
+      secondary: 'bg-gray-100 text-gray-800 hover:bg-gray-200',
+      danger: 'bg-red-500 text-white hover:bg-red-600',
+      ghost: 'bg-transparent text-gray-600 hover:bg-gray-100'
     },
     size: {
-      sm: 'px-3 py-1.5 text-sm',
-      md: 'px-4 py-2 text-base',
-      lg: 'px-6 py-3 text-lg'
+      sm: 'px-3 py-1.5 text-xs',
+      md: 'px-4 py-2 text-sm',
+      lg: 'px-6 py-3 text-base',
+      xl: 'px-8 py-4 text-lg'
     }
   },
-  compoundVariants: [
-    { variant: 'outline', color: 'primary', class: 'text-blue-600 hover:bg-blue-50' },
-    { variant: 'outline', color: 'danger', class: 'text-red-600 hover:bg-red-50' }
-  ],
-  defaultVariants: { variant: 'solid', color: 'primary', size: 'md' }
-})`,
-      'variants-badge': `twsxVariants('.badge', {
-  base: 'inline-block px-3 py-1 rounded-full text-sm font-semibold',
+  defaultVariants: {
+    intent: 'primary',
+    size: 'md'
+  }
+});
+
+// Test different combinations
+const results = {
+  'Default': button(),
+  'Danger + Large': button({ intent: 'danger', size: 'lg' }),
+  'Secondary + Small': button({ intent: 'secondary', size: 'sm' }),
+  'Ghost + XL': button({ intent: 'ghost', size: 'xl' })
+};`
+        },
+        {
+          name: 'Badge Variants',
+          code: `const badge = twsxVariants('.badge', {
+  base: 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold',
   variants: {
     color: {
+      gray: 'bg-gray-100 text-gray-800',
       blue: 'bg-blue-100 text-blue-800',
       green: 'bg-green-100 text-green-800',
       red: 'bg-red-100 text-red-800',
-      yellow: 'bg-yellow-100 text-yellow-800'
+      yellow: 'bg-yellow-100 text-yellow-800',
+      purple: 'bg-purple-100 text-purple-800'
     },
-    size: {
-      sm: 'px-2 py-0.5 text-xs',
-      md: 'px-3 py-1 text-sm',
-      lg: 'px-4 py-2 text-base'
+    pill: {
+      true: 'rounded-full',
+      false: 'rounded-md'
     }
   },
-  defaultVariants: { color: 'blue', size: 'md' }
-})`,
-      'variants-alert': `twsxVariants('.alert', {
-  base: 'p-4 rounded-lg border flex gap-3',
-  variants: {
-    status: {
-      info: 'bg-blue-50 border-blue-200 text-blue-800',
-      success: 'bg-green-50 border-green-200 text-green-800',
-      warning: 'bg-yellow-50 border-yellow-200 text-yellow-800',
-      error: 'bg-red-50 border-red-200 text-red-800'
-    }
-  },
-  defaultVariants: { status: 'info' },
-  nested: {
-    '.alert-icon': 'flex-shrink-0 mt-0.5',
-    '.alert-content': 'flex-1',
-    '.alert-title': 'font-bold mb-1'
+  defaultVariants: {
+    color: 'gray',
+    pill: 'true'
   }
-})`
+});
+
+const results = {
+  'Default': badge(),
+  'Blue': badge({ color: 'blue' }),
+  'Green': badge({ color: 'green' }),
+  'Red (square)': badge({ color: 'red', pill: 'false' }),
+  'Purple': badge({ color: 'purple' })
+};`
+        },
+        {
+          name: 'Input Variants',
+          code: `const input = twsxVariants('.input', {
+  base: 'w-full border rounded-lg text-sm transition-all outline-none',
+  variants: {
+    size: {
+      sm: 'px-2.5 py-1.5 text-xs',
+      md: 'px-3 py-2 text-sm',
+      lg: 'px-4 py-3 text-base'
+    },
+    state: {
+      default: 'border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200',
+      error: 'border-red-500 focus:ring-2 focus:ring-red-200 text-red-900',
+      success: 'border-green-500 focus:ring-2 focus:ring-green-200'
+    }
+  },
+  defaultVariants: {
+    size: 'md',
+    state: 'default'
+  }
+});
+
+const results = {
+  'Default': input(),
+  'Small': input({ size: 'sm' }),
+  'Large': input({ size: 'lg' }),
+  'Error': input({ state: 'error' }),
+  'Success': input({ state: 'success' })
+};`
+        },
+        {
+          name: 'Avatar Variants',
+          code: `const avatar = twsxVariants('.avatar', {
+  base: 'inline-flex items-center justify-center rounded-full font-semibold bg-gray-200 text-gray-600',
+  variants: {
+    size: {
+      xs: 'w-6 h-6 text-xs',
+      sm: 'w-8 h-8 text-sm',
+      md: 'w-10 h-10 text-base',
+      lg: 'w-12 h-12 text-lg',
+      xl: 'w-16 h-16 text-xl'
+    },
+    color: {
+      gray: 'bg-gray-200 text-gray-700',
+      blue: 'bg-blue-100 text-blue-700',
+      green: 'bg-green-100 text-green-700',
+      red: 'bg-red-100 text-red-700'
+    }
+  },
+  defaultVariants: {
+    size: 'md',
+    color: 'gray'
+  }
+});
+
+const results = {
+  'XS Gray': avatar({ size: 'xs' }),
+  'SM Blue': avatar({ size: 'sm', color: 'blue' }),
+  'MD Green': avatar({ size: 'md', color: 'green' }),
+  'LG Red': avatar({ size: 'lg', color: 'red' }),
+  'XL Default': avatar({ size: 'xl' })
+};`
+        }
+      ]
     };
-    
-    function loadExample(name) {
-      const example = examples[name];
-      if (!example) return;
-      
-      if (currentMode === 'tws') {
-        document.getElementById('input-tws').value = example;
-      } else if (currentMode === 'twsx') {
-        document.getElementById('input-twsx').value = example;
-      } else if (currentMode === 'variants') {
-        document.getElementById('input-variants').value = example;
+
+    // ── Init ──
+    function init() {
+      const editor = document.getElementById('editor');
+
+      // Load from URL hash (share feature)
+      if (window.location.hash && window.location.hash.length > 1) {
+        try {
+          const data = JSON.parse(atob(window.location.hash.slice(1)));
+          if (data.mode) switchMode(data.mode, document.querySelector('[data-mode="' + data.mode + '"]'));
+          if (data.code) editor.value = data.code;
+          renderExamples();
+          runCode();
+          return;
+        } catch (e) {
+          // Ignore invalid hash
+        }
       }
-      
+
+      // Default
+      editor.value = examples.tws[0].code;
+      renderExamples();
+      runCode();
+
+      // Keyboard shortcuts
+      document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+          e.preventDefault();
+          runCode();
+        }
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+          e.preventDefault();
+          runCode();
+        }
+      });
+
+      // Tab key support in editor
+      editor.addEventListener('keydown', function(e) {
+        if (e.key === 'Tab') {
+          e.preventDefault();
+          var start = this.selectionStart;
+          var end = this.selectionEnd;
+          this.value = this.value.substring(0, start) + '  ' + this.value.substring(end);
+          this.selectionStart = this.selectionEnd = start + 2;
+        }
+      });
+
+      // Resize handle
+      initResize();
+    }
+
+    // ── Resize Handle ──
+    function initResize() {
+      var handle = document.getElementById('resizeHandle');
+      var editorPane = document.getElementById('editorPane');
+      var outputPane = document.getElementById('outputPane');
+      var isResizing = false;
+
+      handle.addEventListener('mousedown', function(e) {
+        isResizing = true;
+        handle.classList.add('dragging');
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+        e.preventDefault();
+      });
+
+      document.addEventListener('mousemove', function(e) {
+        if (!isResizing) return;
+        var mainEl = document.querySelector('.main');
+        var rect = mainEl.getBoundingClientRect();
+        var pct = ((e.clientX - rect.left) / rect.width) * 100;
+        var clamped = Math.min(Math.max(pct, 20), 80);
+        editorPane.style.flex = 'none';
+        editorPane.style.width = clamped + '%';
+        outputPane.style.flex = '1';
+      });
+
+      document.addEventListener('mouseup', function() {
+        if (!isResizing) return;
+        isResizing = false;
+        handle.classList.remove('dragging');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+      });
+    }
+
+    // ── Switch Mode ──
+    function switchMode(mode, tabEl) {
+      currentMode = mode;
+      document.querySelectorAll('.mode-tab').forEach(function(t) { t.classList.remove('active'); });
+      if (tabEl) tabEl.classList.add('active');
+
+      // Show element picker only in tws mode
+      var picker = document.getElementById('elementPickerGroup');
+      if (picker) picker.style.display = mode === 'tws' ? 'contents' : 'none';
+
+      var editor = document.getElementById('editor');
+      editor.value = examples[mode][0].code;
+      renderExamples();
+
+      lastResult = { styleObj: null, css: '', error: null, inlineStyle: '', classes: '' };
+      document.getElementById('out-styleObj').innerHTML = '<span style="color:#475569">Run code to see output...</span>';
+      document.getElementById('out-css').innerHTML = '<span style="color:#475569">Run code to see CSS output...</span>';
+      resetPreview();
       runCode();
     }
-    
+
+    // ── Render Examples Chips ──
+    function renderExamples() {
+      var bar = document.getElementById('examplesBar');
+      var items = examples[currentMode];
+      bar.innerHTML = '<span class="examples-label">Examples:</span>';
+      items.forEach(function(ex) {
+        var chip = document.createElement('button');
+        chip.className = 'example-chip';
+        chip.textContent = ex.name;
+        chip.onclick = function() {
+          document.getElementById('editor').value = ex.code;
+          runCode();
+        };
+        bar.appendChild(chip);
+      });
+    }
+
+    // ── Run Code ──
     function runCode() {
-      const preview = document.getElementById('preview');
-      const codeOutput = document.getElementById('code-output');
-      
+      var code = document.getElementById('editor').value.trim();
+      if (!code) return;
+
+      var t0 = performance.now();
+
       try {
-        if (currentMode === 'tws') {
-          const input = document.getElementById('input-tws').value.trim();
-          const result = tws(input);
-          
-          // Show live preview
-          preview.innerHTML = `
-            <div style="margin-bottom: 1rem;">
-              <button style="${Object.entries(result).map(([k,v]) => k + ':' + v).join(';')}">
-                Live Preview Button
-              </button>
-            </div>
-            <div style="margin-top: 1rem; padding: 1rem; background: #f3f4f6; border-radius: 8px;">
-              <strong>Style Object:</strong>
-              <div style="margin-top: 0.5rem; font-family: monospace; font-size: 13px;">
-                ${JSON.stringify(result, null, 2)}
-              </div>
-            </div>
-          `;
-          
-          codeOutput.textContent = `// Result:\n${JSON.stringify(result, null, 2)}`;
-          codeOutput.style.display = 'block';
-          
-        } else if (currentMode === 'twsx') {
-          const input = document.getElementById('input-twsx').value.trim();
-          
-          // Extract object from input
-          let styleObj;
-          if (input.startsWith('const') || input.startsWith('let') || input.startsWith('var')) {
-            const match = input.match(/=\s*(\{[\s\S]*\})/);
-            if (match) {
-              styleObj = eval('(' + match[1] + ')');
-            }
-          } else {
-            styleObj = eval('(' + input + ')');
-          }
-          
-          const css = twsx(styleObj);
-          
-          // Inject CSS and show preview
-          const styleEl = document.createElement('style');
-          styleEl.textContent = css;
-          document.head.appendChild(styleEl);
-          
-          // Create preview based on selectors
-          let previewHTML = '<div style="margin-bottom: 1rem;"><strong>Live Preview:</strong></div>';
-          
-          if (css.includes('.cool-btn')) {
-            previewHTML += '<button class="cool-btn">Cool Button</button> ';
-            previewHTML += '<button class="cool-btn large">Large</button> ';
-            previewHTML += '<button class="cool-btn small">Small</button>';
-          } else if (css.includes('.product-card')) {
-            previewHTML += `
-              <div class="product-card" style="max-width: 300px;">
-                <div class="content">
-                  <div class="title">Product Name</div>
-                  <div class="price">$99.99</div>
-                  <button class="button">Add to Cart</button>
-                </div>
-              </div>
-            `;
-          } else if (css.includes('.card')) {
-            previewHTML += '<div class="card"><p>This is a card element</p></div>';
-          } else {
-            previewHTML += '<p style="color: #6b7280;">✅ CSS injected to document head</p>';
-          }
-          
-          preview.innerHTML = previewHTML;
-          codeOutput.textContent = `// Generated CSS:\n${css}`;
-          codeOutput.style.display = 'block';
-          
-        } else if (currentMode === 'variants') {
-          const input = document.getElementById('input-variants').value.trim();
-          
-          // Execute variant definition
-          const variantFn = eval(input);
-          
-          // Show different variant combinations
-          preview.innerHTML = `
-            <div style="margin-bottom: 1rem;"><strong>Live Preview with Variants:</strong></div>
-            <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
-              <button class="${variantFn()}">Default</button>
-              <button class="${variantFn({ color: 'danger' })}">Danger</button>
-              <button class="${variantFn({ color: 'success' })}">Success</button>
-            </div>
-            <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
-              <button class="${variantFn({ size: 'sm' })}">Small</button>
-              <button class="${variantFn({ size: 'md' })}">Medium</button>
-              <button class="${variantFn({ size: 'lg' })}">Large</button>
-            </div>
-            <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-              <button class="${variantFn({ variant: 'outline' })}">Outline</button>
-              <button class="${variantFn({ variant: 'ghost' })}">Ghost</button>
-              <button class="${variantFn({ variant: 'outline', color: 'danger' })}">Outline Danger</button>
-            </div>
-          `;
-          
-          codeOutput.textContent = `// Variant function created!\n\n// Usage examples:\nvariantFn() // "${variantFn()}"\nvariantFn({ color: 'danger' }) // "${variantFn({ color: 'danger' })}"\nvariantFn({ variant: 'outline', size: 'lg' }) // "${variantFn({ variant: 'outline', size: 'lg' })}"`;
-          codeOutput.style.display = 'block';
-        }
-        
-      } catch (error) {
-        preview.innerHTML = `
-          <div style="color: #ef4444; padding: 1rem; background: #fee2e2; border-radius: 8px;">
-            <strong>❌ Error:</strong><br>
-            ${error.message}
-          </div>
-        `;
-        codeOutput.textContent = `// Error:\n${error.stack}`;
-        codeOutput.style.display = 'block';
+        if (currentMode === 'tws') runTws(code);
+        else if (currentMode === 'twsx') runTwsx(code);
+        else if (currentMode === 'variants') runVariants(code);
+
+        var elapsed = (performance.now() - t0).toFixed(1);
+        setStatus(true, 'Executed in ' + elapsed + 'ms');
+        document.getElementById('execTime').style.display = 'flex';
+        document.getElementById('execTimeVal').textContent = elapsed + 'ms';
+
+      } catch (err) {
+        lastResult.error = err;
+        setStatus(false, 'Error');
+
+        var errHtml = '<div class="error-output">' + escapeHtml(err.message) + '\n\n' + escapeHtml(err.stack || '') + '</div>';
+        document.getElementById('out-styleObj').innerHTML = errHtml;
+        document.getElementById('out-css').innerHTML = errHtml;
+        document.getElementById('previewInner').innerHTML = '<div style="padding:2rem;color:#fca5a5;font-size:0.9rem;"><strong>Error:</strong> ' + escapeHtml(err.message) + '</div>';
       }
     }
-    
-    // Auto-run on load
-    runCode();
+
+    // ── tws() Runner ──
+    function runTws(code) {
+      // tws(code) returns CSS string, tws(code, true) returns JSON object
+      var cssString = tws(code);
+      var jsonStyleObj = tws(code, true);
+
+      lastResult.styleObj = jsonStyleObj;
+
+      // Style Object tab
+      document.getElementById('out-styleObj').innerHTML = syntaxHighlightJSON(JSON.stringify(jsonStyleObj, null, 2));
+
+      // CSS tab — wrap the raw CSS string in a selector
+      var css = '.element {\n  ' + cssString.split(';').filter(Boolean).map(function(s) { return s.trim(); }).join(';\n  ') + ';\n}';
+      lastResult.css = css;
+      document.getElementById('out-css').innerHTML = highlightCSS(css);
+
+      var cssSize = new Blob([css]).size;
+      document.getElementById('cssSize').style.display = 'flex';
+      document.getElementById('cssSizeVal').textContent = cssSize + ' bytes';
+
+      // Preview tab — render with selected element tag
+      lastResult.inlineStyle = cssString;
+      lastResult.classes = code;
+      renderTwsPreview();
+    }
+
+    // ── twsx Preview Builder ──
+    function buildTwsxPreviewHTML(styleObj) {
+      // Smart content based on class name
+      function getContent(cls) {
+        var c = cls.toLowerCase();
+        if (/title/.test(c)) return 'Sample Title';
+        if (/desc/.test(c)) return 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
+        if (/text$/.test(c)) return 'This is sample text content for preview purposes.';
+        if (/body/.test(c)) return '';
+        if (/hint|help|error-msg|message/.test(c)) return 'This is a hint message';
+        if (/label/.test(c)) return 'Label Text';
+        if (/footer/.test(c)) return 'Footer content';
+        if (/icon/.test(c)) return '★';
+        if (/img|image/.test(c)) return '';
+        if (/btn|button/.test(c)) return cls.replace(/^btn-?|^button-?/, '') || 'Button';
+        if (/badge/.test(c)) return cls.replace(/^badge-?/, '') || 'Badge';
+        if (/link/.test(c)) return 'Link text';
+        if (/nav-item|tab/.test(c)) return cls.replace(/^nav-/, '').replace(/-/g, ' ');
+        return cls;
+      }
+
+      // Decide HTML tag from class name
+      function guessTag(cls) {
+        var c = cls.toLowerCase();
+        if (/btn|button/.test(c)) return 'button';
+        if (/input/.test(c)) return 'input';
+        if (/label/.test(c)) return 'label';
+        if (/^a$|^link/.test(c)) return 'a';
+        if (/^nav$/.test(c)) return 'nav';
+        if (/^span$|icon/.test(c)) return 'span';
+        return 'div';
+      }
+
+      // Whether element renders inline (flex row for variants)
+      function isInlineEl(cls) {
+        return /btn|button|badge|tag|chip|pill|nav-item|tab/.test(cls.toLowerCase());
+      }
+
+      // Analyze nested value → modifiers & child paths
+      function analyzeValue(val) {
+        var modifiers = [];
+        var childPaths = [];
+        var nestedObjs = [];
+
+        if (typeof val === 'string') return { modifiers: [], childPaths: [] };
+
+        if (Array.isArray(val)) {
+          nestedObjs = val.filter(function(v) { return typeof v === 'object' && !Array.isArray(v); });
+        } else if (typeof val === 'object') {
+          nestedObjs = [val];
+        }
+
+        nestedObjs.forEach(function(obj) {
+          Object.keys(obj).forEach(function(nSel) {
+            if (/^&\.[a-zA-Z][\w-]*$/.test(nSel)) {
+              // Simple modifier: &.btn-primary, &.active, &.error
+              modifiers.push(nSel.slice(1));
+            } else if (nSel.startsWith('&')) {
+              // Pseudo-states, self-ref, complex compound — skip
+            } else if (nSel.startsWith('>') || nSel.startsWith('.')) {
+              // Child/descendant selector
+              childPaths.push(nSel);
+            }
+          });
+        });
+
+        return { modifiers: modifiers, childPaths: childPaths };
+      }
+
+      // Build nested tree from child selector paths
+      function buildTree(paths) {
+        var tree = {};
+        paths.forEach(function(path) {
+          var clean = path.replace(/^\s*>\s*/, '');
+          var parts = clean.split(/\s*>\s*/);
+          var current = tree;
+          parts.forEach(function(part) {
+            var cls = part.replace(/^\./, '').trim();
+            if (!cls) return;
+            if (!current[cls]) current[cls] = {};
+            current = current[cls];
+          });
+        });
+        return tree;
+      }
+
+      // Render child tree as nested HTML
+      function renderTree(tree) {
+        var html = '';
+        var keys = Object.keys(tree);
+        keys.forEach(function(cls) {
+          var sub = tree[cls];
+          var hasKids = Object.keys(sub).length > 0;
+          var tag = guessTag(cls);
+          var content = getContent(cls);
+
+          if (tag === 'input') {
+            html += '<input class="' + cls + '" placeholder="' + (content || cls) + '" />';
+          } else if (/img|image/.test(cls.toLowerCase())) {
+            html += '<div class="' + cls + '" style="background:linear-gradient(135deg,#e2e8f0,#cbd5e1);min-height:120px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:0.75rem;">Image</div>';
+          } else {
+            html += '<' + tag + ' class="' + cls + '">';
+            if (hasKids) {
+              html += renderTree(sub);
+            } else {
+              html += content || cls;
+            }
+            html += '</' + tag + '>';
+          }
+        });
+        return html;
+      }
+
+      // Render one element with classes, child tree, and label
+      function makeEl(classes, childTree, displayLabel, tag) {
+        var childHTML = renderTree(childTree);
+        if (tag === 'input') {
+          return '<input class="' + classes + '" placeholder="' + displayLabel + '" style="max-width:280px;" />';
+        }
+        return '<' + tag + ' class="' + classes + '">' + (childHTML || displayLabel) + '</' + tag + '>';
+      }
+
+      // Main build
+      var topSelectors = Object.keys(styleObj).filter(function(k) { return !k.startsWith('@'); });
+      var html = '';
+
+      topSelectors.forEach(function(sel) {
+        var className = sel.replace(/^\./, '');
+        var val = styleObj[sel];
+        var info = analyzeValue(val);
+        var childTree = buildTree(info.childPaths);
+        var tag = guessTag(className);
+        var hasModifiers = info.modifiers.length > 0;
+        var inline = isInlineEl(className);
+
+        html += '<div style="margin-bottom:1.5rem;">';
+        html += '<div style="font-size:0.7rem;color:#6b7280;margin-bottom:0.5rem;font-family:monospace;">' + escapeHtml(sel) + '</div>';
+
+        if (hasModifiers) {
+          var wrapStyle = inline
+            ? 'display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center;'
+            : 'display:flex;flex-direction:column;gap:0.75rem;';
+          html += '<div style="' + wrapStyle + '">';
+
+          // Base element
+          html += makeEl(className, childTree, getContent(className) || className, tag);
+
+          // Each modifier variant
+          info.modifiers.forEach(function(mod) {
+            var modClass = mod.replace(/^\./, '');
+            var fullClass = className + ' ' + modClass;
+            var re = new RegExp('^' + className.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&') + '-?');
+            var label = modClass.replace(re, '');
+            label = label ? label.charAt(0).toUpperCase() + label.slice(1) : modClass;
+            html += makeEl(fullClass, childTree, label, tag);
+          });
+
+          html += '</div>';
+        } else {
+          html += makeEl(className, childTree, getContent(className) || className, tag);
+        }
+
+        html += '</div>';
+      });
+
+      return html || '<p style="color:#9ca3af;text-align:center;padding:2rem;">No previewable selectors</p>';
+    }
+
+    // ── twsx() Runner ──
+    function runTwsx(code) {
+      var styleObj;
+      try {
+        styleObj = new Function('return (' + code + ')')();
+      } catch (e) {
+        var match = code.match(/=\s*(\{[\s\S]*\})\s*;?\s*$/);
+        if (match) {
+          styleObj = new Function('return (' + match[1] + ')')();
+        } else {
+          throw e;
+        }
+      }
+
+      var css = twsx(styleObj, { autoInjectCss: false });
+      lastResult.styleObj = styleObj;
+      lastResult.css = css;
+
+      // Style Object tab
+      document.getElementById('out-styleObj').innerHTML = syntaxHighlightJSON(JSON.stringify(styleObj, null, 2));
+
+      // CSS tab — format the minified CSS for readability
+      var formattedCSS = formatCSSOutput(css);
+      document.getElementById('out-css').innerHTML = highlightCSS(formattedCSS);
+
+      var cssSize = new Blob([css]).size;
+      document.getElementById('cssSize').style.display = 'flex';
+      document.getElementById('cssSizeVal').textContent = cssSize + ' bytes';
+
+      // Preview tab: inject CSS into preview frame and show sample elements
+      if (injectedStyleEl) injectedStyleEl.remove();
+      injectedStyleEl = document.createElement('style');
+      injectedStyleEl.textContent = css;
+      document.getElementById('previewFrame').appendChild(injectedStyleEl);
+
+      // Build preview with smart structure
+      document.getElementById('previewInner').innerHTML = buildTwsxPreviewHTML(styleObj);
+    }
+
+    // ── twsxVariants() Runner ──
+    function runVariants(code) {
+      // Snapshot existing style elements before execution
+      var existingStyles = new Set();
+      document.querySelectorAll('style').forEach(function(el) { existingStyles.add(el); });
+
+      var fn = new Function('twsxVariants', 'cx',
+        code + '\nreturn typeof results !== "undefined" ? results : null;'
+      );
+      var results = fn(twsxVariants, cx);
+
+      if (!results) {
+        throw new Error(
+          'Define a "results" object at the end of your code.\n\n' +
+          'Example:\n' +
+          'const results = {\n' +
+          '  "Default": myFn(),\n' +
+          '  "Large": myFn({ size: "lg" })\n' +
+          '};'
+        );
+      }
+
+      // Style Object tab
+      var resultObj = {};
+      Object.entries(results).forEach(function(e) { resultObj[e[0]] = e[1]; });
+      lastResult.styleObj = resultObj;
+      document.getElementById('out-styleObj').innerHTML = syntaxHighlightJSON(JSON.stringify(resultObj, null, 2));
+
+      // CSS tab — collect newly injected style elements
+      var newCSS = [];
+      document.querySelectorAll('style').forEach(function(el) {
+        if (!existingStyles.has(el) && el.textContent) {
+          newCSS.push(el.textContent);
+        }
+      });
+      var cssText = newCSS.length > 0 ? newCSS.join('\n') : '/* CSS auto-injected via autoInjectCss */';
+      var formattedCSS = formatCSSOutput(cssText);
+      lastResult.css = formattedCSS;
+      document.getElementById('out-css').innerHTML = highlightCSS(formattedCSS);
+
+      if (newCSS.length > 0) {
+        var cssSize = new Blob([cssText]).size;
+        document.getElementById('cssSize').style.display = 'flex';
+        document.getElementById('cssSizeVal').textContent = cssSize + ' bytes';
+      } else {
+        document.getElementById('cssSize').style.display = 'none';
+      }
+
+      // Preview tab — render each variant combination
+      var previewHTML = '';
+      Object.entries(results).forEach(function(e) {
+        var label = e[0];
+        var className = e[1];
+        previewHTML +=
+          '<div style="margin-bottom:1rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">' +
+            '<div class="' + className + '" style="cursor:default;">' + label + '</div>' +
+            '<code style="font-size:0.6rem;color:#9ca3af;word-break:break-all;max-width:60%;">' + escapeHtml(className) + '</code>' +
+          '</div>';
+      });
+
+      document.getElementById('previewInner').innerHTML =
+        '<div style="margin-bottom:1rem;font-size:0.75rem;color:#6b7280;font-weight:600;">All variant combinations:</div>' +
+        previewHTML;
+    }
+
+    // ── Switch Output Tab ──
+    function switchOutputTab(tab, tabEl) {
+      currentOutputTab = tab;
+      document.querySelectorAll('.output-tab').forEach(function(t) { t.classList.remove('active'); });
+      if (tabEl) tabEl.classList.add('active');
+      document.querySelectorAll('.output-panel').forEach(function(p) { p.classList.remove('active'); });
+      document.getElementById('tab-' + tab).classList.add('active');
+    }
+
+    // ── Editor Actions ──
+    function clearEditor() {
+      document.getElementById('editor').value = '';
+      document.getElementById('editor').focus();
+    }
+
+    function copyEditor() {
+      navigator.clipboard.writeText(document.getElementById('editor').value);
+      showToast('Code copied to clipboard');
+    }
+
+    function copyOutput() {
+      var text = '';
+      if (currentOutputTab === 'styleObj' && lastResult.styleObj) {
+        text = JSON.stringify(lastResult.styleObj, null, 2);
+      } else if (currentOutputTab === 'css') {
+        text = lastResult.css;
+      } else {
+        text = document.getElementById('previewInner').innerHTML;
+      }
+      navigator.clipboard.writeText(text);
+      showToast('Output copied to clipboard');
+    }
+
+    function formatEditor() {
+      var editor = document.getElementById('editor');
+      var code = editor.value.trim();
+      if (currentMode === 'tws') {
+        // Clean up whitespace for tws mode
+        editor.value = code.replace(/\s+/g, ' ').trim();
+        showToast('Formatted');
+        return;
+      }
+      try {
+        // Try to extract and format the object part
+        var objMatch = code.match(/(\{[\s\S]*\})/);
+        if (objMatch) {
+          var obj = new Function('return (' + objMatch[1] + ')')();
+          editor.value = JSON.stringify(obj, null, 2);
+          showToast('Formatted');
+        }
+      } catch (e) {
+        showToast('Cannot auto-format this code');
+      }
+    }
+
+    function shareCode() {
+      var code = document.getElementById('editor').value;
+      try {
+        var data = btoa(unescape(encodeURIComponent(JSON.stringify({ mode: currentMode, code: code }))));
+        var url = window.location.origin + window.location.pathname + '#' + data;
+        navigator.clipboard.writeText(url);
+        window.location.hash = data;
+        showToast('Share URL copied!');
+      } catch (e) {
+        showToast('Failed to create share URL');
+      }
+    }
+
+    function setPreviewTag(tag, btn) {
+      previewTag = tag;
+      // Update active state on toolbar buttons
+      var toolbar = btn.parentElement;
+      toolbar.querySelectorAll('.preview-toggle').forEach(function(b) {
+        if (b.textContent === 'Dark BG' || b.textContent === 'Reset') return;
+        b.classList.remove('active');
+      });
+      btn.classList.add('active');
+      // Re-render preview if in tws mode and we have data
+      if (currentMode === 'tws' && lastResult.inlineStyle) {
+        renderTwsPreview();
+      }
+    }
+
+    function renderTwsPreview() {
+      var s = lastResult.inlineStyle;
+      var tag = previewTag;
+      var el = '';
+
+      if (tag === 'input') {
+        el = '<input type="text" placeholder="Preview Input" style="' + s + '" />';
+      } else if (tag === 'textarea') {
+        el = '<textarea placeholder="Preview Textarea" rows="3" style="' + s + '"></textarea>';
+      } else if (tag === 'a') {
+        el = '<a href="#" onclick="return false" style="' + s + '">Preview Link</a>';
+      } else {
+        el = '<' + tag + ' style="' + s + '">Preview Element</' + tag + '>';
+      }
+
+      document.getElementById('previewInner').innerHTML =
+        '<div style="display:flex;flex-direction:column;gap:1.5rem;">' +
+          '<div>' + el + '</div>' +
+          '<div style="font-size:0.7rem;color:#9ca3af;border-top:1px solid #e5e7eb;padding-top:1rem;">' +
+            '<strong>Classes:</strong> <code style="font-size:0.68rem;color:#3b82f6;word-break:break-all;">' + escapeHtml(lastResult.classes || '') + '</code>' +
+          '</div>' +
+        '</div>';
+    }
+
+    function togglePreviewBg(btn) {
+      btn.classList.toggle('active');
+      document.getElementById('tab-preview').classList.toggle('preview-dark');
+    }
+
+    function resetPreview() {
+      if (injectedStyleEl) { injectedStyleEl.remove(); injectedStyleEl = null; }
+      document.getElementById('previewInner').innerHTML =
+        '<p style="text-align:center;color:#9ca3af;padding:3rem;font-size:0.9rem;">Preview will appear here after running code...</p>';
+    }
+
+    // ── Helpers ──
+    function setStatus(ok, text) {
+      document.getElementById('statusDot').className = 'status-dot' + (ok ? '' : ' error');
+      document.getElementById('statusText').textContent = text;
+    }
+
+    function showToast(msg) {
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(t._timer);
+      t._timer = setTimeout(function() { t.classList.remove('show'); }, 2000);
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // Format minified CSS into readable indented output
+    function formatCSSOutput(css) {
+      if (!css || !css.trim()) return '/* empty */';
+      var result = '';
+      var indent = 0;
+      var i = 0;
+      while (i < css.length) {
+        var ch = css[i];
+        if (ch === '{') {
+          result += ' {\n';
+          indent++;
+          result += '  '.repeat(indent);
+          i++;
+        } else if (ch === '}') {
+          result = result.replace(/\s+$/, '') + '\n';
+          indent = Math.max(0, indent - 1);
+          result += '  '.repeat(indent) + '}\n';
+          if (indent === 0) result += '\n';
+          else result += '  '.repeat(indent);
+          i++;
+        } else if (ch === ';') {
+          result += ';\n' + '  '.repeat(indent);
+          i++;
+          // Skip whitespace after semicolon
+          while (i < css.length && (css[i] === ' ' || css[i] === '\n' || css[i] === '\t')) i++;
+        } else {
+          result += ch;
+          i++;
+        }
+      }
+      return result.replace(/\n\s*\n\s*\n/g, '\n\n').trim();
+    }
+
+    function syntaxHighlightJSON(json) {
+      return escapeHtml(json)
+        .replace(/&quot;(.*?)&quot;(\s*:)/g, '<span style="color:#93c5fd">"$1"</span>$2')
+        .replace(/:\s*&quot;(.*?)&quot;/g, ': <span style="color:#86efac">"$1"</span>')
+        .replace(/:\s*(\d+\.?\d*)/g, ': <span style="color:#fbbf24">$1</span>')
+        .replace(/:\s*(true|false|null)/g, ': <span style="color:#f472b6">$1</span>');
+    }
+
+    function highlightCSS(css) {
+      var escaped = escapeHtml(css);
+      // 1. Highlight selectors (only before {)
+      escaped = escaped.replace(/([.#][\w-]+)(\s*\{)/g, '<span style="color:#c4b5fd">$1</span>$2');
+      // 2. Highlight properties (only at start of line, indented)
+      escaped = escaped.replace(/^(\s+)([\w-]+)(\s*:)/gm, '$1<span style="color:#93c5fd">$2</span>$3');
+      // 3. @media / @keyframes
+      escaped = escaped.replace(/(@media[^{]*)/g, '<span style="color:#fbbf24">$1</span>');
+      escaped = escaped.replace(/(@keyframes[^{]*)/g, '<span style="color:#fbbf24">$1</span>');
+      // 4. Comments
+      escaped = escaped.replace(/(\/\*[\s\S]*?\*\/)/g, '<span style="color:#475569">$1</span>');
+      return escaped;
+    }
+
+    // ── Start ──
+    init();
   </script>
 </body>
 </html>
