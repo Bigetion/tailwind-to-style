@@ -181,6 +181,8 @@ tws('p-0.5 m-1.5 gap-2.5')
 
 Generates real CSS from Tailwind classes with full selector support, SCSS-like nesting, and auto-injects a `<style>` tag into the DOM.
 
+> **HMR-safe** — each `twsx()` call owns a stable slot in the injected style tag keyed by its top-level selectors. When you edit styles during development, the old slot is **replaced** (not appended), so changes are reflected immediately without a hard refresh.
+
 ```javascript
 import { twsx } from 'tailwind-to-style'
 
@@ -625,8 +627,39 @@ function App() {
 
 ```vue
 <script setup>
+import 'tailwind-to-style/preflight.css'
+import { tws, twsx } from 'tailwind-to-style'
+
+// twsx() at the top level of <script setup> is HMR-safe.
+// When you edit the classes, Vite's HMR re-runs this block and
+// the old CSS slot is replaced automatically — no hard refresh needed.
+twsx({
+  'html': 'bg-gray-100 min-h-screen flex items-center justify-center',
+  '.card': [
+    'bg-white p-5 border border-gray-300 rounded-xl shadow-md',
+    {
+      '&:hover': 'shadow-xl',
+      '> .title': 'text-xl font-bold text-gray-900 mb-3',
+      '> .body': 'text-sm text-gray-700',
+    },
+  ],
+})
+</script>
+
+<template>
+  <div class="card">
+    <div class="title">Card Title</div>
+    <p class="body">Styled with twsx — hot reload works out of the box.</p>
+  </div>
+</template>
+```
+
+For simple inline styles, use `tws()` with the reactive system:
+
+```vue
+<script setup>
 import { tws } from 'tailwind-to-style'
-const btnStyle = tws('bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600', true)
+const btnStyle = tws('bg-blue-500 text-white px-4 py-2 rounded-lg', true)
 </script>
 
 <template>
@@ -672,7 +705,7 @@ v3.2.0 includes major performance optimizations:
 - **Pre-compiled regex** — compiled once at module load, reused for every call
 - **Multi-level LRU caching** — class resolution, CSS generation, config lookups
 - **Bounded caches** — Maps capped at 5,000 entries, Sets at 10,000 to prevent memory leaks
-- **`sheet.insertRule()` injection** — avoids full stylesheet reparsing on each call
+- **Slot-based CSS injection** — each `twsx()` call owns a named slot; updates rebuild the tag instead of appending, preventing HMR accumulation
 - **FNV-1a hashing** — 100x faster than `JSON.stringify` for cache keys
 
 ```

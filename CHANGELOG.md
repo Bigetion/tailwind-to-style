@@ -1,5 +1,25 @@
 # Changelog
 
+## [3.2.2] - 2026-03-04
+
+### 🐛 Bug Fixes
+
+#### HMR CSS Accumulation Fix (`twsx()`)
+- Fixed an issue where calling `twsx()` with updated styles during Vite/webpack HMR would **append** new CSS instead of replacing the old one, causing stale property bleed-through that required a hard browser refresh to resolve.
+- Each `twsx(obj)` call now owns a stable **slot** in the injected `#twsx-auto-style` tag, keyed by its sorted top-level selector names (independent of CSS content). When classes change, the slot is replaced and the tag is fully rebuilt — true hot reload, no hard refresh needed.
+- Added `cssBlocks` counter to `performanceUtils.getStats()` for registry visibility.
+- `performanceUtils.clearCaches()` now also clears the CSS block registry and empties the style tag.
+
+### 🧪 Tests
+- Added `tests/css-injection-hmr.test.js` — 15 test cases covering slot-based injection, HMR replacement, multi-component isolation, deduplication, and `performanceUtils` integration.
+
+### 📝 Documentation
+- Updated `README.md`: `twsx()` description now notes HMR-safe slot injection.
+- Updated `README.md`: Vue section now shows the correct `twsx()` top-level pattern that works with HMR.
+- Updated `README.md`: Fixed incorrect `sheet.insertRule()` mention in the Performance section (actual implementation uses slot-based `textContent` rebuild).
+
+---
+
 ## [3.2.0] - 2026-02-26
 
 ### 🚀 New Features

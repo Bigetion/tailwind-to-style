@@ -2774,26 +2774,40 @@ function fastObjectHash(obj, options = {}) {
  * twsxNoCache(styles);
  */
 export function twsx(obj, options = {}) {
-  // Create fast hash key from input (100x faster than JSON.stringify)
+  // Create fast hash key from input content (100x faster than JSON.stringify)
   const cacheKey = fastObjectHash(obj, options);
+  const { inject = true } = options;
+
+  // Derive a STABLE registry key from the object's top-level selector KEYS only.
+  // This key is independent of the CSS class values, so when styles are edited
+  // during HMR (same selectors, different Tailwind classes) the old slot is
+  // replaced rather than a new slot being created — preventing CSS accumulation.
+  const registryKey =
+    obj && typeof obj === "object" && !Array.isArray(obj)
+      ? Object.keys(obj).sort().join("|")
+      : cacheKey; // fallback for edge cases
 
   // Check cache first
   if (_twsxInputCache.has(cacheKey)) {
     const cached = _twsxInputCache.get(cacheKey);
 
-    // Handle injection for cached result
-    const { inject = true } = options;
+    // Re-inject with registryKey so the slot stays registered (no-op when unchanged).
     if (inject && (IS_BROWSER || _ssrCollecting)) {
-      autoInjectCss(cached);
+      autoInjectCss(cached, registryKey);
     }
 
     return cached;
   }
 
-  // Cache miss: call original twsxNoCache and cache result
-  const result = twsxNoCache(obj, options);
+  // Cache miss: generate CSS without internal auto-injection so that twsx owns
+  // the injection and can pass the selector-based registryKey for slot replacement.
+  const result = twsxNoCache(obj, { ...options, inject: false });
   _twsxInputCache.set(cacheKey, result);
   evictMap(_twsxInputCache);
+
+  if (inject && (IS_BROWSER || _ssrCollecting)) {
+    autoInjectCss(result, registryKey);
+  }
 
   return result;
 }
@@ -2850,7 +2864,27 @@ function getCssHash(str) {
 
 // Enhanced auto-inject CSS with performance monitoring & SSR support
 const injectedCssHashSet = new Set();
-function autoInjectCss(cssString) {
+
+// Registry of sourceKey → cssBlock for smart slot-based replacement.
+// Prevents stale CSS chunks from accumulating across HMR cycles.
+const _cssBlockRegistry = new Map();
+
+/**
+ * Rebuild the single twsx style tag from the full CSS block registry.
+ * Called whenever a block is added or updated.
+ */
+function rebuildStyleTag() {
+  let styleTag = document.getElementById("twsx-auto-style");
+  if (!styleTag) {
+    styleTag = document.createElement("style");
+    styleTag.id = "twsx-auto-style";
+    styleTag.setAttribute("data-twsx", "");
+    document.head.appendChild(styleTag);
+  }
+  styleTag.textContent = [..._cssBlockRegistry.values()].join("\n");
+}
+
+function autoInjectCss(cssString, sourceKey = null) {
   const marker = performanceMonitor.start("css:inject");
 
   try {
@@ -2869,6 +2903,31 @@ function autoInjectCss(cssString) {
     }
 
     if (IS_BROWSER) {
+      if (sourceKey) {
+        // Slot-based update: each unique twsx(obj) call owns its own CSS block.
+        // When styles change (new content, same logical call site via cacheKey)
+        // the old slot is replaced and the style tag is fully rebuilt, so no
+        // stale rules from previous HMR cycles can pile up.
+        const existing = _cssBlockRegistry.get(sourceKey);
+        if (existing === cssString) {
+          // Identical content – nothing to do.
+          performanceMonitor.end(marker);
+          return;
+        }
+        _cssBlockRegistry.set(sourceKey, cssString);
+        rebuildStyleTag();
+
+        if (_cssBlockRegistry.size % 10 === 0) {
+          logger.debug(
+            `CSS registry stats: ${_cssBlockRegistry.size} blocks registered`
+          );
+        }
+        performanceMonitor.end(marker);
+        return;
+      }
+
+      // Fallback path (e.g. direct autoInjectCss calls without a sourceKey):
+      // keep the original hash-based dedup + append behaviour.
       const cssHash = getCssHash(cssString);
       if (injectedCssHashSet.has(cssHash)) {
         performanceMonitor.end(marker);
@@ -2938,6 +2997,7 @@ export const performanceUtils = {
       },
       injectionStats: {
         uniqueStylesheets: injectedCssHashSet.size,
+        cssBlocks: _cssBlockRegistry.size,
         keyframes: _injectedKeyframes.size,
       },
     };
@@ -2953,6 +3013,14 @@ export const performanceUtils = {
     // Clear new input-level caches
     _twsxInputCache.clear();
     _twsxVariantsResultCache.clear();
+
+    // Clear CSS block registry and rebuild (empty) the style tag
+    _cssBlockRegistry.clear();
+    injectedCssHashSet.clear();
+    if (IS_BROWSER) {
+      const styleTag = document.getElementById("twsx-auto-style");
+      if (styleTag) styleTag.textContent = "";
+    }
 
     logger.info("All caches cleared");
     performanceMonitor.end(marker);
