@@ -24,11 +24,15 @@ let userConfig = {
   plugins: [],
   corePlugins: {},
   prefix: "",
+  // Tailwind v4 compatibility mode
+  // When true: enables v4-only features (container queries, @starting-style,
+  // open: variant, forced-colors:, print:) and warns about v3-deprecated utilities.
+  v4: false,
   styled: {
-    prefix: "twsx", // Global prefix for styled components
-    separator: "-", // Separator between prefix and component
-    hashLength: 6, // Length of generated hash
-    includeComponentName: true, // Include component type in classname
+    prefix: "twsx",
+    separator: "-",
+    hashLength: 6,
+    includeComponentName: true,
   },
 };
 
@@ -94,7 +98,7 @@ export function configure(config = {}) {
     }
 
     // Validate config structure
-    const validTopKeys = ['theme', 'plugins', 'corePlugins', 'prefix', 'styled'];
+    const validTopKeys = ['theme', 'plugins', 'corePlugins', 'prefix', 'styled', 'v4'];
     const invalidKeys = Object.keys(config).filter(k => !validTopKeys.includes(k));
     if (invalidKeys.length > 0) {
       logger.warn(
@@ -170,6 +174,18 @@ export function configure(config = {}) {
       userConfig.prefix = config.prefix;
     }
 
+    // Tailwind v4 mode
+    if (config.v4 === true) {
+      userConfig.v4 = true;
+      logger.info(
+        "Tailwind v4 compatibility mode enabled. " +
+        "New features: container queries (@sm:/@md:), open: variant, " +
+        "starting: variant, forced-colors:, print:, inset-shadow-*, " +
+        "perspective-*, field-sizing-*, color-scheme-*, font-stretch-*, " +
+        "borderRadius xs/4xl, boxShadow xs, color 950 shades."
+      );
+    }
+
     // Reset cache to apply new configuration
     resetTailwindCache();
 
@@ -191,6 +207,14 @@ export function configure(config = {}) {
  */
 export function getConfig() {
   return { ...userConfig };
+}
+
+/**
+ * Check whether Tailwind v4 compatibility mode is active.
+ * @returns {boolean}
+ */
+export function isV4Mode() {
+  return userConfig.v4 === true;
 }
 
 /**

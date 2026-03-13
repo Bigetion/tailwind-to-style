@@ -172,6 +172,7 @@ import generateBorderCollapse from "./generators/borderCollapse.js";
 import generateBorderColor from "./generators/borderColor.js";
 import generateBorderOpacity from "./generators/borderOpacity.js";
 import generateBorderRadius from "./generators/borderRadius.js";
+import generateColorScheme from "./generators/colorScheme.js";
 import generateBorderSpacing from "./generators/borderSpacing.js";
 import generateBorderStyle from "./generators/borderStyle.js";
 import generateBorderWidth from "./generators/borderWidth.js";
@@ -197,6 +198,7 @@ import generateDivideStyle from "./generators/divideStyle.js";
 import generateDivideWidth from "./generators/divideWidth.js";
 import generateDropShadow from "./generators/dropShadow.js";
 import generateFill from "./generators/fill.js";
+import generateFieldSizing from "./generators/fieldSizing.js";
 import generateFilter from "./generators/filter.js";
 import generateFlex from "./generators/flex.js";
 import generateFlexBasis from "./generators/flexBasis.js";
@@ -208,6 +210,7 @@ import generateFloat from "./generators/float.js";
 import generateFontFamily from "./generators/fontFamily.js";
 import generateFontSize from "./generators/fontSize.js";
 import generateFontSmoothing from "./generators/fontSmoothing.js";
+import generateFontStretch from "./generators/fontStretch.js";
 import generateFontStyle from "./generators/fontStyle.js";
 import generateFontVariantNumeric from "./generators/fontVariantNumeric.js";
 import generateFontWeight from "./generators/fontWeight.js";
@@ -229,6 +232,7 @@ import generateHeight from "./generators/height.js";
 import generateHueRotate from "./generators/hueRotate.js";
 import generateHyphens from "./generators/hyphens.js";
 import generateInset from "./generators/inset.js";
+import generateInsetShadow from "./generators/insetShadow.js";
 import generateInvert from "./generators/invert.js";
 import generateIsolation from "./generators/isolation.js";
 import generateJustifyContent from "./generators/justifyContent.js";
@@ -258,6 +262,7 @@ import generateOutlineWidth from "./generators/outlineWidth.js";
 import generateOverflow from "./generators/overflow.js";
 import generateOverscrollBehavior from "./generators/overscrollBehavior.js";
 import generatePadding from "./generators/padding.js";
+import generatePerspective from "./generators/perspective.js";
 import generatePlaceContent from "./generators/placeContent.js";
 import generatePlaceItems from "./generators/placeItems.js";
 import generatePlaceSelf from "./generators/placeSelf.js";
@@ -482,6 +487,7 @@ const plugins = {
   captionSide: generateCaptionSide,
   caretColor: generateCaretColor,
   clear: generateClear,
+  colorScheme: generateColorScheme,
   columns: generateColumns,
   container: generateContainer,
   content: generateContent,
@@ -493,6 +499,7 @@ const plugins = {
   divideStyle: generateDivideStyle,
   divideWidth: generateDivideWidth,
   dropShadow: generateDropShadow,
+  fieldSizing: generateFieldSizing,
   fill: generateFill,
   filter: generateFilter,
   flex: generateFlex,
@@ -505,6 +512,7 @@ const plugins = {
   fontFamily: generateFontFamily,
   fontSize: generateFontSize,
   fontSmoothing: generateFontSmoothing,
+  fontStretch: generateFontStretch,
   fontStyle: generateFontStyle,
   fontVariantNumeric: generateFontVariantNumeric,
   fontWeight: generateFontWeight,
@@ -526,6 +534,7 @@ const plugins = {
   hueRotate: generateHueRotate,
   hyphens: generateHyphens,
   inset: generateInset,
+  insetShadow: generateInsetShadow,
   invert: generateInvert,
   isolation: generateIsolation,
   justifyContent: generateJustifyContent,
@@ -555,6 +564,7 @@ const plugins = {
   overflow: generateOverflow,
   overscrollBehavior: generateOverscrollBehavior,
   padding: generatePadding,
+  perspective: generatePerspective,
   placeContent: generatePlaceContent,
   placeItems: generatePlaceItems,
   placeSelf: generatePlaceSelf,
@@ -3042,7 +3052,7 @@ export { getTailwindCache, resetTailwindCache } from "./utils/tailwindCache.js";
 export { cx } from "./cx.js";
 
 // Export configuration and plugin system
-export { configure, getConfig, resetConfig } from "./config/userConfig.js";
+export { configure, getConfig, resetConfig, isV4Mode } from "./config/userConfig.js";
 export {
   createPlugin,
   createUtilityPlugin,
