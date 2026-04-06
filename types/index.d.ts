@@ -369,11 +369,433 @@ export function twsxVariants(
  */
 export const performanceUtils: PerformanceUtils;
 
+// ============================================================================
+// twsxClassName - Advanced Unified CSS-in-JS API
+// ============================================================================
+
+/**
+ * Pseudo-class shorthands for twsxClassName
+ */
+export type PseudoShorthand =
+  | "hover" | "focus" | "active" | "disabled" | "visited" | "checked"
+  | "required" | "invalid" | "valid" | "empty" | "enabled" | "indeterminate"
+  | "focus-within" | "focus-visible" | "first" | "last" | "odd" | "even"
+  | "first-of-type" | "last-of-type" | "only" | "only-of-type"
+  | "placeholder" | "before" | "after" | "selection" | "marker" | "file" | "backdrop"
+  // Dark/Light mode
+  | "dark" | "light"
+  // Motion preferences
+  | "motion-safe" | "motion-reduce"
+  // Print
+  | "print"
+  // Contrast
+  | "contrast-more" | "contrast-less"
+  // Orientation
+  | "portrait" | "landscape";
+
+/**
+ * Group/Peer state shorthands
+ */
+export type GroupPeerState =
+  | "group-hover" | "group-focus" | "group-active" | "group-focus-within"
+  | "group-focus-visible" | "group-disabled" | "group-checked" | "group-invalid" | "group-required"
+  | "peer-hover" | "peer-focus" | "peer-active" | "peer-focus-within"
+  | "peer-focus-visible" | "peer-disabled" | "peer-checked" | "peer-invalid"
+  | "peer-required" | "peer-placeholder-shown";
+
+/**
+ * Responsive breakpoint shorthands
+ */
+export type ResponsiveBreakpoint = "sm" | "md" | "lg" | "xl" | "2xl";
+
+/**
+ * Animation preset names
+ */
+export type AnimationPreset =
+  | "fadeIn" | "fadeOut" | "slideInUp" | "slideInDown" | "slideInLeft" | "slideInRight"
+  | "scaleIn" | "scaleOut" | "bounce" | "pulse" | "spin" | "ping" | "shake";
+
+/**
+ * Custom animation configuration
+ */
+export interface AnimationConfig {
+  keyframes: Record<string, string>;
+  duration?: string;
+  timing?: string;
+  delay?: string;
+  iteration?: string | number;
+}
+
+/**
+ * Design tokens structure
+ */
+export interface DesignTokens {
+  colors?: Record<string, string | Record<string, string>>;
+  spacing?: Record<string, string>;
+  fontSize?: Record<string, string>;
+  fontWeight?: Record<string, string>;
+  borderRadius?: Record<string, string>;
+  shadow?: Record<string, string>;
+  animation?: Record<string, AnimationConfig>;
+  custom?: Record<string, string>;
+}
+
+/**
+ * Theme tokens
+ */
+export interface ThemeTokens {
+  [key: string]: string | Record<string, string>;
+}
+
+/**
+ * Basic twsxClassName config (returns className string)
+ */
+export interface TwsxClassNameBasicConfig {
+  /** Base Tailwind classes */
+  _?: string;
+  /** Component name (for readable className) */
+  name?: string;
+  /** Custom prefix (default: "twsx") */
+  prefix?: string;
+  /** Include hash in className (default: true) */
+  hash?: boolean;
+  /** Hash length (default: 8) */
+  hashLength?: number;
+  /** Auto-inject CSS to DOM (default: true) */
+  inject?: boolean;
+  /** Extend from another twsxClassName config */
+  extend?: TwsxClassNameVariantFunction<any> | TwsxClassNameBasicConfig;
+  /** Animation preset or custom config */
+  animation?: AnimationPreset | AnimationConfig;
+  /** Enter transition classes */
+  enter?: string;
+  /** Enter from state */
+  enterFrom?: string;
+  /** Enter to state */
+  enterTo?: string;
+  /** Exit/leave transition classes */
+  exit?: string;
+  /** Leave from state */
+  leaveFrom?: string;
+  /** Leave to state */
+  leaveTo?: string;
+  /** Pseudo-class shorthands, responsive, and custom selectors */
+  [key: string]: string | TwsxClassNameBasicConfig | AnimationPreset | AnimationConfig | boolean | number | undefined | any;
+}
+
+/**
+ * Variant value - string classes or nested object with pseudo states
+ */
+export type TwsxClassNameVariantValue = string | {
+  _?: string;
+  [key: string]: string | undefined;
+};
+
+/**
+ * Variants definition for twsxClassName
+ */
+export interface TwsxClassNameVariantsDefinition {
+  [variantName: string]: {
+    [optionKey: string]: TwsxClassNameVariantValue;
+  };
+}
+
+/**
+ * Compound variant for twsxClassName
+ */
+export interface TwsxClassNameCompoundVariant<V extends TwsxClassNameVariantsDefinition = TwsxClassNameVariantsDefinition> {
+  class?: string;
+  className?: string;
+  [K: string]: string | string[] | boolean | undefined;
+}
+
+/**
+ * Responsive variant value - allows different values per breakpoint
+ */
+export type ResponsiveVariantValue<T> = T | {
+  initial?: T;
+  sm?: T;
+  md?: T;
+  lg?: T;
+  xl?: T;
+  "2xl"?: T;
+};
+
+/**
+ * twsxClassName variants config
+ */
+export interface TwsxClassNameVariantsConfig<V extends TwsxClassNameVariantsDefinition = TwsxClassNameVariantsDefinition> {
+  /** Component name */
+  name?: string;
+  /** Custom prefix */
+  prefix?: string;
+  /** Include hash */
+  hash?: boolean;
+  /** Hash length */
+  hashLength?: number;
+  /** Auto-inject CSS */
+  inject?: boolean;
+  /** Extend from another config */
+  extend?: TwsxClassNameVariantFunction<any> | TwsxClassNameVariantsConfig<any>;
+  /** Base Tailwind classes or nested object */
+  base?: string | { _?: string; [key: string]: string | undefined };
+  /** Variant definitions */
+  variants: V;
+  /** Compound variants */
+  compoundVariants?: TwsxClassNameCompoundVariant<V>[];
+  /** Default variant values */
+  defaultVariants?: { [K in keyof V]?: keyof V[K] | boolean };
+  /** Enable responsive variants for specified variant keys */
+  responsiveVariants?: (keyof V)[];
+}
+
+/**
+ * Slots definition for multi-part components
+ */
+export interface TwsxClassNameSlotsDefinition {
+  [slotName: string]: string | { _?: string; [key: string]: string | undefined };
+}
+
+/**
+ * twsxClassName slots config
+ */
+export interface TwsxClassNameSlotsConfig<
+  S extends TwsxClassNameSlotsDefinition = TwsxClassNameSlotsDefinition,
+  V extends TwsxClassNameVariantsDefinition = TwsxClassNameVariantsDefinition
+> {
+  /** Component name */
+  name?: string;
+  /** Custom prefix */
+  prefix?: string;
+  /** Include hash */
+  hash?: boolean;
+  /** Hash length */
+  hashLength?: number;
+  /** Auto-inject CSS */
+  inject?: boolean;
+  /** Extend from another config */
+  extend?: TwsxClassNameSlotsFunction<any, any>;
+  /** Slot definitions */
+  slots: S;
+  /** Variant definitions (with slot-specific styles) */
+  variants?: V;
+  /** Compound variants */
+  compoundVariants?: TwsxClassNameCompoundVariant<V>[];
+  /** Default variant values */
+  defaultVariants?: { [K in keyof V]?: keyof V[K] | boolean };
+}
+
+/**
+ * Variant props with responsive support
+ */
+export type TwsxClassNameVariantProps<V extends TwsxClassNameVariantsDefinition> = {
+  [K in keyof V]?: keyof V[K] | boolean | ResponsiveVariantValue<keyof V[K]>;
+};
+
+/**
+ * Variant selector function return type
+ */
+export interface TwsxClassNameVariantFunction<V extends TwsxClassNameVariantsDefinition> {
+  (props?: TwsxClassNameVariantProps<V>): string;
+  /** Merge with additional classes */
+  merge(props?: TwsxClassNameVariantProps<V>, ...additionalClasses: ClassValue[]): string;
+  merge(...additionalClasses: ClassValue[]): string;
+  /** Get raw config */
+  raw(): TwsxClassNameVariantsConfig<V>;
+}
+
+/**
+ * Slots generator function return type
+ */
+export interface TwsxClassNameSlotsFunction<
+  S extends TwsxClassNameSlotsDefinition,
+  V extends TwsxClassNameVariantsDefinition
+> {
+  (props?: TwsxClassNameVariantProps<V>): { [K in keyof S]: string };
+  /** Merge with additional classes per slot */
+  merge(props?: TwsxClassNameVariantProps<V>, slotOverrides?: Partial<{ [K in keyof S]: string }>): { [K in keyof S]: string };
+  /** Get raw config */
+  raw(): TwsxClassNameSlotsConfig<S, V>;
+}
+
+/**
+ * Global configuration options
+ */
+export interface TwsxClassNameGlobalConfig {
+  /** Default prefix (default: "twsx") */
+  prefix?: string;
+  /** Include hash by default (default: true) */
+  hash?: boolean;
+  /** Default hash length (default: 8) */
+  hashLength?: number;
+  /** Auto-inject CSS by default (default: true) */
+  inject?: boolean;
+  /** Deduplication (default: true) */
+  deduplicate?: boolean;
+  /** Custom breakpoints */
+  breakpoints?: Record<string, string>;
+}
+
+/**
+ * Unified CSS-in-JS API with smart mode detection.
+ *
+ * @example
+ * // Basic mode - returns className string
+ * const btn = twsxClassName({ _: 'bg-blue-500 p-4', hover: 'bg-blue-600' })
+ *
+ * // With dark mode
+ * const card = twsxClassName({ _: 'bg-white', dark: 'bg-gray-900' })
+ *
+ * // With group/peer states
+ * const icon = twsxClassName({ _: 'opacity-0', 'group-hover': 'opacity-100' })
+ *
+ * // Variants mode with boolean variants
+ * const btn = twsxClassName({
+ *   base: 'px-4 py-2',
+ *   variants: {
+ *     disabled: { true: 'opacity-50', false: '' }
+ *   }
+ * })
+ * btn({ disabled: true })
+ *
+ * // Responsive variants
+ * const btn = twsxClassName({
+ *   variants: { size: { sm: '...', lg: '...' } },
+ *   responsiveVariants: ['size']
+ * })
+ * btn({ size: { initial: 'sm', md: 'lg' } })
+ *
+ * // With design tokens
+ * twsxClassName.defineTokens({ colors: { primary: '#3b82f6' } })
+ * const btn = twsxClassName({ _: 'bg-$colors.primary' })
+ *
+ * // Extend existing config
+ * const primaryBtn = twsxClassName.extend(btn, { _: 'text-white' })
+ */
+export function twsxClassName(config: TwsxClassNameBasicConfig): string;
+export function twsxClassName(name: string, config: TwsxClassNameBasicConfig): string;
+export function twsxClassName<V extends TwsxClassNameVariantsDefinition>(
+  config: TwsxClassNameVariantsConfig<V>
+): TwsxClassNameVariantFunction<V>;
+export function twsxClassName<
+  S extends TwsxClassNameSlotsDefinition,
+  V extends TwsxClassNameVariantsDefinition
+>(
+  config: TwsxClassNameSlotsConfig<S, V>
+): TwsxClassNameSlotsFunction<S, V>;
+
+export namespace twsxClassName {
+  /**
+   * Configure global settings
+   */
+  function config(options: TwsxClassNameGlobalConfig): TwsxClassNameGlobalConfig;
+
+  /**
+   * Get current configuration
+   */
+  function getConfig(): TwsxClassNameGlobalConfig;
+
+  /**
+   * Extend an existing twsxClassName config
+   */
+  function extend<V extends TwsxClassNameVariantsDefinition>(
+    base: TwsxClassNameVariantFunction<V> | TwsxClassNameVariantsConfig<V>,
+    extension: Partial<TwsxClassNameVariantsConfig<V>>
+  ): TwsxClassNameVariantFunction<V>;
+
+  /**
+   * Define design tokens
+   */
+  function defineTokens(tokens: DesignTokens): DesignTokens;
+
+  /**
+   * Get all defined tokens
+   */
+  function getTokens(): DesignTokens;
+
+  /**
+   * Set a single token value
+   */
+  function setToken(path: string, value: string): void;
+
+  /**
+   * Create a named theme
+   */
+  function createTheme(name: string, tokens: ThemeTokens): ThemeTokens;
+
+  /**
+   * Set the active theme
+   */
+  function setTheme(name: string): string;
+
+  /**
+   * Get the active theme name
+   */
+  function getTheme(): string;
+
+  /**
+   * Get all defined themes
+   */
+  function getThemes(): Record<string, ThemeTokens>;
+
+  /**
+   * Define a custom animation preset
+   */
+  function defineAnimation(name: string, animation: AnimationConfig): void;
+
+  /**
+   * Get all animation presets
+   */
+  function getAnimations(): Record<string, AnimationConfig>;
+
+  /**
+   * Clear all caches
+   */
+  function clearCache(): void;
+
+  /**
+   * Get cache statistics
+   */
+  function getCacheStats(): {
+    classNameCacheSize: number;
+    cssCacheSize: number;
+    styleRegistrySize: number;
+  };
+
+  /**
+   * Get generated CSS for a className (useful for SSR)
+   */
+  function getCSS(className: string): string;
+
+  /**
+   * Get all generated CSS (useful for SSR)
+   */
+  function getAllCSS(): string;
+
+  /**
+   * Extract CSS as a style tag string (for SSR)
+   */
+  function extractCSS(): string;
+
+  /**
+   * Merge multiple class values (alias for cx)
+   */
+  function merge(...args: ClassValue[]): string;
+
+  /**
+   * Compose multiple configs into one
+   */
+  function compose<V extends TwsxClassNameVariantsDefinition>(
+    ...configs: (TwsxClassNameVariantFunction<any> | TwsxClassNameVariantsConfig<any>)[]
+  ): TwsxClassNameVariantsConfig<V>;
+}
+
 // Default export (if needed)
 declare const tailwindToStyle: {
   tws: typeof tws;
   twsx: typeof twsx;
   twsxVariants: typeof twsxVariants;
+  twsxClassName: typeof twsxClassName;
   debouncedTws: typeof debouncedTws;
   debouncedTwsx: typeof debouncedTwsx;
   performanceUtils: typeof performanceUtils;

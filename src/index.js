@@ -3082,3 +3082,6 @@ export {
   INLINE_ANIMATIONS,
 } from "./utils/inlineAnimations.js";
 
+// Export twsxClassName - Unified CSS-in-JS API
+export { twsxClassName } from "./className/index.js";
+
