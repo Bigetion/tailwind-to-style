@@ -2,7 +2,7 @@
  * Tests for twsxClassName - Unified CSS-in-JS API
  */
 
-import { twsxClassName } from "../src/className/index.js";
+import { twsxClassName, tw } from "../src/className/index.js";
 
 describe("twsxClassName", () => {
   beforeEach(() => {
@@ -779,6 +779,70 @@ describe("twsxClassName", () => {
 
       expect(merged.root).toContain("custom-root");
       expect(merged.header).toContain("custom-header");
+    });
+  });
+
+  // ==========================================================================
+  // tw() Atomic CSS Generator Tests
+  // ==========================================================================
+
+  describe("tw() Atomic CSS Generator", () => {
+    test("tw function exists", () => {
+      expect(typeof twsxClassName.tw).toBe("function");
+    });
+
+    test("generates atomic classes from utility string", () => {
+      const classes = twsxClassName.tw("flex gap-3");
+      expect(classes).toContain("tw-flex");
+      expect(classes).toContain("tw-gap-3");
+    });
+
+    test("returns empty string for empty input", () => {
+      expect(twsxClassName.tw("")).toBe("");
+      expect(twsxClassName.tw(null)).toBe("");
+      expect(twsxClassName.tw(undefined)).toBe("");
+    });
+
+    test("caches results for same input", () => {
+      const first = twsxClassName.tw("p-4 m-2");
+      const second = twsxClassName.tw("p-4 m-2");
+      expect(first).toBe(second);
+    });
+
+    test("generates consistent class names", () => {
+      twsxClassName.clearCache();
+      const classes1 = twsxClassName.tw("text-sm text-gray-500");
+      twsxClassName.clearCache();
+      const classes2 = twsxClassName.tw("text-sm text-gray-500");
+      // Class names should be deterministic
+      expect(classes1).toBe(classes2);
+    });
+
+    test("handles pseudo-class modifiers", () => {
+      const classes = twsxClassName.tw("hover:bg-blue-500");
+      expect(classes).toContain("tw-hover-bg-blue-500");
+    });
+
+    test("handles responsive modifiers", () => {
+      const classes = twsxClassName.tw("md:flex lg:hidden");
+      expect(classes).toContain("tw-md-flex");
+      expect(classes).toContain("tw-lg-hidden");
+    });
+
+    test("handles multiple modifiers", () => {
+      const classes = twsxClassName.tw("md:hover:bg-blue-500");
+      expect(classes).toContain("tw-md-hover-bg-blue-500");
+    });
+
+    test("trims whitespace", () => {
+      const classes = twsxClassName.tw("  flex  gap-4  ");
+      expect(classes).toContain("tw-flex");
+      expect(classes).toContain("tw-gap-4");
+    });
+
+    test("handles arbitrary values", () => {
+      const classes = twsxClassName.tw("w-[200px]");
+      expect(classes).toContain("tw-w-_200px_");
     });
   });
 });

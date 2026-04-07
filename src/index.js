@@ -15,24 +15,38 @@ let _ssrCollecting = false;
 
 /**
  * Start collecting CSS for SSR. Call before rendering.
+ * @deprecated Use createSSRCollector() instead
  * @returns {void}
  * @example
+ * // Modern approach (recommended):
+ * import { createSSRCollector } from 'tailwind-to-style'
+ * const ssr = createSSRCollector()
+ * const html = renderToString(<App />)
+ * const css = ssr.extract()
+ * 
+ * // Legacy approach (deprecated):
  * import { startSSR, stopSSR } from 'tailwind-to-style'
  * startSSR()
  * const html = renderToString(<App />)
  * const css = stopSSR()
- * // Inject css into <head> of your HTML response
  */
 export function startSSR() {
+  if (typeof console !== 'undefined' && console.warn) {
+    console.warn('[tailwind-to-style] startSSR() is deprecated. Use createSSRCollector() instead.');
+  }
   _ssrCollectedCss = [];
   _ssrCollecting = true;
 }
 
 /**
  * Stop collecting CSS and return all collected CSS as a single string.
+ * @deprecated Use createSSRCollector().extract() instead
  * @returns {string} All CSS collected during SSR
  */
 export function stopSSR() {
+  if (typeof console !== 'undefined' && console.warn) {
+    console.warn('[tailwind-to-style] stopSSR() is deprecated. Use createSSRCollector().extract() instead.');
+  }
   _ssrCollecting = false;
   const css = _ssrCollectedCss.join('\n');
   _ssrCollectedCss = [];
@@ -41,9 +55,13 @@ export function stopSSR() {
 
 /**
  * Get collected CSS without stopping collection.
+ * @deprecated Use createSSRCollector().peek() instead
  * @returns {string} Currently collected CSS
  */
 export function getSSRStyles() {
+  if (typeof console !== 'undefined' && console.warn) {
+    console.warn('[tailwind-to-style] getSSRStyles() is deprecated. Use createSSRCollector().peek() instead.');
+  }
   return _ssrCollectedCss.join('\n');
 }
 
@@ -3059,12 +3077,38 @@ export {
   createVariantPlugin,
 } from "./plugins/pluginAPI.js";
 
-// Export SSR utilities (startSSR, stopSSR, getSSRStyles are already exported above via function declaration)
+// ============================================================================
+// SSR Exports
+// ============================================================================
+// Modern SSR API (recommended)
+export { createSSRCollector } from "./utils/ssr.js";
+// Legacy SSR functions are exported via function declarations above for backward compatibility
 
 // Export environment detection
 export { IS_BROWSER, IS_SERVER };
 
-// Export dynamic animation utilities
+// ============================================================================
+// Animation Exports
+// ============================================================================
+// Unified animation API (recommended)
+export { 
+  animate,
+  chain,
+  stagger,
+  transition,
+  parallel,
+  createKeyframes,
+  clearKeyframes,
+  cancelAll as cancelAllAnimations,
+  getActiveCount as getActiveAnimationCount,
+  registerPreset,
+  getPresetNames,
+  isSupported as isAnimationSupported,
+  ANIMATION_PRESETS,
+  EASING,
+} from "./utils/animation.js";
+
+// Legacy animation APIs (deprecated - use animate/chain/stagger instead)
 export { applyWebAnimation, initWebAnimations } from "./utils/webAnimations.js";
 
 export {
@@ -3082,6 +3126,10 @@ export {
   INLINE_ANIMATIONS,
 } from "./utils/inlineAnimations.js";
 
-// Export twsxClassName - Unified CSS-in-JS API
-export { twsxClassName } from "./className/index.js";
+// ============================================================================
+// Main API Exports
+// ============================================================================
+// twsxClassName - Unified CSS-in-JS API with variants and slots
+// tw - Atomic CSS class generator with pseudo-class support
+export { twsxClassName, tw } from "./className/index.js";
 

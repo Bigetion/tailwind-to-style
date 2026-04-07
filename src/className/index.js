@@ -327,17 +327,78 @@ function evictCache(cache, maxSize = MAX_CACHE_SIZE) {
 }
 
 // ============================================================================
-// CSS Injection System
+// CSS Injection System (Optimized)
 // ============================================================================
 
+let styleTag = null;
+let pendingCSS = [];
+let rafScheduled = false;
+const MAX_STYLE_REGISTRY_SIZE = 3000;
+
 function injectCSS(className, css) {
+  // Skip if already injected with same CSS
   if (styleRegistry.has(className)) {
     const existing = styleRegistry.get(className);
     if (existing === css) return;
   }
 
   styleRegistry.set(className, css);
+  
+  // Evict old styles if registry too large
+  evictStyleRegistry();
 
+  if (IS_BROWSER) {
+    // Batch CSS injection with requestAnimationFrame
+    pendingCSS.push(css);
+    scheduleStyleUpdate();
+  }
+}
+
+function scheduleStyleUpdate() {
+  if (rafScheduled) return;
+  rafScheduled = true;
+  
+  requestAnimationFrame(() => {
+    flushPendingCSS();
+    rafScheduled = false;
+  });
+}
+
+function flushPendingCSS() {
+  if (pendingCSS.length === 0) return;
+  
+  ensureStyleTag();
+  
+  // Append only new CSS (not rebuild all)
+  const newCSS = pendingCSS.join("\n");
+  styleTag.textContent += (styleTag.textContent ? "\n" : "") + newCSS;
+  pendingCSS = [];
+}
+
+function ensureStyleTag() {
+  if (styleTag && styleTag.parentNode) return styleTag;
+  
+  styleTag = document.getElementById("twsx-classname-style");
+  if (!styleTag) {
+    styleTag = document.createElement("style");
+    styleTag.id = "twsx-classname-style";
+    styleTag.setAttribute("data-twsx-classname", "");
+    document.head.appendChild(styleTag);
+  }
+  return styleTag;
+}
+
+function evictStyleRegistry() {
+  if (styleRegistry.size <= MAX_STYLE_REGISTRY_SIZE) return;
+  
+  // Remove oldest 20% entries
+  const removeCount = Math.floor(MAX_STYLE_REGISTRY_SIZE * 0.2);
+  const iter = styleRegistry.keys();
+  for (let i = 0; i < removeCount; i++) {
+    styleRegistry.delete(iter.next().value);
+  }
+  
+  // Rebuild style tag after eviction (rare operation)
   if (IS_BROWSER) {
     rebuildStyleTag();
   }
@@ -345,15 +406,7 @@ function injectCSS(className, css) {
 
 function rebuildStyleTag() {
   if (!IS_BROWSER) return;
-
-  let styleTag = document.getElementById("twsx-classname-style");
-  if (!styleTag) {
-    styleTag = document.createElement("style");
-    styleTag.id = "twsx-classname-style";
-    styleTag.setAttribute("data-twsx-classname", "");
-    document.head.appendChild(styleTag);
-  }
-
+  ensureStyleTag();
   styleTag.textContent = [...styleRegistry.values()].join("\n");
 }
 
@@ -1306,8 +1359,179 @@ twsxClassName.compose = function(...configs) {
 };
 
 // ============================================================================
+// Atomic CSS Generator: tw()
+// ============================================================================
+
+const atomicCache = new Map();
+const atomicStyleRegistry = new Map();
+
+/**
+ * tw() - Atomic CSS class generator
+ * 
+ * Generates reusable atomic CSS classes from Tailwind utilities.
+ * Unlike tws() which returns inline styles, tw() returns class names
+ * with auto-injected CSS that supports pseudo-classes and responsive.
+ * 
+ * @example
+ * // Instead of: style="${tws('flex gap-3')}"  (inline, no pseudo)
+ * // Use:        class="${tw('flex gap-3 hover:bg-gray-100')}"
+ * 
+ * // Returns: "tw-flex tw-gap-3 tw-hover-bg-gray-100"
+ * // Auto-injects CSS for each atomic class
+ */
+function tw(classString) {
+  if (!classString || typeof classString !== "string") return "";
+  
+  const trimmed = classString.trim();
+  
+  // Check full string cache first
+  if (atomicCache.has(trimmed)) {
+    return atomicCache.get(trimmed);
+  }
+  
+  const classes = trimmed.split(/\s+/).filter(Boolean);
+  const resultClasses = [];
+  
+  for (const cls of classes) {
+    const atomicClass = generateAtomicClass(cls);
+    if (atomicClass) {
+      resultClasses.push(atomicClass);
+    }
+  }
+  
+  const result = resultClasses.join(" ");
+  
+  // Cache the full result
+  atomicCache.set(trimmed, result);
+  evictAtomicCache();
+  
+  return result;
+}
+
+function generateAtomicClass(utilityClass) {
+  // Check if already generated
+  if (atomicStyleRegistry.has(utilityClass)) {
+    return atomicStyleRegistry.get(utilityClass).className;
+  }
+  
+  // Parse the utility class for modifiers (hover:, md:, etc.)
+  const { modifiers, baseClass } = parseUtilityModifiers(utilityClass);
+  
+  // Generate safe className (replace : and / with -)
+  const safeClassName = "tw-" + utilityClass
+    .replace(/:/g, "-")
+    .replace(/\//g, "-")
+    .replace(/\[/g, "_")
+    .replace(/\]/g, "_")
+    .replace(/\./g, "_");
+  
+  // Build CSS selector with modifiers
+  let selector = `.${safeClassName.replace(/([[\]_.])/g, "\\$1")}`;
+  let cssRule = "";
+  
+  if (modifiers.length > 0) {
+    // Handle pseudo-classes and responsive
+    const { pseudoClasses, breakpoint } = categorizeModifiers(modifiers);
+    
+    // Build selector with pseudo-classes
+    if (pseudoClasses.length > 0) {
+      selector += pseudoClasses.map(p => `:${p}`).join("");
+    }
+    
+    // Get CSS for base class
+    const baseCSS = twsx({ [selector]: baseClass }, { inject: false });
+    
+    // Wrap in media query if responsive
+    if (breakpoint) {
+      const bp = BREAKPOINTS[breakpoint];
+      if (bp) {
+        cssRule = `@media (min-width: ${bp}) { ${baseCSS} }`;
+      } else {
+        cssRule = baseCSS;
+      }
+    } else {
+      cssRule = baseCSS;
+    }
+  } else {
+    // No modifiers, simple class
+    cssRule = twsx({ [selector]: utilityClass }, { inject: false });
+  }
+  
+  // Store and inject
+  atomicStyleRegistry.set(utilityClass, { className: safeClassName, css: cssRule });
+  injectCSS(safeClassName, cssRule);
+  
+  return safeClassName;
+}
+
+function parseUtilityModifiers(utilityClass) {
+  const parts = utilityClass.split(":");
+  if (parts.length === 1) {
+    return { modifiers: [], baseClass: utilityClass };
+  }
+  
+  const baseClass = parts.pop();
+  return { modifiers: parts, baseClass };
+}
+
+function categorizeModifiers(modifiers) {
+  const pseudoClasses = [];
+  let breakpoint = null;
+  
+  const responsiveBreakpoints = new Set(Object.keys(BREAKPOINTS));
+  const pseudoMap = {
+    hover: "hover",
+    focus: "focus",
+    active: "active",
+    disabled: "disabled",
+    "focus-visible": "focus-visible",
+    "focus-within": "focus-within",
+    visited: "visited",
+    checked: "checked",
+    required: "required",
+    invalid: "invalid",
+    first: "first-child",
+    last: "last-child",
+    odd: "nth-child(odd)",
+    even: "nth-child(even)",
+    "group-hover": null, // handled differently
+    "peer-focus": null,
+  };
+  
+  for (const mod of modifiers) {
+    if (responsiveBreakpoints.has(mod)) {
+      breakpoint = mod;
+    } else if (pseudoMap[mod]) {
+      pseudoClasses.push(pseudoMap[mod]);
+    } else if (mod.startsWith("group-")) {
+      // Group states: .group:hover .tw-class
+      const state = mod.replace("group-", "");
+      pseudoClasses.push(`group-${state}`);
+    } else if (mod.startsWith("peer-")) {
+      // Peer states: .peer:focus ~ .tw-class
+      const state = mod.replace("peer-", "");
+      pseudoClasses.push(`peer-${state}`);
+    }
+  }
+  
+  return { pseudoClasses, breakpoint };
+}
+
+function evictAtomicCache() {
+  if (atomicCache.size <= MAX_CACHE_SIZE) return;
+  const excess = atomicCache.size - MAX_CACHE_SIZE;
+  const iter = atomicCache.keys();
+  for (let i = 0; i < excess; i++) {
+    atomicCache.delete(iter.next().value);
+  }
+}
+
+// Attach tw to twsxClassName namespace
+twsxClassName.tw = tw;
+
+// ============================================================================
 // Exports
 // ============================================================================
 
-export { twsxClassName };
+export { twsxClassName, tw };
 export default twsxClassName;

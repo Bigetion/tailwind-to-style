@@ -788,7 +788,464 @@ export namespace twsxClassName {
   function compose<V extends TwsxClassNameVariantsDefinition>(
     ...configs: (TwsxClassNameVariantFunction<any> | TwsxClassNameVariantsConfig<any>)[]
   ): TwsxClassNameVariantsConfig<V>;
+
+  /**
+   * Atomic CSS class generator.
+   * Generates reusable atomic CSS classes from Tailwind utilities.
+   * Unlike tws() which returns inline styles, tw() returns class names
+   * with auto-injected CSS that supports pseudo-classes and responsive.
+   *
+   * @example
+   * tw('flex gap-3')
+   * // → "tw-flex tw-gap-3"
+   *
+   * tw('hover:bg-blue-500 md:flex-row')
+   * // → "tw-hover-bg-blue-500 tw-md-flex-row"
+   *
+   * // Usage in templates
+   * <div class="${tw('flex gap-3 hover:bg-gray-100')}">
+   */
+  function tw(classString: string): string;
 }
+
+// ============================================================================
+// tw() - Atomic CSS Class Generator (standalone export)
+// ============================================================================
+
+/**
+ * Atomic CSS class generator.
+ * Generates reusable atomic CSS classes from Tailwind utilities.
+ * Unlike tws() which returns inline styles, tw() returns class names
+ * with auto-injected CSS that supports pseudo-classes and responsive breakpoints.
+ *
+ * @param classString - Space-separated Tailwind utility classes
+ * @returns Space-separated atomic class names (e.g., "tw-flex tw-gap-3")
+ *
+ * @example
+ * // Basic usage
+ * tw('flex gap-3 items-center')
+ * // → "tw-flex tw-gap-3 tw-items-center"
+ *
+ * // With pseudo-classes (unlike tws, these work!)
+ * tw('bg-gray-100 hover:bg-gray-200 focus:ring-2')
+ * // → "tw-bg-gray-100 tw-hover-bg-gray-200 tw-focus-ring-2"
+ *
+ * // With responsive breakpoints
+ * tw('flex flex-col md:flex-row lg:gap-8')
+ * // → "tw-flex tw-flex-col tw-md-flex-row tw-lg-gap-8"
+ *
+ * // Combined modifiers
+ * tw('md:hover:bg-blue-500')
+ * // → "tw-md-hover-bg-blue-500"
+ *
+ * // In HTML/JSX
+ * <div class={tw('flex gap-3 hover:bg-gray-100')}>...</div>
+ */
+export function tw(classString: string): string;
+
+// ============================================================================
+// SSR Collector (Modern API)
+// ============================================================================
+
+/**
+ * SSR Collector options
+ */
+export interface SSRCollectorOptions {
+  /** Enable CSS deduplication (default: true) */
+  dedupe?: boolean;
+  /** Enable CSS minification (default: false) */
+  minify?: boolean;
+  /** Sort CSS by specificity (default: true) */
+  sort?: boolean;
+}
+
+/**
+ * Extract options for SSR
+ */
+export interface SSRExtractOptions {
+  /** Style tag ID (default: "twsx-ssr") */
+  id?: string;
+  /** CSP nonce value */
+  nonce?: string;
+  /** Minify output CSS */
+  minify?: boolean;
+}
+
+/**
+ * Critical CSS extraction result
+ */
+export interface SSRCriticalResult {
+  /** Critical CSS wrapped in style tag */
+  critical: string;
+  /** Remaining non-critical CSS */
+  rest: string;
+  /** Extraction statistics */
+  stats: {
+    criticalSize: number;
+    criticalCount: number;
+    totalCount: number;
+  };
+}
+
+/**
+ * SSR statistics
+ */
+export interface SSRStats {
+  ruleCount: number;
+  uniqueCount: number;
+  totalSize: number;
+  minifiedSize: number;
+}
+
+/**
+ * SSR Collector instance
+ */
+export interface SSRCollector {
+  /** Check if currently collecting */
+  readonly isCollecting: boolean;
+  /** Get collected CSS rule count */
+  readonly count: number;
+  /** Get unique CSS rule count */
+  readonly uniqueCount: number;
+
+  /** Peek at collected CSS without stopping */
+  peek(): string;
+  /** Extract CSS as raw string and stop collecting */
+  extractRaw(options?: { shouldMinify?: boolean }): string;
+  /** Extract CSS wrapped in <style> tag and stop collecting */
+  extract(options?: SSRExtractOptions): string;
+  /** Extract critical CSS (above-the-fold) */
+  extractCritical(options?: { maxSize?: number; nonce?: string; id?: string }): SSRCriticalResult;
+  /** Clear collected CSS and optionally restart */
+  clear(restart?: boolean): void;
+  /** Get collection statistics */
+  getStats(): SSRStats;
+  /** @internal Add CSS to collection */
+  _collect(css: string): void;
+}
+
+/**
+ * Create an SSR collector for collecting CSS during server-side rendering.
+ * 
+ * @example
+ * const ssr = createSSRCollector({ dedupe: true, minify: true })
+ * const html = renderToString(<App />)
+ * const css = ssr.extract()
+ * 
+ * // With critical CSS extraction
+ * const { critical, rest } = ssr.extractCritical({ maxSize: 14000 })
+ */
+export function createSSRCollector(options?: SSRCollectorOptions): SSRCollector;
+
+// ============================================================================
+// Animation System (Unified API)
+// ============================================================================
+
+/**
+ * Animation keyframe definition
+ */
+export interface AnimationKeyframe {
+  [property: string]: string | number;
+}
+
+/**
+ * Animation options (Web Animations API compatible)
+ */
+export interface AnimationOptions {
+  duration?: number;
+  easing?: string;
+  delay?: number;
+  iterations?: number | "infinite";
+  fill?: "none" | "forwards" | "backwards" | "both" | "auto";
+  direction?: "normal" | "reverse" | "alternate" | "alternate-reverse";
+  /** Called when animation starts */
+  onStart?: (animation: Animation) => void;
+  /** Called when animation completes */
+  onComplete?: (animation: Animation) => void;
+  /** Called when animation is cancelled */
+  onCancel?: (animation: Animation) => void;
+  /** Custom animation ID */
+  id?: string;
+}
+
+/**
+ * Animation preset configuration
+ */
+export interface AnimationPresetConfig {
+  keyframes: AnimationKeyframe[];
+  options: AnimationOptions;
+}
+
+/**
+ * Animation controller returned by animate()
+ */
+export interface AnimationController {
+  /** Animation ID */
+  readonly id: string | null;
+  /** Native Animation object */
+  readonly animation: Animation | null;
+  /** Current play state */
+  readonly playState: AnimationPlayState;
+  /** Current time in milliseconds */
+  currentTime: number;
+  /** Promise that resolves when animation finishes */
+  readonly finished: Promise<Animation>;
+  /** Whether animation is pending */
+  readonly pending: boolean;
+
+  /** Play the animation */
+  play(): AnimationController;
+  /** Pause the animation */
+  pause(): AnimationController;
+  /** Cancel the animation */
+  cancel(): AnimationController;
+  /** Finish the animation immediately */
+  finish(): AnimationController;
+  /** Reverse the animation */
+  reverse(): AnimationController;
+  /** Seek to specific progress (0-1) */
+  seek(progress: number): AnimationController;
+  /** Set playback speed */
+  setSpeed(rate: number): AnimationController;
+  /** Replay animation from start */
+  replay(): AnimationController;
+  /** Promise interface */
+  then<T>(resolve?: (value: Animation) => T, reject?: (reason: any) => T): Promise<T>;
+}
+
+/**
+ * Chain controller for sequential animations
+ */
+export interface ChainController {
+  /** Current step index */
+  readonly currentStep: number;
+  /** Total number of steps */
+  readonly totalSteps: number;
+  /** Progress (0-1) */
+  readonly progress: number;
+  /** Cancel the chain */
+  cancel(): void;
+  /** Promise that resolves when chain completes */
+  readonly finished: Promise<void>;
+  then<T>(resolve?: () => T, reject?: (reason: any) => T): Promise<T>;
+}
+
+/**
+ * Stagger controller for parallel staggered animations
+ */
+export interface StaggerController {
+  /** Individual animation controllers */
+  readonly controllers: AnimationController[];
+  /** Number of elements */
+  readonly count: number;
+  /** Cancel all animations */
+  cancelAll(): StaggerController;
+  /** Pause all animations */
+  pauseAll(): StaggerController;
+  /** Play all animations */
+  playAll(): StaggerController;
+  /** Reverse all animations */
+  reverseAll(): StaggerController;
+  /** Set speed for all animations */
+  setSpeedAll(rate: number): StaggerController;
+  /** Wait for all animations to complete */
+  waitAll(): Promise<void>;
+  then<T>(resolve?: () => T, reject?: (reason: any) => T): Promise<T>;
+}
+
+/**
+ * Stagger options
+ */
+export interface StaggerOptions extends AnimationOptions {
+  /** Delay between each element (default: 50ms) */
+  delay?: number;
+  /** Direction to start stagger */
+  from?: "start" | "end" | "center" | "random";
+  /** Called for each element */
+  onEach?: (index: number, element: HTMLElement) => void;
+  /** Called when all animations complete */
+  onAllComplete?: () => void;
+}
+
+/**
+ * Chain animation item
+ */
+export type ChainAnimationItem = 
+  | string 
+  | { name: string; delay?: number; options?: AnimationOptions };
+
+/**
+ * Animation preset names
+ */
+export type AnimationPresetName =
+  | "fadeIn" | "fadeOut"
+  | "slideUp" | "slideDown" | "slideLeft" | "slideRight"
+  | "zoomIn" | "zoomOut"
+  | "bounce" | "shake" | "pulse" | "spin"
+  | "flipX" | "flipY"
+  | "enterScale" | "exitScale"
+  | "wiggle" | "heartbeat";
+
+/**
+ * Easing preset names
+ */
+export type EasingPresetName =
+  | "linear" | "ease" | "easeIn" | "easeOut" | "easeInOut"
+  | "spring" | "springLight" | "springMedium" | "springHeavy"
+  | "smooth" | "smoothIn" | "smoothOut"
+  | "bounce" | "elastic"
+  | "anticipate" | "overshoot";
+
+/**
+ * Animation presets object
+ */
+export const ANIMATION_PRESETS: Record<AnimationPresetName, AnimationPresetConfig>;
+
+/**
+ * Easing presets object
+ */
+export const EASING: Record<EasingPresetName, string>;
+
+/**
+ * Apply animation to an element
+ * 
+ * @example
+ * // Using preset
+ * const ctrl = animate(element, 'fadeIn')
+ * 
+ * // With options
+ * animate(element, 'slideUp', { duration: 600, easing: 'spring' })
+ * 
+ * // With callbacks
+ * animate(element, 'bounce', {
+ *   onComplete: () => console.log('done!')
+ * })
+ * 
+ * // Control animation
+ * ctrl.pause()
+ * ctrl.reverse()
+ * await ctrl.finished
+ */
+export function animate(
+  element: HTMLElement,
+  animation: AnimationPresetName | { keyframes: AnimationKeyframe[]; options?: AnimationOptions },
+  options?: AnimationOptions
+): AnimationController;
+
+/**
+ * Chain multiple animations sequentially
+ * 
+ * @example
+ * await chain(element, ['fadeIn', 'pulse', 'fadeOut'])
+ * 
+ * // With delays
+ * chain(element, [
+ *   'fadeIn',
+ *   { name: 'pulse', delay: 100 },
+ *   'fadeOut'
+ * ])
+ */
+export function chain(
+  element: HTMLElement,
+  animations: ChainAnimationItem[],
+  options?: { onStepComplete?: (step: number, name: string) => void; onComplete?: () => void; onCancel?: (step: number) => void }
+): ChainController;
+
+/**
+ * Apply staggered animation to multiple elements
+ * 
+ * @example
+ * // Basic stagger
+ * stagger(listItems, 'slideUp', { delay: 50 })
+ * 
+ * // Wait for all
+ * await stagger(items, 'fadeIn').waitAll()
+ * 
+ * // From center
+ * stagger(items, 'zoomIn', { from: 'center' })
+ */
+export function stagger(
+  elements: HTMLElement[] | NodeListOf<HTMLElement>,
+  animation: AnimationPresetName | { keyframes: AnimationKeyframe[]; options?: AnimationOptions },
+  options?: StaggerOptions
+): StaggerController;
+
+/**
+ * Run multiple animations in parallel
+ * 
+ * @example
+ * await parallel([
+ *   { element: el1, animation: 'fadeIn' },
+ *   { element: el2, animation: 'slideUp' }
+ * ])
+ */
+export function parallel(
+  configs: Array<{ element: HTMLElement; animation: AnimationPresetName | AnimationPresetConfig; options?: AnimationOptions }>
+): Promise<AnimationController[]>;
+
+/**
+ * Apply CSS transition to element
+ * 
+ * @example
+ * await transition(element, { opacity: 0, transform: 'scale(0.9)' }, { duration: 300 })
+ */
+export function transition(
+  element: HTMLElement,
+  properties: Record<string, string | number>,
+  options?: { duration?: number; easing?: string; delay?: number }
+): Promise<void>;
+
+/**
+ * Create CSS keyframes and return animation CSS value
+ * 
+ * @example
+ * const animation = createKeyframes('myAnim', {
+ *   '0%': { opacity: 0 },
+ *   '100%': { opacity: 1 }
+ * })
+ * // → "myAnim 500ms ease-out forwards"
+ */
+export function createKeyframes(
+  name: string,
+  frames: Record<string, Record<string, string | number>>,
+  options?: { duration?: number; easing?: string; fill?: string; iterations?: number | "infinite"; inject?: boolean }
+): string;
+
+/**
+ * Clear all injected keyframes from document
+ */
+export function clearKeyframes(): void;
+
+/**
+ * Cancel all active animations
+ */
+export function cancelAllAnimations(): void;
+
+/**
+ * Get count of currently active animations
+ */
+export function getActiveAnimationCount(): number;
+
+/**
+ * Register a custom animation preset
+ * 
+ * @example
+ * registerPreset('myFade', {
+ *   keyframes: [{ opacity: 0 }, { opacity: 1 }],
+ *   options: { duration: 400 }
+ * })
+ */
+export function registerPreset(name: string, config: AnimationPresetConfig): void;
+
+/**
+ * Get all available preset names
+ */
+export function getPresetNames(): string[];
+
+/**
+ * Check if Web Animations API is supported
+ */
+export function isAnimationSupported(): boolean;
 
 // Default export (if needed)
 declare const tailwindToStyle: {
@@ -796,9 +1253,21 @@ declare const tailwindToStyle: {
   twsx: typeof twsx;
   twsxVariants: typeof twsxVariants;
   twsxClassName: typeof twsxClassName;
+  tw: typeof tw;
   debouncedTws: typeof debouncedTws;
   debouncedTwsx: typeof debouncedTwsx;
   performanceUtils: typeof performanceUtils;
+  // SSR
+  createSSRCollector: typeof createSSRCollector;
+  // Animation
+  animate: typeof animate;
+  chain: typeof chain;
+  stagger: typeof stagger;
+  parallel: typeof parallel;
+  transition: typeof transition;
+  createKeyframes: typeof createKeyframes;
+  ANIMATION_PRESETS: typeof ANIMATION_PRESETS;
+  EASING: typeof EASING;
 };
 
 export default tailwindToStyle;

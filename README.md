@@ -24,6 +24,8 @@
   - [`tws()` — Tailwind to Inline Styles](#tws--tailwind-to-inline-styles)
   - [`twsx()` — CSS-in-JS Engine](#twsx--css-in-js-engine)
   - [`twsxVariants()` — Component Variant System](#twsxvariants--component-variant-system)
+  - [`twsxClassName()` — Unified CSS-in-JS](#twsxclassname--unified-css-in-js)
+  - [`tw()` — Atomic CSS Classes](#tw--atomic-css-classes)
   - [`cx()` — Conditional Class Builder](#cx--conditional-class-builder)
 - [Configuration & Plugins](#configuration--plugins)
   - [`configure()` — Custom Theme](#configure--custom-theme)
@@ -52,6 +54,8 @@
 | **Full Tailwind Support** | All utilities, responsive, pseudo-states, arbitrary values |
 | **SCSS-like Nesting** | `twsx()` for complex nested selector-based styles |
 | **Variant System** | Type-safe component variants like CVA/tailwind-variants |
+| **Unified CSS-in-JS** | `twsxClassName()` — one API for basic/variants/slots |
+| **Atomic CSS Classes** | `tw()` — reusable classes with hover/responsive support |
 | **Conditional Classes** | Built-in `cx()` utility (like clsx/classnames) |
 | **SSR Support** | Server-side rendering with `startSSR()`/`stopSSR()` |
 | **@css Directive** | Inject raw CSS for vendor-specific or complex properties |
@@ -386,6 +390,205 @@ btnClass('bg-blue-500 text-white')
 btnClass({ 'opacity-50': disabled })
 // → 'px-4 py-2 rounded font-medium transition-colors opacity-50'
 ```
+
+---
+
+### `twsxClassName()` — Unified CSS-in-JS
+
+The complete CSS-in-JS solution with automatic mode detection. Generates scoped class names with auto-injected CSS from Tailwind classes.
+
+```javascript
+import { twsxClassName, tw } from 'tailwind-to-style'
+```
+
+**Basic Mode** — Simple className generation:
+
+```javascript
+// Returns: "btn-a1b2c3d4" (or "btn" if hash: false)
+const button = twsxClassName({
+  name: 'btn',
+  _: 'px-4 py-2 bg-blue-500 text-white rounded-lg',
+  hover: 'bg-blue-600',
+  focus: 'ring-2 ring-blue-500',
+  active: 'bg-blue-700',
+  dark: 'bg-blue-400',
+})
+
+// Usage
+<button class="${button}">Click me</button>
+```
+
+**Variants Mode** — Component variants like CVA/tailwind-variants:
+
+```javascript
+const button = twsxClassName({
+  name: 'btn',
+  base: 'px-4 py-2 font-medium rounded-lg transition-colors',
+  variants: {
+    variant: {
+      primary: 'bg-blue-500 text-white hover:bg-blue-600',
+      secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300',
+      outline: 'border-2 border-blue-500 text-blue-500 hover:bg-blue-50',
+    },
+    size: {
+      sm: 'text-sm px-3 py-1.5',
+      md: 'text-base px-4 py-2',
+      lg: 'text-lg px-6 py-3',
+    },
+    disabled: {
+      true: 'opacity-50 cursor-not-allowed',
+      false: 'cursor-pointer',
+    }
+  },
+  compoundVariants: [
+    { variant: 'primary', size: 'lg', class: 'shadow-lg' },
+  ],
+  defaultVariants: {
+    variant: 'primary',
+    size: 'md',
+    disabled: false,
+  },
+})
+
+// Usage
+<button class="${button()}">Default</button>
+<button class="${button({ variant: 'secondary', size: 'lg' })}">Large Secondary</button>
+<button class="${button({ disabled: true })}">Disabled</button>
+```
+
+**Slots Mode** — Multi-part components:
+
+```javascript
+const card = twsxClassName({
+  name: 'card',
+  slots: {
+    root: 'bg-white rounded-xl shadow-lg overflow-hidden',
+    header: 'px-6 py-4 border-b border-gray-200',
+    title: 'text-xl font-bold text-gray-900',
+    body: 'px-6 py-4',
+    footer: 'px-6 py-4 border-t border-gray-200',
+  },
+  variants: {
+    variant: {
+      elevated: { root: 'shadow-2xl' },
+      outlined: { root: 'shadow-none border-2 border-gray-200' },
+    },
+  },
+})
+
+// Usage
+const classes = card({ variant: 'elevated' })
+<div class="${classes.root}">
+  <div class="${classes.header}">
+    <h2 class="${classes.title}">Card Title</h2>
+  </div>
+  <div class="${classes.body}">Content here</div>
+  <div class="${classes.footer}">Footer</div>
+</div>
+```
+
+**Namespace Methods:**
+
+```javascript
+// Global configuration
+twsxClassName.config({ prefix: 'my-app', hash: false })
+
+// Design tokens
+twsxClassName.defineTokens({
+  colors: { primary: '#3b82f6', danger: '#ef4444' },
+  spacing: { sm: '0.5rem', md: '1rem' },
+})
+const btn = twsxClassName({ _: 'bg-$colors.primary' })
+
+// Themes
+twsxClassName.createTheme('dark', { background: '#1f2937', text: '#f9fafb' })
+twsxClassName.setTheme('dark')
+
+// Extend existing configs
+const iconButton = twsxClassName.extend(button, {
+  base: 'p-0 aspect-square',
+  variants: { size: { sm: 'w-8 h-8', md: 'w-10 h-10' } },
+})
+
+// SSR support
+const cssString = twsxClassName.extractCSS()
+// → '<style data-twsx-classname>...</style>'
+
+// Cache management
+twsxClassName.clearCache()
+twsxClassName.getCacheStats()
+```
+
+---
+
+### `tw()` — Atomic CSS Classes
+
+Generates reusable atomic CSS classes from Tailwind utilities. Unlike `tws()` which returns inline styles, `tw()` returns class names with auto-injected CSS — supporting pseudo-classes and responsive breakpoints.
+
+```javascript
+import { tw } from 'tailwind-to-style'
+// or: import { twsxClassName } from '...' → twsxClassName.tw(...)
+```
+
+**Basic Usage:**
+
+```javascript
+// Returns: "tw-flex tw-gap-3 tw-items-center"
+tw('flex gap-3 items-center')
+
+// Usage
+<div class="${tw('flex gap-3 items-center')}">
+  <span>Item 1</span>
+  <span>Item 2</span>
+</div>
+```
+
+**With Pseudo-classes:**
+
+```javascript
+// Returns: "tw-bg-gray-100 tw-hover-bg-gray-200 tw-focus-ring-2"
+tw('bg-gray-100 hover:bg-gray-200 focus:ring-2')
+
+// Unlike tws(), these actually work!
+<div class="${tw('opacity-0 hover:opacity-100 transition-opacity')}">
+  Hover to reveal
+</div>
+```
+
+**With Responsive Breakpoints:**
+
+```javascript
+// Returns: "tw-flex tw-flex-col tw-md-flex-row tw-lg-gap-8"
+tw('flex flex-col md:flex-row lg:gap-8')
+
+<div class="${tw('grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4')}">
+  <!-- Responsive grid -->
+</div>
+```
+
+**Combining with twsxClassName:**
+
+```javascript
+const button = twsxClassName({
+  name: 'btn',
+  base: 'px-4 py-2 rounded-lg',
+  variants: { color: { primary: 'bg-blue-500', danger: 'bg-red-500' } },
+})
+
+// Use tw() for layout, twsxClassName for components
+<div class="${tw('flex gap-3 flex-wrap')}">
+  <button class="${button({ color: 'primary' })}">Save</button>
+  <button class="${button({ color: 'danger' })}">Delete</button>
+</div>
+```
+
+**When to use which:**
+
+| Function | Use Case | Example |
+|----------|----------|---------|
+| `tws()` | Quick inline styles, no pseudo | `style="${tws('p-4 bg-blue')}"` |
+| `tw()` | Reusable layout utilities | `class="${tw('flex gap-3 hover:...')}"` |
+| `twsxClassName` | Components with variants | `class="${button({ size: 'lg' })}"` |
 
 ---
 
