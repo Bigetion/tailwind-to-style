@@ -13,6 +13,7 @@ import {
   BREAKPOINTS,
   PSEUDO_VARIANTS,
   SPECIAL_VARIANTS,
+  ATTRIBUTE_VARIANTS,
 } from "../core/constants.js";
 
 // Cache for parsed selectors
@@ -71,6 +72,9 @@ export function resolveVariants(selector, variants) {
       media = BREAKPOINTS[v];
     } else if (PSEUDO_VARIANTS.has(v)) {
       finalSelector += `:${v}`;
+    } else if (ATTRIBUTE_VARIANTS.has(v)) {
+      // Tailwind v4: attribute selector (e.g., open -> [open])
+      finalSelector += `[${v}]`;
     } else if (v === "dark") {
       // Special handling for dark variant
       finalSelector = `.dark ${finalSelector}`;
@@ -79,6 +83,9 @@ export function resolveVariants(selector, variants) {
         if (v.startsWith(`${key}-`)) {
           const state = v.slice(key.length + 1);
           finalSelector = SPECIAL_VARIANTS[key](state, finalSelector);
+          break;
+        } else if (v === key) {
+          // Exact match (e.g., 'not', 'has' without a sub-state)
           break;
         }
       }

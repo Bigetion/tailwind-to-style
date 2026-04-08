@@ -1,6 +1,6 @@
 {
   "name": "tailwind-to-style",
-  "version": "3.2.2",
+  "version": "3.3.0",
   "description": "Runtime Tailwind CSS to inline styles converter. Zero build step, SSR support, tree-shakeable. Works with React, Vue, Svelte, vanilla JS.",
   "type": "module",
   "main": "dist/index.cjs",
@@ -39,6 +39,11 @@
       "types": "./dist/cx.d.ts",
       "import": "./dist/cx.esm.js",
       "require": "./dist/cx.cjs"
+    },
+    "./classname": {
+      "types": "./dist/className/index.d.ts",
+      "import": "./dist/className/index.esm.js",
+      "require": "./dist/className/index.cjs"
     },
     "./preflight.css": "./preflight.css",
     "./package.json": "./package.json"

@@ -81,13 +81,15 @@ const theme = {
   borderOpacity: ({ theme }) => theme("opacity"),
   borderRadius: {
     none: "0px",
-    sm: "0.125rem",
+    xs: "0.125rem",
+    sm: "0.25rem",
     DEFAULT: "0.25rem",
     md: "0.375rem",
     lg: "0.5rem",
     xl: "0.75rem",
     "2xl": "1rem",
     "3xl": "1.5rem",
+    "4xl": "2rem",
     full: "9999px",
     custom: "custom_value",
   },
@@ -103,7 +105,8 @@ const theme = {
     custom: "custom_value",
   },
   boxShadow: {
-    sm: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+    xs: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+    sm: "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
     DEFAULT: "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
     md: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
     lg: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
@@ -145,6 +148,7 @@ const theme = {
       700: "#334155",
       800: "#1e293b",
       900: "#0f172a",
+      950: "#020617",
     },
     gray: {
       50: "#f9fafb",
@@ -157,6 +161,7 @@ const theme = {
       700: "#374151",
       800: "#1f2937",
       900: "#111827",
+      950: "#030712",
     },
     zinc: {
       50: "#fafafa",
@@ -169,6 +174,7 @@ const theme = {
       700: "#3f3f46",
       800: "#27272a",
       900: "#18181b",
+      950: "#09090b",
     },
     neutral: {
       50: "#fafafa",
@@ -181,6 +187,7 @@ const theme = {
       700: "#404040",
       800: "#262626",
       900: "#171717",
+      950: "#0a0a0a",
     },
     stone: {
       50: "#fafaf9",
@@ -193,6 +200,7 @@ const theme = {
       700: "#44403c",
       800: "#292524",
       900: "#1c1917",
+      950: "#0c0a09",
     },
     red: {
       50: "#fef2f2",
@@ -205,6 +213,7 @@ const theme = {
       700: "#b91c1c",
       800: "#991b1b",
       900: "#7f1d1d",
+      950: "#450a0a",
     },
     orange: {
       50: "#fff7ed",
@@ -217,6 +226,7 @@ const theme = {
       700: "#c2410c",
       800: "#9a3412",
       900: "#7c2d12",
+      950: "#431407",
     },
     amber: {
       50: "#fffbeb",
@@ -229,6 +239,7 @@ const theme = {
       700: "#b45309",
       800: "#92400e",
       900: "#78350f",
+      950: "#451a03",
     },
     yellow: {
       50: "#fefce8",
@@ -241,6 +252,7 @@ const theme = {
       700: "#a16207",
       800: "#854d0e",
       900: "#713f12",
+      950: "#422006",
     },
     lime: {
       50: "#f7fee7",
@@ -253,6 +265,7 @@ const theme = {
       700: "#4d7c0f",
       800: "#3f6212",
       900: "#365314",
+      950: "#1a2e05",
     },
     green: {
       50: "#f0fdf4",
@@ -265,6 +278,7 @@ const theme = {
       700: "#15803d",
       800: "#166534",
       900: "#14532d",
+      950: "#052e16",
     },
     emerald: {
       50: "#ecfdf5",
@@ -277,6 +291,7 @@ const theme = {
       700: "#047857",
       800: "#065f46",
       900: "#064e3b",
+      950: "#022c22",
     },
     teal: {
       50: "#f0fdfa",
@@ -289,6 +304,7 @@ const theme = {
       700: "#0f766e",
       800: "#115e59",
       900: "#134e4a",
+      950: "#042f2e",
     },
     cyan: {
       50: "#ecfeff",
@@ -301,6 +317,7 @@ const theme = {
       700: "#0e7490",
       800: "#155e75",
       900: "#164e63",
+      950: "#083344",
     },
     sky: {
       50: "#f0f9ff",
@@ -313,6 +330,7 @@ const theme = {
       700: "#0369a1",
       800: "#075985",
       900: "#0c4a6e",
+      950: "#082f49",
     },
     blue: {
       50: "#eff6ff",
@@ -325,6 +343,7 @@ const theme = {
       700: "#1d4ed8",
       800: "#1e40af",
       900: "#1e3a8a",
+      950: "#172554",
     },
     indigo: {
       50: "#eef2ff",
@@ -337,6 +356,7 @@ const theme = {
       700: "#4338ca",
       800: "#3730a3",
       900: "#312e81",
+      950: "#1e1b4b",
     },
     violet: {
       50: "#f5f3ff",
@@ -349,6 +369,7 @@ const theme = {
       700: "#6d28d9",
       800: "#5b21b6",
       900: "#4c1d95",
+      950: "#2e1065",
     },
     purple: {
       50: "#faf5ff",
@@ -361,6 +382,7 @@ const theme = {
       700: "#7e22ce",
       800: "#6b21a8",
       900: "#581c87",
+      950: "#3b0764",
     },
     fuchsia: {
       50: "#fdf4ff",
@@ -373,6 +395,7 @@ const theme = {
       700: "#a21caf",
       800: "#86198f",
       900: "#701a75",
+      950: "#4a044e",
     },
     pink: {
       50: "#fdf2f8",
@@ -385,6 +408,7 @@ const theme = {
       700: "#be185d",
       800: "#9d174d",
       900: "#831843",
+      950: "#500724",
     },
     rose: {
       50: "#fff1f2",
@@ -397,6 +421,7 @@ const theme = {
       700: "#be123c",
       800: "#9f1239",
       900: "#881337",
+      950: "#4c0519",
     },
     custom: "custom_value",
   },
@@ -593,6 +618,17 @@ const theme = {
     "8xl": "6rem",
     "9xl": "8rem",
     custom: "custom_value",
+  },
+  fontStretch: {
+    "ultra-condensed": "ultra-condensed",
+    "extra-condensed": "extra-condensed",
+    condensed: "condensed",
+    "semi-condensed": "semi-condensed",
+    normal: "normal",
+    "semi-expanded": "semi-expanded",
+    expanded: "expanded",
+    "extra-expanded": "extra-expanded",
+    "ultra-expanded": "ultra-expanded",
   },
   fontWeight: {
     thin: "100",
@@ -822,6 +858,14 @@ const theme = {
     "3/4": "75%",
     full: "100%",
   }),
+  insetShadow: {
+    xs: "inset 0 1px 1px 0 rgb(0 0 0 / 0.05)",
+    sm: "inset 0 1px 2px 0 rgb(0 0 0 / 0.05)",
+    DEFAULT: "inset 0 2px 4px 0 rgb(0 0 0 / 0.05)",
+    md: "inset 0 2px 6px 0 rgb(0 0 0 / 0.08)",
+    lg: "inset 0 4px 8px 0 rgb(0 0 0 / 0.10)",
+    none: "none",
+  },
   invert: {
     0: "0",
     DEFAULT: "100%",
@@ -992,6 +1036,15 @@ const theme = {
     custom: "custom_value",
   },
   padding: ({ theme }) => theme("spacing"),
+  perspective: {
+    none: "none",
+    dramatic: "100px",
+    near: "300px",
+    normal: "500px",
+    midrange: "800px",
+    distant: "1200px",
+    custom: "custom_value",
+  },
   ringColor: ({ theme }) => ({
     DEFAULT: "#3b82f6",
     ...theme("colors"),
@@ -1055,6 +1108,14 @@ const theme = {
     ...theme("spacing"),
   }),
   scrollPadding: ({ theme }) => theme("spacing"),
+  screens: {
+    sm: "640px",
+    md: "768px",
+    lg: "1024px",
+    xl: "1280px",
+    "2xl": "1536px",
+    "3xl": "1920px",
+  },
   sepia: {
     0: "0",
     DEFAULT: "100%",

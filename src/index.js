@@ -15,24 +15,38 @@ let _ssrCollecting = false;
 
 /**
  * Start collecting CSS for SSR. Call before rendering.
+ * @deprecated Use createSSRCollector() instead
  * @returns {void}
  * @example
+ * // Modern approach (recommended):
+ * import { createSSRCollector } from 'tailwind-to-style'
+ * const ssr = createSSRCollector()
+ * const html = renderToString(<App />)
+ * const css = ssr.extract()
+ * 
+ * // Legacy approach (deprecated):
  * import { startSSR, stopSSR } from 'tailwind-to-style'
  * startSSR()
  * const html = renderToString(<App />)
  * const css = stopSSR()
- * // Inject css into <head> of your HTML response
  */
 export function startSSR() {
+  if (typeof console !== 'undefined' && console.warn) {
+    console.warn('[tailwind-to-style] startSSR() is deprecated. Use createSSRCollector() instead.');
+  }
   _ssrCollectedCss = [];
   _ssrCollecting = true;
 }
 
 /**
  * Stop collecting CSS and return all collected CSS as a single string.
+ * @deprecated Use createSSRCollector().extract() instead
  * @returns {string} All CSS collected during SSR
  */
 export function stopSSR() {
+  if (typeof console !== 'undefined' && console.warn) {
+    console.warn('[tailwind-to-style] stopSSR() is deprecated. Use createSSRCollector().extract() instead.');
+  }
   _ssrCollecting = false;
   const css = _ssrCollectedCss.join('\n');
   _ssrCollectedCss = [];
@@ -41,30 +55,38 @@ export function stopSSR() {
 
 /**
  * Get collected CSS without stopping collection.
+ * @deprecated Use createSSRCollector().peek() instead
  * @returns {string} Currently collected CSS
  */
 export function getSSRStyles() {
+  if (typeof console !== 'undefined' && console.warn) {
+    console.warn('[tailwind-to-style] getSSRStyles() is deprecated. Use createSSRCollector().peek() instead.');
+  }
   return _ssrCollectedCss.join('\n');
 }
 
 // ============================================================================
-// Bounded Caches (prevent memory leaks in long-running SPAs)
+// Bounded Caches using proper LRU (prevent memory leaks in long-running SPAs)
 // ============================================================================
+import { LRUCache } from "./utils/lruCache.js";
+
 const MAX_CACHE_SIZE = 5000;
 const MAX_SET_SIZE = 10000;
 
-// Global registry to track injected keyframes (prevents duplication)
-const _injectedKeyframes = new Set();
+// Global registry to track injected keyframes (prevents duplication) - now with LRU
+const _injectedKeyframes = new LRUCache(MAX_SET_SIZE);
 
-// Global cache Maps with bounded eviction
-const _twsxInputCache = new Map();
-const _twsxVariantsResultCache = new Map();
+// Global LRU cache instances (true LRU, not FIFO)
+const _twsxInputCache = new LRUCache(MAX_CACHE_SIZE);
+const _twsxVariantsResultCache = new LRUCache(MAX_CACHE_SIZE);
+const _generatorCache = new LRUCache(MAX_CACHE_SIZE);
 
 // WeakMap for object identity-based caching (fast lookup for repeated objects)
 const _objectIdentityCache = new WeakMap();
 
-/** Evict oldest entries from a Map when it exceeds maxSize */
+/** @deprecated Use LRUCache.set() instead - kept for backward compatibility */
 function evictMap(map, maxSize = MAX_CACHE_SIZE) {
+  if (map instanceof LRUCache) return; // LRUCache handles its own eviction
   if (map.size <= maxSize) return;
   const excess = map.size - maxSize;
   const iter = map.keys();
@@ -73,8 +95,9 @@ function evictMap(map, maxSize = MAX_CACHE_SIZE) {
   }
 }
 
-/** Evict oldest entries from a Set when it exceeds maxSize */
+/** @deprecated Use LRUCache instead - kept for backward compatibility */
 function evictSet(set, maxSize = MAX_SET_SIZE) {
+  if (set instanceof LRUCache) return; // LRUCache handles its own eviction
   if (set.size <= maxSize) return;
   const excess = set.size - maxSize;
   const iter = set.values();
@@ -172,6 +195,7 @@ import generateBorderCollapse from "./generators/borderCollapse.js";
 import generateBorderColor from "./generators/borderColor.js";
 import generateBorderOpacity from "./generators/borderOpacity.js";
 import generateBorderRadius from "./generators/borderRadius.js";
+import generateColorScheme from "./generators/colorScheme.js";
 import generateBorderSpacing from "./generators/borderSpacing.js";
 import generateBorderStyle from "./generators/borderStyle.js";
 import generateBorderWidth from "./generators/borderWidth.js";
@@ -197,6 +221,7 @@ import generateDivideStyle from "./generators/divideStyle.js";
 import generateDivideWidth from "./generators/divideWidth.js";
 import generateDropShadow from "./generators/dropShadow.js";
 import generateFill from "./generators/fill.js";
+import generateFieldSizing from "./generators/fieldSizing.js";
 import generateFilter from "./generators/filter.js";
 import generateFlex from "./generators/flex.js";
 import generateFlexBasis from "./generators/flexBasis.js";
@@ -208,6 +233,7 @@ import generateFloat from "./generators/float.js";
 import generateFontFamily from "./generators/fontFamily.js";
 import generateFontSize from "./generators/fontSize.js";
 import generateFontSmoothing from "./generators/fontSmoothing.js";
+import generateFontStretch from "./generators/fontStretch.js";
 import generateFontStyle from "./generators/fontStyle.js";
 import generateFontVariantNumeric from "./generators/fontVariantNumeric.js";
 import generateFontWeight from "./generators/fontWeight.js";
@@ -229,6 +255,7 @@ import generateHeight from "./generators/height.js";
 import generateHueRotate from "./generators/hueRotate.js";
 import generateHyphens from "./generators/hyphens.js";
 import generateInset from "./generators/inset.js";
+import generateInsetShadow from "./generators/insetShadow.js";
 import generateInvert from "./generators/invert.js";
 import generateIsolation from "./generators/isolation.js";
 import generateJustifyContent from "./generators/justifyContent.js";
@@ -258,6 +285,7 @@ import generateOutlineWidth from "./generators/outlineWidth.js";
 import generateOverflow from "./generators/overflow.js";
 import generateOverscrollBehavior from "./generators/overscrollBehavior.js";
 import generatePadding from "./generators/padding.js";
+import generatePerspective from "./generators/perspective.js";
 import generatePlaceContent from "./generators/placeContent.js";
 import generatePlaceItems from "./generators/placeItems.js";
 import generatePlaceSelf from "./generators/placeSelf.js";
@@ -320,7 +348,7 @@ import generateWillChange from "./generators/willChange.js";
 import generateZIndex from "./generators/zIndex.js";
 
 import { logger } from "./utils/logger.js";
-import { LRUCache } from "./utils/lruCache.js";
+// LRUCache already imported at top of file
 import { handleError } from "./utils/errorHandler.js";
 
 // ============================================================================
@@ -482,6 +510,7 @@ const plugins = {
   captionSide: generateCaptionSide,
   caretColor: generateCaretColor,
   clear: generateClear,
+  colorScheme: generateColorScheme,
   columns: generateColumns,
   container: generateContainer,
   content: generateContent,
@@ -493,6 +522,7 @@ const plugins = {
   divideStyle: generateDivideStyle,
   divideWidth: generateDivideWidth,
   dropShadow: generateDropShadow,
+  fieldSizing: generateFieldSizing,
   fill: generateFill,
   filter: generateFilter,
   flex: generateFlex,
@@ -505,6 +535,7 @@ const plugins = {
   fontFamily: generateFontFamily,
   fontSize: generateFontSize,
   fontSmoothing: generateFontSmoothing,
+  fontStretch: generateFontStretch,
   fontStyle: generateFontStyle,
   fontVariantNumeric: generateFontVariantNumeric,
   fontWeight: generateFontWeight,
@@ -526,6 +557,7 @@ const plugins = {
   hueRotate: generateHueRotate,
   hyphens: generateHyphens,
   inset: generateInset,
+  insetShadow: generateInsetShadow,
   invert: generateInvert,
   isolation: generateIsolation,
   justifyContent: generateJustifyContent,
@@ -555,6 +587,7 @@ const plugins = {
   overflow: generateOverflow,
   overscrollBehavior: generateOverscrollBehavior,
   padding: generatePadding,
+  perspective: generatePerspective,
   placeContent: generatePlaceContent,
   placeItems: generatePlaceItems,
   placeSelf: generatePlaceSelf,
@@ -2083,8 +2116,8 @@ function twsxNoCache(obj, options = {}) {
       (name) => !_injectedKeyframes.has(name)
     );
 
-    // Mark as injected
-    newKeyframes.forEach((name) => _injectedKeyframes.add(name));
+    // Mark as injected (using .set() for LRUCache)
+    newKeyframes.forEach((name) => _injectedKeyframes.set(name, true));
 
     // Generate minified keyframes CSS only for new ones
     const keyframesCSS = generateMinifiedKeyframes(newKeyframes);
@@ -2114,7 +2147,7 @@ function twsxNoCache(obj, options = {}) {
       const customRegex = new RegExp(`animation(?:-name)?:\\s*${name}`, "i");
       if (!customRegex.test(cssString)) continue;
 
-      _injectedKeyframes.add(name);
+      _injectedKeyframes.set(name, true);
 
       // Generate minified custom keyframe
       customKeyframesCSS += `@keyframes ${name}{`;
@@ -2803,7 +2836,7 @@ export function twsx(obj, options = {}) {
   // the injection and can pass the selector-based registryKey for slot replacement.
   const result = twsxNoCache(obj, { ...options, inject: false });
   _twsxInputCache.set(cacheKey, result);
-  evictMap(_twsxInputCache);
+  // LRUCache handles eviction automatically
 
   if (inject && (IS_BROWSER || _ssrCollecting)) {
     autoInjectCss(result, registryKey);
@@ -2843,7 +2876,7 @@ export function twsxVariants(className, config = {}) {
   // Cache miss: call original twsxVariantsNoCache and cache result
   const result = twsxVariantsNoCache(className, config);
   _twsxVariantsResultCache.set(cacheKey, result);
-  evictMap(_twsxVariantsResultCache);
+  // LRUCache handles eviction automatically
 
   return result;
 }
@@ -3042,19 +3075,45 @@ export { getTailwindCache, resetTailwindCache } from "./utils/tailwindCache.js";
 export { cx } from "./cx.js";
 
 // Export configuration and plugin system
-export { configure, getConfig, resetConfig } from "./config/userConfig.js";
+export { configure, getConfig, resetConfig, isV4Mode } from "./config/userConfig.js";
 export {
   createPlugin,
   createUtilityPlugin,
   createVariantPlugin,
 } from "./plugins/pluginAPI.js";
 
-// Export SSR utilities (startSSR, stopSSR, getSSRStyles are already exported above via function declaration)
+// ============================================================================
+// SSR Exports
+// ============================================================================
+// Modern SSR API (recommended)
+export { createSSRCollector } from "./utils/ssr.js";
+// Legacy SSR functions are exported via function declarations above for backward compatibility
 
 // Export environment detection
 export { IS_BROWSER, IS_SERVER };
 
-// Export dynamic animation utilities
+// ============================================================================
+// Animation Exports
+// ============================================================================
+// Unified animation API (recommended)
+export { 
+  animate,
+  chain,
+  stagger,
+  transition,
+  parallel,
+  createKeyframes,
+  clearKeyframes,
+  cancelAll as cancelAllAnimations,
+  getActiveCount as getActiveAnimationCount,
+  registerPreset,
+  getPresetNames,
+  isSupported as isAnimationSupported,
+  ANIMATION_PRESETS,
+  EASING,
+} from "./utils/animation.js";
+
+// Legacy animation APIs (deprecated - use animate/chain/stagger instead)
 export { applyWebAnimation, initWebAnimations } from "./utils/webAnimations.js";
 
 export {
@@ -3071,4 +3130,11 @@ export {
   staggerAnimations,
   INLINE_ANIMATIONS,
 } from "./utils/inlineAnimations.js";
+
+// ============================================================================
+// Main API Exports
+// ============================================================================
+// twsxClassName - Unified CSS-in-JS API with variants and slots
+// tw - Atomic CSS class generator with pseudo-class support
+export { twsxClassName, tw } from "./className/index.js";
 

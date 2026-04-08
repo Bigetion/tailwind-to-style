@@ -256,6 +256,104 @@ export interface VariantsDefinition {
   [variantName: string]: VariantOptions;
 }
 
+// ============================================================================
+// Type Inference Utilities
+// ============================================================================
+
+/**
+ * Infer variant props from a variant function or config.
+ * Use this when you need to type component props based on your variants.
+ * 
+ * @example
+ * const button = twsxVariants('.btn', {
+ *   variants: {
+ *     size: { sm: 'text-sm', lg: 'text-lg' },
+ *     variant: { primary: 'bg-blue-500', secondary: 'bg-gray-200' }
+ *   }
+ * });
+ * 
+ * // Extract props type
+ * type ButtonProps = InferVariantProps<typeof button>;
+ * // Result: { size?: 'sm' | 'lg'; variant?: 'primary' | 'secondary' }
+ */
+export type InferVariantProps<T> = T extends VariantFunction<infer V>
+  ? VariantProps<V>
+  : T extends TwsxClassNameVariantFunction<infer V>
+  ? TwsxClassNameVariantProps<V>
+  : T extends TwsxVariantsConfig<infer V>
+  ? VariantProps<V>
+  : T extends TwsxClassNameVariantsConfig<infer V>
+  ? TwsxClassNameVariantProps<V>
+  : never;
+
+/**
+ * Infer slot names from a slots function.
+ * 
+ * @example
+ * const card = twsxClassName({
+ *   slots: { root: 'card', header: 'card-header', body: 'card-body' },
+ *   variants: {}
+ * });
+ * 
+ * type CardSlots = InferSlotNames<typeof card>;
+ * // Result: 'root' | 'header' | 'body'
+ */
+export type InferSlotNames<T> = T extends TwsxClassNameSlotsFunction<infer S, any>
+  ? keyof S
+  : never;
+
+/**
+ * Extract variant names from a variants definition.
+ * 
+ * @example
+ * const config = {
+ *   variants: { size: { sm: '...', lg: '...' }, variant: { primary: '...' } }
+ * };
+ * type VariantNames = ExtractVariantNames<typeof config>;
+ * // Result: 'size' | 'variant'
+ */
+export type ExtractVariantNames<T extends { variants?: VariantsDefinition }> = 
+  T['variants'] extends VariantsDefinition ? keyof T['variants'] : never;
+
+/**
+ * Extract variant options for a specific variant.
+ * 
+ * @example
+ * const config = {
+ *   variants: { size: { sm: '...', md: '...', lg: '...' } }
+ * };
+ * type SizeOptions = ExtractVariantOptions<typeof config, 'size'>;
+ * // Result: 'sm' | 'md' | 'lg'
+ */
+export type ExtractVariantOptions<
+  T extends { variants?: VariantsDefinition },
+  K extends keyof NonNullable<T['variants']>
+> = T['variants'] extends VariantsDefinition
+  ? keyof T['variants'][K]
+  : never;
+
+/**
+ * Make all variant props required.
+ * Useful when you want to enforce all variants are specified.
+ */
+export type RequiredVariantProps<V extends VariantsDefinition> = {
+  [K in keyof V]: keyof V[K];
+};
+
+/**
+ * Pick only specific variants from props.
+ */
+export type PickVariantProps<V extends VariantsDefinition, K extends keyof V> = {
+  [P in K]?: keyof V[P];
+};
+
+/**
+ * Omit specific variants from props.
+ */
+export type OmitVariantProps<V extends VariantsDefinition, K extends keyof V> = {
+  [P in Exclude<keyof V, K>]?: keyof V[P];
+};
+
 /** * Compound variant definition - strict typing for better autocomplete
  */
 export interface CompoundVariant<V extends VariantsDefinition = VariantsDefinition> {
@@ -369,14 +467,905 @@ export function twsxVariants(
  */
 export const performanceUtils: PerformanceUtils;
 
+// ============================================================================
+// twsxClassName - Advanced Unified CSS-in-JS API
+// ============================================================================
+
+/**
+ * Pseudo-class shorthands for twsxClassName
+ */
+export type PseudoShorthand =
+  | "hover" | "focus" | "active" | "disabled" | "visited" | "checked"
+  | "required" | "invalid" | "valid" | "empty" | "enabled" | "indeterminate"
+  | "focus-within" | "focus-visible" | "first" | "last" | "odd" | "even"
+  | "first-of-type" | "last-of-type" | "only" | "only-of-type"
+  | "placeholder" | "before" | "after" | "selection" | "marker" | "file" | "backdrop"
+  // Dark/Light mode
+  | "dark" | "light"
+  // Motion preferences
+  | "motion-safe" | "motion-reduce"
+  // Print
+  | "print"
+  // Contrast
+  | "contrast-more" | "contrast-less"
+  // Orientation
+  | "portrait" | "landscape";
+
+/**
+ * Group/Peer state shorthands
+ */
+export type GroupPeerState =
+  | "group-hover" | "group-focus" | "group-active" | "group-focus-within"
+  | "group-focus-visible" | "group-disabled" | "group-checked" | "group-invalid" | "group-required"
+  | "peer-hover" | "peer-focus" | "peer-active" | "peer-focus-within"
+  | "peer-focus-visible" | "peer-disabled" | "peer-checked" | "peer-invalid"
+  | "peer-required" | "peer-placeholder-shown";
+
+/**
+ * Responsive breakpoint shorthands
+ */
+export type ResponsiveBreakpoint = "sm" | "md" | "lg" | "xl" | "2xl";
+
+/**
+ * Animation preset names
+ */
+export type AnimationPreset =
+  | "fadeIn" | "fadeOut" | "slideInUp" | "slideInDown" | "slideInLeft" | "slideInRight"
+  | "scaleIn" | "scaleOut" | "bounce" | "pulse" | "spin" | "ping" | "shake";
+
+/**
+ * Custom animation configuration
+ */
+export interface AnimationConfig {
+  keyframes: Record<string, string>;
+  duration?: string;
+  timing?: string;
+  delay?: string;
+  iteration?: string | number;
+}
+
+/**
+ * Design tokens structure
+ */
+export interface DesignTokens {
+  colors?: Record<string, string | Record<string, string>>;
+  spacing?: Record<string, string>;
+  fontSize?: Record<string, string>;
+  fontWeight?: Record<string, string>;
+  borderRadius?: Record<string, string>;
+  shadow?: Record<string, string>;
+  animation?: Record<string, AnimationConfig>;
+  custom?: Record<string, string>;
+}
+
+/**
+ * Theme tokens
+ */
+export interface ThemeTokens {
+  [key: string]: string | Record<string, string>;
+}
+
+/**
+ * Basic twsxClassName config (returns className string)
+ */
+export interface TwsxClassNameBasicConfig {
+  /** Base Tailwind classes */
+  _?: string;
+  /** Component name (for readable className) */
+  name?: string;
+  /** Custom prefix (default: "twsx") */
+  prefix?: string;
+  /** Include hash in className (default: true) */
+  hash?: boolean;
+  /** Hash length (default: 8) */
+  hashLength?: number;
+  /** Auto-inject CSS to DOM (default: true) */
+  inject?: boolean;
+  /** Extend from another twsxClassName config */
+  extend?: TwsxClassNameVariantFunction<any> | TwsxClassNameBasicConfig;
+  /** Animation preset or custom config */
+  animation?: AnimationPreset | AnimationConfig;
+  /** Enter transition classes */
+  enter?: string;
+  /** Enter from state */
+  enterFrom?: string;
+  /** Enter to state */
+  enterTo?: string;
+  /** Exit/leave transition classes */
+  exit?: string;
+  /** Leave from state */
+  leaveFrom?: string;
+  /** Leave to state */
+  leaveTo?: string;
+  /** Pseudo-class shorthands, responsive, and custom selectors */
+  [key: string]: string | TwsxClassNameBasicConfig | AnimationPreset | AnimationConfig | boolean | number | undefined | any;
+}
+
+/**
+ * Variant value - string classes or nested object with pseudo states
+ */
+export type TwsxClassNameVariantValue = string | {
+  _?: string;
+  [key: string]: string | undefined;
+};
+
+/**
+ * Variants definition for twsxClassName
+ */
+export interface TwsxClassNameVariantsDefinition {
+  [variantName: string]: {
+    [optionKey: string]: TwsxClassNameVariantValue;
+  };
+}
+
+/**
+ * Compound variant for twsxClassName
+ */
+export interface TwsxClassNameCompoundVariant<V extends TwsxClassNameVariantsDefinition = TwsxClassNameVariantsDefinition> {
+  class?: string;
+  className?: string;
+  [K: string]: string | string[] | boolean | undefined;
+}
+
+/**
+ * Responsive variant value - allows different values per breakpoint
+ */
+export type ResponsiveVariantValue<T> = T | {
+  initial?: T;
+  sm?: T;
+  md?: T;
+  lg?: T;
+  xl?: T;
+  "2xl"?: T;
+};
+
+/**
+ * twsxClassName variants config
+ */
+export interface TwsxClassNameVariantsConfig<V extends TwsxClassNameVariantsDefinition = TwsxClassNameVariantsDefinition> {
+  /** Component name */
+  name?: string;
+  /** Custom prefix */
+  prefix?: string;
+  /** Include hash */
+  hash?: boolean;
+  /** Hash length */
+  hashLength?: number;
+  /** Auto-inject CSS */
+  inject?: boolean;
+  /** Extend from another config */
+  extend?: TwsxClassNameVariantFunction<any> | TwsxClassNameVariantsConfig<any>;
+  /** Base Tailwind classes or nested object */
+  base?: string | { _?: string; [key: string]: string | undefined };
+  /** Variant definitions */
+  variants: V;
+  /** Compound variants */
+  compoundVariants?: TwsxClassNameCompoundVariant<V>[];
+  /** Default variant values */
+  defaultVariants?: { [K in keyof V]?: keyof V[K] | boolean };
+  /** Enable responsive variants for specified variant keys */
+  responsiveVariants?: (keyof V)[];
+}
+
+/**
+ * Slots definition for multi-part components
+ */
+export interface TwsxClassNameSlotsDefinition {
+  [slotName: string]: string | { _?: string; [key: string]: string | undefined };
+}
+
+/**
+ * twsxClassName slots config
+ */
+export interface TwsxClassNameSlotsConfig<
+  S extends TwsxClassNameSlotsDefinition = TwsxClassNameSlotsDefinition,
+  V extends TwsxClassNameVariantsDefinition = TwsxClassNameVariantsDefinition
+> {
+  /** Component name */
+  name?: string;
+  /** Custom prefix */
+  prefix?: string;
+  /** Include hash */
+  hash?: boolean;
+  /** Hash length */
+  hashLength?: number;
+  /** Auto-inject CSS */
+  inject?: boolean;
+  /** Extend from another config */
+  extend?: TwsxClassNameSlotsFunction<any, any>;
+  /** Slot definitions */
+  slots: S;
+  /** Variant definitions (with slot-specific styles) */
+  variants?: V;
+  /** Compound variants */
+  compoundVariants?: TwsxClassNameCompoundVariant<V>[];
+  /** Default variant values */
+  defaultVariants?: { [K in keyof V]?: keyof V[K] | boolean };
+}
+
+/**
+ * Variant props with responsive support
+ */
+export type TwsxClassNameVariantProps<V extends TwsxClassNameVariantsDefinition> = {
+  [K in keyof V]?: keyof V[K] | boolean | ResponsiveVariantValue<keyof V[K]>;
+};
+
+/**
+ * Variant selector function return type
+ */
+export interface TwsxClassNameVariantFunction<V extends TwsxClassNameVariantsDefinition> {
+  (props?: TwsxClassNameVariantProps<V>): string;
+  /** Merge with additional classes */
+  merge(props?: TwsxClassNameVariantProps<V>, ...additionalClasses: ClassValue[]): string;
+  merge(...additionalClasses: ClassValue[]): string;
+  /** Get raw config */
+  raw(): TwsxClassNameVariantsConfig<V>;
+}
+
+/**
+ * Slots generator function return type
+ */
+export interface TwsxClassNameSlotsFunction<
+  S extends TwsxClassNameSlotsDefinition,
+  V extends TwsxClassNameVariantsDefinition
+> {
+  (props?: TwsxClassNameVariantProps<V>): { [K in keyof S]: string };
+  /** Merge with additional classes per slot */
+  merge(props?: TwsxClassNameVariantProps<V>, slotOverrides?: Partial<{ [K in keyof S]: string }>): { [K in keyof S]: string };
+  /** Get raw config */
+  raw(): TwsxClassNameSlotsConfig<S, V>;
+}
+
+/**
+ * Global configuration options
+ */
+export interface TwsxClassNameGlobalConfig {
+  /** Default prefix (default: "twsx") */
+  prefix?: string;
+  /** Include hash by default (default: true) */
+  hash?: boolean;
+  /** Default hash length (default: 8) */
+  hashLength?: number;
+  /** Auto-inject CSS by default (default: true) */
+  inject?: boolean;
+  /** Deduplication (default: true) */
+  deduplicate?: boolean;
+  /** Custom breakpoints */
+  breakpoints?: Record<string, string>;
+}
+
+/**
+ * Unified CSS-in-JS API with smart mode detection.
+ *
+ * @example
+ * // Basic mode - returns className string
+ * const btn = twsxClassName({ _: 'bg-blue-500 p-4', hover: 'bg-blue-600' })
+ *
+ * // With dark mode
+ * const card = twsxClassName({ _: 'bg-white', dark: 'bg-gray-900' })
+ *
+ * // With group/peer states
+ * const icon = twsxClassName({ _: 'opacity-0', 'group-hover': 'opacity-100' })
+ *
+ * // Variants mode with boolean variants
+ * const btn = twsxClassName({
+ *   base: 'px-4 py-2',
+ *   variants: {
+ *     disabled: { true: 'opacity-50', false: '' }
+ *   }
+ * })
+ * btn({ disabled: true })
+ *
+ * // Responsive variants
+ * const btn = twsxClassName({
+ *   variants: { size: { sm: '...', lg: '...' } },
+ *   responsiveVariants: ['size']
+ * })
+ * btn({ size: { initial: 'sm', md: 'lg' } })
+ *
+ * // With design tokens
+ * twsxClassName.defineTokens({ colors: { primary: '#3b82f6' } })
+ * const btn = twsxClassName({ _: 'bg-$colors.primary' })
+ *
+ * // Extend existing config
+ * const primaryBtn = twsxClassName.extend(btn, { _: 'text-white' })
+ */
+export function twsxClassName(config: TwsxClassNameBasicConfig): string;
+export function twsxClassName(name: string, config: TwsxClassNameBasicConfig): string;
+export function twsxClassName<V extends TwsxClassNameVariantsDefinition>(
+  config: TwsxClassNameVariantsConfig<V>
+): TwsxClassNameVariantFunction<V>;
+export function twsxClassName<
+  S extends TwsxClassNameSlotsDefinition,
+  V extends TwsxClassNameVariantsDefinition
+>(
+  config: TwsxClassNameSlotsConfig<S, V>
+): TwsxClassNameSlotsFunction<S, V>;
+
+export namespace twsxClassName {
+  /**
+   * Configure global settings
+   */
+  function config(options: TwsxClassNameGlobalConfig): TwsxClassNameGlobalConfig;
+
+  /**
+   * Get current configuration
+   */
+  function getConfig(): TwsxClassNameGlobalConfig;
+
+  /**
+   * Extend an existing twsxClassName config
+   */
+  function extend<V extends TwsxClassNameVariantsDefinition>(
+    base: TwsxClassNameVariantFunction<V> | TwsxClassNameVariantsConfig<V>,
+    extension: Partial<TwsxClassNameVariantsConfig<V>>
+  ): TwsxClassNameVariantFunction<V>;
+
+  /**
+   * Define design tokens
+   */
+  function defineTokens(tokens: DesignTokens): DesignTokens;
+
+  /**
+   * Get all defined tokens
+   */
+  function getTokens(): DesignTokens;
+
+  /**
+   * Set a single token value
+   */
+  function setToken(path: string, value: string): void;
+
+  /**
+   * Create a named theme
+   */
+  function createTheme(name: string, tokens: ThemeTokens): ThemeTokens;
+
+  /**
+   * Set the active theme
+   */
+  function setTheme(name: string): string;
+
+  /**
+   * Get the active theme name
+   */
+  function getTheme(): string;
+
+  /**
+   * Get all defined themes
+   */
+  function getThemes(): Record<string, ThemeTokens>;
+
+  /**
+   * Define a custom animation preset
+   */
+  function defineAnimation(name: string, animation: AnimationConfig): void;
+
+  /**
+   * Get all animation presets
+   */
+  function getAnimations(): Record<string, AnimationConfig>;
+
+  /**
+   * Clear all caches
+   */
+  function clearCache(): void;
+
+  /**
+   * Get cache statistics
+   */
+  function getCacheStats(): {
+    classNameCacheSize: number;
+    cssCacheSize: number;
+    styleRegistrySize: number;
+  };
+
+  /**
+   * Get generated CSS for a className (useful for SSR)
+   */
+  function getCSS(className: string): string;
+
+  /**
+   * Get all generated CSS (useful for SSR)
+   */
+  function getAllCSS(): string;
+
+  /**
+   * Extract CSS as a style tag string (for SSR)
+   */
+  function extractCSS(): string;
+
+  /**
+   * Merge multiple class values (alias for cx)
+   */
+  function merge(...args: ClassValue[]): string;
+
+  /**
+   * Compose multiple configs into one
+   */
+  function compose<V extends TwsxClassNameVariantsDefinition>(
+    ...configs: (TwsxClassNameVariantFunction<any> | TwsxClassNameVariantsConfig<any>)[]
+  ): TwsxClassNameVariantsConfig<V>;
+
+  /**
+   * Atomic CSS class generator.
+   * Generates reusable atomic CSS classes from Tailwind utilities.
+   * Unlike tws() which returns inline styles, tw() returns class names
+   * with auto-injected CSS that supports pseudo-classes and responsive.
+   *
+   * @example
+   * tw('flex gap-3')
+   * // → "tw-flex tw-gap-3"
+   *
+   * tw('hover:bg-blue-500 md:flex-row')
+   * // → "tw-hover-bg-blue-500 tw-md-flex-row"
+   *
+   * // Usage in templates
+   * <div class="${tw('flex gap-3 hover:bg-gray-100')}">
+   */
+  function tw(classString: string): string;
+}
+
+// ============================================================================
+// tw() - Atomic CSS Class Generator (standalone export)
+// ============================================================================
+
+/**
+ * Atomic CSS class generator.
+ * Generates reusable atomic CSS classes from Tailwind utilities.
+ * Unlike tws() which returns inline styles, tw() returns class names
+ * with auto-injected CSS that supports pseudo-classes and responsive breakpoints.
+ *
+ * @param classString - Space-separated Tailwind utility classes
+ * @returns Space-separated atomic class names (e.g., "tw-flex tw-gap-3")
+ *
+ * @example
+ * // Basic usage
+ * tw('flex gap-3 items-center')
+ * // → "tw-flex tw-gap-3 tw-items-center"
+ *
+ * // With pseudo-classes (unlike tws, these work!)
+ * tw('bg-gray-100 hover:bg-gray-200 focus:ring-2')
+ * // → "tw-bg-gray-100 tw-hover-bg-gray-200 tw-focus-ring-2"
+ *
+ * // With responsive breakpoints
+ * tw('flex flex-col md:flex-row lg:gap-8')
+ * // → "tw-flex tw-flex-col tw-md-flex-row tw-lg-gap-8"
+ *
+ * // Combined modifiers
+ * tw('md:hover:bg-blue-500')
+ * // → "tw-md-hover-bg-blue-500"
+ *
+ * // In HTML/JSX
+ * <div class={tw('flex gap-3 hover:bg-gray-100')}>...</div>
+ */
+export function tw(classString: string): string;
+
+// ============================================================================
+// SSR Collector (Modern API)
+// ============================================================================
+
+/**
+ * SSR Collector options
+ */
+export interface SSRCollectorOptions {
+  /** Enable CSS deduplication (default: true) */
+  dedupe?: boolean;
+  /** Enable CSS minification (default: false) */
+  minify?: boolean;
+  /** Sort CSS by specificity (default: true) */
+  sort?: boolean;
+}
+
+/**
+ * Extract options for SSR
+ */
+export interface SSRExtractOptions {
+  /** Style tag ID (default: "twsx-ssr") */
+  id?: string;
+  /** CSP nonce value */
+  nonce?: string;
+  /** Minify output CSS */
+  minify?: boolean;
+}
+
+/**
+ * Critical CSS extraction result
+ */
+export interface SSRCriticalResult {
+  /** Critical CSS wrapped in style tag */
+  critical: string;
+  /** Remaining non-critical CSS */
+  rest: string;
+  /** Extraction statistics */
+  stats: {
+    criticalSize: number;
+    criticalCount: number;
+    totalCount: number;
+  };
+}
+
+/**
+ * SSR statistics
+ */
+export interface SSRStats {
+  ruleCount: number;
+  uniqueCount: number;
+  totalSize: number;
+  minifiedSize: number;
+}
+
+/**
+ * SSR Collector instance
+ */
+export interface SSRCollector {
+  /** Check if currently collecting */
+  readonly isCollecting: boolean;
+  /** Get collected CSS rule count */
+  readonly count: number;
+  /** Get unique CSS rule count */
+  readonly uniqueCount: number;
+
+  /** Peek at collected CSS without stopping */
+  peek(): string;
+  /** Extract CSS as raw string and stop collecting */
+  extractRaw(options?: { shouldMinify?: boolean }): string;
+  /** Extract CSS wrapped in <style> tag and stop collecting */
+  extract(options?: SSRExtractOptions): string;
+  /** Extract critical CSS (above-the-fold) */
+  extractCritical(options?: { maxSize?: number; nonce?: string; id?: string }): SSRCriticalResult;
+  /** Clear collected CSS and optionally restart */
+  clear(restart?: boolean): void;
+  /** Get collection statistics */
+  getStats(): SSRStats;
+  /** @internal Add CSS to collection */
+  _collect(css: string): void;
+}
+
+/**
+ * Create an SSR collector for collecting CSS during server-side rendering.
+ * 
+ * @example
+ * const ssr = createSSRCollector({ dedupe: true, minify: true })
+ * const html = renderToString(<App />)
+ * const css = ssr.extract()
+ * 
+ * // With critical CSS extraction
+ * const { critical, rest } = ssr.extractCritical({ maxSize: 14000 })
+ */
+export function createSSRCollector(options?: SSRCollectorOptions): SSRCollector;
+
+// ============================================================================
+// Animation System (Unified API)
+// ============================================================================
+
+/**
+ * Animation keyframe definition
+ */
+export interface AnimationKeyframe {
+  [property: string]: string | number;
+}
+
+/**
+ * Animation options (Web Animations API compatible)
+ */
+export interface AnimationOptions {
+  duration?: number;
+  easing?: string;
+  delay?: number;
+  iterations?: number | "infinite";
+  fill?: "none" | "forwards" | "backwards" | "both" | "auto";
+  direction?: "normal" | "reverse" | "alternate" | "alternate-reverse";
+  /** Called when animation starts */
+  onStart?: (animation: Animation) => void;
+  /** Called when animation completes */
+  onComplete?: (animation: Animation) => void;
+  /** Called when animation is cancelled */
+  onCancel?: (animation: Animation) => void;
+  /** Custom animation ID */
+  id?: string;
+}
+
+/**
+ * Animation preset configuration
+ */
+export interface AnimationPresetConfig {
+  keyframes: AnimationKeyframe[];
+  options: AnimationOptions;
+}
+
+/**
+ * Animation controller returned by animate()
+ */
+export interface AnimationController {
+  /** Animation ID */
+  readonly id: string | null;
+  /** Native Animation object */
+  readonly animation: Animation | null;
+  /** Current play state */
+  readonly playState: AnimationPlayState;
+  /** Current time in milliseconds */
+  currentTime: number;
+  /** Promise that resolves when animation finishes */
+  readonly finished: Promise<Animation>;
+  /** Whether animation is pending */
+  readonly pending: boolean;
+
+  /** Play the animation */
+  play(): AnimationController;
+  /** Pause the animation */
+  pause(): AnimationController;
+  /** Cancel the animation */
+  cancel(): AnimationController;
+  /** Finish the animation immediately */
+  finish(): AnimationController;
+  /** Reverse the animation */
+  reverse(): AnimationController;
+  /** Seek to specific progress (0-1) */
+  seek(progress: number): AnimationController;
+  /** Set playback speed */
+  setSpeed(rate: number): AnimationController;
+  /** Replay animation from start */
+  replay(): AnimationController;
+  /** Promise interface */
+  then<T>(resolve?: (value: Animation) => T, reject?: (reason: any) => T): Promise<T>;
+}
+
+/**
+ * Chain controller for sequential animations
+ */
+export interface ChainController {
+  /** Current step index */
+  readonly currentStep: number;
+  /** Total number of steps */
+  readonly totalSteps: number;
+  /** Progress (0-1) */
+  readonly progress: number;
+  /** Cancel the chain */
+  cancel(): void;
+  /** Promise that resolves when chain completes */
+  readonly finished: Promise<void>;
+  then<T>(resolve?: () => T, reject?: (reason: any) => T): Promise<T>;
+}
+
+/**
+ * Stagger controller for parallel staggered animations
+ */
+export interface StaggerController {
+  /** Individual animation controllers */
+  readonly controllers: AnimationController[];
+  /** Number of elements */
+  readonly count: number;
+  /** Cancel all animations */
+  cancelAll(): StaggerController;
+  /** Pause all animations */
+  pauseAll(): StaggerController;
+  /** Play all animations */
+  playAll(): StaggerController;
+  /** Reverse all animations */
+  reverseAll(): StaggerController;
+  /** Set speed for all animations */
+  setSpeedAll(rate: number): StaggerController;
+  /** Wait for all animations to complete */
+  waitAll(): Promise<void>;
+  then<T>(resolve?: () => T, reject?: (reason: any) => T): Promise<T>;
+}
+
+/**
+ * Stagger options
+ */
+export interface StaggerOptions extends AnimationOptions {
+  /** Delay between each element (default: 50ms) */
+  delay?: number;
+  /** Direction to start stagger */
+  from?: "start" | "end" | "center" | "random";
+  /** Called for each element */
+  onEach?: (index: number, element: HTMLElement) => void;
+  /** Called when all animations complete */
+  onAllComplete?: () => void;
+}
+
+/**
+ * Chain animation item
+ */
+export type ChainAnimationItem = 
+  | string 
+  | { name: string; delay?: number; options?: AnimationOptions };
+
+/**
+ * Animation preset names
+ */
+export type AnimationPresetName =
+  | "fadeIn" | "fadeOut"
+  | "slideUp" | "slideDown" | "slideLeft" | "slideRight"
+  | "zoomIn" | "zoomOut"
+  | "bounce" | "shake" | "pulse" | "spin"
+  | "flipX" | "flipY"
+  | "enterScale" | "exitScale"
+  | "wiggle" | "heartbeat";
+
+/**
+ * Easing preset names
+ */
+export type EasingPresetName =
+  | "linear" | "ease" | "easeIn" | "easeOut" | "easeInOut"
+  | "spring" | "springLight" | "springMedium" | "springHeavy"
+  | "smooth" | "smoothIn" | "smoothOut"
+  | "bounce" | "elastic"
+  | "anticipate" | "overshoot";
+
+/**
+ * Animation presets object
+ */
+export const ANIMATION_PRESETS: Record<AnimationPresetName, AnimationPresetConfig>;
+
+/**
+ * Easing presets object
+ */
+export const EASING: Record<EasingPresetName, string>;
+
+/**
+ * Apply animation to an element
+ * 
+ * @example
+ * // Using preset
+ * const ctrl = animate(element, 'fadeIn')
+ * 
+ * // With options
+ * animate(element, 'slideUp', { duration: 600, easing: 'spring' })
+ * 
+ * // With callbacks
+ * animate(element, 'bounce', {
+ *   onComplete: () => console.log('done!')
+ * })
+ * 
+ * // Control animation
+ * ctrl.pause()
+ * ctrl.reverse()
+ * await ctrl.finished
+ */
+export function animate(
+  element: HTMLElement,
+  animation: AnimationPresetName | { keyframes: AnimationKeyframe[]; options?: AnimationOptions },
+  options?: AnimationOptions
+): AnimationController;
+
+/**
+ * Chain multiple animations sequentially
+ * 
+ * @example
+ * await chain(element, ['fadeIn', 'pulse', 'fadeOut'])
+ * 
+ * // With delays
+ * chain(element, [
+ *   'fadeIn',
+ *   { name: 'pulse', delay: 100 },
+ *   'fadeOut'
+ * ])
+ */
+export function chain(
+  element: HTMLElement,
+  animations: ChainAnimationItem[],
+  options?: { onStepComplete?: (step: number, name: string) => void; onComplete?: () => void; onCancel?: (step: number) => void }
+): ChainController;
+
+/**
+ * Apply staggered animation to multiple elements
+ * 
+ * @example
+ * // Basic stagger
+ * stagger(listItems, 'slideUp', { delay: 50 })
+ * 
+ * // Wait for all
+ * await stagger(items, 'fadeIn').waitAll()
+ * 
+ * // From center
+ * stagger(items, 'zoomIn', { from: 'center' })
+ */
+export function stagger(
+  elements: HTMLElement[] | NodeListOf<HTMLElement>,
+  animation: AnimationPresetName | { keyframes: AnimationKeyframe[]; options?: AnimationOptions },
+  options?: StaggerOptions
+): StaggerController;
+
+/**
+ * Run multiple animations in parallel
+ * 
+ * @example
+ * await parallel([
+ *   { element: el1, animation: 'fadeIn' },
+ *   { element: el2, animation: 'slideUp' }
+ * ])
+ */
+export function parallel(
+  configs: Array<{ element: HTMLElement; animation: AnimationPresetName | AnimationPresetConfig; options?: AnimationOptions }>
+): Promise<AnimationController[]>;
+
+/**
+ * Apply CSS transition to element
+ * 
+ * @example
+ * await transition(element, { opacity: 0, transform: 'scale(0.9)' }, { duration: 300 })
+ */
+export function transition(
+  element: HTMLElement,
+  properties: Record<string, string | number>,
+  options?: { duration?: number; easing?: string; delay?: number }
+): Promise<void>;
+
+/**
+ * Create CSS keyframes and return animation CSS value
+ * 
+ * @example
+ * const animation = createKeyframes('myAnim', {
+ *   '0%': { opacity: 0 },
+ *   '100%': { opacity: 1 }
+ * })
+ * // → "myAnim 500ms ease-out forwards"
+ */
+export function createKeyframes(
+  name: string,
+  frames: Record<string, Record<string, string | number>>,
+  options?: { duration?: number; easing?: string; fill?: string; iterations?: number | "infinite"; inject?: boolean }
+): string;
+
+/**
+ * Clear all injected keyframes from document
+ */
+export function clearKeyframes(): void;
+
+/**
+ * Cancel all active animations
+ */
+export function cancelAllAnimations(): void;
+
+/**
+ * Get count of currently active animations
+ */
+export function getActiveAnimationCount(): number;
+
+/**
+ * Register a custom animation preset
+ * 
+ * @example
+ * registerPreset('myFade', {
+ *   keyframes: [{ opacity: 0 }, { opacity: 1 }],
+ *   options: { duration: 400 }
+ * })
+ */
+export function registerPreset(name: string, config: AnimationPresetConfig): void;
+
+/**
+ * Get all available preset names
+ */
+export function getPresetNames(): string[];
+
+/**
+ * Check if Web Animations API is supported
+ */
+export function isAnimationSupported(): boolean;
+
 // Default export (if needed)
 declare const tailwindToStyle: {
   tws: typeof tws;
   twsx: typeof twsx;
   twsxVariants: typeof twsxVariants;
+  twsxClassName: typeof twsxClassName;
+  tw: typeof tw;
   debouncedTws: typeof debouncedTws;
   debouncedTwsx: typeof debouncedTwsx;
   performanceUtils: typeof performanceUtils;
+  // SSR
+  createSSRCollector: typeof createSSRCollector;
+  // Animation
+  animate: typeof animate;
+  chain: typeof chain;
+  stagger: typeof stagger;
+  parallel: typeof parallel;
+  transition: typeof transition;
+  createKeyframes: typeof createKeyframes;
+  ANIMATION_PRESETS: typeof ANIMATION_PRESETS;
+  EASING: typeof EASING;
 };
 
 export default tailwindToStyle;

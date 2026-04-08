@@ -42,6 +42,7 @@ const subPathEntries = [
   { input: 'src/core/tws.js', name: 'core/tws', typeSrc: 'types/core/tws.d.ts' },
   { input: 'src/core/twsx.js', name: 'core/twsx', typeSrc: 'types/core/twsx.d.ts' },
   { input: 'src/core/twsxVariants.js', name: 'core/twsxVariants', typeSrc: 'types/core/twsxVariants.d.ts' },
+  { input: 'src/className/index.js', name: 'className/index', typeSrc: 'types/className/index.d.ts' },
   { input: 'src/utils/index.js', name: 'utils/index', typeSrc: 'types/utils/index.d.ts' },
   { input: 'src/cx.js', name: 'cx', typeSrc: 'types/cx.d.ts' },
 ];

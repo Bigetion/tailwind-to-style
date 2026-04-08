@@ -201,11 +201,26 @@ export const FRACTION_PREFIXES = [
 
 /** Responsive breakpoints */
 export const BREAKPOINTS = {
+  // Standard responsive breakpoints (Tailwind v3 + v4)
   sm: "@media (min-width: 640px)",
   md: "@media (min-width: 768px)",
   lg: "@media (min-width: 1024px)",
   xl: "@media (min-width: 1280px)",
   "2xl": "@media (min-width: 1536px)",
+  "3xl": "@media (min-width: 1920px)",
+  // Container queries (Tailwind v4)
+  "@sm": "@container (min-width: 640px)",
+  "@md": "@container (min-width: 768px)",
+  "@lg": "@container (min-width: 1024px)",
+  "@xl": "@container (min-width: 1280px)",
+  "@2xl": "@container (min-width: 1536px)",
+  "@3xl": "@container (min-width: 1920px)",
+  // Special media variants (Tailwind v4)
+  "starting": "@starting-style",
+  "forced-colors": "@media (forced-colors: active)",
+  print: "@media print",
+  portrait: "@media (orientation: portrait)",
+  landscape: "@media (orientation: landscape)",
 };
 
 /** Pseudo-class variants */
@@ -213,14 +228,41 @@ export const PSEUDO_VARIANTS = new Set([
   "hover",
   "focus",
   "focus-within",
+  "focus-visible",
   "active",
   "visited",
   "disabled",
+  "enabled",
   "first",
   "last",
   "checked",
+  "unchecked",
+  "indeterminate",
   "invalid",
+  "valid",
   "required",
+  "optional",
+  "read-only",
+  "read-write",
+  "placeholder-shown",
+  "autofill",
+  "even",
+  "odd",
+  "empty",
+  "target",
+  "default",
+  "in-range",
+  "out-of-range",
+  "user-invalid",
+  "user-valid",
+]);
+
+/**
+ * Attribute-based variants — generate [attr] selectors instead of :pseudo
+ * Added in Tailwind v4 (e.g., details[open], dialog[open])
+ */
+export const ATTRIBUTE_VARIANTS = new Set([
+  "open",
 ]);
 
 /** Special variant handlers */
@@ -228,6 +270,11 @@ export const SPECIAL_VARIANTS = {
   group: (state, sel) => `.group:${state} ${sel}`,
   peer: (state, sel) => `.peer:${state} ~ ${sel}`,
   dark: (state, sel) => `.dark ${sel}`,
+  // Tailwind v4: not-* and has-* structural variants
+  not: (state, sel) => `${sel}:not(${state})`,
+  has: (state, sel) => `${sel}:has(${state})`,
+  "aria": (state, sel) => `${sel}[aria-${state}]`,
+  "data": (state, sel) => `${sel}[data-${state}]`,
 };
 
 /** Selector variants for child selection */
