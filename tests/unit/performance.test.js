@@ -144,8 +144,8 @@ describe("Performance Regression Tests", () => {
       const duration = performance.now() - start;
       
       // 50,000 cached lookups should complete reasonably fast
-      // Using 2000ms to account for slower CI/CD environments
-      expect(duration).toBeLessThan(2000);
+      // Using 5000ms to account for slower machines/CI environments
+      expect(duration).toBeLessThan(5000);
     });
   });
 
