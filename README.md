@@ -965,21 +965,23 @@ Import only what you need to reduce bundle size by **50-70%**:
 
 ```javascript
 // Individual imports (recommended for production)
-import { tws } from 'tailwind-to-style/tws'                    // ~3KB
-import { twsx } from 'tailwind-to-style/twsx'                   // ~6KB
-import { twsxVariants } from 'tailwind-to-style/twsx-variants'  // ~6KB
-import { cx } from 'tailwind-to-style/cx'                       // <1KB
+import { tws } from 'tailwind-to-style/tws'                         // ~3KB
+import { twsx } from 'tailwind-to-style/twsx'                        // ~6KB
+import { twsxVariants } from 'tailwind-to-style/twsx-variants'       // ~6KB
+import { twsxClassName, tw } from 'tailwind-to-style/classname'      // ~8KB
+import { cx } from 'tailwind-to-style/cx'                            // <1KB
 
 // Full import (everything)
-import { tws, twsx, twsxVariants, cx } from 'tailwind-to-style' // ~12KB
+import { tws, twsx, twsxVariants, twsxClassName, cx } from 'tailwind-to-style' // ~15KB
 ```
 
 | Import Path | Includes | Size (minified) |
 |---|---|---|
-| `tailwind-to-style` | Everything | ~12KB |
+| `tailwind-to-style` | Everything | ~15KB |
 | `tailwind-to-style/tws` | `tws()` only | ~3KB |
 | `tailwind-to-style/twsx` | `twsx()` | ~6KB |
 | `tailwind-to-style/twsx-variants` | `twsxVariants()` | ~6KB |
+| `tailwind-to-style/classname` | `twsxClassName()`, `tw()` | ~8KB |
 | `tailwind-to-style/cx` | `cx()` | <1KB |
 | `tailwind-to-style/utils` | Logger, LRUCache, error handler | ~2KB |
 
