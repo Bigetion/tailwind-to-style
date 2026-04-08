@@ -11,6 +11,98 @@ import { twsx } from "../index.js";
 import { cx } from "../cx.js";
 
 // ============================================================================
+// Custom Error Class
+// ============================================================================
+
+class TwsxClassNameError extends Error {
+  constructor(message, context = {}) {
+    super(message);
+    this.name = "TwsxClassNameError";
+    this.context = context;
+  }
+}
+
+// ============================================================================
+// Input Validation Utilities
+// ============================================================================
+
+/**
+ * Validate twsxClassName configuration
+ * @param {Object} config - Configuration object to validate
+ * @throws {TwsxClassNameError} If configuration is invalid
+ */
+function validateConfig(config) {
+  if (config === null || config === undefined) {
+    throw new TwsxClassNameError("Configuration cannot be null or undefined", { config });
+  }
+
+  if (typeof config !== "object" || Array.isArray(config)) {
+    throw new TwsxClassNameError("Configuration must be a plain object", { 
+      received: Array.isArray(config) ? "array" : typeof config 
+    });
+  }
+
+  // Validate variants structure
+  if ("variants" in config && config.variants !== undefined) {
+    if (typeof config.variants !== "object" || Array.isArray(config.variants)) {
+      throw new TwsxClassNameError("variants must be a plain object", {
+        received: Array.isArray(config.variants) ? "array" : typeof config.variants
+      });
+    }
+
+    // Validate each variant
+    for (const [variantName, variantValues] of Object.entries(config.variants)) {
+      if (typeof variantValues !== "object" || Array.isArray(variantValues)) {
+        throw new TwsxClassNameError(`variants.${variantName} must be a plain object`, {
+          variantName,
+          received: Array.isArray(variantValues) ? "array" : typeof variantValues
+        });
+      }
+    }
+  }
+
+  // Validate slots structure
+  if ("slots" in config && config.slots !== undefined) {
+    if (typeof config.slots !== "object" || Array.isArray(config.slots)) {
+      throw new TwsxClassNameError("slots must be a plain object", {
+        received: Array.isArray(config.slots) ? "array" : typeof config.slots
+      });
+    }
+  }
+
+  // Validate compoundVariants structure
+  if ("compoundVariants" in config && config.compoundVariants !== undefined) {
+    if (!Array.isArray(config.compoundVariants)) {
+      throw new TwsxClassNameError("compoundVariants must be an array", {
+        received: typeof config.compoundVariants
+      });
+    }
+  }
+
+  // Validate defaultVariants structure
+  if ("defaultVariants" in config && config.defaultVariants !== undefined) {
+    if (typeof config.defaultVariants !== "object" || Array.isArray(config.defaultVariants)) {
+      throw new TwsxClassNameError("defaultVariants must be a plain object", {
+        received: Array.isArray(config.defaultVariants) ? "array" : typeof config.defaultVariants
+      });
+    }
+  }
+
+  return true;
+}
+
+/**
+ * Validate that a value is a valid Tailwind class string
+ * @param {*} value - Value to validate
+ * @param {string} context - Context for error message
+ * @returns {boolean}
+ */
+function isValidClassValue(value) {
+  return typeof value === "string" || 
+         (typeof value === "object" && value !== null && !Array.isArray(value));
+}
+
+// ============================================================================
 // Constants & Environment Detection
 // ============================================================================
 
@@ -1107,11 +1199,28 @@ function createSlots(config) {
 // ============================================================================
 
 function twsxClassName(nameOrConfig, config = {}) {
+  // Input validation
+  if (nameOrConfig === null || nameOrConfig === undefined) {
+    throw new TwsxClassNameError("twsxClassName requires a configuration object or name string", {
+      received: nameOrConfig
+    });
+  }
+
   let opts;
   if (typeof nameOrConfig === "string") {
+    // Validate config when name is provided separately
+    if (config !== null && config !== undefined && typeof config === "object") {
+      validateConfig(config);
+    }
     opts = { name: nameOrConfig, ...config };
-  } else {
+  } else if (typeof nameOrConfig === "object") {
+    // Validate the config object
+    validateConfig(nameOrConfig);
     opts = nameOrConfig;
+  } else {
+    throw new TwsxClassNameError("twsxClassName first argument must be a string or object", {
+      received: typeof nameOrConfig
+    });
   }
 
   // Handle extend

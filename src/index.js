@@ -66,23 +66,27 @@ export function getSSRStyles() {
 }
 
 // ============================================================================
-// Bounded Caches (prevent memory leaks in long-running SPAs)
+// Bounded Caches using proper LRU (prevent memory leaks in long-running SPAs)
 // ============================================================================
+import { LRUCache } from "./utils/lruCache.js";
+
 const MAX_CACHE_SIZE = 5000;
 const MAX_SET_SIZE = 10000;
 
-// Global registry to track injected keyframes (prevents duplication)
-const _injectedKeyframes = new Set();
+// Global registry to track injected keyframes (prevents duplication) - now with LRU
+const _injectedKeyframes = new LRUCache(MAX_SET_SIZE);
 
-// Global cache Maps with bounded eviction
-const _twsxInputCache = new Map();
-const _twsxVariantsResultCache = new Map();
+// Global LRU cache instances (true LRU, not FIFO)
+const _twsxInputCache = new LRUCache(MAX_CACHE_SIZE);
+const _twsxVariantsResultCache = new LRUCache(MAX_CACHE_SIZE);
+const _generatorCache = new LRUCache(MAX_CACHE_SIZE);
 
 // WeakMap for object identity-based caching (fast lookup for repeated objects)
 const _objectIdentityCache = new WeakMap();
 
-/** Evict oldest entries from a Map when it exceeds maxSize */
+/** @deprecated Use LRUCache.set() instead - kept for backward compatibility */
 function evictMap(map, maxSize = MAX_CACHE_SIZE) {
+  if (map instanceof LRUCache) return; // LRUCache handles its own eviction
   if (map.size <= maxSize) return;
   const excess = map.size - maxSize;
   const iter = map.keys();
@@ -91,8 +95,9 @@ function evictMap(map, maxSize = MAX_CACHE_SIZE) {
   }
 }
 
-/** Evict oldest entries from a Set when it exceeds maxSize */
+/** @deprecated Use LRUCache instead - kept for backward compatibility */
 function evictSet(set, maxSize = MAX_SET_SIZE) {
+  if (set instanceof LRUCache) return; // LRUCache handles its own eviction
   if (set.size <= maxSize) return;
   const excess = set.size - maxSize;
   const iter = set.values();
@@ -343,7 +348,7 @@ import generateWillChange from "./generators/willChange.js";
 import generateZIndex from "./generators/zIndex.js";
 
 import { logger } from "./utils/logger.js";
-import { LRUCache } from "./utils/lruCache.js";
+// LRUCache already imported at top of file
 import { handleError } from "./utils/errorHandler.js";
 
 // ============================================================================
@@ -2111,8 +2116,8 @@ function twsxNoCache(obj, options = {}) {
       (name) => !_injectedKeyframes.has(name)
     );
 
-    // Mark as injected
-    newKeyframes.forEach((name) => _injectedKeyframes.add(name));
+    // Mark as injected (using .set() for LRUCache)
+    newKeyframes.forEach((name) => _injectedKeyframes.set(name, true));
 
     // Generate minified keyframes CSS only for new ones
     const keyframesCSS = generateMinifiedKeyframes(newKeyframes);
@@ -2142,7 +2147,7 @@ function twsxNoCache(obj, options = {}) {
       const customRegex = new RegExp(`animation(?:-name)?:\\s*${name}`, "i");
       if (!customRegex.test(cssString)) continue;
 
-      _injectedKeyframes.add(name);
+      _injectedKeyframes.set(name, true);
 
       // Generate minified custom keyframe
       customKeyframesCSS += `@keyframes ${name}{`;
@@ -2831,7 +2836,7 @@ export function twsx(obj, options = {}) {
   // the injection and can pass the selector-based registryKey for slot replacement.
   const result = twsxNoCache(obj, { ...options, inject: false });
   _twsxInputCache.set(cacheKey, result);
-  evictMap(_twsxInputCache);
+  // LRUCache handles eviction automatically
 
   if (inject && (IS_BROWSER || _ssrCollecting)) {
     autoInjectCss(result, registryKey);
@@ -2871,7 +2876,7 @@ export function twsxVariants(className, config = {}) {
   // Cache miss: call original twsxVariantsNoCache and cache result
   const result = twsxVariantsNoCache(className, config);
   _twsxVariantsResultCache.set(cacheKey, result);
-  evictMap(_twsxVariantsResultCache);
+  // LRUCache handles eviction automatically
 
   return result;
 }

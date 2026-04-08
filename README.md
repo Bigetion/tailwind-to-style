@@ -489,34 +489,132 @@ const classes = card({ variant: 'elevated' })
 
 **Namespace Methods:**
 
-```javascript
-// Global configuration
-twsxClassName.config({ prefix: 'my-app', hash: false })
+| Category | Method | Description |
+|----------|--------|-------------|
+| **Config** | `config(options)` | Set global options (prefix, hash, hashLength) |
+| | `getConfig()` | Get current configuration |
+| **Tokens** | `defineTokens(tokens)` | Define design tokens |
+| | `getTokens()` | Get all defined tokens |
+| | `setToken(path, value)` | Set a single token value |
+| **Themes** | `createTheme(name, tokens)` | Create a named theme |
+| | `setTheme(name)` | Activate a theme |
+| | `getTheme()` | Get active theme name |
+| | `getThemes()` | Get all defined themes |
+| **Extend** | `extend(base, extension)` | Extend an existing config |
+| | `compose(...configs)` | Compose multiple configs |
+| | `merge(...classes)` | Merge class values (like cx) |
+| **Animation** | `defineAnimation(name, config)` | Register custom animation |
+| | `getAnimations()` | Get all registered animations |
+| **SSR** | `getCSS(className)` | Get CSS for a className |
+| | `getAllCSS()` | Get all generated CSS |
+| | `extractCSS()` | Extract as `<style>` tag |
+| **Cache** | `clearCache()` | Clear all caches |
+| | `getCacheStats()` | Get cache statistics |
+| **Utility** | `tw(classes)` | Atomic CSS class generator |
 
-// Design tokens
+```javascript
+// ═══════════════════════════════════════════════════════════════
+// Configuration
+// ═══════════════════════════════════════════════════════════════
+
+// Global configuration
+twsxClassName.config({ prefix: 'my-app', hash: false, hashLength: 8 })
+twsxClassName.getConfig()  // → { prefix: 'my-app', hash: false, ... }
+
+// ═══════════════════════════════════════════════════════════════
+// Design Tokens
+// ═══════════════════════════════════════════════════════════════
+
+// Define tokens
 twsxClassName.defineTokens({
   colors: { primary: '#3b82f6', danger: '#ef4444' },
   spacing: { sm: '0.5rem', md: '1rem' },
 })
-const btn = twsxClassName({ _: 'bg-$colors.primary' })
 
-// Themes
+// Get all tokens
+twsxClassName.getTokens()  // → { colors: {...}, spacing: {...} }
+
+// Set a single token
+twsxClassName.setToken('colors.success', '#10b981')
+
+// Use tokens in styles (use $path.to.token syntax)
+const btn = twsxClassName({ _: 'bg-$colors.primary p-$spacing.md' })
+
+// ═══════════════════════════════════════════════════════════════
+// Theme System
+// ═══════════════════════════════════════════════════════════════
+
+// Create named themes
 twsxClassName.createTheme('dark', { background: '#1f2937', text: '#f9fafb' })
+twsxClassName.createTheme('light', { background: '#ffffff', text: '#111827' })
+
+// Switch themes
 twsxClassName.setTheme('dark')
 
-// Extend existing configs
+// Get current/all themes
+twsxClassName.getTheme()   // → 'dark'
+twsxClassName.getThemes()  // → { dark: {...}, light: {...} }
+
+// ═══════════════════════════════════════════════════════════════
+// Extend & Compose
+// ═══════════════════════════════════════════════════════════════
+
+// Extend existing config
 const iconButton = twsxClassName.extend(button, {
   base: 'p-0 aspect-square',
   variants: { size: { sm: 'w-8 h-8', md: 'w-10 h-10' } },
 })
 
-// SSR support
-const cssString = twsxClassName.extractCSS()
+// Compose multiple configs
+const combined = twsxClassName.compose(baseStyles, variants, overrides)
+
+// Merge classes (like cx)
+twsxClassName.merge('p-4', isActive && 'bg-blue-500', { 'opacity-50': disabled })
+
+// ═══════════════════════════════════════════════════════════════
+// Animations
+// ═══════════════════════════════════════════════════════════════
+
+// Define custom animation preset
+twsxClassName.defineAnimation('myFade', {
+  keyframes: { '0%': { opacity: 0 }, '100%': { opacity: 1 } },
+  duration: '300ms',
+  timing: 'ease-out',
+})
+
+// Get all registered animations
+twsxClassName.getAnimations()  // → { myFade: {...}, ... }
+
+// Use in config
+const modal = twsxClassName({
+  _: 'fixed inset-0',
+  animation: 'myFade',  // or built-in: 'fadeIn', 'slideUp', etc.
+})
+
+// ═══════════════════════════════════════════════════════════════
+// SSR Support
+// ═══════════════════════════════════════════════════════════════
+
+// Get CSS for specific className
+twsxClassName.getCSS('btn-a1b2c3d4')
+
+// Get all generated CSS
+twsxClassName.getAllCSS()
+
+// Extract as style tag (for SSR)
+const styleTag = twsxClassName.extractCSS()
 // → '<style data-twsx-classname>...</style>'
 
-// Cache management
+// ═══════════════════════════════════════════════════════════════
+// Cache Management
+// ═══════════════════════════════════════════════════════════════
+
+// Clear all caches
 twsxClassName.clearCache()
+
+// Get cache statistics
 twsxClassName.getCacheStats()
+// → { classNameCacheSize: 42, cssCacheSize: 38, styleRegistrySize: 15 }
 ```
 
 ---
@@ -709,11 +807,48 @@ const fullHtml = `
 | `IS_BROWSER` | `true` in browser environment |
 | `IS_SERVER` | `true` in Node.js/server environment |
 
+### Advanced SSR Collector
+
+For more control over SSR CSS collection:
+
+```javascript
+import { createSSRCollector } from 'tailwind-to-style'
+
+// Create collector with options
+const ssr = createSSRCollector({
+  dedupe: true,   // Remove duplicate rules
+  minify: true,   // Minify output CSS
+  sort: true,     // Sort by specificity
+})
+
+// Render app
+const html = renderToString(<App />)
+
+// Extract CSS
+const css = ssr.extractRaw()                    // Raw CSS string
+const styleTag = ssr.extract({ id: 'ssr-css' }) // <style id="ssr-css">...</style>
+
+// Or extract critical CSS (above-the-fold)
+const { critical, rest, stats } = ssr.extractCritical({ maxSize: 14000 })
+// critical: CSS under 14KB limit
+// rest: remaining CSS to lazy-load
+// stats: { criticalSize, criticalCount, totalCount }
+
+// Utilities
+ssr.peek()       // Preview CSS without stopping
+ssr.count        // Number of rules collected
+ssr.uniqueCount  // Unique rules (after dedupe)
+ssr.clear(true)  // Clear and restart collecting
+ssr.getStats()   // { ruleCount, uniqueCount, totalSize, minifiedSize }
+```
+
 ---
 
 ## Animation System
 
 ### Built-in CSS Animations
+
+Tailwind animation utilities work out of the box:
 
 ```javascript
 tws('animate-spin')    // → animation: spin 1s linear infinite
@@ -722,32 +857,104 @@ tws('animate-pulse')   // → animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) i
 tws('animate-ping')    // → animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite
 ```
 
-### Web Animations API
+### Programmatic Animations (Web Animations API)
+
+For interactive animations with full control:
 
 ```javascript
-import { applyWebAnimation } from 'tailwind-to-style'
+import { animate, chain, stagger, parallel, transition } from 'tailwind-to-style'
 
-// Apply a named animation to a DOM element
-applyWebAnimation(element, 'fadeIn')
-applyWebAnimation(element, 'slideUp')
+// Single element animation
+const ctrl = animate(element, 'fadeIn', { duration: 300 })
+ctrl.pause()   // Pause
+ctrl.play()    // Resume
+ctrl.reverse() // Reverse
+ctrl.cancel()  // Cancel
+await ctrl.finished // Wait for completion
+
+// Sequential animations
+await chain(element, ['fadeIn', 'slideUp', 'pulse'])
+
+// With custom options per step
+await chain(element, [
+  'fadeIn',
+  { name: 'slideUp', delay: 200 },
+  { name: 'pulse', options: { iterations: 2 } }
+])
+
+// Staggered animations (lists, grids)
+stagger('.card', 'fadeIn', {
+  delay: 50,           // 50ms between each
+  from: 'start',       // 'start' | 'end' | 'center' | 'random'
+  onAllComplete: () => console.log('Done!')
+})
+
+// Parallel animations on multiple elements
+await parallel([el1, el2, el3], 'fadeIn')
+
+// Transition between states
+transition(element, 
+  { opacity: 0, transform: 'scale(0.9)' },  // from
+  { opacity: 1, transform: 'scale(1)' },    // to
+  { duration: 300, easing: 'ease-out' }
+)
 ```
 
-### Inline Animations
+### Animation Presets
 
 ```javascript
-import { applyInlineAnimation, animateElement, chainAnimations, staggerAnimations } from 'tailwind-to-style'
+import { ANIMATION_PRESETS, EASING } from 'tailwind-to-style'
 
-// Single animation
-applyInlineAnimation(element, 'fadeIn')
+// Available presets
+// fadeIn, fadeOut, slideUp, slideDown, slideLeft, slideRight,
+// zoomIn, zoomOut, bounce, shake, pulse, spin, flipX, flipY,
+// enterScale, exitScale, wiggle, heartbeat
 
-// Programmatic animation
-animateElement(element, { opacity: [0, 1] }, { duration: 300 })
+// Easing presets
+// linear, ease, easeIn, easeOut, easeInOut,
+// spring, springLight, springMedium, springHeavy,
+// smooth, smoothIn, smoothOut, bounce, elastic
+```
 
-// Sequential chain
-chainAnimations(element, ['fadeIn', 'slideUp', 'bounceIn'])
+### Custom Keyframes
 
-// Staggered across multiple elements
-staggerAnimations('.card', 'fadeIn', { delay: 100 })
+```javascript
+import { createKeyframes, clearKeyframes, registerPreset } from 'tailwind-to-style'
+
+// Create custom keyframes (auto-injects CSS)
+const animationValue = createKeyframes('myFade', {
+  '0%': { opacity: 0, transform: 'translateY(-10px)' },
+  '100%': { opacity: 1, transform: 'translateY(0)' }
+}, { duration: 400, easing: 'ease-out' })
+// → "myFade 400ms ease-out forwards"
+
+// Register as reusable preset
+registerPreset('myFade', {
+  keyframes: [{ opacity: 0 }, { opacity: 1 }],
+  options: { duration: 400 }
+})
+
+// Use it
+animate(element, 'myFade')
+
+// Cleanup
+clearKeyframes()
+```
+
+### Animation Utilities
+
+```javascript
+import { 
+  cancelAllAnimations,
+  getActiveAnimationCount, 
+  isAnimationSupported,
+  getPresetNames
+} from 'tailwind-to-style'
+
+cancelAllAnimations()         // Stop all running animations
+getActiveAnimationCount()     // Number of active animations
+isAnimationSupported()        // Check Web Animations API support
+getPresetNames()              // List all available preset names
 ```
 
 ---
@@ -777,6 +984,59 @@ import { tws, twsx, twsxVariants, cx } from 'tailwind-to-style' // ~12KB
 | `tailwind-to-style/utils` | Logger, LRUCache, error handler | ~2KB |
 
 All sub-paths provide ESM + CJS bundles with TypeScript type definitions.
+
+### Utility Exports
+
+```javascript
+import { 
+  // Debounced versions (for rapid updates)
+  debouncedTws,   // Debounced tws() - 50ms delay
+  debouncedTwsx,  // Debounced twsx() - 100ms delay
+  
+  // Performance utilities
+  performanceUtils,
+  
+  // Error handling
+  TwsError,
+  onError,
+  handleError,
+  
+  // Cache utilities
+  LRUCache,
+  getTailwindCache,
+  resetTailwindCache,
+  
+  // Logging
+  logger,
+  Logger,
+} from 'tailwind-to-style'
+
+// Debounced functions - useful for user input
+const handleInput = (value) => {
+  debouncedTws(`w-[${value}px]`, true)  // Won't spam during typing
+}
+
+// Error handling
+const unsubscribe = onError((error) => {
+  console.error('TWS Error:', error.message, error.context)
+  sendToErrorTracking(error)
+})
+
+// Custom error
+const error = handleError(new Error('Invalid class'), { className: 'invalid' })
+// → TwsError with context and timestamp
+
+// LRU Cache (bounded Map)
+const cache = new LRUCache(1000)  // Max 1000 items
+cache.set('key', 'value')
+cache.get('key')  // → 'value'
+cache.has('key')  // → true
+cache.size        // → 1
+
+// Logger
+logger.setLevel('debug')  // 'debug' | 'info' | 'warn' | 'error' | 'silent'
+logger.debug('Processing class:', className)
+```
 
 ---
 

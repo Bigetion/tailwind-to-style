@@ -256,6 +256,104 @@ export interface VariantsDefinition {
   [variantName: string]: VariantOptions;
 }
 
+// ============================================================================
+// Type Inference Utilities
+// ============================================================================
+
+/**
+ * Infer variant props from a variant function or config.
+ * Use this when you need to type component props based on your variants.
+ * 
+ * @example
+ * const button = twsxVariants('.btn', {
+ *   variants: {
+ *     size: { sm: 'text-sm', lg: 'text-lg' },
+ *     variant: { primary: 'bg-blue-500', secondary: 'bg-gray-200' }
+ *   }
+ * });
+ * 
+ * // Extract props type
+ * type ButtonProps = InferVariantProps<typeof button>;
+ * // Result: { size?: 'sm' | 'lg'; variant?: 'primary' | 'secondary' }
+ */
+export type InferVariantProps<T> = T extends VariantFunction<infer V>
+  ? VariantProps<V>
+  : T extends TwsxClassNameVariantFunction<infer V>
+  ? TwsxClassNameVariantProps<V>
+  : T extends TwsxVariantsConfig<infer V>
+  ? VariantProps<V>
+  : T extends TwsxClassNameVariantsConfig<infer V>
+  ? TwsxClassNameVariantProps<V>
+  : never;
+
+/**
+ * Infer slot names from a slots function.
+ * 
+ * @example
+ * const card = twsxClassName({
+ *   slots: { root: 'card', header: 'card-header', body: 'card-body' },
+ *   variants: {}
+ * });
+ * 
+ * type CardSlots = InferSlotNames<typeof card>;
+ * // Result: 'root' | 'header' | 'body'
+ */
+export type InferSlotNames<T> = T extends TwsxClassNameSlotsFunction<infer S, any>
+  ? keyof S
+  : never;
+
+/**
+ * Extract variant names from a variants definition.
+ * 
+ * @example
+ * const config = {
+ *   variants: { size: { sm: '...', lg: '...' }, variant: { primary: '...' } }
+ * };
+ * type VariantNames = ExtractVariantNames<typeof config>;
+ * // Result: 'size' | 'variant'
+ */
+export type ExtractVariantNames<T extends { variants?: VariantsDefinition }> = 
+  T['variants'] extends VariantsDefinition ? keyof T['variants'] : never;
+
+/**
+ * Extract variant options for a specific variant.
+ * 
+ * @example
+ * const config = {
+ *   variants: { size: { sm: '...', md: '...', lg: '...' } }
+ * };
+ * type SizeOptions = ExtractVariantOptions<typeof config, 'size'>;
+ * // Result: 'sm' | 'md' | 'lg'
+ */
+export type ExtractVariantOptions<
+  T extends { variants?: VariantsDefinition },
+  K extends keyof NonNullable<T['variants']>
+> = T['variants'] extends VariantsDefinition
+  ? keyof T['variants'][K]
+  : never;
+
+/**
+ * Make all variant props required.
+ * Useful when you want to enforce all variants are specified.
+ */
+export type RequiredVariantProps<V extends VariantsDefinition> = {
+  [K in keyof V]: keyof V[K];
+};
+
+/**
+ * Pick only specific variants from props.
+ */
+export type PickVariantProps<V extends VariantsDefinition, K extends keyof V> = {
+  [P in K]?: keyof V[P];
+};
+
+/**
+ * Omit specific variants from props.
+ */
+export type OmitVariantProps<V extends VariantsDefinition, K extends keyof V> = {
+  [P in Exclude<keyof V, K>]?: keyof V[P];
+};
+
 /** * Compound variant definition - strict typing for better autocomplete
  */
 export interface CompoundVariant<V extends VariantsDefinition = VariantsDefinition> {
