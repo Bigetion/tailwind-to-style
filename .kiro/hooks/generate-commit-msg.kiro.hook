@@ -4,18 +4,7 @@
   "description": "Setiap kali file code diedit, otomatis generate commit message yang sesuai agar developer bisa commit dan push secara manual.",
   "version": "1",
   "when": {
-    "type": "fileEdited",
-    "patterns": [
-      "*.js",
-      "*.ts",
-      "*.jsx",
-      "*.tsx",
-      "*.json",
-      "*.css",
-      "*.scss",
-      "*.html",
-      "*.md"
-    ]
+    "type": "agentStop"
   },
   "then": {
     "type": "askAgent",
