@@ -1,6 +1,6 @@
 import React from 'react';
 import { twsxClassName } from 'tailwind-to-style';
-import { CheckboxDemo } from './demos/CheckboxDemo';
+import { PaginationDemo } from './demos/PaginationDemo';
 
 // Layout styles
 const page = twsxClassName({ name: 'page', _: 'min-h-screen bg-gray-50 p-8' });
@@ -13,8 +13,8 @@ export default function App() {
     <div className={page}>
       <div className={container}>
         <h1 className={title}>tailwind-to-style — React Components</h1>
-        <p className={subtitle}>Visual testing: Checkbox & Radio</p>
-        <CheckboxDemo />
+        <p className={subtitle}>Visual testing: Pagination component</p>
+        <PaginationDemo />
       </div>
     </div>
   );
