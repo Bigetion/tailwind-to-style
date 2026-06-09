@@ -1,11 +1,11 @@
 import React from 'react';
-import { twsxClassName, cx } from 'tailwind-to-style';
+import { tw, cx } from 'tailwind-to-style';
 
 /**
  * Card component — container with header, body, footer slots.
- * Uses twsxClassName slots mode.
+ * Uses tw slots mode.
  */
-const card = twsxClassName({
+const card = tw({
   name: 'card',
   slots: {
     root: 'bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden',

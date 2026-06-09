@@ -1,11 +1,11 @@
 import React from 'react';
-import { twsxClassName, cx } from 'tailwind-to-style';
+import { tw, cx } from 'tailwind-to-style';
 
 /**
  * Progress component — visual progress indicator.
  * Variants: color, size, striped
  */
-const track = twsxClassName({
+const track = tw({
   name: 'progress-track',
   base: 'w-full overflow-hidden rounded-full bg-gray-200',
   variants: {
@@ -20,7 +20,7 @@ const track = twsxClassName({
   defaultVariants: { size: 'md' },
 });
 
-const fill = twsxClassName({
+const fill = tw({
   name: 'progress-fill',
   base: 'h-full rounded-full transition-all duration-500 ease-out',
   variants: {
@@ -36,9 +36,9 @@ const fill = twsxClassName({
   defaultVariants: { color: 'blue' },
 });
 
-const labelStyle = twsxClassName({ name: 'progress-label', _: 'flex justify-between items-center mb-1' });
-const labelText = twsxClassName({ name: 'progress-label-text', _: 'text-sm font-medium text-gray-700' });
-const labelValue = twsxClassName({ name: 'progress-label-value', _: 'text-sm text-gray-500' });
+const labelStyle = tw({ name: 'progress-label', _: 'flex justify-between items-center mb-1' });
+const labelText = tw({ name: 'progress-label-text', _: 'text-sm font-medium text-gray-700' });
+const labelValue = tw({ name: 'progress-label-value', _: 'text-sm text-gray-500' });
 
 export function Progress({
   value = 0,

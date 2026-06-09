@@ -1,10 +1,10 @@
 import React from 'react';
-import { twsxClassName, cx } from 'tailwind-to-style';
+import { tw, cx } from 'tailwind-to-style';
 
 /**
  * Skeleton component — loading placeholder with shimmer animation.
  */
-const skeleton = twsxClassName({
+const skeleton = tw({
   name: 'skeleton',
   base: 'bg-gray-200 animate-pulse',
   variants: {

@@ -1,10 +1,10 @@
 import React from 'react';
-import { twsxClassName, cx } from 'tailwind-to-style';
+import { tw, cx } from 'tailwind-to-style';
 
 /**
  * Table component — data table with slots.
  */
-const table = twsxClassName({
+const table = tw({
   name: 'table',
   slots: {
     wrapper: 'overflow-x-auto rounded-lg border border-gray-200',

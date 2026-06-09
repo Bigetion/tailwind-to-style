@@ -1,11 +1,11 @@
 import React from 'react';
-import { twsxClassName, cx } from 'tailwind-to-style';
+import { tw, cx } from 'tailwind-to-style';
 
 /**
  * Avatar component — profile image with fallback initials.
  * Variants: size, shape
  */
-const avatar = twsxClassName({
+const avatar = tw({
   name: 'avatar',
   base: 'relative inline-flex items-center justify-center bg-gray-200 text-gray-600 font-medium select-none',
   variants: {
@@ -25,7 +25,7 @@ const avatar = twsxClassName({
   defaultVariants: { size: 'md', shape: 'circle' },
 });
 
-const statusDot = twsxClassName({
+const statusDot = tw({
   name: 'avatar-status',
   base: 'absolute border-2 border-white rounded-full',
   variants: {

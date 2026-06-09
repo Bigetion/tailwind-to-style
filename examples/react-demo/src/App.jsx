@@ -1,11 +1,11 @@
 import React from 'react';
-import { twsxClassName } from 'tailwind-to-style';
+import { tw } from 'tailwind-to-style';
 import { BreadcrumbDemo } from './demos/BreadcrumbDemo';
 
-const page = twsxClassName({ name: 'page', _: 'min-h-screen bg-gray-50 p-8' });
-const container = twsxClassName({ name: 'container', _: 'max-w-4xl mx-auto' });
-const title = twsxClassName({ name: 'title', _: 'text-3xl font-bold text-gray-900 mb-2' });
-const subtitle = twsxClassName({ name: 'subtitle', _: 'text-gray-500 mb-8' });
+const page = tw({ name: 'page', _: 'min-h-screen bg-gray-50 p-8' });
+const container = tw({ name: 'container', _: 'max-w-4xl mx-auto' });
+const title = tw({ name: 'title', _: 'text-3xl font-bold text-gray-900 mb-2' });
+const subtitle = tw({ name: 'subtitle', _: 'text-gray-500 mb-8' });
 
 export default function App() {
   return (

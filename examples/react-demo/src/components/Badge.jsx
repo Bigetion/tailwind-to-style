@@ -1,11 +1,11 @@
 import React from 'react';
-import { twsxClassName, cx } from 'tailwind-to-style';
+import { tw, cx } from 'tailwind-to-style';
 
 /**
  * Badge component — small status labels/indicators.
  * Variants: color, size, dot (status indicator)
  */
-const badge = twsxClassName({
+const badge = tw({
   name: 'badge',
   base: 'inline-flex items-center font-medium rounded-full',
   variants: {

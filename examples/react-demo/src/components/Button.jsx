@@ -1,11 +1,11 @@
 import React from 'react';
-import { twsxClassName } from 'tailwind-to-style';
+import { tw } from 'tailwind-to-style';
 import { cx } from 'tailwind-to-style';
 
 /**
- * Button component built with twsxClassName variants.
+ * Button component built with tw variants.
  */
-const button = twsxClassName({
+const button = tw({
   name: 'btn',
   base: 'inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-200 cursor-pointer select-none hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 active:scale-95',
   variants: {
@@ -39,10 +39,10 @@ const button = twsxClassName({
 });
 
 // Disabled overlay style
-const disabledStyle = twsxClassName({ name: 'btn-disabled', _: 'opacity-50 cursor-not-allowed pointer-events-none' });
+const disabledStyle = tw({ name: 'btn-disabled', _: 'opacity-50 cursor-not-allowed pointer-events-none' });
 
 // Loading spinner
-const spinnerStyle = twsxClassName({ name: 'btn-spinner', _: 'w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin' });
+const spinnerStyle = tw({ name: 'btn-spinner', _: 'w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin' });
 
 export function Button({
   children,

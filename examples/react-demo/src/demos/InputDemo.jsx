@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { twsxClassName } from 'tailwind-to-style';
+import { tw } from 'tailwind-to-style';
 import { Input } from '../components/Input';
 import { Mail, Lock, Search, Eye, EyeOff, User, Phone, AlertCircle, CheckCircle } from 'lucide-react';
 
-const section = twsxClassName({ name: 'demo-section', _: 'mb-10 p-6 bg-white rounded-xl border border-gray-200 shadow-sm' });
-const sectionTitle = twsxClassName({ name: 'demo-title', _: 'text-xl font-semibold text-gray-900 mb-4' });
-const label = twsxClassName({ name: 'demo-label', _: 'text-sm text-gray-500 mb-3 font-medium' });
-const divider = twsxClassName({ name: 'demo-divider', _: 'border-t border-gray-100 my-4' });
-const grid = twsxClassName({ name: 'demo-grid', _: 'grid grid-cols-1 gap-4 max-w-md' });
-const gridTwo = twsxClassName({ name: 'demo-grid-2', _: 'grid grid-cols-2 gap-4 max-w-lg' });
+const section = tw({ name: 'demo-section', _: 'mb-10 p-6 bg-white rounded-xl border border-gray-200 shadow-sm' });
+const sectionTitle = tw({ name: 'demo-title', _: 'text-xl font-semibold text-gray-900 mb-4' });
+const label = tw({ name: 'demo-label', _: 'text-sm text-gray-500 mb-3 font-medium' });
+const divider = tw({ name: 'demo-divider', _: 'border-t border-gray-100 my-4' });
+const grid = tw({ name: 'demo-grid', _: 'grid grid-cols-1 gap-4 max-w-md' });
+const gridTwo = tw({ name: 'demo-grid-2', _: 'grid grid-cols-2 gap-4 max-w-lg' });
 
 export function InputDemo() {
   const [email, setEmail] = useState('');

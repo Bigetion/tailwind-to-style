@@ -1,12 +1,12 @@
 import React from 'react';
-import { twsxClassName } from 'tailwind-to-style';
+import { tw } from 'tailwind-to-style';
 import { Avatar, AvatarGroup } from '../components/Avatar';
 
-const section = twsxClassName({ name: 'demo-section', _: 'mb-10 p-6 bg-white rounded-xl border border-gray-200 shadow-sm' });
-const sectionTitle = twsxClassName({ name: 'demo-title', _: 'text-xl font-semibold text-gray-900 mb-4' });
-const label = twsxClassName({ name: 'demo-label', _: 'text-sm text-gray-500 mb-3 font-medium' });
-const row = twsxClassName({ name: 'demo-row', _: 'flex flex-wrap items-center gap-3 mb-4' });
-const divider = twsxClassName({ name: 'demo-divider', _: 'border-t border-gray-100 my-4' });
+const section = tw({ name: 'demo-section', _: 'mb-10 p-6 bg-white rounded-xl border border-gray-200 shadow-sm' });
+const sectionTitle = tw({ name: 'demo-title', _: 'text-xl font-semibold text-gray-900 mb-4' });
+const label = tw({ name: 'demo-label', _: 'text-sm text-gray-500 mb-3 font-medium' });
+const row = tw({ name: 'demo-row', _: 'flex flex-wrap items-center gap-3 mb-4' });
+const divider = tw({ name: 'demo-divider', _: 'border-t border-gray-100 my-4' });
 
 export function AvatarDemo() {
   return (

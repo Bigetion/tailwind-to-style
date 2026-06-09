@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { twsxClassName, cx } from 'tailwind-to-style';
+import { tw, cx } from 'tailwind-to-style';
 import { CheckCircle, XCircle, AlertTriangle, Info, X } from 'lucide-react';
 
 /**
  * Toast component — ephemeral notification messages.
  */
-const toast = twsxClassName({
+const toast = tw({
   name: 'toast',
   base: 'flex items-start gap-3 w-full max-w-sm px-4 py-3 bg-white rounded-lg shadow-lg border border-gray-200 pointer-events-auto',
   variants: {
@@ -17,9 +17,9 @@ const toast = twsxClassName({
   defaultVariants: { entering: true },
 });
 
-const toastTitle = twsxClassName({ name: 'toast-title', _: 'text-sm font-semibold text-gray-900' });
-const toastMessage = twsxClassName({ name: 'toast-msg', _: 'text-sm text-gray-600' });
-const toastClose = twsxClassName({ name: 'toast-close', _: 'text-gray-400 cursor-pointer hover:text-gray-600 transition-colors' });
+const toastTitle = tw({ name: 'toast-title', _: 'text-sm font-semibold text-gray-900' });
+const toastMessage = tw({ name: 'toast-msg', _: 'text-sm text-gray-600' });
+const toastClose = tw({ name: 'toast-close', _: 'text-gray-400 cursor-pointer hover:text-gray-600 transition-colors' });
 
 const icons = {
   success: { Icon: CheckCircle, color: '#10b981' },

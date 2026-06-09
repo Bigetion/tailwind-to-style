@@ -1,14 +1,14 @@
 import React from 'react';
-import { twsxClassName, cx } from 'tailwind-to-style';
+import { tw, cx } from 'tailwind-to-style';
 import { MoreHorizontal, ChevronLeft, ChevronRight } from 'lucide-react';
 
 /**
- * Pagination — uses twsxClassName like other components.
+ * Pagination — uses tw like other components.
  * colorScheme: 'blue' | 'outline' | 'minimal' | 'rounded'
  */
 
 // Page button variants
-const pageBtn = twsxClassName({
+const pageBtn = tw({
   name: 'page-btn',
   base: 'inline-flex items-center justify-center font-medium cursor-pointer select-none transition-colors duration-150',
   variants: {
@@ -33,7 +33,7 @@ const pageBtn = twsxClassName({
   defaultVariants: { size: 'md' },
 });
 
-const navBtn = twsxClassName({
+const navBtn = tw({
   name: 'page-nav',
   base: 'inline-flex items-center justify-center transition-colors duration-150 cursor-pointer text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-md',
   variants: {

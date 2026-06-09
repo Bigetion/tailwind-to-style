@@ -109,7 +109,4 @@ export { tw, tws, cx };
 // SSR utilities
 export { createSSRCollector } from '../utils/ssr.js';
 
-// Internal access (for advanced users)
-export { twsxClassName } from '../className/index.js';
-
 export default tw;

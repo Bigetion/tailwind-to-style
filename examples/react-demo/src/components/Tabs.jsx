@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { twsxClassName, cx } from 'tailwind-to-style';
+import { tw, cx } from 'tailwind-to-style';
 
 /**
  * Tabs component — switchable content panels.
  * Variants: variant (underline, pills, enclosed)
  */
-const tabList = twsxClassName({
+const tabList = tw({
   name: 'tab-list',
   base: 'flex',
   variants: {
@@ -18,7 +18,7 @@ const tabList = twsxClassName({
   defaultVariants: { variant: 'underline' },
 });
 
-const tab = twsxClassName({
+const tab = tw({
   name: 'tab',
   base: 'inline-flex items-center justify-center gap-2 font-medium cursor-pointer select-none transition-all duration-200',
   variants: {
@@ -43,7 +43,7 @@ const tab = twsxClassName({
   defaultVariants: { variant: 'underline', active: false },
 });
 
-const tabPanel = twsxClassName({ name: 'tab-panel', _: 'py-4' });
+const tabPanel = tw({ name: 'tab-panel', _: 'py-4' });
 
 export function Tabs({
   items,

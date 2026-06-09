@@ -1,12 +1,12 @@
 import React from 'react';
-import { twsxClassName, cx } from 'tailwind-to-style';
+import { tw, cx } from 'tailwind-to-style';
 import { ChevronRight, Slash, Home } from 'lucide-react';
 
 /**
  * Breadcrumb component — navigation path indicator.
  * separator: 'slash' | 'chevron' | 'dot' | custom element
  */
-const breadcrumbLink = twsxClassName({
+const breadcrumbLink = tw({
   name: 'breadcrumb-link',
   base: 'text-sm transition-colors duration-150',
   variants: {
@@ -18,8 +18,8 @@ const breadcrumbLink = twsxClassName({
   defaultVariants: { active: false },
 });
 
-const separatorStyle = twsxClassName({ name: 'breadcrumb-sep', _: 'text-gray-400 flex items-center' });
-const breadcrumbList = twsxClassName({ name: 'breadcrumb-list', _: 'flex items-center flex-wrap gap-1' });
+const separatorStyle = tw({ name: 'breadcrumb-sep', _: 'text-gray-400 flex items-center' });
+const breadcrumbList = tw({ name: 'breadcrumb-list', _: 'flex items-center flex-wrap gap-1' });
 
 const separatorMap = {
   chevron: <ChevronRight size={14} />,

@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
-import { twsxClassName, cx } from 'tailwind-to-style';
+import { tw, cx } from 'tailwind-to-style';
 import { X } from 'lucide-react';
 
 /**
  * Dialog/Modal component — overlay panel.
  * Uses slots for overlay, content, header, body, footer.
  */
-const dialog = twsxClassName({
+const dialog = tw({
   name: 'dialog',
   slots: {
     overlay: 'fixed inset-0 z-50 flex items-center justify-center p-4',
@@ -21,7 +21,7 @@ const dialog = twsxClassName({
 
 const slots = dialog();
 
-const closeBtn = twsxClassName({ name: 'dialog-close', _: 'p-1 rounded-md text-gray-400 cursor-pointer hover:text-gray-600 hover:bg-gray-100 transition-colors' });
+const closeBtn = tw({ name: 'dialog-close', _: 'p-1 rounded-md text-gray-400 cursor-pointer hover:text-gray-600 hover:bg-gray-100 transition-colors' });
 
 export function Dialog({
   open,

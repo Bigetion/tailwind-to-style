@@ -1,5 +1,5 @@
 import React, { useId } from 'react';
-import { twsxClassName } from 'tailwind-to-style';
+import { tw } from 'tailwind-to-style';
 
 // Color map for checked state
 const colorStyles = {
@@ -21,9 +21,9 @@ const dotSizeMap = {
   lg: { box: '22px', dot: '10px' },
 };
 
-const labelCls = twsxClassName({ name: 'cb-label', _: 'text-sm font-medium text-gray-700 cursor-pointer select-none' });
-const descCls  = twsxClassName({ name: 'cb-desc',  _: 'text-xs text-gray-500 mt-0.5' });
-const errorCls = twsxClassName({ name: 'cb-error', _: 'text-xs text-red-600 mt-1' });
+const labelCls = tw({ name: 'cb-label', _: 'text-sm font-medium text-gray-700 cursor-pointer select-none' });
+const descCls  = tw({ name: 'cb-desc',  _: 'text-xs text-gray-500 mt-0.5' });
+const errorCls = tw({ name: 'cb-error', _: 'text-xs text-red-600 mt-1' });
 
 // ─── Checkbox ────────────────────────────────────────────────────────────────
 

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { twsxClassName, cx } from 'tailwind-to-style';
+import { tw, cx } from 'tailwind-to-style';
 import { Info, CheckCircle, AlertTriangle, XCircle, X } from 'lucide-react';
 
 /**
  * Alert component — contextual feedback messages.
  * Variants: color (info, success, warning, error)
  */
-const alert = twsxClassName({
+const alert = tw({
   name: 'alert',
   base: 'relative flex gap-3 rounded-lg p-4 text-sm',
   variants: {
@@ -20,8 +20,8 @@ const alert = twsxClassName({
   defaultVariants: { color: 'info' },
 });
 
-const alertTitle = twsxClassName({ name: 'alert-title', _: 'font-semibold mb-0.5' });
-const alertClose = twsxClassName({ name: 'alert-close', _: 'absolute top-3 right-3 opacity-60 cursor-pointer hover:opacity-100 transition-opacity' });
+const alertTitle = tw({ name: 'alert-title', _: 'font-semibold mb-0.5' });
+const alertClose = tw({ name: 'alert-close', _: 'absolute top-3 right-3 opacity-60 cursor-pointer hover:opacity-100 transition-opacity' });
 
 const iconMap = {
   info: Info,

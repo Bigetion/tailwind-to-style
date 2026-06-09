@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { twsxClassName } from 'tailwind-to-style';
+import { tw } from 'tailwind-to-style';
 import { Skeleton, SkeletonText, SkeletonCard } from '../components/Skeleton';
 import { Avatar } from '../components/Avatar';
 import { Button } from '../components/Button';
 import { RefreshCw } from 'lucide-react';
 
-const section = twsxClassName({ name: 'demo-section', _: 'mb-10 p-6 bg-white rounded-xl border border-gray-200 shadow-sm' });
-const sectionTitle = twsxClassName({ name: 'demo-title', _: 'text-xl font-semibold text-gray-900 mb-4' });
-const label = twsxClassName({ name: 'demo-label', _: 'text-sm text-gray-500 mb-3 font-medium' });
-const gridTwo = twsxClassName({ name: 'demo-grid-2', _: 'grid grid-cols-2 gap-4' });
+const section = tw({ name: 'demo-section', _: 'mb-10 p-6 bg-white rounded-xl border border-gray-200 shadow-sm' });
+const sectionTitle = tw({ name: 'demo-title', _: 'text-xl font-semibold text-gray-900 mb-4' });
+const label = tw({ name: 'demo-label', _: 'text-sm text-gray-500 mb-3 font-medium' });
+const gridTwo = tw({ name: 'demo-grid-2', _: 'grid grid-cols-2 gap-4' });
 
 export function SkeletonDemo() {
   const [loaded, setLoaded] = useState(false);

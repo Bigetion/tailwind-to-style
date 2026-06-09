@@ -1,13 +1,13 @@
 import React, { useId } from 'react';
-import { twsxClassName, cx } from 'tailwind-to-style';
+import { tw, cx } from 'tailwind-to-style';
 import { ChevronDown, AlertCircle, CheckCircle } from 'lucide-react';
 
 /**
  * Select component — styled native select with label, states, sizes.
  */
-const selectWrapper = twsxClassName({ name: 'select-wrapper', _: 'relative' });
+const selectWrapper = tw({ name: 'select-wrapper', _: 'relative' });
 
-const selectField = twsxClassName({
+const selectField = tw({
   name: 'select',
   base: 'block w-full rounded-lg border bg-white text-gray-900 appearance-none pr-10 cursor-pointer transition-all duration-200 focus:outline-none focus:ring-2',
   variants: {
@@ -28,11 +28,11 @@ const selectField = twsxClassName({
   defaultVariants: { size: 'md', state: 'default' },
 });
 
-const labelStyle = twsxClassName({ name: 'select-label', _: 'block text-sm font-medium text-gray-700 mb-1.5' });
-const helperStyle = twsxClassName({ name: 'select-helper', _: 'mt-1.5 text-sm text-gray-500' });
-const errorStyle = twsxClassName({ name: 'select-error', _: 'mt-1.5 text-sm text-red-600 flex items-center gap-1' });
-const successStyle = twsxClassName({ name: 'select-success', _: 'mt-1.5 text-sm text-emerald-600 flex items-center gap-1' });
-const iconWrapper = twsxClassName({ name: 'select-icon', _: 'absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400' });
+const labelStyle = tw({ name: 'select-label', _: 'block text-sm font-medium text-gray-700 mb-1.5' });
+const helperStyle = tw({ name: 'select-helper', _: 'mt-1.5 text-sm text-gray-500' });
+const errorStyle = tw({ name: 'select-error', _: 'mt-1.5 text-sm text-red-600 flex items-center gap-1' });
+const successStyle = tw({ name: 'select-success', _: 'mt-1.5 text-sm text-emerald-600 flex items-center gap-1' });
+const iconWrapper = tw({ name: 'select-icon', _: 'absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400' });
 
 export function Select({
   label,

@@ -1,11 +1,11 @@
 import React from 'react';
-import { twsxClassName, cx } from 'tailwind-to-style';
+import { tw, cx } from 'tailwind-to-style';
 
 /**
  * Toggle/Switch component — on/off control.
  * Variants: size, color
  */
-const track = twsxClassName({
+const track = tw({
   name: 'toggle-track',
   base: 'relative inline-flex shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200',
   variants: {
@@ -25,7 +25,7 @@ const track = twsxClassName({
   defaultVariants: { size: 'md', checked: false },
 });
 
-const thumb = twsxClassName({
+const thumb = tw({
   name: 'toggle-thumb',
   base: 'pointer-events-none inline-block rounded-full bg-white shadow-sm ring-0 transition-transform duration-200',
   variants: {
@@ -42,8 +42,8 @@ const thumb = twsxClassName({
   defaultVariants: { size: 'md', checked: false },
 });
 
-const labelStyle = twsxClassName({ name: 'toggle-label', _: 'text-sm text-gray-700 select-none' });
-const descStyle = twsxClassName({ name: 'toggle-desc', _: 'text-xs text-gray-500' });
+const labelStyle = tw({ name: 'toggle-label', _: 'text-sm text-gray-700 select-none' });
+const descStyle = tw({ name: 'toggle-desc', _: 'text-xs text-gray-500' });
 
 const checkedColors = {
   blue: '#3b82f6',

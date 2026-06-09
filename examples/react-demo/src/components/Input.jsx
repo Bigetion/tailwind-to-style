@@ -1,5 +1,5 @@
 import React, { useId } from 'react';
-import { twsxClassName, cx } from 'tailwind-to-style';
+import { tw, cx } from 'tailwind-to-style';
 
 /**
  * Input component — text field with label, helper text, error state, and icons.
@@ -9,7 +9,7 @@ import { twsxClassName, cx } from 'tailwind-to-style';
  * - Filter undefined props before passing to variant function
  * - base has no padding (put in size variants)
  */
-const inputField = twsxClassName({
+const inputField = tw({
   name: 'input',
   base: 'block w-full rounded-lg border bg-white text-gray-900 transition-all duration-200 focus:outline-none focus:ring-2',
   variants: {
@@ -33,13 +33,13 @@ const inputField = twsxClassName({
   },
 });
 
-const labelStyle = twsxClassName({ name: 'input-label', _: 'block text-sm font-medium text-gray-700 mb-1.5' });
-const helperStyle = twsxClassName({ name: 'input-helper', _: 'mt-1.5 text-sm text-gray-500' });
-const errorStyle = twsxClassName({ name: 'input-error', _: 'mt-1.5 text-sm text-red-600' });
-const successStyle = twsxClassName({ name: 'input-success', _: 'mt-1.5 text-sm text-emerald-600' });
-const wrapperStyle = twsxClassName({ name: 'input-wrapper', _: 'relative' });
-const iconLeftStyle = twsxClassName({ name: 'input-icon-left', _: 'absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none' });
-const iconRightStyle = twsxClassName({ name: 'input-icon-right', _: 'absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none' });
+const labelStyle = tw({ name: 'input-label', _: 'block text-sm font-medium text-gray-700 mb-1.5' });
+const helperStyle = tw({ name: 'input-helper', _: 'mt-1.5 text-sm text-gray-500' });
+const errorStyle = tw({ name: 'input-error', _: 'mt-1.5 text-sm text-red-600' });
+const successStyle = tw({ name: 'input-success', _: 'mt-1.5 text-sm text-emerald-600' });
+const wrapperStyle = tw({ name: 'input-wrapper', _: 'relative' });
+const iconLeftStyle = tw({ name: 'input-icon-left', _: 'absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none' });
+const iconRightStyle = tw({ name: 'input-icon-right', _: 'absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none' });
 
 export function Input({
   label,

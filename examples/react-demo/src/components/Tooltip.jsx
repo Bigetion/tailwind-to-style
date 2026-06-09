@@ -1,11 +1,11 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { twsxClassName, cx } from 'tailwind-to-style';
+import { tw, cx } from 'tailwind-to-style';
 
 /**
  * Tooltip component — hover/focus popup for contextual info.
  * Positions: top, bottom, left, right
  */
-const tooltipBox = twsxClassName({
+const tooltipBox = tw({
   name: 'tooltip',
   base: 'absolute z-50 px-2.5 py-1.5 text-xs font-medium text-white bg-gray-900 rounded-md whitespace-nowrap pointer-events-none shadow-lg',
   variants: {
