@@ -1,6 +1,6 @@
 import React from 'react';
 import { twsxClassName } from 'tailwind-to-style';
-import { AccordionDemo } from './demos/AccordionDemo';
+import { DropdownDemo } from './demos/DropdownDemo';
 
 // Layout styles
 const page = twsxClassName({ name: 'page', _: 'min-h-screen bg-gray-50 p-8' });
@@ -13,8 +13,8 @@ export default function App() {
     <div className={page}>
       <div className={container}>
         <h1 className={title}>tailwind-to-style — React Components</h1>
-        <p className={subtitle}>Visual testing: Accordion component</p>
-        <AccordionDemo />
+        <p className={subtitle}>Visual testing: Dropdown component</p>
+        <DropdownDemo />
       </div>
     </div>
   );
