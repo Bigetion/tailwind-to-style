@@ -1,6 +1,6 @@
 import React from 'react';
 import { tw } from 'tailwind-to-style';
-import { TextareaDemo } from './demos/TextareaDemo';
+import { StepperDemo } from './demos/StepperDemo';
 
 const page = tw({ name: 'page', _: 'min-h-screen bg-gray-50 p-8' });
 const container = tw({ name: 'container', _: 'max-w-4xl mx-auto' });
@@ -12,8 +12,8 @@ export default function App() {
     <div className={page}>
       <div className={container}>
         <h1 className={title}>tailwind-to-style — React Components</h1>
-        <p className={subtitle}>Visual testing: Textarea component</p>
-        <TextareaDemo />
+        <p className={subtitle}>Visual testing: Stepper component</p>
+        <StepperDemo />
       </div>
     </div>
   );
