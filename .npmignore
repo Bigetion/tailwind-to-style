@@ -14,8 +14,10 @@ coverage/
 # Development tooling
 .github/
 .vscode/
+.bmad-core/
+.kiro/
 
-# Examples (keep these accessible but not published)
+# Examples
 examples/
 
 # Git files
@@ -35,3 +37,8 @@ npm-debug.log*
 
 # Dependency directories
 node_modules/
+
+# Docs (included in README)
+ARCHITECTURE.md
+CONTRIBUTING.md
+CHANGELOG.md
