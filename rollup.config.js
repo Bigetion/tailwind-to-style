@@ -45,6 +45,7 @@ const subPathEntries = [
   { input: 'src/className/index.js', name: 'className/index', typeSrc: 'types/className/index.d.ts' },
   { input: 'src/utils/index.js', name: 'utils/index', typeSrc: 'types/utils/index.d.ts' },
   { input: 'src/cx.js', name: 'cx', typeSrc: 'types/cx.d.ts' },
+  { input: 'src/className/index.js', name: 'styled', typeSrc: 'types/className/index.d.ts' },
 ];
 
 // Generate sub-path builds (ESM + CJS for each)

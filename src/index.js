@@ -347,6 +347,17 @@ import generateWordBreak from "./generators/wordBreak.js";
 import generateWillChange from "./generators/willChange.js";
 import generateZIndex from "./generators/zIndex.js";
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// MODERN CSS GENERATORS (Next-Gen Features)
+// ═══════════════════════════════════════════════════════════════════════════════
+import generateFluid from "./generators/fluid.js";
+import generateLogicalProperties from "./generators/logicalProperties.js";
+import generateModernColor from "./generators/modernColor.js";
+import generateContentVisibility from "./generators/contentVisibility.js";
+import generateAnchorPositioning from "./generators/anchorPositioning.js";
+import generateModernLayout from "./generators/modernLayout.js";
+import generateScrollDrivenAnimations from "./generators/scrollDrivenAnimations.js";
+
 import { logger } from "./utils/logger.js";
 // LRUCache already imported at top of file
 import { handleError } from "./utils/errorHandler.js";
@@ -648,6 +659,18 @@ const plugins = {
   willChange: generateWillChange,
   wordBreak: generateWordBreak,
   zIndex: generateZIndex,
+
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // MODERN CSS PLUGINS (Next-Gen Features)
+  // ═══════════════════════════════════════════════════════════════════════════════
+  fluid: generateFluid,
+  logicalProperties: generateLogicalProperties,
+  modernColor: generateModernColor,
+  modernTextWrap: generateTextWrap,
+  contentVisibility: generateContentVisibility,
+  anchorPositioning: generateAnchorPositioning,
+  modernLayout: generateModernLayout,
+  scrollDrivenAnimations: generateScrollDrivenAnimations,
 };
 
 function parseCustomClassWithPatterns(className) {
@@ -933,6 +956,88 @@ function resolveVariants(selector, variants) {
     } else if (v === "dark") {
       // Special handling for dark variant
       finalSelector = `.dark ${finalSelector}`;
+    } else if (v.startsWith("has-[")) {
+      // :has([selector]) variant
+      const match = v.match(/has-\[([^\]]+)\]/);
+      if (match) finalSelector += `:has(${match[1]})`;
+    } else if (v.startsWith("not-[")) {
+      // :not([selector]) variant
+      const match = v.match(/not-\[([^\]]+)\]/);
+      if (match) finalSelector += `:not(${match[1]})`;
+    } else if (v.startsWith("is-[")) {
+      // :is([selector]) variant
+      const match = v.match(/is-\[([^\]]+)\]/);
+      if (match) finalSelector += `:is(${match[1]})`;
+    } else if (v.startsWith("where-[")) {
+      // :where([selector]) variant
+      const match = v.match(/where-\[([^\]]+)\]/);
+      if (match) finalSelector += `:where(${match[1]})`;
+    } else if (v.startsWith("group-has-[")) {
+      // .group:has([selector]) & variant
+      const match = v.match(/group-has-\[([^\]]+)\]/);
+      if (match) finalSelector = `.group:has(${match[1]}) ${finalSelector}`;
+    } else if (v.startsWith("peer-has-[")) {
+      // .peer:has([selector]) ~ & variant
+      const match = v.match(/peer-has-\[([^\]]+)\]/);
+      if (match) finalSelector = `.peer:has(${match[1]}) ~ ${finalSelector}`;
+    } else if (v.startsWith("group-not-[")) {
+      // .group:not([selector]) & variant
+      const match = v.match(/group-not-\[([^\]]+)\]/);
+      if (match) finalSelector = `.group:not(${match[1]}) ${finalSelector}`;
+    } else if (v.startsWith("peer-not-[")) {
+      // .peer:not([selector]) ~ & variant
+      const match = v.match(/peer-not-\[([^\]]+)\]/);
+      if (match) finalSelector = `.peer:not(${match[1]}) ~ ${finalSelector}`;
+    } else if (v.startsWith("group-is-[")) {
+      // .group:is([selector]) & variant
+      const match = v.match(/group-is-\[([^\]]+)\]/);
+      if (match) finalSelector = `.group:is(${match[1]}) ${finalSelector}`;
+    } else if (v.startsWith("peer-is-[")) {
+      // .peer:is([selector]) ~ & variant
+      const match = v.match(/peer-is-\[([^\]]+)\]/);
+      if (match) finalSelector = `.peer:is(${match[1]}) ~ ${finalSelector}`;
+    } else if (v.startsWith("group-where-[")) {
+      // .group:where([selector]) & variant
+      const match = v.match(/group-where-\[([^\]]+)\]/);
+      if (match) finalSelector = `.group:where(${match[1]}) ${finalSelector}`;
+    } else if (v.startsWith("peer-where-[")) {
+      // .peer:where([selector]) ~ & variant
+      const match = v.match(/peer-where-\[([^\]]+)\]/);
+      if (match) finalSelector = `.peer:where(${match[1]}) ~ ${finalSelector}`;
+    } else if (v.startsWith("aria-[")) {
+      // [aria-...] variant
+      const match = v.match(/aria-\[([^\]]+)\]/);
+      if (match) finalSelector += `[aria-${match[1]}]`;
+    } else if (v.startsWith("data-[")) {
+      // [data-...] variant
+      const match = v.match(/data-\[([^\]]+)\]/);
+      if (match) finalSelector += `[data-${match[1]}]`;
+    } else if (v.startsWith("@[")) {
+      // Container query with arbitrary value: @[min-width:400px]
+      const match = v.match(/@\[([^\]]+)\]/);
+      if (match) media = `@container (${match[1]})`;
+    } else if (v.startsWith("@")) {
+      // Named container query: @sm, @md, @lg
+      const cqName = v;
+      if (breakpoints[cqName]) {
+        media = breakpoints[cqName];
+      }
+    } else if (v === "motion-safe") {
+      media = "@media (prefers-reduced-motion: no-preference)";
+    } else if (v === "motion-reduce") {
+      media = "@media (prefers-reduced-motion: reduce)";
+    } else if (v === "contrast-more") {
+      media = "@media (prefers-contrast: more)";
+    } else if (v === "contrast-less") {
+      media = "@media (prefers-contrast: less)";
+    } else if (v === "portrait") {
+      media = "@media (orientation: portrait)";
+    } else if (v === "landscape") {
+      media = "@media (orientation: landscape)";
+    } else if (v === "print") {
+      media = "@media print";
+    } else if (v === "forced-colors") {
+      media = "@media (forced-colors: active)";
     } else {
       for (const key in specialVariants) {
         if (v.startsWith(`${key}-`)) {
@@ -1679,9 +1784,35 @@ function processNestedSelectors(nested, selector, styles, walk) {
       continue;
     }
 
-    const combinedSel = nestedSel.includes("&")
-      ? nestedSel.replace(/&/g, selector)
-      : `${selector} ${nestedSel}`;
+    let combinedSel;
+    if (nestedSel.includes("&")) {
+      combinedSel = nestedSel.replace(/&/g, selector);
+    } else if (
+      // Pseudo-class/attribute variants that should be appended with :
+      nestedSel.match(/^(hover|focus|focus-visible|focus-within|active|visited|disabled|enabled|checked|indeterminate|default|required|optional|valid|invalid|in-range|out-of-range|placeholder-shown|autofill|read-only|read-write|empty|target|first|last|only|odd|even|first-of-type|last-of-type|only-of-type|before|after|placeholder|selection|marker|file|backdrop|part|slotted|host|is\(|where\(|has\(|not\(|lang\(|dir\()/) ||
+      nestedSel.match(/^\[/) ||
+      nestedSel.match(/^has-/) ||
+      nestedSel.match(/^not-/) ||
+      nestedSel.match(/^is-/) ||
+      nestedSel.match(/^where-/)
+    ) {
+      // Handle bracket variants: has-[...] → :has(...)
+      let pseudoSel = nestedSel;
+      const hasMatch = nestedSel.match(/^has-\[([^\]]+)\]$/);
+      const notMatch = nestedSel.match(/^not-\[([^\]]+)\]$/);
+      const isMatch = nestedSel.match(/^is-\[([^\]]+)\]$/);
+      const whereMatch = nestedSel.match(/^where-\[([^\]]+)\]$/);
+
+      if (hasMatch) pseudoSel = `:has(${hasMatch[1]})`;
+      else if (notMatch) pseudoSel = `:not(${notMatch[1]})`;
+      else if (isMatch) pseudoSel = `:is(${isMatch[1]})`;
+      else if (whereMatch) pseudoSel = `:where(${whereMatch[1]})`;
+      else if (!nestedSel.startsWith(":")) pseudoSel = `:${nestedSel}`;
+
+      combinedSel = `${selector}${pseudoSel}`;
+    } else {
+      combinedSel = `${selector} ${nestedSel}`;
+    }
     walk(combinedSel, nestedVal);
   }
 }
@@ -1785,12 +1916,14 @@ function isSelectorObject(val) {
 
 function flattenStyleObject(obj, parentSelector = "") {
   const result = {};
+  const AT_RULE_NAMES = ["@media", "@container", "@scope", "@supports", "@layer", "@position-try"];
 
   for (const selector in obj) {
     const val = obj[selector];
 
-    // Handle media queries specially - don't concatenate with parent
-    if (selector.startsWith("@media")) {
+    // Handle at-rules specially - don't concatenate with parent
+    const isAtRuleSelector = AT_RULE_NAMES.some((name) => selector.startsWith(name));
+    if (isAtRuleSelector) {
       if (isSelectorObject(val)) {
         // Initialize media query in result if not exists
         if (!result[selector]) {
@@ -1828,8 +1961,8 @@ function flattenStyleObject(obj, parentSelector = "") {
             );
             // Merge nested results into media query
             for (const nestedSel in nested) {
-              if (nestedSel.startsWith("@media")) {
-                // Nested media query - merge at top level
+              if (AT_RULE_NAMES.some((name) => nestedSel.startsWith(name))) {
+                // Nested at-rule - merge at top level
                 Object.assign(result, nested);
               } else {
                 result[selector][nestedSel] = nested[nestedSel];
@@ -1844,6 +1977,25 @@ function flattenStyleObject(obj, parentSelector = "") {
     const currentSelector = parentSelector
       ? selector.includes("&")
         ? selector.replace(/&/g, parentSelector)
+        : selector.match(/^(hover|focus|focus-visible|focus-within|active|visited|disabled|enabled|checked|indeterminate|default|required|optional|valid|invalid|in-range|out-of-range|placeholder-shown|autofill|read-only|read-write|empty|target|first|last|only|odd|even|first-of-type|last-of-type|only-of-type|before|after|placeholder|selection|marker|file|backdrop|part|slotted|host|is\(|where\(|has\(|not\(|lang\(|dir\()/) ||
+          selector.match(/^\[/) ||
+          selector.match(/^has-/) ||
+          selector.match(/^not-/) ||
+          selector.match(/^is-/) ||
+          selector.match(/^where-/)
+        ? (() => {
+            let pseudoSel = selector;
+            const hasMatch = selector.match(/^has-\[([^\]]+)\]$/);
+            const notMatch = selector.match(/^not-\[([^\]]+)\]$/);
+            const isMatch = selector.match(/^is-\[([^\]]+)\]$/);
+            const whereMatch = selector.match(/^where-\[([^\]]+)\]$/);
+            if (hasMatch) pseudoSel = `:has(${hasMatch[1]})`;
+            else if (notMatch) pseudoSel = `:not(${notMatch[1]})`;
+            else if (isMatch) pseudoSel = `:is(${isMatch[1]})`;
+            else if (whereMatch) pseudoSel = `:where(${whereMatch[1]})`;
+            else if (!selector.startsWith(":")) pseudoSel = `:${selector}`;
+            return `${parentSelector}${pseudoSel}`;
+          })()
         : `${parentSelector} ${selector}`
       : selector;
 
@@ -1890,13 +2042,27 @@ function flattenStyleObject(obj, parentSelector = "") {
 // CSS Generation utilities
 function generateCssString(styles) {
   const baseStyles = [];
-  const mediaStyles = [];
+  const atRuleStyles = [];
+
+  // At-rule patterns that should be nested
+  const AT_RULE_PATTERNS = [
+    /^@media/,
+    /^@container/,
+    /^@supports/,
+    /^@scope/,
+    /^@layer/,
+    /^@position-try/,
+  ];
+
+  function isAtRule(sel) {
+    return AT_RULE_PATTERNS.some((pattern) => pattern.test(sel));
+  }
 
   for (const sel in styles) {
-    if (!sel.startsWith("@media")) {
+    if (!isAtRule(sel)) {
       baseStyles.push({ sel, css: styles[sel] });
     } else {
-      mediaStyles.push({ sel, content: styles[sel] });
+      atRuleStyles.push({ sel, content: styles[sel] });
     }
   }
 
@@ -1907,15 +2073,26 @@ function generateCssString(styles) {
     cssString += `${sel}{${css.trim().replace(/\n/g, "")}}`;
   }
 
-  // Sort and add media queries
-  function mediaPriority(sel) {
-    const match = sel.match(/@media \(min-width: (\d+)px\)/);
-    return match ? parseInt(match[1], 10) : 99999;
+  // Sort at-rules: @layer first, then @scope, @supports, @container, @media by breakpoint
+  function atRulePriority(sel) {
+    if (sel.startsWith("@layer")) return 0;
+    if (sel.startsWith("@scope")) return 1;
+    if (sel.startsWith("@position-try")) return 2;
+    if (sel.startsWith("@supports")) return 3;
+    if (sel.startsWith("@container")) {
+      const match = sel.match(/min-width:\s*(\d+)px/);
+      return match ? 1000 + parseInt(match[1], 10) : 99999;
+    }
+    if (sel.startsWith("@media")) {
+      const match = sel.match(/min-width:\s*(\d+)px/);
+      return match ? 2000 + parseInt(match[1], 10) : 99999;
+    }
+    return 99999;
   }
 
-  mediaStyles.sort((a, b) => mediaPriority(a.sel) - mediaPriority(b.sel));
+  atRuleStyles.sort((a, b) => atRulePriority(a.sel) - atRulePriority(b.sel));
 
-  for (const { sel, content } of mediaStyles) {
+  for (const { sel, content } of atRuleStyles) {
     cssString += `${sel}{`;
     for (const subSel in content) {
       cssString += `${subSel}{${content[subSel].trim().replace(/\n/g, "")}}`;
@@ -1997,20 +2174,98 @@ function twsxNoCache(obj, options = {}) {
     for (const selector in flattered) {
       const val = flattered[selector];
 
-      // Handle media queries specially - don't process through walk
-      if (selector.startsWith("@media")) {
-        // Media query should have nested selectors with Tailwind classes
-        if (typeof val === "object" && !Array.isArray(val)) {
-          // Initialize media query in styles
-          if (!styles[selector]) {
-            styles[selector] = {};
-          }
+      // Handle at-rules specially - don't process through walk
+      const atRuleMatch = selector.match(/^@(media|container|scope|supports|layer|position-try)\b/);
+      if (atRuleMatch) {
+        const atRuleType = atRuleMatch[1];
 
-          // Process each selector within the media query
+        if (atRuleType === "scope") {
+          // @scope (.start) to (.end) { ... }
+          const scopeMatch = selector.match(/@scope\s*\(\s*([^)]+)\s*\)(?:\s+to\s*\(\s*([^)]+)\s*\))?/);
+          if (scopeMatch) {
+            const scopeStart = scopeMatch[1].trim();
+            const scopeEnd = scopeMatch[2] ? scopeMatch[2].trim() : null;
+            const scopeKey = scopeEnd
+              ? `@scope (${scopeStart}) to (${scopeEnd})`
+              : `@scope (${scopeStart})`;
+
+            if (!styles[scopeKey]) styles[scopeKey] = {};
+
+            if (typeof val === "object" && !Array.isArray(val)) {
+              for (const innerSelector in val) {
+                const innerVal = val[innerSelector];
+                const baseClass = typeof innerVal === "string" ? expandGroupedClass(innerVal) : "";
+                if (baseClass) {
+                  for (const cls of baseClass.split(" ")) {
+                    if (cls.trim()) {
+                      processClass(cls, innerSelector, styles[scopeKey]);
+                    }
+                  }
+                }
+              }
+            }
+          }
+          continue;
+        }
+
+        if (atRuleType === "position-try") {
+          // @position-try --flip-block { ... }
+          const ptMatch = selector.match(/@position-try\s+([^\{]+)/);
+          if (ptMatch) {
+            const ptName = ptMatch[1].trim();
+            const ptKey = `@position-try ${ptName}`;
+            if (!styles[ptKey]) styles[ptKey] = {};
+
+            if (typeof val === "object" && !Array.isArray(val)) {
+              for (const innerSelector in val) {
+                const innerVal = val[innerSelector];
+                const baseClass = typeof innerVal === "string" ? expandGroupedClass(innerVal) : "";
+                if (baseClass) {
+                  for (const cls of baseClass.split(" ")) {
+                    if (cls.trim()) {
+                      processClass(cls, innerSelector, styles[ptKey]);
+                    }
+                  }
+                }
+              }
+            }
+          }
+          continue;
+        }
+
+        if (atRuleType === "layer") {
+          // @layer utilities { ... }
+          const layerMatch = selector.match(/@layer\s+([^\{]+)/);
+          if (layerMatch) {
+            const layerName = layerMatch[1].trim();
+            const layerKey = `@layer ${layerName}`;
+            if (!styles[layerKey]) styles[layerKey] = {};
+
+            if (typeof val === "object" && !Array.isArray(val)) {
+              for (const innerSelector in val) {
+                const innerVal = val[innerSelector];
+                const baseClass = typeof innerVal === "string" ? expandGroupedClass(innerVal) : "";
+                if (baseClass) {
+                  for (const cls of baseClass.split(" ")) {
+                    if (cls.trim()) {
+                      processClass(cls, innerSelector, styles[layerKey]);
+                    }
+                  }
+                }
+              }
+            }
+          }
+          continue;
+        }
+
+        // Default handling for @media, @container, @supports
+        if (typeof val === "object" && !Array.isArray(val)) {
+          if (!styles[selector]) styles[selector] = {};
+
           for (const innerSelector in val) {
             const innerVal = val[innerSelector];
 
-            // Handle @css string directive inside media queries
+            // Handle @css string directive inside at-rules
             if (typeof innerVal === "string") {
               const trimmedInner = innerVal.trim();
               if (trimmedInner.startsWith('@css')) {
@@ -2027,7 +2282,6 @@ function twsxNoCache(obj, options = {}) {
             const baseClass =
               typeof innerVal === "string" ? expandGroupedClass(innerVal) : "";
 
-            // Process Tailwind classes for this selector
             if (baseClass) {
               for (const cls of baseClass.split(" ")) {
                 if (cls.trim()) {
@@ -3134,7 +3388,21 @@ export {
 // ============================================================================
 // Main API Exports
 // ============================================================================
-// twsxClassName - Unified CSS-in-JS API with variants and slots
-// tw - Atomic CSS class generator with pseudo-class support
+
+// 🎯 styled() — THE PRIMARY API (v4+)
+// Unified CSS-in-JS: basic className, variants, slots, raw CSS injection
+export { styled } from "./className/index.js";
+
+// Legacy exports (still available for backward compatibility)
 export { twsxClassName, tw } from "./className/index.js";
+
+// ============================================================================
+// Modern CSS Utilities
+// ============================================================================
+export {
+  toDarkMode,
+  generateDarkVariant,
+  createAutoDarkConfig,
+  generateTypedPropertyDefinitions,
+} from "./utils/autoDarkMode.js";
 

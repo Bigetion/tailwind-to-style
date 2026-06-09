@@ -275,6 +275,23 @@ export const SPECIAL_VARIANTS = {
   has: (state, sel) => `${sel}:has(${state})`,
   "aria": (state, sel) => `${sel}[aria-${state}]`,
   "data": (state, sel) => `${sel}[data-${state}]`,
+  // Modern selector variants
+  "is": (state, sel) => `${sel}:is(${state})`,
+  "where": (state, sel) => `${sel}:where(${state})`,
+  "has-not": (state, sel) => `${sel}:has(:not(${state}))`,
+  "group-has": (state, sel) => `.group:has(${state}) ${sel}`,
+  "peer-has": (state, sel) => `.peer:has(${state}) ~ ${sel}`,
+  "group-not": (state, sel) => `.group:not(${state}) ${sel}`,
+  "peer-not": (state, sel) => `.peer:not(${state}) ~ ${sel}`,
+  "group-is": (state, sel) => `.group:is(${state}) ${sel}`,
+  "peer-is": (state, sel) => `.peer:is(${state}) ~ ${sel}`,
+  "group-where": (state, sel) => `.group:where(${state}) ${sel}`,
+  "peer-where": (state, sel) => `.peer:where(${state}) ~ ${sel}`,
+  // Reduced motion / accessibility
+  "motion-safe": (state, sel) => `@media (prefers-reduced-motion: no-preference) { ${sel} }`,
+  "motion-reduce": (state, sel) => `@media (prefers-reduced-motion: reduce) { ${sel} }`,
+  "contrast-more": (state, sel) => `@media (prefers-contrast: more) { ${sel} }`,
+  "contrast-less": (state, sel) => `@media (prefers-contrast: less) { ${sel} }`,
 };
 
 /** Selector variants for child selection */
@@ -285,7 +302,78 @@ export const SELECTOR_VARIANTS = {
   even: () => "> :nth-child(even)",
   not: (arg) => `> :not(${arg})`,
   number: (arg) => `> :nth-child(${arg})`,
+  "has": (arg) => `:has(> ${arg})`,
+  "is": (arg) => `:is(> ${arg})`,
+  "where": (arg) => `:where(> ${arg})`,
 };
+
+// ============================================================================
+// SMART SELECTOR VARIANTS (Modern CSS selectors)
+// ============================================================================
+
+/** Regex for has-[...] variant */
+export const HAS_VARIANT_REGEX = /has-\[([^\]]+)\]/;
+
+/** Regex for not-[...] variant */
+export const NOT_VARIANT_REGEX = /not-\[([^\]]+)\]/;
+
+/** Regex for is-[...] variant */
+export const IS_VARIANT_REGEX = /is-\[([^\]]+)\]/;
+
+/** Regex for where-[...] variant */
+export const WHERE_VARIANT_REGEX = /where-\[([^\]]+)\]/;
+
+/** Regex for aria-[...] variant */
+export const ARIA_VARIANT_REGEX = /aria-\[([^\]]+)\]/;
+
+/** Regex for data-[...] variant */
+export const DATA_VARIANT_REGEX = /data-\[([^\]]+)\]/;
+
+/** Regex for group-has-[...] variant */
+export const GROUP_HAS_VARIANT_REGEX = /group-has-\[([^\]]+)\]/;
+
+/** Regex for peer-has-[...] variant */
+export const PEER_HAS_VARIANT_REGEX = /peer-has-\[([^\]]+)\]/;
+
+/** Regex for group-not-[...] variant */
+export const GROUP_NOT_VARIANT_REGEX = /group-not-\[([^\]]+)\]/;
+
+/** Regex for peer-not-[...] variant */
+export const PEER_NOT_VARIANT_REGEX = /peer-not-\[([^\]]+)\]/;
+
+// ============================================================================
+// CSS NESTING & SCOPE
+// ============================================================================
+
+/** Regex for @scope detection */
+export const SCOPE_AT_RULE_REGEX = /@scope\s*\(\s*([^)]+)\s*\)(?:\s+to\s*\(\s*([^)]+)\s*\))?/;
+
+/** Regex for @container detection */
+export const CONTAINER_AT_RULE_REGEX = /@container\s+([^\{]+)/;
+
+/** Regex for @position-try detection */
+export const POSITION_TRY_AT_RULE_REGEX = /@position-try\s+([^\{]+)/;
+
+// ============================================================================
+// MODERN CSS PROPERTIES
+// ============================================================================
+
+/** CSS properties that support oklch */
+export const OKLCH_COLOR_PROPERTIES = [
+  "color",
+  "background-color",
+  "border-color",
+  "text-decoration-color",
+  "outline-color",
+  "fill",
+  "stroke",
+  "caret-color",
+  "accent-color",
+  "column-rule-color",
+];
+
+/** Modern color space keywords */
+export const MODERN_COLOR_SPACES = ["oklch", "oklab", "lab", "lch", "display-p3", "srgb", "hsl", "hwb"];
 
 // ============================================================================
 // ANIMATION KEYFRAMES

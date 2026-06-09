@@ -76,26 +76,4 @@ export function cx(...args) {
   return classes.join(' ');
 }
 
-/**
- * Create a cx function bound with base classes.
- * Useful for component-level class composition.
- * 
- * @param {...(string|Object|Array)} baseArgs - Base class arguments always included
- * @returns {Function} A cx function pre-filled with base classes
- * 
- * @example
- * const btnClasses = cx.with('px-4 py-2 rounded font-medium transition-colors')
- * 
- * btnClasses('bg-blue-500 text-white')
- * // → 'px-4 py-2 rounded font-medium transition-colors bg-blue-500 text-white'
- * 
- * btnClasses({ 'opacity-50 cursor-not-allowed': isDisabled })
- * // → 'px-4 py-2 rounded font-medium transition-colors opacity-50 cursor-not-allowed'
- */
-cx.with = function (...baseArgs) {
-  return function (...args) {
-    return cx(...baseArgs, ...args);
-  };
-};
-
 export default cx;

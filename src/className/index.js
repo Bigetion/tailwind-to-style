@@ -591,13 +591,19 @@ function expandShorthands(config, baseSelector) {
   return expanded;
 }
 
-function processNestedStyles(config, baseSelector) {
+function processNestedStyles(config, baseSelector, skipShorthands = false) {
   const result = {};
 
   for (const [key, value] of Object.entries(config)) {
+    // Skip at-rules — they are handled by expandShorthands
+    if (key.startsWith("@")) continue;
+
+    // Skip root-level shorthands already handled by expandShorthands
+    if (skipShorthands && (PSEUDO_SHORTHANDS[key] || GROUP_PEER_STATES[key] || BREAKPOINTS[key])) continue;
+
     if (typeof value === "object" && !Array.isArray(value)) {
       const nestedSelector = key.replace(/^&/, baseSelector);
-      const nested = processNestedStyles(value, nestedSelector);
+      const nested = processNestedStyles(value, nestedSelector, false);
       Object.assign(result, nested);
 
       if (value._) {
@@ -728,8 +734,11 @@ function generateBasicClassName(config) {
     hashLength = globalConfig.hashLength,
     inject = globalConfig.inject,
     _: baseStyles = "",
+    base: baseProp = "",
     ...rest
   } = config;
+
+  const effectiveBase = baseStyles || baseProp;
 
   const configHash = getConfigHash(config);
 
@@ -753,8 +762,8 @@ function generateBasicClassName(config) {
   const styleObj = {};
 
   // Add base styles with token processing
-  if (baseStyles) {
-    styleObj[baseSelector] = processTokens(baseStyles);
+  if (effectiveBase) {
+    styleObj[baseSelector] = processTokens(effectiveBase);
   }
 
   // Process shorthands (hover, focus, dark, group-hover, etc.)
@@ -762,7 +771,7 @@ function generateBasicClassName(config) {
   Object.assign(styleObj, expanded);
 
   // Process nested objects
-  const nested = processNestedStyles(rest, baseSelector);
+  const nested = processNestedStyles(rest, baseSelector, true);
   Object.assign(styleObj, nested);
 
   // Process animations
@@ -1412,6 +1421,7 @@ twsxClassName.clearCache = function() {
   classNameCache.clear();
   cssCache.clear();
   styleRegistry.clear();
+  cssInjectionCounter = 0;
 
   if (IS_BROWSER) {
     const styleTag = document.getElementById("twsx-classname-style");
@@ -1635,12 +1645,113 @@ function evictAtomicCache() {
   }
 }
 
-// Attach tw to twsxClassName namespace
+// Attach tw to twsxClassName namespace (legacy)
 twsxClassName.tw = tw;
+
+// ============================================================================
+// styled() — The Unified API
+// ============================================================================
+
+/**
+ * styled() — One API to rule them all.
+ * 
+ * Replaces: twsxClassName, twsxVariants, tw, and twsx (basic usage).
+ * 
+ * @param {Object} config — Configuration object
+ * @returns {string|Function} className string (basic) or variant/slots function
+ * 
+ * @example
+ * // Basic mode — returns a className string
+ * const btnClass = styled({ name: 'btn', base: 'px-4 py-2 bg-blue-500' })
+ * // → "btn-a1b2c3"
+ * 
+ * @example
+ * // Variants mode — returns a function
+ * const btn = styled({
+ *   name: 'btn',
+ *   base: 'px-4 py-2 rounded-lg',
+ *   variants: {
+ *     color: { primary: 'bg-blue-500', danger: 'bg-red-500' },
+ *     size: { sm: 'text-sm', lg: 'text-lg' }
+ *   },
+ *   defaultVariants: { color: 'primary', size: 'md' }
+ * })
+ * btn({ color: 'danger' }) // → "btn btn--danger btn--md"
+ * 
+ * @example
+ * // Slots mode — returns a function with slot accessors
+ * const card = styled({
+ *   name: 'card',
+ *   slots: {
+ *     root: 'bg-white rounded-xl',
+ *     header: 'px-6 py-4 border-b',
+ *     body: 'px-6 py-4'
+ *   }
+ * })
+ * card().root // → "card__root"
+ */
+function styled(config) {
+  if (!config || typeof config !== 'object') {
+    throw new TwsxClassNameError('styled() requires a configuration object', { received: config });
+  }
+  return twsxClassName(config);
+}
+
+/**
+ * styled.css() — Inject raw CSS from a nested style object.
+ * 
+ * Replaces: twsx() for direct CSS injection use cases.
+ * 
+ * @param {Object} cssObject — Nested selectors → Tailwind classes
+ * @param {Object} [options] — { inject: boolean }
+ * @returns {string} Generated CSS string
+ * 
+ * @example
+ * styled.css({
+ *   '.card': 'bg-white p-6 rounded-xl',
+ *   '.card:hover': 'shadow-lg',
+ *   '@media (min-width: 768px)': { '.card': 'grid-cols-2' }
+ * })
+ * // → Auto-injects CSS and returns the CSS string
+ */
+let cssInjectionCounter = 0;
+
+styled.css = function(cssObject, options = {}) {
+  if (!cssObject || typeof cssObject !== 'object') {
+    throw new TwsxClassNameError('styled.css() requires an object', { received: cssObject });
+  }
+  const css = twsx(cssObject, { inject: false });
+  if (options.inject !== false) {
+    const key = `css-${++cssInjectionCounter}`;
+    injectCSS(key, css);
+  }
+  return css;
+};
+
+// Attach utility methods from twsxClassName namespace
+styled.config = twsxClassName.config;
+styled.getConfig = twsxClassName.getConfig;
+styled.defineTokens = twsxClassName.defineTokens;
+styled.getTokens = twsxClassName.getTokens;
+styled.setToken = twsxClassName.setToken;
+styled.createTheme = twsxClassName.createTheme;
+styled.setTheme = twsxClassName.setTheme;
+styled.getTheme = twsxClassName.getTheme;
+styled.getThemes = twsxClassName.getThemes;
+styled.extend = twsxClassName.extend;
+styled.compose = twsxClassName.compose;
+styled.merge = twsxClassName.merge;
+styled.defineAnimation = twsxClassName.defineAnimation;
+styled.getAnimations = twsxClassName.getAnimations;
+styled.getCSS = twsxClassName.getCSS;
+styled.getAllCSS = twsxClassName.getAllCSS;
+styled.extractCSS = twsxClassName.extractCSS;
+styled.clearCache = twsxClassName.clearCache;
+styled.getCacheStats = twsxClassName.getCacheStats;
 
 // ============================================================================
 // Exports
 // ============================================================================
 
-export { twsxClassName, tw };
-export default twsxClassName;
+export { twsxClassName, tw, styled };
+export default styled;
