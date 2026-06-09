@@ -4,7 +4,7 @@
  */
 
 import { resetTailwindCache } from "../utils/tailwindCache.js";
-import { logger } from "../utils/logger.js";
+const logger = { warn: (...args) => console.warn(...args) };
 
 // Import clearConfigCache - will be set after module loads
 let clearConfigCache = null;

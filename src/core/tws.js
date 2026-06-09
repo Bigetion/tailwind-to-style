@@ -7,9 +7,13 @@
  */
 
 import { getTailwindCache } from "../utils/tailwindCache.js";
-import { logger } from "../utils/logger.js";
+const logger = { warn: () => {}, error: () => {}, info: () => {}, debug: () => {} };
 import { handleError } from "../utils/errorHandler.js";
-import { performanceMonitor } from "../utils/performanceMonitor.js";
+const performanceMonitor = {
+  start: () => 0,
+  end: () => {},
+  measure: (fn) => fn(),
+};
 import { separateAndResolveCSS, resolveCssToClearCss, inlineStyleToJson } from "../css/resolver.js";
 import { processOpacityModifier } from "../css/parser.js";
 import {

@@ -1,4 +1,4 @@
-import { logger } from "./logger.js";
+const logger = { warn: () => {}, error: () => {}, info: () => {}, debug: () => {} };
 
 /**
  * Custom error class for tailwind-to-style

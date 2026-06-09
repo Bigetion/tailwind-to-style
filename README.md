@@ -10,8 +10,8 @@
 [![bundle size](https://img.shields.io/bundlephobia/minzip/tailwind-to-style)](https://bundlephobia.com/package/tailwind-to-style)
 [![license](https://img.shields.io/npm/l/tailwind-to-style.svg)](https://github.com/Bigetion/tailwind-to-style/blob/main/LICENSE)
 
-> **Runtime Tailwind CSS to inline styles converter.**
-> Zero build step. SSR-ready. Tree-shakeable. Works everywhere — React, Vue, Svelte, Node.js, vanilla JS.
+> **React Runtime Theme Engine — powered by Tailwind CSS.**
+> Define Tailwind-based components. Swap design tokens at runtime. No build step. Perfect for white-label SaaS and multi-tenant apps.
 
 ---
 
@@ -49,6 +49,7 @@
 | **Zero Build Step** | No PostCSS, no compilation — just JavaScript |
 | **Framework Agnostic** | React, Vue, Svelte, vanilla JS |
 | **Full Tailwind Support** | All utilities, responsive, pseudo-states, arbitrary values |
+| **Runtime Theme Swapping** | Change colors, spacing, shadows at runtime without rebuilding |
 | **SCSS-like Nesting** | `styled.css()` for complex nested selector-based styles |
 | **Variant System** | Type-safe component variants like CVA/tailwind-variants via `styled()` |
 | **Unified CSS-in-JS** | `styled()` — one API for basic / variants / slots / raw CSS |
@@ -90,56 +91,72 @@ pnpm add tailwind-to-style
 
 ## Quick Start
 
-```javascript
+```jsx
 import { tws, styled, cx } from 'tailwind-to-style'
+import { ThemeProvider } from 'tailwind-to-style/react'
 
-// 1. Inline styles (unique superpower)
-const style = tws('bg-blue-500 text-white p-4 rounded-lg', true)
-// → { backgroundColor: '#3b82f6', color: '#fff', padding: '1rem', borderRadius: '0.5rem' }
+// ═══════════════════════════════════════════════════════════════
+// 1. Define design tokens
+// ═══════════════════════════════════════════════════════════════
+const tokens = {
+  colors: {
+    primary: 'blue-500',
+    surface: 'white',
+    text: 'gray-900',
+  },
+  spacing: {
+    md: '4',
+    lg: '6',
+  },
+}
 
-// 2. Component with auto-generated className + injected CSS
-const btn = styled({
+// ═══════════════════════════════════════════════════════════════
+// 2. Create components with token references
+// ═══════════════════════════════════════════════════════════════
+const Button = styled({
   name: 'btn',
-  base: 'px-4 py-2 rounded-lg font-medium',
-  hover: 'bg-blue-600',
-})
-// → "btn-a1b2c3d4"  (className string, CSS auto-injected)
-
-// 3. Component variants (like CVA / tailwind-variants)
-const button = styled({
-  name: 'btn',
-  base: 'px-4 py-2 rounded-lg font-medium',
+  base: 'px-$spacing.md py-2 rounded-lg font-medium bg-$colors.primary text-white',
+  hover: 'opacity-90',
   variants: {
-    color: { primary: 'bg-blue-500 text-white', danger: 'bg-red-500 text-white' },
-    size:  { sm: 'text-sm', md: 'text-base', lg: 'text-lg' },
+    size: {
+      sm: 'text-sm px-3',
+      lg: 'text-lg px-$spacing.lg',
+    },
   },
-  defaultVariants: { color: 'primary', size: 'md' },
 })
-button({ color: 'danger', size: 'lg' })  // → "btn-a1b2c3d4 btn-a1b2c3d4--color-danger btn-a1b2c3d4--size-lg"
 
-// 4. Multi-part components (slots)
-const card = styled({
+const Card = styled({
   name: 'card',
+  base: 'bg-$colors.surface rounded-xl shadow-lg',
   slots: {
-    root:   'bg-white rounded-xl shadow-lg',
-    header: 'px-6 py-4 border-b',
-    body:   'px-6 py-4',
+    header: 'px-$spacing.lg py-4 border-b',
+    body:   'px-$spacing.lg py-4',
   },
 })
-const classes = card()
-// classes.root   → "card__root-..."
-// classes.header → "card__header-..."
 
-// 5. Raw CSS injection (replaces twsx)
-styled.css({
-  '.card': 'bg-white p-6 rounded-xl',
-  '.card:hover': 'shadow-xl',
-  '@media (min-width: 768px)': { '.card': 'grid-cols-2' },
-})
+// ═══════════════════════════════════════════════════════════════
+// 3. Wrap with ThemeProvider — tokens drive all styles
+// ═══════════════════════════════════════════════════════════════
+function App() {
+  return (
+    <ThemeProvider tokens={tokens}>
+      <button className={Button({ size: 'lg' })}>Click me</button>
+      <Card />
+    </ThemeProvider>
+  )
+}
 
-// 6. Conditional classes
-cx('p-4', isActive && 'bg-blue-500', { 'opacity-50': isDisabled })
-// → 'p-4 bg-blue-500'
+// ═══════════════════════════════════════════════════════════════
+// 4. Swap theme at runtime — no rebuild needed!
+// ═══════════════════════════════════════════════════════════════
+function DarkModeToggle() {
+  const { setTheme } = useTheme()
+  return (
+    <button onClick={() => setTheme({ colors: { primary: 'red-500', surface: 'gray-900' } })}>
+      Switch Brand
+    </button>
+  )
+}
 ```
 
 ---

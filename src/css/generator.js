@@ -8,7 +8,7 @@
  */
 
 import { LRUCache } from "../utils/lruCache.js";
-import { logger } from "../utils/logger.js";
+const logger = { warn: () => {}, error: () => {}, info: () => {}, debug: () => {} };
 import {
   BREAKPOINTS,
   PSEUDO_VARIANTS,

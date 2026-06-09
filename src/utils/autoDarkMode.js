@@ -13,7 +13,7 @@
  * @module utils/autoDarkMode
  */
 
-import { logger } from "./logger.js";
+const logger = { warn: () => {}, error: () => {}, info: () => {}, debug: () => {} };
 
 /**
  * Dark color mappings — maps light palette colors to dark equivalents

@@ -329,7 +329,6 @@ import generateTextShadowX from "./generators/textShadowX.js";
 import generateTextShadowY from "./generators/textShadowY.js";
 import generateTextTransform from "./generators/textTransform.js";
 import generateTextUnderlineOffset from "./generators/textUnderlineOffset.js";
-import generateTextWrap from "./generators/textWrap.js";
 import generateTouchAction from "./generators/touchAction.js";
 import generateTransform from "./generators/transform.js";
 import generateTransformOrigin from "./generators/transformOrigin.js";
@@ -347,18 +346,6 @@ import generateWordBreak from "./generators/wordBreak.js";
 import generateWillChange from "./generators/willChange.js";
 import generateZIndex from "./generators/zIndex.js";
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// MODERN CSS GENERATORS (Next-Gen Features)
-// ═══════════════════════════════════════════════════════════════════════════════
-import generateFluid from "./generators/fluid.js";
-import generateLogicalProperties from "./generators/logicalProperties.js";
-import generateModernColor from "./generators/modernColor.js";
-import generateContentVisibility from "./generators/contentVisibility.js";
-import generateAnchorPositioning from "./generators/anchorPositioning.js";
-import generateModernLayout from "./generators/modernLayout.js";
-import generateScrollDrivenAnimations from "./generators/scrollDrivenAnimations.js";
-
-import { logger } from "./utils/logger.js";
 // LRUCache already imported at top of file
 import { handleError } from "./utils/errorHandler.js";
 
@@ -471,8 +458,14 @@ const UPPERCASE_LETTER_REGEX = /([A-Z])/g;
 const ESCAPE_SLASH_REGEX = /\//g;
 const ESCAPE_DOT_REGEX = /\./g;
 import { getTailwindCache } from "./utils/tailwindCache.js";
-import { getPlugins } from "./config/userConfig.js";
-import { pluginToLookup } from "./plugins/pluginAPI.js";
+
+// Stub for removed logger
+const logger = {
+  debug: () => {},
+  info: () => {},
+  warn: (...args) => console.warn(...args),
+  error: (...args) => console.error(...args),
+};
 import patterns from "./patterns/index.js";
 
 const plugins = {
@@ -642,7 +635,6 @@ const plugins = {
   textShadowY: generateTextShadowY,
   textTransform: generateTextTransform,
   textUnderlineOffset: generateTextUnderlineOffset,
-  textWrap: generateTextWrap,
   touchAction: generateTouchAction,
   transform: generateTransform,
   transformOrigin: generateTransformOrigin,
@@ -660,17 +652,6 @@ const plugins = {
   wordBreak: generateWordBreak,
   zIndex: generateZIndex,
 
-  // ═══════════════════════════════════════════════════════════════════════════════
-  // MODERN CSS PLUGINS (Next-Gen Features)
-  // ═══════════════════════════════════════════════════════════════════════════════
-  fluid: generateFluid,
-  logicalProperties: generateLogicalProperties,
-  modernColor: generateModernColor,
-  modernTextWrap: generateTextWrap,
-  contentVisibility: generateContentVisibility,
-  anchorPositioning: generateAnchorPositioning,
-  modernLayout: generateModernLayout,
-  scrollDrivenAnimations: generateScrollDrivenAnimations,
 };
 
 function parseCustomClassWithPatterns(className) {
@@ -820,15 +801,10 @@ function convertCssToObject(cssString) {
     obj[className] = cssRules;
   }
 
-  // Add plugin utilities to the lookup object
-  const plugins = getPlugins();
-  const configOptions = getConfigOptions();
-  const prefix = configOptions.prefix || "";
-
-  plugins.forEach((plugin) => {
-    const pluginLookup = pluginToLookup(plugin, prefix);
-    Object.assign(obj, pluginLookup);
-  });
+  // Plugin system disabled in slimmed build
+  // const plugins = getPlugins();
+  // const configOptions = getConfigOptions();
+  // const prefix = configOptions.prefix || "";
 
   return obj;
 }
@@ -2971,6 +2947,20 @@ function twsxVariantsNoCache(className, config = {}) {
 // ============================================================================
 
 /**
+ * Cached variant of twsxVariantsNoCache
+ * @deprecated Use styled() variants mode instead
+ */
+export function twsxVariants(className, config = {}) {
+  const cacheKey = `${className}:${fastObjectHash(config)}`;
+  if (_twsxVariantsResultCache.has(cacheKey)) {
+    return _twsxVariantsResultCache.get(cacheKey);
+  }
+  const result = twsxVariantsNoCache(className, config);
+  _twsxVariantsResultCache.set(cacheKey, result);
+  return result;
+}
+
+/**
  * FNV-1a hash algorithm - Fast and good distribution for strings
  * @param {string} str - String to hash
  * @returns {number} 32-bit hash
@@ -3118,22 +3108,7 @@ export function twsx(obj, options = {}) {
  * // For non-cached version (rare case):
  * twsxVariantsNoCache('btn', config);
  */
-export function twsxVariants(className, config = {}) {
-  // Create fast hash key from className and config (100x faster than JSON.stringify)
-  const cacheKey = `${className}:${fastObjectHash(config)}`;
 
-  // Check cache first
-  if (_twsxVariantsResultCache.has(cacheKey)) {
-    return _twsxVariantsResultCache.get(cacheKey);
-  }
-
-  // Cache miss: call original twsxVariantsNoCache and cache result
-  const result = twsxVariantsNoCache(className, config);
-  _twsxVariantsResultCache.set(cacheKey, result);
-  // LRUCache handles eviction automatically
-
-  return result;
-}
 
 // Simple hashCode function for CSS deduplication
 function getCssHash(str) {
@@ -3267,7 +3242,7 @@ export const debouncedTws = debounce(tws, 50); // Faster debounce for tws
  * @param {Object} [options] - Additional options
  * @returns {string} Generated CSS string
  */
-export const debouncedTwsx = debounce(twsx, 100); // Standard debounce for twsx
+
 
 // Export performance utilities for debugging
 export const performanceUtils = {
@@ -3320,7 +3295,6 @@ export const performanceUtils = {
 };
 
 // Export utility classes and functions
-export { logger, Logger } from "./utils/logger.js";
 export { LRUCache } from "./utils/lruCache.js";
 export { TwsError, onError, handleError } from "./utils/errorHandler.js";
 export { getTailwindCache, resetTailwindCache } from "./utils/tailwindCache.js";
@@ -3328,13 +3302,8 @@ export { getTailwindCache, resetTailwindCache } from "./utils/tailwindCache.js";
 // Export conditional class name builder
 export { cx } from "./cx.js";
 
-// Export configuration and plugin system
+// Export configuration
 export { configure, getConfig, resetConfig, isV4Mode } from "./config/userConfig.js";
-export {
-  createPlugin,
-  createUtilityPlugin,
-  createVariantPlugin,
-} from "./plugins/pluginAPI.js";
 
 // ============================================================================
 // SSR Exports
@@ -3345,45 +3314,6 @@ export { createSSRCollector } from "./utils/ssr.js";
 
 // Export environment detection
 export { IS_BROWSER, IS_SERVER };
-
-// ============================================================================
-// Animation Exports
-// ============================================================================
-// Unified animation API (recommended)
-export { 
-  animate,
-  chain,
-  stagger,
-  transition,
-  parallel,
-  createKeyframes,
-  clearKeyframes,
-  cancelAll as cancelAllAnimations,
-  getActiveCount as getActiveAnimationCount,
-  registerPreset,
-  getPresetNames,
-  isSupported as isAnimationSupported,
-  ANIMATION_PRESETS,
-  EASING,
-} from "./utils/animation.js";
-
-// Legacy animation APIs (deprecated - use animate/chain/stagger instead)
-export { applyWebAnimation, initWebAnimations } from "./utils/webAnimations.js";
-
-export {
-  createDynamicAnimation,
-  createTemplateAnimation,
-  applyDynamicAnimation,
-  DYNAMIC_TEMPLATES,
-} from "./utils/dynamicAnimations.js";
-
-export {
-  applyInlineAnimation,
-  animateElement,
-  chainAnimations,
-  staggerAnimations,
-  INLINE_ANIMATIONS,
-} from "./utils/inlineAnimations.js";
 
 // ============================================================================
 // Main API Exports
@@ -3405,4 +3335,10 @@ export {
   createAutoDarkConfig,
   generateTypedPropertyDefinitions,
 } from "./utils/autoDarkMode.js";
+
+// ============================================================================
+// React Runtime Theme Engine
+// ============================================================================
+// React integration is available via: import { ThemeProvider } from "tailwind-to-style/react"
+export { tokenRegistry } from "./tokens/registry.js";
 

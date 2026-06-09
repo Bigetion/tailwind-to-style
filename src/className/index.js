@@ -221,20 +221,13 @@ const DEFAULT_BREAKPOINTS = {
 
 let BREAKPOINTS = { ...DEFAULT_BREAKPOINTS };
 
+import { tokenRegistry } from "../tokens/registry.js";
+
 // ============================================================================
 // Design Tokens System
 // ============================================================================
 
-let designTokens = {
-  colors: {},
-  spacing: {},
-  fontSize: {},
-  fontWeight: {},
-  borderRadius: {},
-  shadow: {},
-  animation: {},
-  custom: {},
-};
+let designTokens = tokenRegistry.get();
 
 // ============================================================================
 // Theme System
@@ -510,17 +503,18 @@ function processTokens(classString) {
   if (!classString || typeof classString !== "string") return classString;
 
   // Replace $token references with actual values
+  const tokens = tokenRegistry.get();
   return classString.replace(/\$([a-zA-Z0-9_.]+)/g, (match, tokenPath) => {
     const parts = tokenPath.split(".");
-    let value = designTokens;
+    let value = tokens;
 
     for (const part of parts) {
       if (value && typeof value === "object" && part in value) {
         value = value[part];
       } else {
         // Check in custom tokens
-        if (designTokens.custom && designTokens.custom[tokenPath]) {
-          return designTokens.custom[tokenPath];
+        if (tokens.custom && tokens.custom[tokenPath]) {
+          return tokens.custom[tokenPath];
         }
         return match; // Return original if not found
       }
@@ -1343,17 +1337,19 @@ twsxClassName.getConfig = function() {
 // ============================================================================
 
 twsxClassName.defineTokens = function(tokens) {
-  designTokens = deepMerge(designTokens, tokens);
+  tokenRegistry.set(tokens);
+  designTokens = tokenRegistry.get();
   return designTokens;
 };
 
 twsxClassName.getTokens = function() {
-  return { ...designTokens };
+  return { ...tokenRegistry.get() };
 };
 
 twsxClassName.setToken = function(path, value) {
+  const tokens = tokenRegistry.get();
   const parts = path.split(".");
-  let current = designTokens;
+  let current = tokens;
   
   for (let i = 0; i < parts.length - 1; i++) {
     if (!current[parts[i]]) current[parts[i]] = {};
@@ -1361,6 +1357,7 @@ twsxClassName.setToken = function(path, value) {
   }
   
   current[parts[parts.length - 1]] = value;
+  tokenRegistry.replace(tokens);
 };
 
 // ============================================================================

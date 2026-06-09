@@ -4,10 +4,10 @@
  */
 
 import { generateCssString } from "../utils/index.js";
-import {
-  INLINE_ANIMATIONS,
-  animationToTransition,
-} from "../utils/inlineAnimations.js";
+
+// Stub for removed inlineAnimations system
+const INLINE_ANIMATIONS = {};
+const animationToTransition = () => ({});
 
 export default function generator(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;
