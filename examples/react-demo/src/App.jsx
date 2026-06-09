@@ -1,6 +1,6 @@
 import React from 'react';
 import { twsxClassName } from 'tailwind-to-style';
-import { ToggleDemo } from './demos/ToggleDemo';
+import { TabsDemo } from './demos/TabsDemo';
 
 // Layout styles
 const page = twsxClassName({ name: 'page', _: 'min-h-screen bg-gray-50 p-8' });
@@ -13,8 +13,8 @@ export default function App() {
     <div className={page}>
       <div className={container}>
         <h1 className={title}>tailwind-to-style — React Components</h1>
-        <p className={subtitle}>Visual testing: Toggle component</p>
-        <ToggleDemo />
+        <p className={subtitle}>Visual testing: Tabs component</p>
+        <TabsDemo />
       </div>
     </div>
   );
