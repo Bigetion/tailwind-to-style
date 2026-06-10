@@ -3,6 +3,7 @@ import { tw, cx } from 'tailwind-to-style';
 
 import { AccordionDemo } from './demos/AccordionDemo';
 import { AlertDemo } from './demos/AlertDemo';
+import { AnimationsDemo } from './demos/AnimationsDemo';
 import { AvatarDemo } from './demos/AvatarDemo';
 import { BadgeDemo } from './demos/BadgeDemo';
 import { BreadcrumbDemo } from './demos/BreadcrumbDemo';
@@ -25,43 +26,58 @@ import { TableDemo } from './demos/TableDemo';
 import { TabsDemo } from './demos/TabsDemo';
 import { TagDemo } from './demos/TagDemo';
 import { TextareaDemo } from './demos/TextareaDemo';
+import { ThemeDemo } from './demos/ThemeDemo';
 import { TimelineDemo } from './demos/TimelineDemo';
 import { ToastDemo } from './demos/ToastDemo';
 import { ToggleDemo } from './demos/ToggleDemo';
 import { TooltipDemo } from './demos/TooltipDemo';
 
-// ─── Nav items ──────────────────────────────────────────────────────────────
+// ─── Nav items ───────────────────────────────────────────────────────────────
 
-const NAV_ITEMS = [
-  { id: 'accordion',  label: 'Accordion',  component: AccordionDemo },
-  { id: 'alert',      label: 'Alert',      component: AlertDemo },
-  { id: 'avatar',     label: 'Avatar',     component: AvatarDemo },
-  { id: 'badge',      label: 'Badge',      component: BadgeDemo },
-  { id: 'breadcrumb', label: 'Breadcrumb', component: BreadcrumbDemo },
-  { id: 'button',     label: 'Button',     component: ButtonDemo },
-  { id: 'card',       label: 'Card',       component: CardDemo },
-  { id: 'checkbox',   label: 'Checkbox',   component: CheckboxDemo },
-  { id: 'dialog',     label: 'Dialog',     component: DialogDemo },
-  { id: 'dropdown',   label: 'Dropdown',   component: DropdownDemo },
-  { id: 'input',      label: 'Input',      component: InputDemo },
-  { id: 'pagination', label: 'Pagination', component: PaginationDemo },
-  { id: 'popover',    label: 'Popover',    component: PopoverDemo },
-  { id: 'progress',   label: 'Progress',   component: ProgressDemo },
-  { id: 'select',     label: 'Select',     component: SelectDemo },
-  { id: 'skeleton',   label: 'Skeleton',   component: SkeletonDemo },
-  { id: 'slider',     label: 'Slider',     component: SliderDemo },
-  { id: 'spinner',    label: 'Spinner',    component: SpinnerDemo },
-  { id: 'statcard',   label: 'StatCard',   component: StatCardDemo },
-  { id: 'stepper',    label: 'Stepper',    component: StepperDemo },
-  { id: 'table',      label: 'Table',      component: TableDemo },
-  { id: 'tabs',       label: 'Tabs',       component: TabsDemo },
-  { id: 'tag',        label: 'Tag',        component: TagDemo },
-  { id: 'textarea',   label: 'Textarea',   component: TextareaDemo },
-  { id: 'timeline',   label: 'Timeline',   component: TimelineDemo },
-  { id: 'toast',      label: 'Toast',      component: ToastDemo },
-  { id: 'toggle',     label: 'Toggle',     component: ToggleDemo },
-  { id: 'tooltip',    label: 'Tooltip',    component: TooltipDemo },
+const NAV_GROUPS = [
+  {
+    group: 'Library Features',
+    items: [
+      { id: 'theme',      label: '🎨 Tokens & Themes', component: ThemeDemo },
+      { id: 'animations', label: '✨ Animations',       component: AnimationsDemo },
+    ],
+  },
+  {
+    group: 'Components',
+    items: [
+      { id: 'accordion',  label: 'Accordion',  component: AccordionDemo },
+      { id: 'alert',      label: 'Alert',      component: AlertDemo },
+      { id: 'avatar',     label: 'Avatar',     component: AvatarDemo },
+      { id: 'badge',      label: 'Badge',      component: BadgeDemo },
+      { id: 'breadcrumb', label: 'Breadcrumb', component: BreadcrumbDemo },
+      { id: 'button',     label: 'Button',     component: ButtonDemo },
+      { id: 'card',       label: 'Card',       component: CardDemo },
+      { id: 'checkbox',   label: 'Checkbox',   component: CheckboxDemo },
+      { id: 'dialog',     label: 'Dialog',     component: DialogDemo },
+      { id: 'dropdown',   label: 'Dropdown',   component: DropdownDemo },
+      { id: 'input',      label: 'Input',      component: InputDemo },
+      { id: 'pagination', label: 'Pagination', component: PaginationDemo },
+      { id: 'popover',    label: 'Popover',    component: PopoverDemo },
+      { id: 'progress',   label: 'Progress',   component: ProgressDemo },
+      { id: 'select',     label: 'Select',     component: SelectDemo },
+      { id: 'skeleton',   label: 'Skeleton',   component: SkeletonDemo },
+      { id: 'slider',     label: 'Slider',     component: SliderDemo },
+      { id: 'spinner',    label: 'Spinner',    component: SpinnerDemo },
+      { id: 'statcard',   label: 'StatCard',   component: StatCardDemo },
+      { id: 'stepper',    label: 'Stepper',    component: StepperDemo },
+      { id: 'table',      label: 'Table',      component: TableDemo },
+      { id: 'tabs',       label: 'Tabs',       component: TabsDemo },
+      { id: 'tag',        label: 'Tag',        component: TagDemo },
+      { id: 'textarea',   label: 'Textarea',   component: TextareaDemo },
+      { id: 'timeline',   label: 'Timeline',   component: TimelineDemo },
+      { id: 'toast',      label: 'Toast',      component: ToastDemo },
+      { id: 'toggle',     label: 'Toggle',     component: ToggleDemo },
+      { id: 'tooltip',    label: 'Tooltip',    component: TooltipDemo },
+    ],
+  },
 ];
+
+const ALL_ITEMS = NAV_GROUPS.flatMap(g => g.items);
 
 // ─── Styles ─────────────────────────────────────────────────────────────────
 
@@ -102,9 +118,9 @@ const content = tw({ name: 'content', _: 'flex-1 overflow-y-auto p-8' });
 // ─── App ────────────────────────────────────────────────────────────────────
 
 export default function App() {
-  const [activeId, setActiveId] = useState('button');
+  const [activeId, setActiveId] = useState('theme');
 
-  const active = NAV_ITEMS.find((n) => n.id === activeId) || NAV_ITEMS[0];
+  const active = ALL_ITEMS.find((n) => n.id === activeId) || ALL_ITEMS[0];
   const Demo = active.component;
 
   return (
@@ -116,14 +132,21 @@ export default function App() {
           <p className={sidebarSub}>Component demos</p>
         </div>
         <nav className={navList}>
-          {NAV_ITEMS.map((item) => (
-            <button
-              key={item.id}
-              className={navItem({ active: item.id === activeId })}
-              onClick={() => setActiveId(item.id)}
-            >
-              {item.label}
-            </button>
+          {NAV_GROUPS.map((group) => (
+            <div key={group.group} style={{ marginBottom: '8px' }}>
+              <p style={{ fontSize: '0.65rem', fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '4px 12px 2px' }}>
+                {group.group}
+              </p>
+              {group.items.map((item) => (
+                <button
+                  key={item.id}
+                  className={navItem({ active: item.id === activeId })}
+                  onClick={() => setActiveId(item.id)}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
           ))}
         </nav>
       </aside>

@@ -38,6 +38,26 @@ const statusColors = {
 export function TableDemo() {
   return (
     <div>
+      {/* Slots + Variants showcase */}
+      <div className={section}>
+        <h2 className={sectionTitle}>Table — Variants (slots + variants)</h2>
+        <p className={label}>variant and density each affect multiple slots at once — thead, tr, th, td all update together</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div>
+            <p style={{ fontSize: '0.7rem', color: '#9ca3af', marginBottom: '6px' }}>variant="default" + density="default"</p>
+            <Table variant="default" density="default" columns={[{ key: 'id', label: 'ID' }, { key: 'product', label: 'Product' }, { key: 'amount', label: 'Amount' }]} data={orders.slice(0, 3)} />
+          </div>
+          <div>
+            <p style={{ fontSize: '0.7rem', color: '#9ca3af', marginBottom: '6px' }}>variant="striped" + density="compact"</p>
+            <Table variant="striped" density="compact" columns={[{ key: 'id', label: 'ID' }, { key: 'product', label: 'Product' }, { key: 'amount', label: 'Amount' }]} data={orders.slice(0, 3)} />
+          </div>
+          <div>
+            <p style={{ fontSize: '0.7rem', color: '#9ca3af', marginBottom: '6px' }}>variant="bordered" + density="comfortable"</p>
+            <Table variant="bordered" density="comfortable" columns={[{ key: 'id', label: 'ID' }, { key: 'product', label: 'Product' }, { key: 'amount', label: 'Amount' }]} data={orders.slice(0, 3)} />
+          </div>
+        </div>
+      </div>
+
       {/* Basic Table */}
       <div className={section}>
         <h2 className={sectionTitle}>Table — Users</h2>

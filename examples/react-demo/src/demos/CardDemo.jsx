@@ -14,6 +14,55 @@ const gridTwo = tw({ name: 'demo-grid-2col', _: 'grid grid-cols-2 gap-6' });
 export function CardDemo() {
   return (
     <div>
+      {/* Variant showcase — slots + variants combo */}
+      <div className={section}>
+        <h2 className={sectionTitle}>Card — Variants (slots + variants)</h2>
+        <p className={label}>Each variant affects <strong>multiple slots simultaneously</strong> (root, header, footer) — one prop, coordinated styles</p>
+        <div className={gridTwo}>
+          <div>
+            <p style={{ fontSize: '0.7rem', color: '#9ca3af', marginBottom: '8px' }}>variant="default"</p>
+            <Card variant="default" title="Default" description="shadow-sm + gray borders">
+              <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>Standard card with subtle shadow.</p>
+            </Card>
+          </div>
+          <div>
+            <p style={{ fontSize: '0.7rem', color: '#9ca3af', marginBottom: '8px' }}>variant="elevated"</p>
+            <Card variant="elevated" title="Elevated" description="shadow-lg + hover:shadow-xl">
+              <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>Hover to see shadow deepen.</p>
+            </Card>
+          </div>
+          <div>
+            <p style={{ fontSize: '0.7rem', color: '#9ca3af', marginBottom: '8px' }}>variant="flat"</p>
+            <Card variant="flat" title="Flat" description="No shadow, heavier borders">
+              <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>Minimal, flat design.</p>
+            </Card>
+          </div>
+          <div>
+            <p style={{ fontSize: '0.7rem', color: '#9ca3af', marginBottom: '8px' }}>variant="ghost"</p>
+            <Card variant="ghost" title="Ghost" description="Transparent border, gray surface">
+              <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>Blends into the background.</p>
+            </Card>
+          </div>
+        </div>
+      </div>
+
+      {/* Size showcase */}
+      <div className={section}>
+        <h2 className={sectionTitle}>Card — Sizes (slot-aware padding)</h2>
+        <p className={label}>size variant adjusts header, body, footer padding all at once</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '32rem' }}>
+          <Card size="sm" title="Small Card" description="Compact padding">
+            <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>sm size — tighter padding across all slots.</p>
+          </Card>
+          <Card size="md" title="Medium Card" description="Default padding">
+            <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>md size — standard comfortable padding.</p>
+          </Card>
+          <Card size="lg" title="Large Card" description="Generous padding">
+            <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>lg size — spacious layout for rich content.</p>
+          </Card>
+        </div>
+      </div>
+
       {/* Basic Cards */}
       <div className={section}>
         <h2 className={sectionTitle}>Card — Basic</h2>
