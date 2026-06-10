@@ -1,6 +1,6 @@
 {
   "name": "tailwind-to-style",
-  "version": "4.0.0-beta.1",
+  "version": "4.0.0",
   "description": "Zero-build runtime Tailwind CSS engine. Convert utility classes to real CSS with variants, slots, tokens, and React bindings. SSR-ready, tree-shakeable.",
   "type": "module",
   "main": "dist/index.cjs",

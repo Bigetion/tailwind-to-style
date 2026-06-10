@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [4.0.0-beta.1] — 2026-06-10
+## [4.0.0] — 2026-06-10
 
 ### Added
 - **`tw()` unified API** — one function covering 4 modes: atomic string, named class, variants config, and slots config
