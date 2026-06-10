@@ -48,7 +48,7 @@
     "./preflight.css": "./preflight.css",
     "./package.json": "./package.json"
   },
-  "sideEffects": false,
+  "sideEffects": ["*.css", "dist/*.js", "dist/**/*.js"],
   "files": [
     "dist",
     "types",
