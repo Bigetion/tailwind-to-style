@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { tw } from 'tailwind-to-style';
-import { animate, defineAnimation, getAnimationNames, ANIMATION_PRESETS } from 'tailwind-to-style/animations';
+import { animate, defineAnimation, getAnimationNames, getPreset } from 'tailwind-to-style/animations';
 
 // ── Demo styles ──────────────────────────────────────────────────────────────
 
@@ -8,29 +8,17 @@ const section = tw({ name: 'demo-section', _: 'mb-10 p-6 bg-white rounded-xl bor
 const sectionTitle = tw({ name: 'demo-title', _: 'text-xl font-semibold text-gray-900 mb-4' });
 const label = tw({ name: 'demo-label', _: 'text-sm text-gray-500 mb-3 font-medium' });
 
-const animBtn = tw({
-  name: 'anim-trigger-btn',
-  base: 'px-3 py-1.5 text-sm font-medium rounded-lg border cursor-pointer transition-colors duration-150',
-  variants: {
-    active: {
-      true:  'bg-blue-600 text-white border-blue-600',
-      false: 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50',
-    },
-  },
-  defaultVariants: { active: false },
-});
-
-const previewBox = tw({
-  name: 'anim-preview',
-  _: 'w-16 h-16 rounded-xl bg-blue-500 flex items-center justify-center text-white text-xs font-bold shadow-md',
-});
-
 const codeBlock = tw({
   name: 'anim-code',
-  _: 'bg-gray-900 text-green-400 rounded-lg px-4 py-3 text-xs font-mono mt-3',
+  _: 'bg-gray-900 text-green-400 rounded-lg px-4 py-3 text-xs font-mono mt-3 overflow-x-auto whitespace-pre',
 });
 
-// ── Register a custom animation for the demo ─────────────────────────────────
+const boxBase = tw({
+  name: 'anim-box',
+  _: 'w-16 h-16 rounded-xl bg-blue-500 flex items-center justify-center text-white text-xs font-bold shadow-md cursor-pointer select-none',
+});
+
+// ── Register custom animations ───────────────────────────────────────────────
 
 defineAnimation('wiggle', {
   keyframes: [
@@ -59,7 +47,7 @@ defineAnimation('rubberBand', {
   easing: 'ease-in-out',
 });
 
-// ── Built-in preset grid ──────────────────────────────────────────────────────
+// ── Preset lists ──────────────────────────────────────────────────────────────
 
 const BUILTIN = [
   'fadeIn', 'fadeOut',
@@ -70,19 +58,51 @@ const BUILTIN = [
 
 const CUSTOM = ['wiggle', 'rubberBand'];
 
+// ── useAnimation hook — triggers Web Animations API directly ─────────────────
+//
+// `animate()` from the library injects @keyframes into <style> and returns a
+// className. The issue with className-based replay: same class = browser won't
+// restart. We use element.animate() (Web Animations API) directly for reliable
+// replay — pulling keyframes + options from getPreset().
+
+function useAnimation(name, options = {}) {
+  const ref = useRef(null);
+
+  const play = (overrides = {}) => {
+    const preset = getPreset(name);
+    if (!preset || !ref.current) return;
+
+    const duration = parseInt(overrides.duration || options.duration || preset.duration || '300ms');
+    const easing   = overrides.easing   || options.easing   || preset.easing   || 'ease';
+    const delay    = parseInt(overrides.delay || options.delay || preset.delay || '0ms');
+    const iterations = overrides.iterations || options.iterations || preset.iterations || 1;
+
+    ref.current.animate(preset.keyframes, {
+      duration,
+      easing,
+      delay,
+      iterations: iterations === 'infinite' ? Infinity : Number(iterations),
+      fill: 'both',
+    });
+  };
+
+  return { ref, play };
+}
+
+// ── AnimPreview — click to replay via Web Animations API ─────────────────────
+
 function AnimPreview({ name }) {
-  const [key, setKey] = useState(0);
-  const cls = animate(name);
+  const { ref, play } = useAnimation(name);
+
+  // Auto-play on mount
+  useEffect(() => { play(); }, []);
 
   return (
-    <div
-      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px', background: '#f9fafb', borderRadius: '10px', minWidth: '90px' }}
-    >
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px', background: '#f9fafb', borderRadius: '10px', minWidth: '90px' }}>
       <div
-        key={key}
-        className={previewBox + ' ' + cls}
-        style={{ cursor: 'pointer' }}
-        onClick={() => setKey(k => k + 1)}
+        ref={ref}
+        className={boxBase}
+        onClick={() => play()}
         title="Click to replay"
       >
         {name.slice(0, 3).toUpperCase()}
@@ -92,50 +112,52 @@ function AnimPreview({ name }) {
   );
 }
 
-// ── Options demo ──────────────────────────────────────────────────────────────
+// ── Options playground ────────────────────────────────────────────────────────
 
 function CustomOptionsDemo() {
-  const [duration, setDuration] = useState('400ms');
-  const [easing, setEasing] = useState('ease-out');
-  const [delay, setDelay] = useState('0ms');
-  const [key, setKey] = useState(0);
+  const [duration, setDuration]   = useState('400ms');
+  const [easing, setEasing]       = useState('ease-out');
+  const [delay, setDelay]         = useState('0ms');
+  const { ref, play }             = useAnimation('slideInUp');
 
+  const triggerPlay = () => play({ duration, easing, delay });
+
+  // Auto-play on mount
+  useEffect(() => { triggerPlay(); }, []);
+
+  // Re-play when options change
+  useEffect(() => { triggerPlay(); }, [duration, easing, delay]);
+
+  // Build the animate() class for display purposes only
   const cls = animate('slideInUp', { duration, easing, delay });
 
   return (
     <div>
       <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '16px' }}>
-        <div>
-          <p style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '4px' }}>Duration</p>
-          <select value={duration} onChange={e => setDuration(e.target.value)} style={{ fontSize: '0.8rem', border: '1px solid #d1d5db', borderRadius: '6px', padding: '4px 8px' }}>
-            {['150ms', '300ms', '400ms', '600ms', '800ms', '1s'].map(v => <option key={v}>{v}</option>)}
-          </select>
-        </div>
-        <div>
-          <p style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '4px' }}>Easing</p>
-          <select value={easing} onChange={e => setEasing(e.target.value)} style={{ fontSize: '0.8rem', border: '1px solid #d1d5db', borderRadius: '6px', padding: '4px 8px' }}>
-            {['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear', 'cubic-bezier(0.34,1.56,0.64,1)'].map(v => <option key={v}>{v}</option>)}
-          </select>
-        </div>
-        <div>
-          <p style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '4px' }}>Delay</p>
-          <select value={delay} onChange={e => setDelay(e.target.value)} style={{ fontSize: '0.8rem', border: '1px solid #d1d5db', borderRadius: '6px', padding: '4px 8px' }}>
-            {['0ms', '100ms', '200ms', '300ms', '500ms'].map(v => <option key={v}>{v}</option>)}
-          </select>
-        </div>
+        {[
+          { label: 'Duration', value: duration, set: setDuration, opts: ['150ms', '300ms', '400ms', '600ms', '800ms', '1s'] },
+          { label: 'Easing',   value: easing,   set: setEasing,   opts: ['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear', 'cubic-bezier(0.34,1.56,0.64,1)'] },
+          { label: 'Delay',    value: delay,    set: setDelay,    opts: ['0ms', '100ms', '200ms', '300ms', '500ms'] },
+        ].map(({ label: l, value, set, opts }) => (
+          <div key={l}>
+            <p style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '4px' }}>{l}</p>
+            <select value={value} onChange={e => set(e.target.value)} style={{ fontSize: '0.8rem', border: '1px solid #d1d5db', borderRadius: '6px', padding: '4px 8px' }}>
+              {opts.map(v => <option key={v}>{v}</option>)}
+            </select>
+          </div>
+        ))}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
         <div
-          key={key}
-          className={previewBox + ' ' + cls}
-          style={{ cursor: 'pointer', flexShrink: 0 }}
-          onClick={() => setKey(k => k + 1)}
+          ref={ref}
+          className={boxBase}
+          onClick={triggerPlay}
           title="Click to replay"
         >
           ▶
         </div>
         <div>
-          <p style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '4px' }}>Generated className:</p>
+          <p style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '4px' }}>animate() className (for reference):</p>
           <code style={{ fontSize: '0.72rem', background: '#f3f4f6', padding: '4px 8px', borderRadius: '6px', display: 'block', wordBreak: 'break-all' }}>{cls}</code>
           <p style={{ fontSize: '0.7rem', color: '#9ca3af', marginTop: '4px' }}>Click box to replay</p>
         </div>
@@ -152,35 +174,66 @@ export function AnimationsDemo() {
       {/* Built-in presets */}
       <div className={section}>
         <h2 className={sectionTitle}>Animations — Built-in Presets</h2>
-        <p className={label}>Click any box to replay. Each uses <code style={{ fontSize: '0.85em', background: '#f3f4f6', padding: '1px 5px', borderRadius: '4px' }}>animate(name)</code> which injects @keyframes and returns a className.</p>
+        <p className={label}>
+          Click any box to replay. Uses <code style={{ fontSize: '0.85em', background: '#f3f4f6', padding: '1px 5px', borderRadius: '4px' }}>getPreset()</code> +
+          Web Animations API for reliable replay. <code style={{ fontSize: '0.85em', background: '#f3f4f6', padding: '1px 5px', borderRadius: '4px' }}>animate(name)</code> injects @keyframes and returns a className.
+        </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
           {BUILTIN.map(name => <AnimPreview key={name} name={name} />)}
         </div>
-        <div className={codeBlock}>
-          {`import { animate } from 'tailwind-to-style/animations';\n\nconst cls = animate('slideInUp');\n// → "anim-slideInUp-xxxxxxxx"\n// Auto-injects @keyframes tws-anim-slideInUp { ... }\n\n<div className={cls}>...</div>`}
-        </div>
+        <div className={codeBlock}>{
+`import { animate, getPreset } from 'tailwind-to-style/animations';
+
+// Option A: className (CSS-based, one-shot on mount)
+const cls = animate('slideInUp');
+// → "anim-slideInUp-xxxxxxxx"  (injects @keyframes tws-anim-slideInUp)
+<div className={cls}>...</div>
+
+// Option B: Web Animations API (reliable replay)
+const preset = getPreset('slideInUp');
+element.animate(preset.keyframes, { duration: 400, easing: 'ease-out', fill: 'both' });`
+        }</div>
       </div>
 
       {/* Custom animations */}
       <div className={section}>
         <h2 className={sectionTitle}>Animations — Custom (defineAnimation)</h2>
-        <p className={label}>Register your own keyframes with <code style={{ fontSize: '0.85em', background: '#f3f4f6', padding: '1px 5px', borderRadius: '4px' }}>defineAnimation()</code> — then use them just like built-ins.</p>
+        <p className={label}>
+          Register your own keyframes with <code style={{ fontSize: '0.85em', background: '#f3f4f6', padding: '1px 5px', borderRadius: '4px' }}>defineAnimation()</code> — then use them just like built-ins.
+        </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
           {CUSTOM.map(name => <AnimPreview key={name} name={name} />)}
         </div>
-        <div className={codeBlock}>
-          {`import { defineAnimation, animate } from 'tailwind-to-style/animations';\n\ndefineAnimation('wiggle', {\n  keyframes: [\n    { transform: 'rotate(0deg)' },\n    { transform: 'rotate(-8deg)' },\n    { transform: 'rotate(8deg)' },\n    { transform: 'rotate(0deg)' },\n  ],\n  duration: '500ms',\n  easing: 'ease-in-out',\n});\n\nconst cls = animate('wiggle');\n<div className={cls}>...</div>`}
-        </div>
+        <div className={codeBlock}>{
+`import { defineAnimation, animate } from 'tailwind-to-style/animations';
+
+defineAnimation('wiggle', {
+  keyframes: [
+    { transform: 'rotate(0deg)' },
+    { transform: 'rotate(-8deg)' },
+    { transform: 'rotate(8deg)' },
+    { transform: 'rotate(0deg)' },
+  ],
+  duration: '500ms',
+  easing: 'ease-in-out',
+});
+
+const cls = animate('wiggle');  // works just like built-ins`
+        }</div>
       </div>
 
       {/* Options playground */}
       <div className={section}>
         <h2 className={sectionTitle}>Animations — Options Playground</h2>
-        <p className={label}>Override duration, easing, and delay per-call. Options are merged with the preset defaults.</p>
+        <p className={label}>Override duration, easing, and delay per-call. Click box or change options to replay.</p>
         <CustomOptionsDemo />
-        <div className={codeBlock}>
-          {`animate('slideInUp', {\n  duration: '600ms',\n  easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',\n  delay: '200ms',\n})`}
-        </div>
+        <div className={codeBlock}>{
+`animate('slideInUp', {
+  duration: '600ms',
+  easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',  // spring-like overshoot
+  delay: '200ms',
+})`
+        }</div>
       </div>
 
       {/* All available names */}
@@ -189,7 +242,17 @@ export function AnimationsDemo() {
         <p className={label}>Returns all registered names (built-in + custom).</p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
           {getAnimationNames().map(name => (
-            <span key={name} style={{ fontSize: '0.75rem', background: CUSTOM.includes(name) ? '#ede9fe' : '#f3f4f6', color: CUSTOM.includes(name) ? '#7c3aed' : '#374151', padding: '2px 10px', borderRadius: '9999px', fontFamily: 'monospace' }}>
+            <span
+              key={name}
+              style={{
+                fontSize: '0.75rem',
+                background: CUSTOM.includes(name) ? '#ede9fe' : '#f3f4f6',
+                color: CUSTOM.includes(name) ? '#7c3aed' : '#374151',
+                padding: '2px 10px',
+                borderRadius: '9999px',
+                fontFamily: 'monospace',
+              }}
+            >
               {name}{CUSTOM.includes(name) ? ' ✦' : ''}
             </span>
           ))}
