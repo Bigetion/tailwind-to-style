@@ -173,7 +173,7 @@ export function ThemeDemo() {
 
   // Apply theme on mount and on change
   useEffect(() => {
-    createTheme(THEMES[activeTheme], { name: activeTheme });
+    createTheme(structuredClone(THEMES[activeTheme]), { name: activeTheme });
   }, [activeTheme]);
 
   return (
@@ -194,9 +194,8 @@ export function ThemeDemo() {
               onClick={() => setActiveTheme(name)}
               style={{
                 background: 'none',
-                border: undefined,
-                borderColor: activeTheme === name ? THEMES[name].colors.primary : undefined,
-                color: activeTheme === name ? THEMES[name].colors.primary : undefined,
+                borderColor: activeTheme === name ? THEMES[name].colors.primary : 'transparent',
+                color: activeTheme === name ? THEMES[name].colors.primary : '#4b5563',
               }}
             >
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>

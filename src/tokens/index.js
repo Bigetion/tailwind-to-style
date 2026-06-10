@@ -212,7 +212,10 @@ function deepMerge(target, source) {
     ) {
       deepMerge(target[key], value);
     } else {
-      target[key] = value;
+      // Deep clone objects to avoid mutating the source
+      target[key] = (typeof value === 'object' && value !== null && !Array.isArray(value))
+        ? deepMerge({}, value)
+        : value;
     }
   }
   return target;
