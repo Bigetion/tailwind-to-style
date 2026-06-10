@@ -18,8 +18,8 @@ const breadcrumbLink = tw({
   defaultVariants: { active: false },
 });
 
-const separatorStyle = tw({ name: 'breadcrumb-sep', _: 'text-gray-400 flex items-center' });
-const breadcrumbList = tw({ name: 'breadcrumb-list', _: 'flex items-center flex-wrap gap-1' });
+const separatorStyle = tw('breadcrumb-sep', 'text-gray-400 flex items-center');
+const breadcrumbList = tw('breadcrumb-list', 'flex items-center flex-wrap gap-1');
 
 const separatorMap = {
   chevron: <ChevronRight size={14} />,

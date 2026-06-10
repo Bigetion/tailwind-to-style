@@ -8,10 +8,10 @@ import {
   Moon, Sun, Monitor, Globe, Lock
 } from 'lucide-react';
 
-const section = tw({ name: 'demo-section', _: 'mb-10 p-6 bg-white rounded-xl border border-gray-200 shadow-sm' });
-const sectionTitle = tw({ name: 'demo-title', _: 'text-xl font-semibold text-gray-900 mb-4' });
-const label = tw({ name: 'demo-label', _: 'text-sm text-gray-500 mb-3 font-medium' });
-const row = tw({ name: 'demo-row', _: 'flex flex-wrap items-start gap-6 mb-4' });
+const section = tw('demo-section', 'mb-10 p-6 bg-white rounded-xl border border-gray-200 shadow-sm');
+const sectionTitle = tw('demo-title', 'text-xl font-semibold text-gray-900 mb-4');
+const label = tw('demo-label', 'text-sm text-gray-500 mb-3 font-medium');
+const row = tw('demo-row', 'flex flex-wrap items-start gap-6 mb-4');
 
 export function DropdownDemo() {
   const [theme, setTheme] = useState('System');

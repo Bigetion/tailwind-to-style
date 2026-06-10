@@ -39,10 +39,10 @@ const button = tw({
 });
 
 // Disabled overlay style
-const disabledStyle = tw({ name: 'btn-disabled', _: 'opacity-50 cursor-not-allowed pointer-events-none' });
+const disabledStyle = tw('btn-disabled', 'opacity-50 cursor-not-allowed pointer-events-none');
 
 // Loading spinner
-const spinnerStyle = tw({ name: 'btn-spinner', _: 'w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin' });
+const spinnerStyle = tw('btn-spinner', 'w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin');
 
 export function Button({
   children,

@@ -5,7 +5,7 @@ import { ChevronDown, AlertCircle, CheckCircle } from 'lucide-react';
 /**
  * Select component — styled native select with label, states, sizes.
  */
-const selectWrapper = tw({ name: 'select-wrapper', _: 'relative' });
+const selectWrapper = tw('select-wrapper', 'relative');
 
 const selectField = tw({
   name: 'select',
@@ -28,11 +28,11 @@ const selectField = tw({
   defaultVariants: { size: 'md', state: 'default' },
 });
 
-const labelStyle = tw({ name: 'select-label', _: 'block text-sm font-medium text-gray-700 mb-1.5' });
-const helperStyle = tw({ name: 'select-helper', _: 'mt-1.5 text-sm text-gray-500' });
-const errorStyle = tw({ name: 'select-error', _: 'mt-1.5 text-sm text-red-600 flex items-center gap-1' });
-const successStyle = tw({ name: 'select-success', _: 'mt-1.5 text-sm text-emerald-600 flex items-center gap-1' });
-const iconWrapper = tw({ name: 'select-icon', _: 'absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400' });
+const labelStyle = tw('select-label', 'block text-sm font-medium text-gray-700 mb-1.5');
+const helperStyle = tw('select-helper', 'mt-1.5 text-sm text-gray-500');
+const errorStyle = tw('select-error', 'mt-1.5 text-sm text-red-600 flex items-center gap-1');
+const successStyle = tw('select-success', 'mt-1.5 text-sm text-emerald-600 flex items-center gap-1');
+const iconWrapper = tw('select-icon', 'absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400');
 
 export function Select({
   label,

@@ -5,9 +5,9 @@ import { Badge } from '../components/Badge';
 import { Avatar } from '../components/Avatar';
 import { MoreHorizontal } from 'lucide-react';
 
-const section = tw({ name: 'demo-section', _: 'mb-10 p-6 bg-white rounded-xl border border-gray-200 shadow-sm' });
-const sectionTitle = tw({ name: 'demo-title', _: 'text-xl font-semibold text-gray-900 mb-4' });
-const label = tw({ name: 'demo-label', _: 'text-sm text-gray-500 mb-3 font-medium' });
+const section = tw('demo-section', 'mb-10 p-6 bg-white rounded-xl border border-gray-200 shadow-sm');
+const sectionTitle = tw('demo-title', 'text-xl font-semibold text-gray-900 mb-4');
+const label = tw('demo-label', 'text-sm text-gray-500 mb-3 font-medium');
 
 const users = [
   { id: 1, name: 'Alice Johnson', email: 'alice@example.com', role: 'Admin', status: 'active', avatar: 'https://i.pravatar.cc/40?img=1' },

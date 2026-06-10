@@ -18,9 +18,9 @@ const card = tw({
   defaultVariants: { variant: 'default' },
 });
 
-const statLabel = tw({ name: 'stat-label', _: 'text-sm font-medium text-gray-500' });
-const statValue = tw({ name: 'stat-value', _: 'text-3xl font-bold text-gray-900 mt-1 tracking-tight' });
-const statSubtext = tw({ name: 'stat-sub', _: 'text-xs text-gray-400 mt-0.5' });
+const statLabel = tw('stat-label', 'text-sm font-medium text-gray-500');
+const statValue = tw('stat-value', 'text-3xl font-bold text-gray-900 mt-1 tracking-tight');
+const statSubtext = tw('stat-sub', 'text-xs text-gray-400 mt-0.5');
 
 const trendColors = {
   up:   { text: '#059669', bg: '#d1fae5', icon: TrendingUp },

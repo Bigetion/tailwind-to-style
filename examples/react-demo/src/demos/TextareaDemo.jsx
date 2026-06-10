@@ -3,10 +3,10 @@ import { tw } from 'tailwind-to-style';
 import { Textarea } from '../components/Textarea';
 import { Button } from '../components/Button';
 
-const section = tw({ name: 'demo-section', _: 'mb-10 p-6 bg-white rounded-xl border border-gray-200 shadow-sm' });
-const sectionTitle = tw({ name: 'demo-title', _: 'text-xl font-semibold text-gray-900 mb-4' });
-const label = tw({ name: 'demo-label', _: 'text-sm text-gray-500 mb-3 font-medium' });
-const grid = tw({ name: 'demo-grid', _: 'flex flex-col gap-4 max-w-lg' });
+const section = tw('demo-section', 'mb-10 p-6 bg-white rounded-xl border border-gray-200 shadow-sm');
+const sectionTitle = tw('demo-title', 'text-xl font-semibold text-gray-900 mb-4');
+const label = tw('demo-label', 'text-sm text-gray-500 mb-3 font-medium');
+const grid = tw('demo-grid', 'flex flex-col gap-4 max-w-lg');
 
 export function TextareaDemo() {
   const [bio, setBio] = useState('');

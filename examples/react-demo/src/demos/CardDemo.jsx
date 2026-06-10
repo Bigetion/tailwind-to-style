@@ -5,11 +5,11 @@ import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { MoreHorizontal, ExternalLink, Heart, MessageCircle, Share2, User, Calendar, MapPin } from 'lucide-react';
 
-const section = tw({ name: 'demo-section', _: 'mb-10 p-6 bg-white rounded-xl border border-gray-200 shadow-sm' });
-const sectionTitle = tw({ name: 'demo-title', _: 'text-xl font-semibold text-gray-900 mb-4' });
-const label = tw({ name: 'demo-label', _: 'text-sm text-gray-500 mb-3 font-medium' });
-const grid = tw({ name: 'demo-grid-3', _: 'grid grid-cols-1 gap-6' });
-const gridTwo = tw({ name: 'demo-grid-2col', _: 'grid grid-cols-2 gap-6' });
+const section = tw('demo-section', 'mb-10 p-6 bg-white rounded-xl border border-gray-200 shadow-sm');
+const sectionTitle = tw('demo-title', 'text-xl font-semibold text-gray-900 mb-4');
+const label = tw('demo-label', 'text-sm text-gray-500 mb-3 font-medium');
+const grid = tw('demo-grid-3', 'grid grid-cols-1 gap-6');
+const gridTwo = tw('demo-grid-2col', 'grid grid-cols-2 gap-6');
 
 export function CardDemo() {
   return (

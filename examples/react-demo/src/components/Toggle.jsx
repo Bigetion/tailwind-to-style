@@ -42,8 +42,8 @@ const thumb = tw({
   defaultVariants: { size: 'md', checked: false },
 });
 
-const labelStyle = tw({ name: 'toggle-label', _: 'text-sm text-gray-700 select-none' });
-const descStyle = tw({ name: 'toggle-desc', _: 'text-xs text-gray-500' });
+const labelStyle = tw('toggle-label', 'text-sm text-gray-700 select-none');
+const descStyle = tw('toggle-desc', 'text-xs text-gray-500');
 
 const checkedColors = {
   blue: '#3b82f6',

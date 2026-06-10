@@ -40,7 +40,7 @@ const stepLabel = tw({
   defaultVariants: { state: 'upcoming' },
 });
 
-const stepDesc = tw({ name: 'step-desc', _: 'text-xs text-gray-400 mt-0.5' });
+const stepDesc = tw('step-desc', 'text-xs text-gray-400 mt-0.5');
 
 const connector = tw({
   name: 'step-connector',

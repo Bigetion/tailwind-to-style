@@ -6,10 +6,10 @@ import { ChevronDown } from 'lucide-react';
  * Accordion component — expandable content sections.
  * Supports single or multiple open panels.
  */
-const accordionRoot = tw({ name: 'accordion', _: 'rounded-lg border border-gray-200 overflow-hidden divide-y divide-gray-200' });
-const accordionItem = tw({ name: 'accordion-item', _: 'bg-white' });
-const accordionTrigger = tw({ name: 'accordion-trigger', _: 'flex items-center justify-between w-full px-4 py-3 text-left text-sm font-medium text-gray-900 cursor-pointer select-none hover:bg-gray-50 transition-colors' });
-const accordionContent = tw({ name: 'accordion-content', _: 'px-4 pb-3 text-sm text-gray-600' });
+const accordionRoot = tw('accordion', 'rounded-lg border border-gray-200 overflow-hidden divide-y divide-gray-200');
+const accordionItem = tw('accordion-item', 'bg-white');
+const accordionTrigger = tw('accordion-trigger', 'flex items-center justify-between w-full px-4 py-3 text-left text-sm font-medium text-gray-900 cursor-pointer select-none hover:bg-gray-50 transition-colors');
+const accordionContent = tw('accordion-content', 'px-4 pb-3 text-sm text-gray-600');
 
 export function Accordion({
   items,

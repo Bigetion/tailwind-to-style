@@ -28,7 +28,7 @@ const spinner = tw({
   defaultVariants: { size: 'md', color: 'blue' },
 });
 
-const spinnerLabel = tw({ name: 'spinner-label', _: 'text-sm text-gray-600' });
+const spinnerLabel = tw('spinner-label', 'text-sm text-gray-600');
 
 export function Spinner({
   size,

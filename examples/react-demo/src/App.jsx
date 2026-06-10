@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { tw, cx } from 'tailwind-to-style';
 import {
   Palette, Sparkles,
@@ -91,19 +91,19 @@ const ALL_ITEMS = NAV_GROUPS.flatMap(g => g.items);
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 // Root layout — h-screen + overflow-hidden so only inner panels scroll
-const layout = tw({ name: 'app-layout', _: 'flex h-screen overflow-hidden bg-gray-50' });
+const layout = tw('app-layout', 'flex h-screen overflow-hidden bg-gray-50');
 
 // Desktop sidebar — always full height, scrolls independently
-const desktopSidebar = tw({ name: 'app-sidebar', _: 'hidden md:flex w-56 shrink-0 flex-col bg-white border-r border-gray-200 h-full overflow-y-auto' });
+const desktopSidebar = tw('app-sidebar', 'hidden md:flex w-56 shrink-0 flex-col bg-white border-r border-gray-200 h-full overflow-y-auto');
 
 // Sidebar internals
-const sidebarHeader = tw({ name: 'sidebar-header', _: 'px-5 py-4 border-b border-gray-100 shrink-0' });
-const sidebarLogo   = tw({ name: 'sidebar-logo',   _: 'text-sm font-bold text-gray-900 leading-tight' });
-const sidebarSub    = tw({ name: 'sidebar-sub',    _: 'text-xs text-gray-400 mt-0.5' });
-const sidebarNav    = tw({ name: 'sidebar-nav',    _: 'flex-1 overflow-y-auto py-3 px-2' });
-const navGroup      = tw({ name: 'nav-group',      _: 'mb-2' });
-const navItems      = tw({ name: 'nav-items',      _: 'space-y-0.5' });
-const navGroupLabel = tw({ name: 'nav-group-label', _: 'text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 py-2' });
+const sidebarHeader = tw('sidebar-header', 'px-5 py-4 border-b border-gray-100 shrink-0');
+const sidebarLogo   = tw('sidebar-logo',   'text-sm font-bold text-gray-900 leading-tight');
+const sidebarSub    = tw('sidebar-sub',    'text-xs text-gray-400 mt-0.5');
+const sidebarNav    = tw('sidebar-nav',    'flex-1 overflow-y-auto py-3 px-2');
+const navGroup      = tw('nav-group',      'mb-2');
+const navItems      = tw('nav-items',      'space-y-0.5');
+const navGroupLabel = tw('nav-group-label', 'text-[0.55rem] font-semibold text-gray-400 uppercase tracking-wider px-3 pt-3 pb-1');
 
 const navItem = tw({
   name: 'nav-item',
@@ -118,25 +118,25 @@ const navItem = tw({
 });
 
 // Mobile drawer backdrop
-const backdrop = tw({ name: 'app-backdrop', _: 'fixed inset-0 z-40 bg-black/40 md:hidden' });
+const backdrop = tw('app-backdrop', 'fixed inset-0 z-40 bg-black/40 md:hidden');
 
 // Mobile drawer panel
-const drawerBase = tw({ name: 'app-drawer', _: 'fixed top-0 left-0 bottom-0 z-50 w-64 flex flex-col bg-white shadow-xl transition-transform duration-200 ease-in-out md:hidden' });
+const drawerBase = tw('app-drawer', 'fixed top-0 left-0 bottom-0 z-50 w-64 flex flex-col bg-white shadow-xl transition-transform duration-200 ease-in-out md:hidden');
 
 // Drawer close button
-const drawerClose = tw({ name: 'drawer-close', _: 'absolute top-3 right-3 p-1 rounded-md text-gray-500 hover:bg-gray-100 bg-transparent border-none cursor-pointer flex items-center' });
+const drawerClose = tw('drawer-close', 'absolute top-3 right-3 p-1 rounded-md text-gray-500 hover:bg-gray-100 bg-transparent border-none cursor-pointer flex items-center');
 
 // Main column — fills remaining space, inner content scrolls
-const mainCol = tw({ name: 'app-main', _: 'flex-1 min-w-0 flex flex-col h-full overflow-hidden' });
+const mainCol = tw('app-main', 'flex-1 min-w-0 flex flex-col h-full overflow-hidden');
 
 // Topbar
-const topbar      = tw({ name: 'app-topbar',       _: 'sticky top-0 z-30 flex items-center gap-2 bg-white border-b border-gray-200 px-4 py-2.5 min-w-0' });
-const hamburger   = tw({ name: 'app-hamburger',    _: 'flex md:hidden items-center p-1 rounded-md text-gray-700 hover:bg-gray-100 bg-transparent border-none cursor-pointer shrink-0' });
-const topbarTitle = tw({ name: 'app-topbar-title', _: 'flex-1 min-w-0 text-lg font-semibold text-gray-900 truncate' });
-const topbarBadge = tw({ name: 'app-topbar-badge', _: 'shrink-0 text-[0.7rem] font-medium px-2 py-0.5 rounded-full bg-blue-50 text-blue-600' });
+const topbar      = tw('app-topbar',       'sticky top-0 z-30 flex items-center gap-2 bg-white border-b border-gray-200 px-4 py-2.5 min-w-0');
+const hamburger   = tw('app-hamburger',    'flex md:hidden items-center p-1 rounded-md text-gray-700 hover:bg-gray-100 bg-transparent border-none cursor-pointer shrink-0');
+const topbarTitle = tw('app-topbar-title', 'flex-1 min-w-0 text-lg font-semibold text-gray-900 truncate');
+const topbarBadge = tw('app-topbar-badge', 'shrink-0 text-[0.7rem] font-medium px-2 py-0.5 rounded-full bg-blue-50 text-blue-600');
 
 // Content area
-const content = tw({ name: 'app-content', _: 'flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-8 min-w-0' });
+const content = tw('app-content', 'flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-8 min-w-0');
 
 // ─── SVG Icons ────────────────────────────────────────────────────────────────
 
