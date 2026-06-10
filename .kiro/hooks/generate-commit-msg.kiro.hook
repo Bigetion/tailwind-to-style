@@ -1,0 +1,15 @@
+{
+  "enabled": true,
+  "name": "Generate Commit Message",
+  "description": "Setiap kali file code diedit, otomatis generate commit message yang sesuai agar developer bisa commit dan push secara manual.",
+  "version": "1",
+  "when": {
+    "type": "agentStop"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A code file was just edited. Based on the recent changes (git diff), generate a concise and descriptive commit message following conventional commits format (e.g., feat:, fix:, refactor:, docs:, chore:). Do NOT run git commit or git push. Just present the suggested commit message based on git changes to the developer so they can commit and push manually."
+  },
+  "workspaceFolderName": "tailwind-to-style",
+  "shortName": "generate-commit-msg"
+}

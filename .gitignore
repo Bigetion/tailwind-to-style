@@ -40,8 +40,6 @@ logs/
 
 # Testing
 /coverage
-/tests/*.js
-/tests/*.jsx
 
 # Temporary files
 .tmp/

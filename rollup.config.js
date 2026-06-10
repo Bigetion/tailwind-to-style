@@ -11,20 +11,26 @@ const pkg = require('./package.json');
 
 const banner = `/**
  * tailwind-to-style v${pkg.version}
- * Runtime Tailwind CSS to inline styles converter
+ * Zero-build runtime Tailwind CSS engine
  * 
  * @author Bigetion
  * @license MIT
  */`;
 
-const input = 'src/index.js';
+// v4 entry point
+const input = 'src/v4/index.js';
 const extensions = ['.js'];
 
 // Babel configuration for browser compatibility
 const babelConfig = {
   babelHelpers: 'bundled',
   exclude: 'node_modules/**',
-  extensions
+  extensions,
+  presets: [
+    ['@babel/preset-env', { targets: '> 0.25%, not dead', modules: false, useBuiltIns: false }],
+    '@babel/preset-react',
+  ],
+  plugins: ['@babel/plugin-proposal-optional-chaining'],
 };
 
 // Shared plugins factory
@@ -39,42 +45,49 @@ const createPlugins = (opts = {}) => [
 
 // Sub-path entry points for tree-shakeable imports
 const subPathEntries = [
-  { input: 'src/core/tws.js', name: 'core/tws', typeSrc: 'types/core/tws.d.ts' },
-  { input: 'src/core/twsx.js', name: 'core/twsx', typeSrc: 'types/core/twsx.d.ts' },
-  { input: 'src/core/twsxVariants.js', name: 'core/twsxVariants', typeSrc: 'types/core/twsxVariants.d.ts' },
-  { input: 'src/className/index.js', name: 'className/index', typeSrc: 'types/className/index.d.ts' },
-  { input: 'src/utils/index.js', name: 'utils/index', typeSrc: 'types/utils/index.d.ts' },
-  { input: 'src/cx.js', name: 'cx', typeSrc: 'types/cx.d.ts' },
+  { input: 'src/react/index.js', name: 'react/index' },
+  { input: 'src/tokens/index.js', name: 'tokens/index' },
+  { input: 'src/animations/index.js', name: 'animations/index' },
+  { input: 'src/core/tws.js', name: 'core/tws' },
+  { input: 'src/className/index.js', name: 'className/index' },
+  { input: 'src/cx.js', name: 'cx' },
 ];
 
 // Generate sub-path builds (ESM + CJS for each)
-const subPathBuilds = subPathEntries.flatMap(({ input: entryInput, name }) => [
-  {
-    input: entryInput,
-    output: {
-      file: `dist/${name}.esm.js`,
-      format: 'esm',
-      banner,
-      inlineDynamicImports: true,
-      sourcemap: true,
+const subPathBuilds = subPathEntries.flatMap(({ input: entryInput, name }) => {
+  const isReact = name.startsWith('react');
+  const external = isReact ? ['react', 'react-dom'] : [];
+
+  return [
+    {
+      input: entryInput,
+      output: {
+        file: `dist/${name}.esm.js`,
+        format: 'esm',
+        banner,
+        inlineDynamicImports: true,
+        sourcemap: true,
+      },
+      external,
+      plugins: createPlugins(),
     },
-    plugins: createPlugins(),
-  },
-  {
-    input: entryInput,
-    output: {
-      file: `dist/${name}.cjs`,
-      format: 'cjs',
-      banner,
-      exports: 'named',
-      inlineDynamicImports: true,
+    {
+      input: entryInput,
+      output: {
+        file: `dist/${name}.cjs`,
+        format: 'cjs',
+        banner,
+        exports: 'named',
+        inlineDynamicImports: true,
+      },
+      external,
+      plugins: createPlugins(),
     },
-    plugins: createPlugins(),
-  },
-]);
+  ];
+});
 
 export default [
-  // Main ESM build (primary export)
+  // Main ESM build (v4 entry)
   {
     input,
     output: {
@@ -88,13 +101,15 @@ export default [
       copyPlugin: [
         { src: 'types/index.d.ts', dest: 'dist/' },
         { src: 'types/core', dest: 'dist/' },
-        { src: 'types/utils', dest: 'dist/' },
+        { src: 'types/tokens', dest: 'dist/' },
+        { src: 'types/react', dest: 'dist/' },
+        { src: 'types/animations', dest: 'dist/' },
         { src: 'types/cx.d.ts', dest: 'dist/' },
       ],
     }),
   },
-  
-  // Main CommonJS build (for Node.js compatibility)
+
+  // Main CommonJS build
   {
     input,
     output: {
@@ -106,8 +121,8 @@ export default [
     },
     plugins: createPlugins(),
   },
-  
-  // Minified UMD build (for CDN usage)
+
+  // Minified UMD build (for CDN)
   {
     input,
     output: {
@@ -122,6 +137,6 @@ export default [
     plugins: createPlugins({ browser: true, terserPlugin: true }),
   },
 
-  // Sub-path builds for tree-shaking
+  // Sub-path builds
   ...subPathBuilds,
 ];

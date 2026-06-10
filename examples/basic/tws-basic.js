@@ -4,7 +4,7 @@
  * Demonstrates simple Tailwind class conversion to inline styles
  */
 
-import { tws } from 'tailwind-to-style';
+import { tws } from '../../src/v4/index.js';
 
 console.log('='.repeat(60));
 console.log('📘 BASIC TWS() EXAMPLES');

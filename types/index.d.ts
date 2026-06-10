@@ -1,6 +1,9 @@
-// Type definitions for tailwind-to-style
+// Type definitions for tailwind-to-style v4
 // Project: https://github.com/Bigetion/tailwind-to-style
 // Definitions by: Bigetion
+
+// v4 unified API re-exports
+export { tw, tws, cx, createSSRCollector } from './v4';
 
 // ============================================================================
 // Environment Detection

@@ -1,7 +1,7 @@
 {
   "name": "tailwind-to-style",
-  "version": "3.3.0",
-  "description": "Runtime Tailwind CSS to inline styles converter. Zero build step, SSR support, tree-shakeable. Works with React, Vue, Svelte, vanilla JS.",
+  "version": "4.0.0",
+  "description": "Zero-build runtime Tailwind CSS engine. Convert utility classes to real CSS with variants, slots, tokens, and React bindings. SSR-ready, tree-shakeable.",
   "type": "module",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
@@ -15,25 +15,25 @@
       "import": "./dist/index.esm.js",
       "require": "./dist/index.cjs"
     },
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.esm.js",
+      "require": "./dist/react/index.cjs"
+    },
+    "./tokens": {
+      "types": "./dist/tokens/index.d.ts",
+      "import": "./dist/tokens/index.esm.js",
+      "require": "./dist/tokens/index.cjs"
+    },
+    "./animations": {
+      "types": "./dist/animations/index.d.ts",
+      "import": "./dist/animations/index.esm.js",
+      "require": "./dist/animations/index.cjs"
+    },
     "./tws": {
       "types": "./dist/core/tws.d.ts",
       "import": "./dist/core/tws.esm.js",
       "require": "./dist/core/tws.cjs"
-    },
-    "./twsx": {
-      "types": "./dist/core/twsx.d.ts",
-      "import": "./dist/core/twsx.esm.js",
-      "require": "./dist/core/twsx.cjs"
-    },
-    "./twsx-variants": {
-      "types": "./dist/core/twsxVariants.d.ts",
-      "import": "./dist/core/twsxVariants.esm.js",
-      "require": "./dist/core/twsxVariants.cjs"
-    },
-    "./utils": {
-      "types": "./dist/utils/index.d.ts",
-      "import": "./dist/utils/index.esm.js",
-      "require": "./dist/utils/index.cjs"
     },
     "./cx": {
       "types": "./dist/cx.d.ts",
@@ -48,7 +48,7 @@
     "./preflight.css": "./preflight.css",
     "./package.json": "./package.json"
   },
-  "sideEffects": false,
+  "sideEffects": ["*.css", "dist/*.js", "dist/**/*.js"],
   "files": [
     "dist",
     "types",
@@ -82,19 +82,20 @@
     "tailwind",
     "tailwindcss",
     "css",
-    "stylesheet",
-    "inline-styles",
-    "runtime-css",
     "css-in-js",
+    "runtime-css",
     "zero-build",
+    "variants",
+    "slots",
+    "design-tokens",
+    "styled-components",
     "ssr",
     "server-side-rendering",
     "tree-shakeable",
-    "variants",
-    "style-converter",
     "react",
     "vue",
-    "svelte"
+    "svelte",
+    "vanilla-js"
   ],
   "author": "Bigetion",
   "license": "MIT",
@@ -106,6 +107,14 @@
     "url": "https://github.com/Bigetion/tailwind-to-style/issues"
   },
   "homepage": "https://github.com/Bigetion/tailwind-to-style#readme",
+  "peerDependencies": {
+    "react": ">=17.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@babel/core": "^7.27.4",
     "@babel/plugin-proposal-optional-chaining": "^7.21.0",
