@@ -46,21 +46,21 @@ export function StatCard({
 
   return (
     <div className={cx(card(variantProps), className)}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <div style={{ flex: 1, minWidth: 0 }}>
+      <div className={tw('flex justify-between items-start')}>
+        <div className={tw('flex-1 min-w-0')}>
           <p className={statLabel}>{label}</p>
           <p className={statValue}>{value}</p>
           {subtext && <p className={statSubtext}>{subtext}</p>}
           {trend && trendCfg && (
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', marginTop: '8px', padding: '2px 8px', borderRadius: '9999px', backgroundColor: trendCfg.bg }}>
+            <div className={tw('inline-flex items-center gap-1 mt-2 rounded-full')} style={{ padding: '2px 8px', backgroundColor: trendCfg.bg }}>
               <TrendIcon size={12} color={trendCfg.text} />
-              <span style={{ fontSize: '0.75rem', fontWeight: 600, color: trendCfg.text }}>{trend.value}</span>
-              {trend.label && <span style={{ fontSize: '0.7rem', color: trendCfg.text, opacity: 0.8 }}>{trend.label}</span>}
+              <span className={tw('text-xs font-semibold')} style={{ color: trendCfg.text }}>{trend.value}</span>
+              {trend.label && <span className={tw('text-xs')} style={{ color: trendCfg.text, opacity: 0.8 }}>{trend.label}</span>}
             </div>
           )}
         </div>
         {icon && (
-          <div style={{ width: '44px', height: '44px', borderRadius: '12px', backgroundColor: iconBg || '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginLeft: '12px' }}>
+          <div className={tw('flex items-center justify-center shrink-0 rounded-xl')} style={{ width: '44px', height: '44px', backgroundColor: iconBg || '#eff6ff', marginLeft: '12px' }}>
             {icon}
           </div>
         )}
@@ -78,8 +78,8 @@ export function MiniStatCard({ label, value, color = '#3b82f6', className }) {
       className={cx(card(), className)}
       style={{ borderLeft: `4px solid ${color}`, paddingLeft: '16px' }}
     >
-      <p style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: 500 }}>{label}</p>
-      <p style={{ fontSize: '1.5rem', fontWeight: 700, color: '#111827', marginTop: '2px' }}>{value}</p>
+      <p className={tw('text-xs text-gray-500 font-medium')}>{label}</p>
+      <p className={tw('text-2xl font-bold text-gray-900 mt-0.5')}>{value}</p>
     </div>
   );
 }

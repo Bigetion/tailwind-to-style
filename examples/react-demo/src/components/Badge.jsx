@@ -74,19 +74,17 @@ export function Badge({
     <span className={cx(badge(variantProps), className)}>
       {dot && (
         <span
+          className={tw('rounded-full mr-1.5 shrink-0')}
           style={{
             width: '6px',
             height: '6px',
-            borderRadius: '50%',
             backgroundColor: dotColors[color || 'gray'],
-            marginRight: '6px',
-            flexShrink: 0,
           }}
         />
       )}
-      {leftIcon && <span style={{ marginRight: '4px', display: 'inline-flex' }}>{leftIcon}</span>}
+      {leftIcon && <span className={tw('mr-1 inline-flex')}>{leftIcon}</span>}
       {children}
-      {rightIcon && <span style={{ marginLeft: '4px', display: 'inline-flex' }}>{rightIcon}</span>}
+      {rightIcon && <span className={tw('ml-1 inline-flex')}>{rightIcon}</span>}
     </span>
   );
 }

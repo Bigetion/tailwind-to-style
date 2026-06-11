@@ -77,7 +77,8 @@ export function Avatar({
         <img
           src={src}
           alt={alt || name || 'Avatar'}
-          style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit' }}
+          className={tw('w-full h-full object-cover')}
+          style={{ borderRadius: 'inherit' }}
         />
       ) : (
         <span>{getInitials(name)}</span>
@@ -96,9 +97,9 @@ export function AvatarGroup({ children, max, size }) {
   const remaining = max ? items.length - max : 0;
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
+    <div className={tw('flex items-center')}>
       {visible.map((child, i) => (
-        <div key={i} style={{ marginLeft: i === 0 ? 0 : '-8px', position: 'relative', zIndex: visible.length - i }}>
+        <div key={i} className={tw('relative')} style={{ marginLeft: i === 0 ? 0 : '-8px', zIndex: visible.length - i }}>
           {child}
         </div>
       ))}

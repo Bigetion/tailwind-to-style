@@ -1,5 +1,5 @@
 import React, { useId } from 'react';
-import { tw } from 'tailwind-to-style';
+import { tw, cx } from 'tailwind-to-style';
 
 /**
  * Slider component — range input with track, fill, and thumb.
@@ -38,10 +38,10 @@ export function Slider({
   const displayValue = formatValue ? formatValue(value) : value;
 
   return (
-    <div className={className} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+    <div className={cx(tw('flex flex-col gap-2'), className)}>
       {/* Header row */}
       {(label || showValue) && (
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className={tw('flex justify-between items-center')}>
           {label && <label htmlFor={inputId} className={labelStyle}>{label}</label>}
           {showValue && <span className={valueStyle}>{displayValue}</span>}
         </div>
@@ -103,9 +103,9 @@ export function Slider({
       </div>
 
       {/* Min/Max labels */}
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: '0.7rem', color: '#9ca3af' }}>{min}</span>
-        <span style={{ fontSize: '0.7rem', color: '#9ca3af' }}>{max}</span>
+      <div className={tw('flex justify-between')}>
+        <span className={tw('text-xs text-gray-400')}>{min}</span>
+        <span className={tw('text-xs text-gray-400')}>{max}</span>
       </div>
     </div>
   );
@@ -137,9 +137,9 @@ export function RangeSlider({ minValue, maxValue, min = 0, max = 100, step = 1, 
   const maxZIndex = pctMin > 90 ? 4 : 5;
 
   return (
-    <div className={className} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+    <div className={cx(tw('flex flex-col gap-2'), className)}>
       {label && (
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div className={tw('flex justify-between')}>
           <span className={labelStyle}>{label}</span>
           <span className={valueStyle}>{displayMin} – {displayMax}</span>
         </div>
@@ -196,9 +196,9 @@ export function RangeSlider({ minValue, maxValue, min = 0, max = 100, step = 1, 
           boxShadow: '0 1px 4px rgba(0,0,0,0.15)', pointerEvents: 'none',
         }} />
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: '0.7rem', color: '#9ca3af' }}>{min}</span>
-        <span style={{ fontSize: '0.7rem', color: '#9ca3af' }}>{max}</span>
+      <div className={tw('flex justify-between')}>
+        <span className={tw('text-xs text-gray-400')}>{min}</span>
+        <span className={tw('text-xs text-gray-400')}>{max}</span>
       </div>
     </div>
   );

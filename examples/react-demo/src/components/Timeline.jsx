@@ -36,7 +36,7 @@ const timelineContent = tw({
 
 export function Timeline({ items = [], size = 'md', className }) {
   return (
-    <div className={className} style={{ position: 'relative' }}>
+    <div className={cx(tw('relative'), className)}>
       {items.map((item, i) => {
         const isLast = i === items.length - 1;
         const dotProps = {};
@@ -46,9 +46,9 @@ export function Timeline({ items = [], size = 'md', className }) {
         const iconSize = size === 'sm' ? 12 : size === 'lg' ? 18 : 14;
 
         return (
-          <div key={i} style={{ display: 'flex', gap: '16px' }}>
+          <div key={i} className={tw('flex gap-4')}>
             {/* Left column: dot + connector */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div className={tw('flex flex-col items-center')}>
               <div className={timelineDot(dotProps)}>
                 {item.icon
                   ? React.cloneElement(item.icon, { size: iconSize })
@@ -56,29 +56,29 @@ export function Timeline({ items = [], size = 'md', className }) {
                 }
               </div>
               {!isLast && (
-                <div style={{ width: '2px', flex: 1, backgroundColor: '#e5e7eb', marginTop: '4px' }} />
+                <div className={tw('flex-1 mt-1')} style={{ width: '2px', backgroundColor: '#e5e7eb' }} />
               )}
             </div>
 
             {/* Right column: content */}
             <div className={timelineContent({ last: isLast })}>
-              <div style={{ marginBottom: '4px' }}>
-                <p style={{ fontSize: size === 'sm' ? '0.8rem' : '0.875rem', fontWeight: 600, color: '#111827' }}>
+              <div className={tw('mb-1')}>
+                <p className={tw('font-semibold text-gray-900')} style={{ fontSize: size === 'sm' ? '0.8rem' : '0.875rem' }}>
                   {item.title}
                 </p>
                 {item.time && (
-                  <span style={{ fontSize: '0.7rem', color: '#9ca3af' }}>
+                  <span className={tw('text-xs text-gray-400')}>
                     {item.time}
                   </span>
                 )}
               </div>
               {item.description && (
-                <p style={{ fontSize: size === 'sm' ? '0.75rem' : '0.8rem', color: '#6b7280', lineHeight: 1.5 }}>
+                <p className={tw('text-gray-500')} style={{ fontSize: size === 'sm' ? '0.75rem' : '0.8rem', lineHeight: 1.5 }}>
                   {item.description}
                 </p>
               )}
               {item.content && (
-                <div style={{ marginTop: '8px' }}>{item.content}</div>
+                <div className={tw('mt-2')}>{item.content}</div>
               )}
             </div>
           </div>

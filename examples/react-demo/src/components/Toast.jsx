@@ -54,12 +54,12 @@ function ToastItem({ id, type = 'info', title, message, duration = 4000, onRemov
       className={toast({ entering: visible })}
       style={{ transition: 'opacity 200ms, transform 200ms' }}
     >
-      <Icon size={18} color={color} style={{ flexShrink: 0, marginTop: '1px' }} />
-      <div style={{ flex: 1, minWidth: 0 }}>
+      <Icon size={18} color={color} className={tw('shrink-0')} style={{ marginTop: '1px' }} />
+      <div className={tw('flex-1 min-w-0')}>
         {title && <p className={toastTitle}>{title}</p>}
         {message && <p className={toastMessage}>{message}</p>}
       </div>
-      <button onClick={handleClose} className={toastClose} style={{ background: 'none', border: 'none' }} aria-label="Close">
+      <button onClick={handleClose} className={cx(toastClose, tw('bg-transparent border-none'))} aria-label="Close">
         <X size={14} />
       </button>
     </div>
@@ -84,15 +84,8 @@ export function ToastContainer({ toasts, onRemove, position = 'top-right' }) {
 
   return (
     <div
-      style={{
-        position: 'fixed',
-        zIndex: 9999,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '8px',
-        pointerEvents: 'none',
-        ...containerPositions[position],
-      }}
+      className={tw('fixed z-[9999] flex flex-col gap-2 pointer-events-none')}
+      style={containerPositions[position]}
     >
       {toasts.map((t) => (
         <ToastItem key={t.id} {...t} onRemove={onRemove} />

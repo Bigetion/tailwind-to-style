@@ -85,8 +85,8 @@ export function Pagination({
 
   return (
     <nav
-      style={{ display: 'inline-flex', alignItems: 'center', gap: size === 'sm' ? '3px' : size === 'lg' ? '5px' : '4px' }}
-      className={className}
+      className={cx(tw('inline-flex items-center'), className)}
+      style={{ gap: size === 'sm' ? '3px' : size === 'lg' ? '5px' : '4px' }}
       aria-label="Pagination"
     >
       <button
@@ -102,8 +102,7 @@ export function Pagination({
         p === '...' ? (
           <span
             key={`el-${i}`}
-            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: '#9ca3af' }}
-            className={pageBtn({ size, minimal_default: true })}
+            className={cx(tw('inline-flex items-center justify-center text-gray-400'), pageBtn({ size, minimal_default: true }))}
           >
             <MoreHorizontal size={iconSize - 2} />
           </span>
