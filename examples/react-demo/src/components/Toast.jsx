@@ -17,9 +17,9 @@ const toast = tw({
   defaultVariants: { entering: true },
 });
 
-const toastTitle = tw({ name: 'toast-title', _: 'text-sm font-semibold text-gray-900' });
-const toastMessage = tw({ name: 'toast-msg', _: 'text-sm text-gray-600' });
-const toastClose = tw({ name: 'toast-close', _: 'text-gray-400 cursor-pointer hover:text-gray-600 transition-colors' });
+const toastTitle = tw('toast-title', 'text-sm font-semibold text-gray-900');
+const toastMessage = tw('toast-msg', 'text-sm text-gray-600');
+const toastClose = tw('toast-close', 'text-gray-400 cursor-pointer hover:text-gray-600 transition-colors');
 
 const icons = {
   success: { Icon: CheckCircle, color: '#10b981' },

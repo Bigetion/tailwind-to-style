@@ -20,8 +20,8 @@ const alert = tw({
   defaultVariants: { color: 'info' },
 });
 
-const alertTitle = tw({ name: 'alert-title', _: 'font-semibold mb-0.5' });
-const alertClose = tw({ name: 'alert-close', _: 'absolute top-3 right-3 opacity-60 cursor-pointer hover:opacity-100 transition-opacity' });
+const alertTitle = tw('alert-title', 'font-semibold mb-0.5');
+const alertClose = tw('alert-close', 'absolute top-3 right-3 opacity-60 cursor-pointer hover:opacity-100 transition-opacity');
 
 const iconMap = {
   info: Info,

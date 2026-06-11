@@ -27,20 +27,20 @@ const themedBtn = tw({
 });
 
 // ── Themed card using token() references ────────────────────────────────────
-const themedCard = tw({
-  name: 'theme-card',
-  _: `bg-[${token('colors.surface')}] border border-[${token('colors.border')}] rounded-xl p-5 shadow-sm`,
-});
+const themedCard = tw(
+  'theme-card',
+  `bg-[${token('colors.surface')}] border border-[${token('colors.border')}] rounded-xl p-5 shadow-sm`,
+);
 
-const themedHeading = tw({
-  name: 'theme-heading',
-  _: `text-lg font-semibold text-[${token('colors.text')}]`,
-});
+const themedHeading = tw(
+  'theme-heading',
+  `text-lg font-semibold text-[${token('colors.text')}]`,
+);
 
-const themedSubtext = tw({
-  name: 'theme-subtext',
-  _: `text-sm text-[${token('colors.muted')}]`,
-});
+const themedSubtext = tw(
+  'theme-subtext',
+  `text-sm text-[${token('colors.muted')}]`,
+);
 
 const themedBadge = tw({
   name: 'theme-badge',

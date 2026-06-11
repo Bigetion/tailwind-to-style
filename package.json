@@ -53,6 +53,7 @@
     "dist",
     "types",
     "preflight.css",
+    "llms.txt",
     "README.md",
     "LICENSE"
   ],

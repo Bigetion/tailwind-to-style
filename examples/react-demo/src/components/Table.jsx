@@ -14,13 +14,13 @@ import { tw, cx } from 'tailwind-to-style';
 
 // ── Static structural class names ────────────────────────────────────────────
 
-const wrapperCls   = tw({ name: 'tbl-wrapper', _: 'overflow-x-auto rounded-lg' });
-const tableCls     = tw({ name: 'tbl-table',   _: 'w-full text-sm text-left' });
-const theadCls     = tw({ name: 'tbl-thead',   _: 'border-b' });
-const thBaseCls    = tw({ name: 'tbl-th',      _: 'text-xs font-semibold text-gray-600 uppercase tracking-wider text-left' });
-const tbodyCls     = tw({ name: 'tbl-tbody',   _: '' });
-const trBaseCls    = tw({ name: 'tbl-tr',      _: 'transition-colors duration-150' });
-const tdBaseCls    = tw({ name: 'tbl-td',      _: 'text-gray-700 border-b border-gray-100' });
+const wrapperCls   = tw('tbl-wrapper', 'overflow-x-auto rounded-lg');
+const tableCls     = tw('tbl-table',   'w-full text-sm text-left');
+const theadCls     = tw('tbl-thead',   'border-b');
+const thBaseCls    = tw('tbl-th',      'text-xs font-semibold text-gray-600 uppercase tracking-wider text-left');
+const tbodyCls     = tw('tbl-tbody',   '');
+const trBaseCls    = tw('tbl-tr',      'transition-colors duration-150');
+const tdBaseCls    = tw('tbl-td',      'text-gray-700 border-b border-gray-100');
 
 // ── Value maps (inline styles — guaranteed to work) ──────────────────────────
 

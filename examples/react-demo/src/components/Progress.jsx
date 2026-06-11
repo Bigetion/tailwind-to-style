@@ -36,9 +36,9 @@ const fill = tw({
   defaultVariants: { color: 'blue' },
 });
 
-const labelStyle = tw({ name: 'progress-label', _: 'flex justify-between items-center mb-1' });
-const labelText = tw({ name: 'progress-label-text', _: 'text-sm font-medium text-gray-700' });
-const labelValue = tw({ name: 'progress-label-value', _: 'text-sm text-gray-500' });
+const labelStyle = tw('progress-label', 'flex justify-between items-center mb-1');
+const labelText = tw('progress-label-text', 'text-sm font-medium text-gray-700');
+const labelValue = tw('progress-label-value', 'text-sm text-gray-500');
 
 export function Progress({
   value = 0,

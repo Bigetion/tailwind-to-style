@@ -33,13 +33,13 @@ const inputField = tw({
   },
 });
 
-const labelStyle = tw({ name: 'input-label', _: 'block text-sm font-medium text-gray-700 mb-1.5' });
-const helperStyle = tw({ name: 'input-helper', _: 'mt-1.5 text-sm text-gray-500' });
-const errorStyle = tw({ name: 'input-error', _: 'mt-1.5 text-sm text-red-600' });
-const successStyle = tw({ name: 'input-success', _: 'mt-1.5 text-sm text-emerald-600' });
-const wrapperStyle = tw({ name: 'input-wrapper', _: 'relative' });
-const iconLeftStyle = tw({ name: 'input-icon-left', _: 'absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none' });
-const iconRightStyle = tw({ name: 'input-icon-right', _: 'absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none' });
+const labelStyle = tw('input-label', 'block text-sm font-medium text-gray-700 mb-1.5');
+const helperStyle = tw('input-helper', 'mt-1.5 text-sm text-gray-500');
+const errorStyle = tw('input-error', 'mt-1.5 text-sm text-red-600');
+const successStyle = tw('input-success', 'mt-1.5 text-sm text-emerald-600');
+const wrapperStyle = tw('input-wrapper', 'relative');
+const iconLeftStyle = tw('input-icon-left', 'absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none');
+const iconRightStyle = tw('input-icon-right', 'absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none');
 
 export function Input({
   label,

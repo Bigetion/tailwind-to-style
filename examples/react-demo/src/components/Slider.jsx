@@ -5,9 +5,9 @@ import { tw } from 'tailwind-to-style';
  * Slider component — range input with track, fill, and thumb.
  * Fully custom styled over native range input.
  */
-const trackWrapper = tw({ name: 'slider-track', _: 'relative w-full h-2 bg-gray-200 rounded-full cursor-pointer' });
-const labelStyle = tw({ name: 'slider-label', _: 'text-sm font-medium text-gray-700' });
-const valueStyle = tw({ name: 'slider-value', _: 'text-sm font-semibold text-blue-600' });
+const trackWrapper = tw('slider-track', 'relative w-full h-2 bg-gray-200 rounded-full cursor-pointer');
+const labelStyle = tw('slider-label', 'text-sm font-medium text-gray-700');
+const valueStyle = tw('slider-value', 'text-sm font-semibold text-blue-600');
 
 const colorMap = {
   blue:   '#2563eb',

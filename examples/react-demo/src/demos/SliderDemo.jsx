@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { tw } from 'tailwind-to-style';
 import { Slider, RangeSlider } from '../components/Slider';
 
-const section = tw({ name: 'demo-section', _: 'mb-10 p-6 bg-white rounded-xl border border-gray-200 shadow-sm' });
-const sectionTitle = tw({ name: 'demo-title', _: 'text-xl font-semibold text-gray-900 mb-4' });
-const label = tw({ name: 'demo-label', _: 'text-sm text-gray-500 mb-3 font-medium' });
-const stack = tw({ name: 'demo-stack', _: 'flex flex-col gap-6 max-w-lg' });
+const section = tw('demo-section', 'mb-10 p-6 bg-white rounded-xl border border-gray-200 shadow-sm');
+const sectionTitle = tw('demo-title', 'text-xl font-semibold text-gray-900 mb-4');
+const label = tw('demo-label', 'text-sm text-gray-500 mb-3 font-medium');
+const stack = tw('demo-stack', 'flex flex-col gap-6 max-w-lg');
 
 export function SliderDemo() {
   const [volume, setVolume] = useState(65);

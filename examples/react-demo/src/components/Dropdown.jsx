@@ -37,8 +37,8 @@ const menuItem = tw({
   defaultVariants: { variant: 'default', active: false },
 });
 
-const menuDivider = tw({ name: 'dropdown-divider', _: 'my-1 border-t border-gray-100' });
-const menuLabel = tw({ name: 'dropdown-label', _: 'px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider' });
+const menuDivider = tw('dropdown-divider', 'my-1 border-t border-gray-100');
+const menuLabel = tw('dropdown-label', 'px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider');
 
 export function Dropdown({
   trigger,

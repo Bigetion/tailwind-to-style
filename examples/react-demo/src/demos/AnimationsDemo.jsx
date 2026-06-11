@@ -4,19 +4,19 @@ import { animate, defineAnimation, getAnimationNames, getPreset } from 'tailwind
 
 // ── Demo styles ──────────────────────────────────────────────────────────────
 
-const section = tw({ name: 'demo-section', _: 'mb-10 p-6 bg-white rounded-xl border border-gray-200 shadow-sm' });
-const sectionTitle = tw({ name: 'demo-title', _: 'text-xl font-semibold text-gray-900 mb-4' });
-const label = tw({ name: 'demo-label', _: 'text-sm text-gray-500 mb-3 font-medium' });
+const section = tw('demo-section', 'mb-10 p-6 bg-white rounded-xl border border-gray-200 shadow-sm');
+const sectionTitle = tw('demo-title', 'text-xl font-semibold text-gray-900 mb-4');
+const label = tw('demo-label', 'text-sm text-gray-500 mb-3 font-medium');
 
-const codeBlock = tw({
-  name: 'anim-code',
-  _: 'bg-gray-900 text-green-400 rounded-lg px-4 py-3 text-xs font-mono mt-3 overflow-x-auto whitespace-pre',
-});
+const codeBlock = tw(
+  'anim-code',
+  'bg-gray-900 text-green-400 rounded-lg px-4 py-3 text-xs font-mono mt-3 overflow-x-auto whitespace-pre',
+);
 
-const boxBase = tw({
-  name: 'anim-box',
-  _: 'w-16 h-16 rounded-xl bg-blue-500 flex items-center justify-center text-white text-xs font-bold shadow-md cursor-pointer select-none',
-});
+const boxBase = tw(
+  'anim-box',
+  'w-16 h-16 rounded-xl bg-blue-500 flex items-center justify-center text-white text-xs font-bold shadow-md cursor-pointer select-none',
+);
 
 // ── Register custom animations ───────────────────────────────────────────────
 

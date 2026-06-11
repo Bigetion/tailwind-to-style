@@ -43,7 +43,7 @@ const tab = tw({
   defaultVariants: { variant: 'underline', active: false },
 });
 
-const tabPanel = tw({ name: 'tab-panel', _: 'py-4' });
+const tabPanel = tw('tab-panel', 'py-4');
 
 export function Tabs({
   items,

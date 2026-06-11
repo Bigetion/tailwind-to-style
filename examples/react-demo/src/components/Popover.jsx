@@ -167,16 +167,16 @@ export function Popover({
  * Popover sub-components for structured content
  */
 export function PopoverHeader({ children, className }) {
-  const header = tw({ name: 'popover-header', _: 'px-4 py-3 border-b border-gray-100 font-semibold text-sm text-gray-900' });
+  const header = tw('popover-header', 'px-4 py-3 border-b border-gray-100 font-semibold text-sm text-gray-900');
   return <div className={cx(header, className)}>{children}</div>;
 }
 
 export function PopoverBody({ children, className }) {
-  const body = tw({ name: 'popover-body', _: 'px-4 py-3' });
+  const body = tw('popover-body', 'px-4 py-3');
   return <div className={cx(body, className)}>{children}</div>;
 }
 
 export function PopoverFooter({ children, className }) {
-  const footer = tw({ name: 'popover-footer', _: 'px-4 py-3 border-t border-gray-100' });
+  const footer = tw('popover-footer', 'px-4 py-3 border-t border-gray-100');
   return <div className={cx(footer, className)}>{children}</div>;
 }

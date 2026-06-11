@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { tw } from 'tailwind-to-style';
 import { Select } from '../components/Select';
 
-const section = tw({ name: 'demo-section', _: 'mb-10 p-6 bg-white rounded-xl border border-gray-200 shadow-sm' });
-const sectionTitle = tw({ name: 'demo-title', _: 'text-xl font-semibold text-gray-900 mb-4' });
-const label = tw({ name: 'demo-label', _: 'text-sm text-gray-500 mb-3 font-medium' });
-const grid = tw({ name: 'demo-grid', _: 'flex flex-col gap-4 max-w-sm' });
-const gridTwo = tw({ name: 'demo-grid-2', _: 'grid grid-cols-2 gap-4 max-w-lg' });
+const section = tw('demo-section', 'mb-10 p-6 bg-white rounded-xl border border-gray-200 shadow-sm');
+const sectionTitle = tw('demo-title', 'text-xl font-semibold text-gray-900 mb-4');
+const label = tw('demo-label', 'text-sm text-gray-500 mb-3 font-medium');
+const grid = tw('demo-grid', 'flex flex-col gap-4 max-w-sm');
+const gridTwo = tw('demo-grid-2', 'grid grid-cols-2 gap-4 max-w-lg');
 
 const countries = [
   { value: 'us', label: 'United States' },

@@ -25,11 +25,11 @@ const textareaField = tw({
   defaultVariants: { size: 'md', state: 'default' },
 });
 
-const labelStyle = tw({ name: 'textarea-label', _: 'block text-sm font-medium text-gray-700 mb-1.5' });
-const helperStyle = tw({ name: 'textarea-helper', _: 'mt-1.5 text-sm text-gray-500' });
-const errorStyle = tw({ name: 'textarea-error', _: 'mt-1.5 text-sm text-red-600' });
-const successStyle = tw({ name: 'textarea-success', _: 'mt-1.5 text-sm text-emerald-600' });
-const countStyle = tw({ name: 'textarea-count', _: 'text-xs text-gray-400' });
+const labelStyle = tw('textarea-label', 'block text-sm font-medium text-gray-700 mb-1.5');
+const helperStyle = tw('textarea-helper', 'mt-1.5 text-sm text-gray-500');
+const errorStyle = tw('textarea-error', 'mt-1.5 text-sm text-red-600');
+const successStyle = tw('textarea-success', 'mt-1.5 text-sm text-emerald-600');
+const countStyle = tw('textarea-count', 'text-xs text-gray-400');
 
 export function Textarea({
   label,
