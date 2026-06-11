@@ -1,0 +1,481 @@
+# tailwind-to-style
+
+> Zero-build runtime Tailwind CSS engine. Convert utility classes to real CSS at runtime — with variants, slots, design tokens, and React bindings.
+
+## Installation
+
+```
+npm install tailwind-to-style
+```
+
+## Overview
+
+tailwind-to-style replaces the Tailwind CSS build step entirely. You write Tailwind utility classes as strings, and the library generates and injects real CSS into the DOM at runtime. It supports responsive breakpoints (md:, lg:), pseudo-classes (hover:, focus:), arbitrary values, variants, slots, design tokens, and SSR.
+
+---
+
+## API Reference
+
+### `tw()` — The main function (4 modes)
+
+#### Mode 1: Atomic classes
+Pass a string of Tailwind utilities. Returns auto-generated class names. CSS is injected into the DOM automatically, including @media queries and pseudo-class rules.
+
+```js
+import { tw } from 'tailwind-to-style';
+
+tw('flex items-center gap-4 hover:bg-gray-100 md:hidden')
+// Returns: "tw-flex tw-items-center tw-gap-4 tw-hover-bg-gray-100 tw-md-hidden"
+```
+
+Use with `className={}` in React. Supports all responsive prefixes (sm:, md:, lg:, xl:, 2xl:) and pseudo-classes (hover:, focus:, active:, disabled:, focus-within:, etc.).
+
+#### Mode 2: Named class (preferred for static styles)
+Two string arguments: name + Tailwind classes. Returns the name as the class. This is the preferred shorthand for defining reusable static styles.
+
+```js
+tw('sidebar', 'w-64 h-screen bg-white border-r border-gray-200')
+// Returns: "sidebar"
+// Injects: .sidebar { width: 16rem; height: 100vh; background: #fff; ... }
+```
+
+#### Mode 3: Variants (returns a selector function)
+Object config with `name`, `base`, `variants`, optional `compoundVariants` and `defaultVariants`. Returns a function you call with variant selections.
+
+```js
+const button = tw({
+  name: 'btn',
+  base: 'px-4 py-2 rounded-lg font-medium transition-all cursor-pointer',
+  variants: {
+    color: {
+      primary: 'bg-blue-600 text-white hover:bg-blue-700',
+      secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300',
+      danger: 'bg-red-600 text-white hover:bg-red-700',
+      ghost: 'bg-transparent text-gray-700 hover:bg-gray-100',
+    },
+    size: {
+      sm: 'text-sm px-3 py-1.5',
+      md: 'text-base px-4 py-2',
+      lg: 'text-lg px-6 py-3',
+    },
+    fullWidth: {
+      true: 'w-full',
+    },
+  },
+  compoundVariants: [
+    { color: 'primary', size: 'lg', class: 'shadow-lg shadow-blue-500/25' },
+    { color: 'danger', size: 'lg', class: 'shadow-lg shadow-red-500/25' },
+  ],
+  defaultVariants: { color: 'primary', size: 'md' },
+})
+
+button({ color: 'danger', size: 'lg' })
+// Returns: "btn btn--color-danger btn--size-lg"
+```
+
+#### Mode 4: Slots (multi-part components)
+Object config with `name`, `slots`, and `variants` where each variant value is an object mapping slot names to classes.
+
+```js
+const card = tw({
+  name: 'card',
+  slots: {
+    root: 'bg-white rounded-xl border overflow-hidden',
+    header: 'border-b flex items-center justify-between',
+    title: 'font-semibold text-gray-900',
+    body: 'text-gray-700',
+    footer: 'border-t bg-gray-50',
+  },
+  variants: {
+    variant: {
+      default: {
+        root: 'border-gray-200 shadow-sm',
+        header: 'border-gray-100',
+        footer: 'border-gray-100',
+      },
+      elevated: {
+        root: 'border-gray-200 shadow-lg hover:shadow-xl',
+        header: 'border-gray-100',
+        footer: 'border-gray-100',
+      },
+    },
+    size: {
+      sm: { header: 'px-4 py-3', title: 'text-sm', body: 'px-4 py-3 text-sm', footer: 'px-4 py-3' },
+      md: { header: 'px-6 py-4', title: 'text-base', body: 'px-6 py-4', footer: 'px-6 py-4' },
+      lg: { header: 'px-8 py-5', title: 'text-lg', body: 'px-8 py-5', footer: 'px-8 py-5' },
+    },
+  },
+  defaultVariants: { variant: 'default', size: 'md' },
+})
+
+const slots = card({ variant: 'elevated', size: 'lg' })
+// Returns: { root: "card__root card__root--variant-elevated card__root--size-lg", ... }
+// Use: <div className={slots.root}> ... <h3 className={slots.title}> ...
+```
+
+---
+
+### `tws()` — Inline style converter
+
+Converts Tailwind classes to CSS string or JS style object. Does NOT support responsive or pseudo-class variants (those require `tw()`).
+
+```js
+import { tws } from 'tailwind-to-style';
+
+// CSS string
+tws('bg-blue-500 text-white p-4 rounded-lg')
+// → "background-color: rgb(59,130,246); color: #fff; padding: 1rem; border-radius: 0.5rem;"
+
+// JS object (pass true as second arg)
+tws('flex items-center gap-4', true)
+// → { display: 'flex', alignItems: 'center', gap: '1rem' }
+```
+
+---
+
+### `cx()` — Conditional class merging
+
+```js
+import { cx } from 'tailwind-to-style';
+
+cx('base-class', isActive && 'ring-2 ring-blue-500', { 'opacity-50': disabled })
+cx(button({ color: 'primary' }), disabled && tw('opacity-50 pointer-events-none'), className)
+```
+
+---
+
+### Design Tokens
+
+```js
+import { createTheme, activateTheme, token, tokenRegistry } from 'tailwind-to-style/tokens';
+
+createTheme({
+  colors: { primary: '#2563eb', surface: '#ffffff', text: '#0f172a', border: '#e2e8f0' },
+}, { name: 'light' });
+
+createTheme({
+  colors: { primary: '#60a5fa', surface: '#1e293b', text: '#f1f5f9', border: '#334155' },
+}, { name: 'dark' });
+
+// Reference in tw() via arbitrary value syntax
+tw('themed-btn', `bg-[${token('colors.primary')}] text-white px-4 py-2 rounded-lg`)
+// token('colors.primary') → "var(--tws-colors-primary)"
+
+// Switch themes at runtime
+activateTheme('dark')
+
+// Programmatic access
+tokenRegistry.get('colors.primary')
+tokenRegistry.set('colors.primary', '#1d4ed8')
+tokenRegistry.subscribe((tokens) => { /* react to changes */ })
+tokenRegistry.toCSS() // → ":root { --tws-colors-primary: ...; }"
+```
+
+---
+
+### React Bindings
+
+```jsx
+import { ThemeProvider, useTheme, styled } from 'tailwind-to-style/react';
+
+<ThemeProvider theme={lightTheme} name="light">
+  <App />
+</ThemeProvider>
+
+// Inside components:
+const { tokens, setTheme } = useTheme();
+
+// styled() — creates React components with variant props
+const Button = styled('button', {
+  name: 'btn',
+  base: 'px-4 py-2 rounded-lg font-medium',
+  variants: {
+    color: { primary: 'bg-blue-600 text-white', secondary: 'bg-gray-200 text-gray-800' },
+  },
+  defaultVariants: { color: 'primary' },
+})
+
+<Button color="primary" onClick={handleClick}>Click</Button>
+```
+
+---
+
+### Animations
+
+```js
+import { animate, defineAnimation } from 'tailwind-to-style/animations';
+
+element.className = animate('fadeIn', { duration: '300ms', delay: '100ms' });
+// Built-in: fadeIn, fadeOut, slideInUp, slideInDown, slideInLeft, slideInRight,
+//           scaleIn, scaleOut, bounce, shake, pulse, spin, ping
+
+defineAnimation('wiggle', {
+  keyframes: [
+    { transform: 'rotate(0deg)' },
+    { transform: 'rotate(-3deg)' },
+    { transform: 'rotate(3deg)' },
+    { transform: 'rotate(0deg)' },
+  ],
+  duration: '300ms',
+  easing: 'ease-in-out',
+});
+```
+
+---
+
+### SSR (Server-Side Rendering)
+
+```js
+import { tw, createSSRCollector } from 'tailwind-to-style';
+
+const collector = createSSRCollector();
+const html = renderToString(<App />);
+const css = collector.extract();
+// Inject css into <style> in <head> of server-rendered HTML
+```
+
+---
+
+## Import Paths
+
+| Path | Exports |
+|------|---------|
+| `tailwind-to-style` | `tw`, `tws`, `cx` |
+| `tailwind-to-style/react` | `ThemeProvider`, `useTheme`, `styled`, `useTws` |
+| `tailwind-to-style/tokens` | `createTheme`, `activateTheme`, `token`, `tokenRegistry` |
+| `tailwind-to-style/animations` | `animate`, `defineAnimation`, `getAnimationNames` |
+| `tailwind-to-style/cx` | `cx` (standalone, ~300B) |
+| `tailwind-to-style/tws` | `tws` (standalone subset) |
+
+---
+
+## Real-World Component Patterns
+
+These patterns are extracted from the library's production demo app.
+
+### Pattern: Simple component with Mode 2 static classes
+
+```jsx
+import { tw, cx } from 'tailwind-to-style';
+
+const accordionRoot = tw('accordion', 'rounded-lg border border-gray-200 overflow-hidden divide-y divide-gray-200');
+const accordionItem = tw('accordion-item', 'bg-white');
+const accordionTrigger = tw('accordion-trigger', 'flex items-center justify-between w-full px-4 py-3 text-left text-sm font-medium text-gray-900 cursor-pointer select-none hover:bg-gray-50 transition-colors');
+const accordionContent = tw('accordion-content', 'px-4 pb-3 text-sm text-gray-600');
+
+export function Accordion({ items, className }) {
+  return (
+    <div className={cx(accordionRoot, className)}>
+      {items.map((item, i) => (
+        <div className={accordionItem}>
+          <button className={accordionTrigger}>{item.title}</button>
+          <div className={accordionContent}>{item.content}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+### Pattern: Component with variants
+
+```jsx
+const inputField = tw({
+  name: 'input',
+  base: 'block w-full rounded-lg border bg-white text-gray-900 transition-all duration-200 focus:outline-none focus:ring-2',
+  variants: {
+    size: {
+      sm: 'text-sm px-3 py-1.5',
+      md: 'text-base px-3.5 py-2.5',
+      lg: 'text-lg px-4 py-3',
+    },
+    state: {
+      default: 'border-gray-300 focus:border-blue-500 focus:ring-blue-500/20',
+      error: 'border-red-400 focus:border-red-500 focus:ring-red-500/20',
+      success: 'border-emerald-400 focus:border-emerald-500 focus:ring-emerald-500/20',
+    },
+    disabled: {
+      true: 'opacity-50 cursor-not-allowed bg-gray-50',
+    },
+  },
+  defaultVariants: { size: 'md', state: 'default' },
+});
+
+// Usage — filter undefined props before passing:
+const variantProps = { state: error ? 'error' : 'default' };
+if (size !== undefined) variantProps.size = size;
+if (disabled) variantProps.disabled = true;
+
+<input className={inputField(variantProps)} />
+```
+
+### Pattern: Component with compoundVariants
+
+```jsx
+const tab = tw({
+  name: 'tab',
+  base: 'inline-flex items-center justify-center font-medium cursor-pointer transition-all duration-200',
+  variants: {
+    variant: {
+      underline: 'px-4 py-2.5 text-sm border-b-2 -mb-px',
+      pills: 'px-3 py-1.5 text-sm rounded-md',
+    },
+    active: { true: '', false: '' },
+  },
+  compoundVariants: [
+    { variant: 'underline', active: true, class: 'border-blue-500 text-blue-600' },
+    { variant: 'underline', active: false, class: 'border-transparent text-gray-500 hover:text-gray-700' },
+    { variant: 'pills', active: true, class: 'bg-white text-gray-900 shadow-sm' },
+    { variant: 'pills', active: false, class: 'text-gray-500 hover:text-gray-700' },
+  ],
+  defaultVariants: { variant: 'underline', active: false },
+});
+
+tab({ variant: 'pills', active: true })
+```
+
+### Pattern: Multi-part component with slots
+
+```jsx
+const dialog = tw({
+  name: 'dialog',
+  slots: {
+    overlay: 'fixed inset-0 z-50 flex items-center justify-center p-4',
+    backdrop: 'absolute inset-0 bg-black/50',
+    content: 'relative bg-white rounded-xl shadow-xl w-full max-h-[85vh] overflow-y-auto',
+    header: 'border-b border-gray-100 flex items-center justify-between',
+    title: 'font-semibold text-gray-900',
+    body: '',
+    footer: 'border-t border-gray-100 flex justify-end gap-2',
+  },
+  variants: {
+    size: {
+      sm: { content: 'max-w-sm', header: 'px-4 py-3', body: 'px-4 py-3', footer: 'px-4 py-3' },
+      md: { content: 'max-w-md', header: 'px-6 py-4', body: 'px-6 py-4', footer: 'px-6 py-4' },
+      lg: { content: 'max-w-2xl', header: 'px-8 py-5', body: 'px-8 py-5', footer: 'px-8 py-5' },
+    },
+  },
+  defaultVariants: { size: 'md' },
+});
+
+// Usage:
+const slots = dialog({ size: 'lg' });
+<div className={slots.overlay}>
+  <div className={slots.backdrop} onClick={onClose} />
+  <div className={slots.content}>
+    <div className={slots.header}><h2 className={slots.title}>{title}</h2></div>
+    <div className={slots.body}>{children}</div>
+    <div className={slots.footer}>{footer}</div>
+  </div>
+</div>
+```
+
+### Pattern: Toggle with color maps (combining tw() and inline styles)
+
+When a component has many possible colors (not fixed variants), use a color map with inline styles for the dynamic color, and tw() for structural styling:
+
+```jsx
+const track = tw({
+  name: 'toggle-track',
+  base: 'relative inline-flex shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200',
+  variants: {
+    size: { sm: 'w-8 h-4', md: 'w-11 h-6', lg: 'w-14 h-7' },
+    checked: { true: '', false: 'bg-gray-200' },
+    disabled: { true: 'opacity-50 cursor-not-allowed' },
+  },
+  defaultVariants: { size: 'md', checked: false },
+});
+
+const checkedColors = {
+  blue: '#3b82f6', green: '#10b981', red: '#ef4444', purple: '#8b5cf6',
+};
+
+// Usage: tw() handles layout/structure, inline style handles dynamic color
+<button
+  className={track({ size, checked, disabled })}
+  style={checked ? { backgroundColor: checkedColors[color] } : undefined}
+/>
+```
+
+### Pattern: Table with structural tw() + value maps for density/variant
+
+For data-driven variations where utilities don't cleanly map (padding values, complex conditional styles), define value maps as plain objects and apply via inline style:
+
+```jsx
+const wrapperCls = tw('tbl-wrapper', 'overflow-x-auto rounded-lg');
+const tableCls = tw('tbl-table', 'w-full text-sm text-left');
+const thBaseCls = tw('tbl-th', 'text-xs font-semibold text-gray-600 uppercase tracking-wider');
+const tdBaseCls = tw('tbl-td', 'text-gray-700 border-b border-gray-100');
+
+const DENSITY_PADDING = {
+  compact: { padding: '4px 12px' },
+  default: { padding: '12px 16px' },
+  comfortable: { padding: '20px 24px' },
+};
+
+// Usage:
+<th className={thBaseCls} style={DENSITY_PADDING[density]}>{col.label}</th>
+```
+
+### Pattern: Responsive layout using tw()
+
+```jsx
+const layout = tw('app-layout', 'flex h-screen overflow-hidden bg-gray-50');
+const sidebar = tw('app-sidebar', 'hidden md:flex w-56 shrink-0 flex-col bg-white border-r border-gray-200 h-full overflow-y-auto');
+const hamburger = tw('app-hamburger', 'flex md:hidden items-center p-1 rounded-md text-gray-700 hover:bg-gray-100 bg-transparent border-none cursor-pointer');
+const content = tw('app-content', 'flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-8 min-w-0');
+
+// Sidebar hidden on mobile, shown on md+. Hamburger visible on mobile only.
+```
+
+### Pattern: Design tokens with live theme switching
+
+```jsx
+import { createTheme, token } from 'tailwind-to-style/tokens';
+import { ThemeProvider, useTheme } from 'tailwind-to-style/react';
+
+const THEMES = {
+  blue: { colors: { primary: '#2563eb', primaryLight: '#dbeafe', surface: '#ffffff' } },
+  emerald: { colors: { primary: '#059669', primaryLight: '#d1fae5', surface: '#f0fdf4' } },
+};
+
+// Apply theme
+createTheme(structuredClone(THEMES.blue), { name: 'blue' });
+
+// Reference in component styles (uses CSS variables — updates automatically when theme changes)
+const themedBtn = tw({
+  name: 'theme-btn',
+  base: 'px-4 py-2 rounded-lg font-medium transition-all cursor-pointer',
+  variants: {
+    intent: {
+      primary: `bg-[${token('colors.primary')}] text-white hover:opacity-90`,
+      surface: `bg-[${token('colors.surface')}] text-[${token('colors.text')}] border border-[${token('colors.border')}]`,
+    },
+  },
+  defaultVariants: { intent: 'primary' },
+});
+```
+
+---
+
+## Best Practices
+
+1. **Use `tw('name', 'classes')` for static styles.** It's the shortest, cleanest form.
+2. **Use Mode 3 (object with base + variants) only when you need runtime variant selection.**
+3. **Use `className={tw(...)}` for all responsive and interactive styles.** Never `style={tws('md:...')}` — responsive/pseudo-class does not work in inline styles.
+4. **Use `cx()` to merge conditional classes.** Not string concatenation.
+5. **Filter undefined variant props** before passing to a variant function — pass only defined keys so defaultVariants apply correctly.
+6. **For dynamic colors not in a fixed variant set**, use a color map + inline style for the color, and tw() for everything structural.
+7. **This library replaces Tailwind CSS entirely.** Do not install both.
+8. **Always clone theme objects** when passing to `createTheme()` in React effects (use `structuredClone()`).
+9. **Arbitrary values work:** `tw('box', 'w-[200px] h-[50vh] bg-[#ff6600] text-[1.2rem]')`
+10. **All Tailwind v3 utilities are supported.** Most v4 utilities also supported.
+
+---
+
+## Links
+
+- npm: https://www.npmjs.com/package/tailwind-to-style
+- GitHub: https://github.com/Bigetion/tailwind-to-style
+- Live Demo: https://n86xr8.csb.app/
+- License: MIT
