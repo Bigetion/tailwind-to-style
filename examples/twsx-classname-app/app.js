@@ -13,20 +13,59 @@ import '../../preflight.css';
 
 // v4 unified API — one import for everything
 import { tw, cx } from '../../src/v4/index.js';
+import { createTheme, activateTheme } from '../../src/tokens/index.js';
+
+// ============================================================================
+// Theme Definitions
+// ============================================================================
+
+const lightTheme = {
+  colors: {
+    surface: '#f8fafc',
+    card: '#ffffff',
+    text: '#0f172a',
+    border: '#e5e7eb',
+    muted: '#6b7280',
+    primary: '#2563eb',
+  },
+};
+
+const darkTheme = {
+  colors: {
+    surface: '#0f172a',
+    card: '#111827',
+    text: '#f8fafc',
+    border: '#334155',
+    muted: '#94a3b8',
+    primary: '#60a5fa',
+  },
+};
+
+let isDarkMode = false;
+
+createTheme(lightTheme, { name: 'light', selector: ':root' });
+createTheme(darkTheme, { name: 'dark', selector: ':root' });
+activateTheme('light');
+
+function toggleTheme() {
+  isDarkMode = !isDarkMode;
+  activateTheme(isDarkMode ? 'dark' : 'light');
+  render();
+}
 
 // ============================================================================
 // Layout — Mode 2: Named Classes
 // ============================================================================
 
-const appContainer = tw('app', 'min-h-screen bg-gray-50 text-gray-900');
-const header = tw('header', 'bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50');
+const appContainer = tw('app', 'min-h-screen bg-[var(--tws-colors-surface)] text-[var(--tws-colors-text)] transition-colors duration-200');
+const header = tw('header', 'bg-[var(--tws-colors-surface)] shadow-sm border-b border-[var(--tws-colors-border)] sticky top-0 z-50');
 const headerContent = tw('header-content', 'max-w-6xl mx-auto px-4 py-4 flex items-center justify-between');
-const logo = tw('logo', 'text-xl font-bold text-blue-600');
+const logo = tw('logo', 'text-xl font-bold text-[var(--tws-colors-primary)]');
 const main = tw('main', 'max-w-6xl mx-auto px-4 py-8');
 const section = tw('section', 'mb-12');
-const sectionTitle = tw('section-title', 'text-2xl font-bold text-gray-900 mb-6 pb-2 border-b border-gray-200');
+const sectionTitle = tw('section-title', 'text-2xl font-bold text-[var(--tws-colors-text)] mb-6 pb-2 border-b border-[var(--tws-colors-border)]');
 const grid = tw('grid', 'grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3');
-const footer = tw('footer', 'border-t border-gray-200 py-8 text-center text-sm text-gray-500');
+const footer = tw('footer', 'border-t border-[var(--tws-colors-border)] py-8 text-center text-sm text-[var(--tws-colors-muted)]');
 
 // ============================================================================
 // Button — Mode 3: Variants
@@ -37,10 +76,10 @@ const button = tw({
   base: 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 cursor-pointer',
   variants: {
     variant: {
-      primary: 'bg-blue-600 text-white hover:bg-blue-700',
-      secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300',
-      outline: 'border-2 border-blue-600 text-blue-600 bg-transparent hover:bg-blue-50',
-      ghost: 'text-gray-600 bg-transparent hover:bg-gray-100',
+      primary: 'bg-[var(--tws-colors-primary)] text-[var(--tws-colors-surface)] hover:bg-[var(--tws-colors-primary)]/90',
+      secondary: 'bg-[var(--tws-colors-border)] text-[var(--tws-colors-text)] hover:bg-[var(--tws-colors-border)]/90',
+      outline: 'border-2 border-[var(--tws-colors-primary)] text-[var(--tws-colors-primary)] bg-transparent hover:bg-[var(--tws-colors-primary)]/10',
+      ghost: 'text-[var(--tws-colors-text)] bg-transparent hover:bg-[var(--tws-colors-border)]',
       danger: 'bg-red-600 text-white hover:bg-red-700',
       success: 'bg-green-600 text-white hover:bg-green-700',
     },
@@ -65,12 +104,12 @@ const button = tw({
 const card = tw({
   name: 'card',
   slots: {
-    root: 'bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow',
-    header: 'px-6 py-4 border-b border-gray-200 bg-gray-50',
-    title: 'text-lg font-semibold text-gray-900',
-    description: 'text-sm text-gray-500 mt-1',
+    root: 'bg-[var(--tws-colors-card)] rounded-xl shadow-sm border border-[var(--tws-colors-border)] overflow-hidden hover:shadow-md transition-shadow',
+    header: 'px-6 py-4 border-b border-[var(--tws-colors-border)] bg-[var(--tws-colors-surface)]',
+    title: 'text-lg font-semibold text-[var(--tws-colors-text)]',
+    description: 'text-sm text-[var(--tws-colors-muted)] mt-1',
     body: 'px-6 py-4',
-    footer: 'px-6 py-4 border-t border-gray-200 bg-gray-50 flex gap-2',
+    footer: 'px-6 py-4 border-t border-[var(--tws-colors-border)] bg-[var(--tws-colors-surface)] flex gap-2',
   },
 });
 
@@ -80,7 +119,7 @@ const card = tw({
 
 const input = tw({
   name: 'input',
-  base: 'block w-full rounded-lg border bg-white text-gray-900 transition-all duration-200 focus:outline-none focus:ring-2',
+  base: 'block w-full rounded-lg border bg-[var(--tws-colors-surface)] text-[var(--tws-colors-text)] transition-all duration-200 focus:outline-none focus:ring-2',
   variants: {
     size: {
       sm: 'px-3 py-1.5 text-sm',
@@ -88,7 +127,7 @@ const input = tw({
       lg: 'px-5 py-3 text-lg',
     },
     state: {
-      default: 'border-gray-300 focus:border-blue-500 focus:ring-blue-500/20',
+      default: 'border-[var(--tws-colors-border)] focus:border-[var(--tws-colors-primary)] focus:ring-[var(--tws-colors-primary)]/20',
       error: 'border-red-500 focus:border-red-500 focus:ring-red-500/20',
       success: 'border-green-500 focus:border-green-500 focus:ring-green-500/20',
     },
@@ -145,13 +184,13 @@ const alert = tw({
 const table = tw({
   name: 'table',
   slots: {
-    wrapper: 'overflow-x-auto rounded-lg border border-gray-200',
+    wrapper: 'overflow-x-auto rounded-lg border border-[var(--tws-colors-border)]',
     table: 'w-full text-left',
-    thead: 'bg-gray-50 border-b border-gray-200',
-    th: 'px-4 py-3 text-sm font-semibold text-gray-900',
-    tbody: 'divide-y divide-gray-200',
-    tr: 'bg-white hover:bg-gray-50 transition-colors',
-    td: 'px-4 py-3 text-sm text-gray-700',
+    thead: 'bg-[var(--tws-colors-surface)] border-b border-[var(--tws-colors-border)]',
+    th: 'px-4 py-3 text-sm font-semibold text-[var(--tws-colors-text)]',
+    tbody: 'divide-y divide-[var(--tws-colors-border)]',
+    tr: 'bg-[var(--tws-colors-card)] hover:bg-[var(--tws-colors-surface)] transition-colors',
+    td: 'px-4 py-3 text-sm text-[var(--tws-colors-text)]',
   },
 });
 
@@ -169,8 +208,8 @@ function render() {
       <header class="${header}">
         <div class="${headerContent}">
           <div class="${logo}">🎨 tw() v4 Demo</div>
-          <button class="${button({ variant: 'ghost', size: 'sm' })}">
-            🌙 Toggle Theme
+          <button id="theme-toggle" class="${button({ variant: 'ghost', size: 'sm' })}">
+            ${isDarkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
           </button>
         </div>
       </header>
@@ -324,7 +363,11 @@ function render() {
       </footer>
     </div>
   `;
+
+  const themeToggle = document.getElementById('theme-toggle');
+  themeToggle?.addEventListener('click', toggleTheme);
 }
 
 render();
+
 console.log('✨ tw() v4 Demo loaded!');

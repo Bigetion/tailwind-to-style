@@ -1,4 +1,4 @@
-import { generateCssString } from "../utils/index";
+import { generateCssString } from "../utils/index.js";
 
 /**
  * Generates inset-shadow-* utility classes (Tailwind v4)

@@ -4,7 +4,7 @@
  * Demonstrates performance improvements from caching and optimizations
  */
 
-import { tws, twsx, twsxVariants, performanceUtils } from 'tailwind-to-style';
+import { tws, twsx, twsxVariants, performanceUtils } from '../../src/index.js';
 
 console.log('='.repeat(60));
 console.log('⚡ PERFORMANCE BENCHMARKS');

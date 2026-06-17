@@ -42,10 +42,9 @@ export function Spinner({
 
   return (
     <span
-      style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+      className={cx(tw('inline-flex items-center gap-2'), className)}
       role="status"
       aria-label={label || 'Loading'}
-      className={className}
     >
       <span className={spinner(variantProps)} aria-hidden="true" />
       {label && <span className={spinnerLabel}>{label}</span>}
@@ -76,7 +75,7 @@ export function SpinnerOverlay({ label, fullscreen, size = 'lg' }) {
   return (
     <div className={overlay(props)}>
       <Spinner size={size} />
-      {label && <p style={{ fontSize: '0.875rem', color: '#4b5563', fontWeight: 500 }}>{label}</p>}
+      {label && <p className={tw('text-sm text-gray-600 font-medium')}>{label}</p>}
     </div>
   );
 }

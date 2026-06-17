@@ -41,7 +41,7 @@ export function Skeleton({
  */
 export function SkeletonText({ lines = 3, lastLineWidth = '70%' }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+    <div className={tw('flex flex-col gap-2')}>
       {Array.from({ length: lines }).map((_, i) => (
         <Skeleton
           key={i}
@@ -58,11 +58,11 @@ export function SkeletonText({ lines = 3, lastLineWidth = '70%' }) {
  */
 export function SkeletonCard({ avatar = false, lines = 3 }) {
   return (
-    <div style={{ padding: '16px', background: 'white', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+    <div className={tw('p-4 bg-white rounded-xl border border-gray-200')}>
       {avatar && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+        <div className={tw('flex items-center gap-3 mb-4')}>
           <Skeleton shape="circle" width="40px" height="40px" />
-          <div style={{ flex: 1 }}>
+          <div className={tw('flex-1')}>
             <Skeleton height="14px" width="40%" style={{ marginBottom: '6px' }} />
             <Skeleton height="12px" width="25%" />
           </div>

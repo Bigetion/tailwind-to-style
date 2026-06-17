@@ -1,4 +1,4 @@
-import { generateCssString } from "../utils/index";
+import { generateCssString } from "../utils/index.js";
 
 export default function generator(configOptions = {}) {
   const { prefix: globalPrefix, theme = {} } = configOptions;

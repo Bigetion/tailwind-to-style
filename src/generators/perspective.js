@@ -1,4 +1,4 @@
-import { generateCssString } from "../utils/index";
+import { generateCssString } from "../utils/index.js";
 
 /**
  * Generates perspective-* utility classes (Tailwind v4)

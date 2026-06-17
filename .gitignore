@@ -10,6 +10,8 @@ yarn.lock
 /dist
 /coverage
 /react-test
+examples/react-demo/dist/
+examples/twsx-classname-app/dist/
 
 # UI Library
 ui-library/dist/
