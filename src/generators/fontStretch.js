@@ -1,4 +1,4 @@
-import { generateCssString } from "../utils/index";
+import { generateCssString } from "../utils/index.js";
 
 /**
  * Generates font-stretch-* utility classes (Tailwind v4)

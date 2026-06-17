@@ -64,6 +64,30 @@ const classes = cx('base', isActive && 'ring-2', { 'opacity-50': disabled });
 
 ---
 
+## Examples
+
+Want to try the library with real demos?
+
+- `examples/basic/` — runtime `tws()` examples for inline conversion and custom values.
+- `examples/react-demo/` — full React showcase with components, variants, tokens, and theme switching.
+- `examples/twsx-classname-app/` — Vite-based runtime `tw()` v4 demo with variant and slots components.
+
+Run the demos by opening `examples/README.md` or using the commands below:
+
+```bash
+cd examples/react-demo
+npm install
+npm run dev
+```
+
+```bash
+cd examples/twsx-classname-app
+npm install
+npm run dev
+```
+
+---
+
 ## API Reference
 
 ### `tw()` — The Main Function
@@ -259,7 +283,7 @@ createTheme({
   },
   spacing: { sm: '0.5rem', md: '1rem', lg: '1.5rem' },
   radius: { sm: '0.25rem', md: '0.5rem', lg: '1rem' },
-});
+}, { selector: ':root' });
 // Injects CSS variables on :root:
 // --tws-colors-primary: #3b82f6;
 // --tws-colors-secondary: #8b5cf6;
@@ -361,11 +385,10 @@ Import only what you need for minimal bundle size:
 
 Works with any framework or vanilla JS:
 
-- **React** — Full bindings via `tailwind-to-style/react`
-- **Vue** — Use `tw()` in computed properties or `tws()` in `:style`
-- **Svelte** — Use `tw()` in `class:` or `tws()` in `style:`
-- **Vanilla JS** — Direct DOM manipulation
-- **Node.js / SSR** — `tws()` for inline + `createSSRCollector()` for classes
+- **React** — Full bindings via `tailwind-to-style/react` (example available in `examples/react-demo`)
+- **Vanilla JS** — Direct DOM usage with `tw()` and `tws()`
+- **Node.js / SSR** — `tws()` for inline styles + `createSSRCollector()` for CSS extraction
+- **Vue / Svelte** — supported in runtime with `tw()` / `tws()`, examples can be added in future releases
 
 ---
 
