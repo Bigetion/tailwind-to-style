@@ -1,6 +1,6 @@
 {
   "name": "tailwind-to-style",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Zero-build runtime Tailwind CSS engine. Convert utility classes to real CSS with variants, slots, tokens, and React bindings. SSR-ready, tree-shakeable.",
   "type": "module",
   "main": "dist/index.cjs",
@@ -48,7 +48,11 @@
     "./preflight.css": "./preflight.css",
     "./package.json": "./package.json"
   },
-  "sideEffects": ["*.css", "dist/*.js", "dist/**/*.js"],
+  "sideEffects": [
+    "*.css",
+    "dist/*.js",
+    "dist/**/*.js"
+  ],
   "files": [
     "dist",
     "types",
