@@ -8,6 +8,7 @@ import {
   BarChart2, ListFilter, Bone, SlidersHorizontal, Loader2,
   LayoutDashboard, ListChecks, Table2, LayoutTemplate,
   Hash, AlignLeft, GitCommitHorizontal, Bell, ToggleLeft, MessageCircle,
+  Code2, Merge, Wand2, Monitor, Component, Anchor, Boxes, Server, Puzzle,
 } from 'lucide-react';
 
 import { AccordionDemo } from './demos/AccordionDemo';
@@ -41,14 +42,39 @@ import { ToastDemo } from './demos/ToastDemo';
 import { ToggleDemo } from './demos/ToggleDemo';
 import { TooltipDemo } from './demos/TooltipDemo';
 
+// ─── New API demos ────────────────────────────────────────────────────────────
+import { TwsDemo }              from './demos/TwsDemo';
+import { CxDemo }               from './demos/CxDemo';
+import { TwVariantsDemo }       from './demos/TwVariantsDemo';
+import { ResponsiveDemo }       from './demos/ResponsiveDemo';
+import { StyledDemo }           from './demos/StyledDemo';
+import { UseTwsDemo }           from './demos/UseTwsDemo';
+import { CompoundVariantsDemo } from './demos/CompoundVariantsDemo';
+import { SSRDemo }              from './demos/SSRDemo';
+import { ConfigPluginDemo }     from './demos/ConfigPluginDemo';
+
 // ─── Nav data ─────────────────────────────────────────────────────────────────
 
 const NAV_GROUPS = [
   {
     group: 'Library Features',
     items: [
-      { id: 'theme',      label: 'Tokens & Themes', icon: Palette,           component: ThemeDemo },
-      { id: 'animations', label: 'Animations',       icon: Sparkles,          component: AnimationsDemo },
+      { id: 'theme',            label: 'Tokens & Themes',     icon: Palette,    component: ThemeDemo },
+      { id: 'animations',       label: 'Animations',          icon: Sparkles,   component: AnimationsDemo },
+    ],
+  },
+  {
+    group: 'API Explorer',
+    items: [
+      { id: 'tws',              label: 'tws() — Inline Styles',    icon: Code2,      component: TwsDemo },
+      { id: 'cx',               label: 'cx() — Class Merging',     icon: Merge,      component: CxDemo },
+      { id: 'tw-variants',      label: 'tw() — All 4 Modes',       icon: Wand2,      component: TwVariantsDemo },
+      { id: 'responsive',       label: 'Responsive & Pseudo',      icon: Monitor,    component: ResponsiveDemo },
+      { id: 'styled',           label: 'styled() — React Factory', icon: Component,  component: StyledDemo },
+      { id: 'usetws',           label: 'useTws() Hook',            icon: Anchor,     component: UseTwsDemo },
+      { id: 'compound-variants',label: 'Compound Variants',        icon: Boxes,      component: CompoundVariantsDemo },
+      { id: 'ssr',              label: 'SSR Utilities',            icon: Server,     component: SSRDemo },
+      { id: 'config-plugin',    label: 'Config & Plugins',         icon: Puzzle,     component: ConfigPluginDemo },
     ],
   },
   {
@@ -94,24 +120,24 @@ const ALL_ITEMS = NAV_GROUPS.flatMap(g => g.items);
 const layout = tw('app-layout', 'flex h-screen overflow-hidden bg-gray-50');
 
 // Desktop sidebar — always full height, scrolls independently
-const desktopSidebar = tw('app-sidebar', 'hidden md:flex w-56 shrink-0 flex-col bg-white border-r border-gray-200 h-full overflow-y-auto');
+const desktopSidebar = tw('app-sidebar', 'hidden md:flex w-60 shrink-0 flex-col bg-white border-r border-gray-200 h-full overflow-y-auto');
 
 // Sidebar internals
-const sidebarHeader = tw('sidebar-header', 'px-5 py-4 border-b border-gray-100 shrink-0');
+const sidebarHeader = tw('sidebar-header', 'px-4 py-4 border-b border-gray-100 shrink-0');
 const sidebarLogo   = tw('sidebar-logo',   'text-sm font-bold text-gray-900 leading-tight');
 const sidebarSub    = tw('sidebar-sub',    'text-xs text-gray-400 mt-0.5');
-const sidebarNav    = tw('sidebar-nav',    'flex-1 overflow-y-auto py-3 px-2');
-const navGroup      = tw('nav-group',      'mb-2');
+const sidebarNav    = tw('sidebar-nav',    'flex-1 overflow-y-auto py-2 px-2');
+const navGroup      = tw('nav-group',      'mb-1');
 const navItems      = tw('nav-items',      'space-y-0.5');
-const navGroupLabel = tw('nav-group-label', 'text-[0.55rem] font-semibold text-gray-400 uppercase tracking-wider px-3 pt-3 pb-1');
+const navGroupLabel = tw('nav-group-label', 'text-[0.6rem] font-bold text-gray-400 uppercase tracking-widest px-2 pt-4 pb-1.5 flex items-center gap-1.5');
 
 const navItem = tw({
   name: 'nav-item',
-  base: 'w-full text-left px-3 py-1.5 rounded-lg text-sm font-medium transition-colors duration-100 cursor-pointer bg-transparent border-none flex items-center gap-2.5',
+  base: 'w-full text-left px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors duration-100 cursor-pointer bg-transparent border-none flex items-center gap-2 min-w-0',
   variants: {
     active: {
       true:  'bg-blue-50 text-blue-700',
-      false: 'text-gray-600 hover:bg-gray-100 hover:text-gray-900',
+      false: 'text-gray-500 hover:bg-gray-100 hover:text-gray-800',
     },
   },
   defaultVariants: { active: false },
@@ -121,7 +147,7 @@ const navItem = tw({
 const backdrop = tw('app-backdrop', 'fixed inset-0 z-40 bg-black/40 md:hidden');
 
 // Mobile drawer panel
-const drawerBase = tw('app-drawer', 'fixed top-0 left-0 bottom-0 z-50 w-64 flex flex-col bg-white shadow-xl transition-transform duration-200 ease-in-out md:hidden');
+const drawerBase = tw('app-drawer', 'fixed top-0 left-0 bottom-0 z-50 w-60 flex flex-col bg-white shadow-xl transition-transform duration-200 ease-in-out md:hidden');
 
 // Drawer close button
 const drawerClose = tw('drawer-close', 'absolute top-3 right-3 p-1 rounded-md text-gray-500 hover:bg-gray-100 bg-transparent border-none cursor-pointer flex items-center');
@@ -169,20 +195,27 @@ function SidebarContent({ activeId, onSelect }) {
         <p className={sidebarSub}>Component demos</p>
       </div>
       <nav className={sidebarNav}>
-        {NAV_GROUPS.map((group) => (
+        {NAV_GROUPS.map((group, gi) => (
           <div key={group.group} className={navGroup}>
-            <p className={navGroupLabel}>{group.group}</p>
+            {/* Group label with subtle top divider (except first group) */}
+            <p className={navGroupLabel} style={gi > 0 ? { borderTop: '1px solid #f3f4f6', marginTop: '4px' } : {}}>
+              {group.group}
+            </p>
             <div className={navItems}>
               {group.items.map((item) => {
                 const Icon = item.icon;
+                const isActive = item.id === activeId;
                 return (
                   <button
                     key={item.id}
-                    className={navItem({ active: item.id === activeId })}
+                    className={navItem({ active: isActive })}
                     onClick={() => onSelect(item.id)}
+                    title={item.label}
                   >
-                    <Icon size={14} strokeWidth={2} />
-                    {item.label}
+                    <Icon size={13} strokeWidth={isActive ? 2.2 : 1.8} style={{ flexShrink: 0 }} />
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>
+                      {item.label}
+                    </span>
                   </button>
                 );
               })}
