@@ -41,18 +41,19 @@ const chip = tw({
       md: 'text-xs px-3 py-1',
       lg: 'text-sm px-4 py-1.5',
     },
-    dot: {
-      true: '',
-    },
   },
-  compoundVariants: [
-    { color: 'blue',   dot: true, class: "before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-blue-500" },
-    { color: 'green',  dot: true, class: "before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-emerald-500" },
-    { color: 'red',    dot: true, class: "before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-red-500" },
-    { color: 'yellow', dot: true, class: "before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-yellow-500" },
-  ],
   defaultVariants: { color: 'gray', size: 'md' },
 });
+
+// Dot color per chip color — rendered as inline <span>
+const DOT_COLOR = {
+  blue:   tw('w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0'),
+  green:  tw('w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0'),
+  red:    tw('w-1.5 h-1.5 rounded-full bg-red-500 shrink-0'),
+  yellow: tw('w-1.5 h-1.5 rounded-full bg-yellow-500 shrink-0'),
+  purple: tw('w-1.5 h-1.5 rounded-full bg-purple-500 shrink-0'),
+  gray:   tw('w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0'),
+};
 
 // ── Mode 4: Slots ─────────────────────────────────────────────────────────────
 // tw({ name, slots, variants }) → slot-generating fn
@@ -225,18 +226,22 @@ const cardBody = tw('feature-card-b', 'text-sm text-gray-500');
         </div>
 
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
-          <span className={chip({ color: chipColor, size: chipSize, dot: chipDot })}>
+          <span className={chip({ color: chipColor, size: chipSize })}>
+            {chipDot && <span className={DOT_COLOR[chipColor]} />}
             {chipColor} / {chipSize}{chipDot ? ' + dot' : ''}
           </span>
           <span className={chip({ color: 'blue' })}>Default size</span>
-          <span className={chip({ color: 'green', dot: true })}>Active</span>
+          <span className={chip({ color: 'green' })}>
+            <span className={DOT_COLOR.green} />
+            Active
+          </span>
           <span className={chip({ color: 'red', size: 'sm' })}>Error</span>
         </div>
 
         <div className={codeBlock}>{
 `const chip = tw({
   name: 'chip',
-  base: 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border',
+  base: 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border',
   variants: {
     color: {
       blue:  'bg-blue-50 text-blue-700 border-blue-200',
@@ -244,15 +249,17 @@ const cardBody = tw('feature-card-b', 'text-sm text-gray-500');
       red:   'bg-red-50 text-red-700 border-red-200',
     },
     size: { sm: 'text-[0.65rem] px-2 py-0.5', md: 'text-xs px-3 py-1' },
-    dot: { true: '' },
   },
-  compoundVariants: [
-    { color: 'blue', dot: true, class: "before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-blue-500" },
-  ],
   defaultVariants: { color: 'gray', size: 'md' },
 });
 
-chip({ color: 'blue', size: 'lg', dot: true })  // → "chip chip--color-blue chip--size-lg ..."`
+// Dot rendered as a <span> element (more reliable than before: pseudo)
+const dotClass = tw('w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0');
+
+<span className={chip({ color: 'blue', size: 'lg' })}>
+  <span className={dotClass} />
+  Blue chip
+</span>`
         }</div>
       </div>
 
