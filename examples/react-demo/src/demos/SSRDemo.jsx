@@ -225,63 +225,65 @@ const page = \`
 
 // ── Critical CSS extraction ───────────────────────────────────────────────────
 
+// Simulated critical CSS split — represents what extractCritical() returns on server
+const SIMULATED_CRITICAL = `.tw-flex { display: flex; }
+.tw-items-center { align-items: center; }
+.tw-bg-white { background-color: rgba(255, 255, 255, 1); }
+.tw-rounded-xl { border-radius: 0.75rem; }
+.tw-p-6 { padding: 1.5rem; }
+.tw-text-2xl { font-size: 1.5rem; line-height: 2rem; }
+.tw-font-bold { font-weight: 700; }
+.tw-text-gray-900 { color: rgba(17, 24, 39, 1); }`;
+
+const SIMULATED_DEFERRED = `.tw-shadow-sm { box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
+.tw-border { border-width: 1px; border-style: solid; }
+.tw-border-gray-200 { border-color: rgba(229, 231, 235, 1); }
+.tw-text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+.tw-text-gray-500 { color: rgba(107, 114, 128, 1); }
+.tw-px-4 { padding-left: 1rem; padding-right: 1rem; }
+.tw-py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.tw-bg-blue-600 { background-color: rgba(37, 99, 235, 1); }
+.tw-text-white { color: rgba(255, 255, 255, 1); }
+.tw-rounded-lg { border-radius: 0.5rem; }
+.tw-hover-bg-blue-700:hover { background-color: rgba(29, 78, 216, 1); }
+.tw-transition-colors { transition-property: color, background-color, border-color; }`;
+
 function CriticalCSSSection() {
-  const [result, setResult] = useState(null);
-
-  const runExtract = () => {
-    const ssr = createSSRCollector({ dedupe: true });
-    // Trigger some tw() calls to populate
-    tw('flex items-center gap-4');
-    tw('bg-white rounded-xl p-6 shadow-sm');
-    tw('text-2xl font-bold text-gray-900');
-
-    if (typeof ssr.extractCritical === 'function') {
-      const r = ssr.extractCritical({ maxSize: 2048 });
-      setResult(r);
-    } else {
-      setResult({ critical: ssr.extract(), rest: '', stats: { criticalSize: 0, criticalCount: 0, totalCount: 0 } });
-    }
-  };
-
-  useEffect(() => { runExtract(); }, []);
-
   return (
     <div className={section}>
       <h2 className={sectionTitle}>extractCritical() — Above-the-fold CSS</h2>
       <p className={label}>
-        Split CSS into critical (small, above-the-fold) and the rest.
-        Embed critical inline, lazy-load the rest.
+        Split CSS jadi dua bagian: <strong>critical</strong> (above-the-fold, embed inline) dan <strong>deferred</strong> (lazy-load).
+        Berguna untuk optimasi LCP dan menghindari FOUC pada first load.
       </p>
 
-      <button onClick={runExtract}
-        style={{ padding: '7px 16px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer', border: '1px solid #d1d5db', background: '#f3f4f6', marginBottom: '12px' }}>
-        Run extractCritical()
-      </button>
+      <div style={{ background: '#fefce8', border: '1px solid #fde68a', borderRadius: '8px', padding: '10px 14px', fontSize: '0.8rem', color: '#92400e', marginBottom: '12px' }}>
+        <strong>⚠️ Konteks browser:</strong> Output di bawah adalah <strong>simulasi</strong> — di server, CSS akan di-split
+        berdasarkan <code>maxSize</code> yang kamu tentukan. CSS terkecil masuk critical, sisanya deferred.
+      </div>
 
-      {result && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-          <div>
-            <p style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 600, marginBottom: '6px' }}>
-              Critical CSS ({result.stats?.criticalCount ?? 0} rules)
-            </p>
-            <div style={{ maxHeight: '140px', overflow: 'auto', background: '#1e1e2e', borderRadius: '8px', padding: '10px' }}>
-              <pre style={{ fontSize: '0.68rem', color: '#a6e3a1', margin: 0, fontFamily: 'monospace', lineHeight: 1.5 }}>
-                {result.critical || '(none)'}
-              </pre>
-            </div>
-          </div>
-          <div>
-            <p style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: 600, marginBottom: '6px' }}>
-              Deferred CSS ({result.stats?.totalCount ?? 0} total)
-            </p>
-            <div style={{ maxHeight: '140px', overflow: 'auto', background: '#1e1e2e', borderRadius: '8px', padding: '10px' }}>
-              <pre style={{ fontSize: '0.68rem', color: '#cdd6f4', margin: 0, fontFamily: 'monospace', lineHeight: 1.5 }}>
-                {result.rest || '(none — all critical)'}
-              </pre>
-            </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+        <div>
+          <p style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 600, marginBottom: '6px' }}>
+            Critical CSS ({SIMULATED_CRITICAL.split('\n').length} rules) — embed inline
+          </p>
+          <div style={{ maxHeight: '160px', overflow: 'auto', background: '#1e1e2e', borderRadius: '8px', padding: '10px' }}>
+            <pre style={{ fontSize: '0.68rem', color: '#a6e3a1', margin: 0, fontFamily: 'monospace', lineHeight: 1.5 }}>
+              {SIMULATED_CRITICAL}
+            </pre>
           </div>
         </div>
-      )}
+        <div>
+          <p style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: 600, marginBottom: '6px' }}>
+            Deferred CSS ({SIMULATED_DEFERRED.split('\n').length} rules) — lazy-load
+          </p>
+          <div style={{ maxHeight: '160px', overflow: 'auto', background: '#1e1e2e', borderRadius: '8px', padding: '10px' }}>
+            <pre style={{ fontSize: '0.68rem', color: '#cdd6f4', margin: 0, fontFamily: 'monospace', lineHeight: 1.5 }}>
+              {SIMULATED_DEFERRED}
+            </pre>
+          </div>
+        </div>
+      </div>
 
       <div className={codeBlock}>{
 `const ssr = createSSRCollector({ dedupe: true });
