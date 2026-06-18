@@ -23,19 +23,32 @@ function ResultBadge({ value }) {
 // ── Section 1: Strings ────────────────────────────────────────────────────────
 
 function StringsSection() {
-  const result = cx('bg-blue-500', 'text-white', 'rounded-lg', 'px-4 py-2');
+  // cx() hanya join string — tw() yang inject CSS-nya
+  const result = cx(
+    tw('bg-blue-500'),
+    tw('text-white'),
+    tw('rounded-lg'),
+    tw('px-4 py-2'),
+  );
+
   return (
     <div className={section}>
       <h2 className={sectionTitle}>cx() — Strings</h2>
-      <p className={label}>Multiple string arguments are joined with spaces. Falsy values are skipped.</p>
+      <p className={label}>
+        cx() hanya menggabungkan class names. Wrap setiap group dengan{' '}
+        <code style={{ background: '#f3f4f6', padding: '1px 5px', borderRadius: '4px' }}>tw()</code>{' '}
+        agar CSS-nya di-inject ke DOM (tanpa Tailwind CSS terpasang).
+      </p>
 
       <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '12px' }}>
-        <button style={{ padding: '8px 16px', borderRadius: '8px', background: '#3b82f6', color: 'white', border: 'none', cursor: 'pointer', fontSize: '0.85rem' }}
-          className={cx('font-semibold', 'transition-all', 'hover:opacity-90')}>
+        <button className={cx(tw('bg-blue-500 text-white rounded-lg px-4 py-2 font-semibold border-none cursor-pointer transition-all'))}>
           cx joined
         </button>
-        <button className={cx('px-4 py-2 rounded-lg text-sm font-medium', false && 'bg-red-500', null, undefined, 'bg-emerald-500 text-white')}
-          style={{ border: 'none', cursor: 'pointer' }}>
+        <button className={cx(
+          tw('px-4 py-2 rounded-lg text-sm font-medium border-none cursor-pointer'),
+          false && tw('bg-red-500'),
+          tw('bg-emerald-500 text-white'),
+        )}>
           falsy skipped
         </button>
       </div>
@@ -43,12 +56,13 @@ function StringsSection() {
       <ResultBadge value={result} />
 
       <div className={codeBlock}>{
-`cx('bg-blue-500', 'text-white', 'rounded-lg', 'px-4 py-2')
+`// cx() hanya join string — tw() yang inject CSS-nya ke DOM
+cx(tw('bg-blue-500'), tw('text-white'), tw('rounded-lg'), tw('px-4 py-2'))
 // → "bg-blue-500 text-white rounded-lg px-4 py-2"
 
-// Falsy values are silently ignored
-cx('base', false, null, undefined, 0, '', 'appended')
-// → "base appended"`
+// Falsy values tetap diabaikan
+cx(tw('base px-4 py-2'), false && tw('bg-red-500'), tw('bg-emerald-500 text-white'))
+// → "base px-4 py-2 bg-emerald-500 text-white"`
       }</div>
     </div>
   );
@@ -61,24 +75,29 @@ function ConditionalsSection() {
   const [isDisabled, setIsDisabled] = useState(false);
   const [isLoading, setIsLoading]   = useState(false);
 
+  // Setiap group class di-wrap tw() agar CSS-nya ngefek
   const btnClass = cx(
-    'px-4 py-2 rounded-lg text-sm font-medium transition-all border-none cursor-pointer',
-    isActive   && 'bg-blue-600 text-white',
-    !isActive  && 'bg-gray-200 text-gray-700',
-    isDisabled && 'opacity-50 cursor-not-allowed pointer-events-none',
-    isLoading  && 'animate-pulse',
+    tw('px-4 py-2 rounded-lg text-sm font-medium transition-all border-none cursor-pointer'),
+    isActive   && tw('bg-blue-600 text-white'),
+    !isActive  && tw('bg-gray-200 text-gray-700'),
+    isDisabled && tw('opacity-50 cursor-not-allowed pointer-events-none'),
+    isLoading  && tw('animate-pulse'),
   );
 
   return (
     <div className={section}>
       <h2 className={sectionTitle}>cx() — Conditionals</h2>
-      <p className={label}>Use <code>&amp;&amp;</code> short-circuit to conditionally include classes.</p>
+      <p className={label}>
+        Gunakan <code>&amp;&amp;</code> short-circuit untuk class kondisional.{' '}
+        Tiap kondisi di-wrap <code style={{ background: '#f3f4f6', padding: '1px 5px', borderRadius: '4px' }}>tw()</code>{' '}
+        agar hanya CSS yang aktif yang di-inject.
+      </p>
 
       <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '12px' }}>
         {[
-          { label: 'Active', state: isActive, set: setIsActive },
+          { label: 'Active',   state: isActive,   set: setIsActive },
           { label: 'Disabled', state: isDisabled, set: setIsDisabled },
-          { label: 'Loading', state: isLoading, set: setIsLoading },
+          { label: 'Loading',  state: isLoading,  set: setIsLoading },
         ].map(({ label: l, state, set }) => (
           <label key={l} style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '0.85rem', color: '#374151' }}>
             <input type="checkbox" checked={state} onChange={e => set(e.target.checked)} />
@@ -95,11 +114,11 @@ function ConditionalsSection() {
 
       <div className={codeBlock}>{
 `const btnClass = cx(
-  'px-4 py-2 rounded-lg text-sm font-medium transition-all border-none cursor-pointer',
-  isActive   && 'bg-blue-600 text-white',
-  !isActive  && 'bg-gray-200 text-gray-700',
-  isDisabled && 'opacity-50 cursor-not-allowed pointer-events-none',
-  isLoading  && 'animate-pulse',
+  tw('px-4 py-2 rounded-lg text-sm font-medium transition-all border-none cursor-pointer'),
+  isActive   && tw('bg-blue-600 text-white'),
+  !isActive  && tw('bg-gray-200 text-gray-700'),
+  isDisabled && tw('opacity-50 cursor-not-allowed pointer-events-none'),
+  isLoading  && tw('animate-pulse'),
 );`
       }</div>
     </div>
@@ -109,20 +128,25 @@ function ConditionalsSection() {
 // ── Section 3: Object Syntax ──────────────────────────────────────────────────
 
 function ObjectSyntaxSection() {
-  const [variant, setVariant] = useState('primary');
+  const [variant, setVariant] = useState('danger');
 
-  const result = cx('px-4 py-2 rounded-lg font-semibold text-sm transition-colors border-none cursor-pointer', {
-    'bg-blue-600 text-white hover:bg-blue-700':     variant === 'primary',
-    'bg-gray-200 text-gray-900 hover:bg-gray-300':  variant === 'secondary',
-    'bg-red-600 text-white hover:bg-red-700':       variant === 'danger',
-    'bg-emerald-600 text-white hover:bg-emerald-700': variant === 'success',
-  });
+  // Object syntax: key adalah tw() call (returns class string), value adalah kondisi
+  const result = cx(
+    tw('px-4 py-2 rounded-lg font-semibold text-sm transition-colors border-none cursor-pointer'),
+    {
+      [tw('bg-blue-600 text-white hover:bg-blue-700')]:      variant === 'primary',
+      [tw('bg-gray-200 text-gray-900 hover:bg-gray-300')]:   variant === 'secondary',
+      [tw('bg-red-600 text-white hover:bg-red-700')]:        variant === 'danger',
+      [tw('bg-emerald-600 text-white hover:bg-emerald-700')]: variant === 'success',
+    },
+  );
 
   return (
     <div className={section}>
       <h2 className={sectionTitle}>cx() — Object Syntax</h2>
       <p className={label}>
-        Object keys are class names, values are booleans (conditions). Only truthy keys are included.
+        Object keys adalah class names (dari <code style={{ background: '#f3f4f6', padding: '1px 5px', borderRadius: '4px' }}>tw()</code>),
+        values adalah kondisi boolean. Hanya key yang truthy yang dimasukkan.
       </p>
 
       <div style={{ display: 'flex', gap: '8px', marginBottom: '14px', flexWrap: 'wrap' }}>
@@ -142,12 +166,15 @@ function ObjectSyntaxSection() {
       <ResultBadge value={result} />
 
       <div className={codeBlock}>{
-`cx('px-4 py-2 rounded-lg font-semibold text-sm transition-colors border-none cursor-pointer', {
-  'bg-blue-600 text-white hover:bg-blue-700':      variant === 'primary',
-  'bg-gray-200 text-gray-900 hover:bg-gray-300':   variant === 'secondary',
-  'bg-red-600 text-white hover:bg-red-700':        variant === 'danger',
-  'bg-emerald-600 text-white hover:bg-emerald-700': variant === 'success',
-})`
+`cx(
+  tw('px-4 py-2 rounded-lg font-semibold text-sm transition-colors border-none cursor-pointer'),
+  {
+    [tw('bg-blue-600 text-white hover:bg-blue-700')]:      variant === 'primary',
+    [tw('bg-gray-200 text-gray-900 hover:bg-gray-300')]:   variant === 'secondary',
+    [tw('bg-red-600 text-white hover:bg-red-700')]:        variant === 'danger',
+    [tw('bg-emerald-600 text-white hover:bg-emerald-700')]: variant === 'success',
+  },
+)`
       }</div>
     </div>
   );
@@ -158,37 +185,40 @@ function ObjectSyntaxSection() {
 function ArraysSection() {
   const [showExtra, setShowExtra] = useState(true);
 
-  const base   = ['px-4 py-2', 'rounded-lg', 'text-sm', 'font-medium'];
-  const extras = showExtra ? ['ring-2', 'ring-blue-400', 'ring-offset-2'] : [];
+  // Array berisi tw() calls, di-flatten oleh cx()
+  const base   = [tw('px-4 py-2'), tw('rounded-lg'), tw('text-sm font-medium')];
+  const extras = showExtra ? [tw('ring-2 ring-blue-400 ring-offset-2')] : [];
 
-  const result = cx(base, 'bg-indigo-600 text-white', extras);
+  const result = cx(base, tw('bg-indigo-600 text-white border-none cursor-pointer'), extras);
 
   return (
     <div className={section}>
       <h2 className={sectionTitle}>cx() — Arrays</h2>
-      <p className={label}>Pass arrays directly — they are flattened recursively. Nested arrays and conditionals work too.</p>
+      <p className={label}>
+        Kirim array berisi <code style={{ background: '#f3f4f6', padding: '1px 5px', borderRadius: '4px' }}>tw()</code> calls —
+        cx() flatten secara rekursif. Cocok untuk menyusun class dari beberapa sumber.
+      </p>
 
       <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '0.85rem', marginBottom: '12px' }}>
         <input type="checkbox" checked={showExtra} onChange={e => setShowExtra(e.target.checked)} />
         Include ring classes (nested array)
       </label>
 
-      <button className={result} style={{ border: 'none', cursor: 'pointer' }}>
+      <button className={result}>
         Array composed
       </button>
 
       <ResultBadge value={result} />
 
       <div className={codeBlock}>{
-`const base   = ['px-4', 'py-2', 'rounded-lg', 'text-sm'];
-const extras = showRing ? ['ring-2', 'ring-blue-400', 'ring-offset-2'] : [];
+`const base   = [tw('px-4 py-2'), tw('rounded-lg'), tw('text-sm font-medium')];
+const extras = showRing ? [tw('ring-2 ring-blue-400 ring-offset-2')] : [];
 
-cx(base, 'bg-indigo-600 text-white', extras)
-// → "px-4 py-2 rounded-lg text-sm bg-indigo-600 text-white ring-2 ring-blue-400 ring-offset-2"
+cx(base, tw('bg-indigo-600 text-white border-none cursor-pointer'), extras)
+// → "px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 text-white ... ring-2 ring-blue-400 ring-offset-2"
 
-// Nested arrays also work
-cx(['a', ['b', ['c', 'd']]])
-// → "a b c d"`
+// Nested arrays juga work
+cx([tw('a'), [tw('b'), [tw('c'), tw('d')]]])`
       }</div>
     </div>
   );
@@ -197,19 +227,23 @@ cx(['a', ['b', ['c', 'd']]])
 // ── Section 5: cx.with() ──────────────────────────────────────────────────────
 
 function CxWithSection() {
-  const [size, setSize]   = useState('md');
-  const [color, setColor] = useState('primary');
+  const [size, setSize]   = useState('lg');
+  const [color, setColor] = useState('danger');
 
-  // cx.with() creates a bound helper with the base always applied
+  // cx.with() menerima tw() call sebagai base — CSS-nya selalu di-inject
   const btn = cx.with(
-    'inline-flex items-center justify-center rounded-lg font-semibold border-none cursor-pointer transition-colors select-none'
+    tw('inline-flex items-center justify-center rounded-lg font-semibold border-none cursor-pointer transition-colors select-none')
   );
 
-  const sizeClasses  = { sm: 'text-xs px-3 py-1.5', md: 'text-sm px-4 py-2', lg: 'text-base px-6 py-3' };
+  const sizeClasses  = {
+    sm: tw('text-xs px-3 py-1.5'),
+    md: tw('text-sm px-4 py-2'),
+    lg: tw('text-base px-6 py-3'),
+  };
   const colorClasses = {
-    primary:   'bg-blue-600 text-white hover:bg-blue-700',
-    secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300',
-    danger:    'bg-red-600 text-white hover:bg-red-700',
+    primary:   tw('bg-blue-600 text-white hover:bg-blue-700'),
+    secondary: tw('bg-gray-200 text-gray-800 hover:bg-gray-300'),
+    danger:    tw('bg-red-600 text-white hover:bg-red-700'),
   };
 
   const cls = btn(sizeClasses[size], colorClasses[color]);
@@ -218,8 +252,8 @@ function CxWithSection() {
     <div className={section}>
       <h2 className={sectionTitle}>cx.with() — Pre-bound Helper</h2>
       <p className={label}>
-        <code>cx.with(...base)</code> returns a new cx function with base classes always prepended.
-        Great for component-level class composition.
+        <code>cx.with(tw(...))</code> returns cx function baru dengan base classes selalu di-prepend.
+        Cocok untuk component-level class composition tanpa repeat base class.
       </p>
 
       <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', marginBottom: '14px' }}>
@@ -254,17 +288,21 @@ function CxWithSection() {
       <ResultBadge value={cls} />
 
       <div className={codeBlock}>{
-`// Define once — base classes always applied
+`// Define once — base tw() selalu di-inject
 const btn = cx.with(
-  'inline-flex items-center justify-center rounded-lg font-semibold border-none cursor-pointer transition-colors select-none'
+  tw('inline-flex items-center justify-center rounded-lg font-semibold border-none cursor-pointer transition-colors select-none')
 );
 
-// Call with additional classes per use-case
-btn('text-sm px-4 py-2', 'bg-blue-600 text-white hover:bg-blue-700')
-// → "inline-flex items-center justify-center ... text-sm px-4 py-2 bg-blue-600 text-white hover:bg-blue-700"
+// Size & color maps pakai tw() agar CSS-nya terdaftar
+const sizeClasses  = { sm: tw('text-xs px-3 py-1.5'), md: tw('text-sm px-4 py-2'), lg: tw('text-base px-6 py-3') };
+const colorClasses = {
+  primary:   tw('bg-blue-600 text-white hover:bg-blue-700'),
+  secondary: tw('bg-gray-200 text-gray-800 hover:bg-gray-300'),
+  danger:    tw('bg-red-600 text-white hover:bg-red-700'),
+};
 
-btn('text-xs px-3 py-1.5', isDisabled && 'opacity-50 pointer-events-none')
-// → "inline-flex items-center justify-center ... text-xs px-3 py-1.5"`
+// Panggil sesuai kebutuhan
+btn(sizeClasses[size], colorClasses[color])`
       }</div>
     </div>
   );
@@ -277,22 +315,26 @@ function MixedSection() {
 
   const toggle = key => setState(s => ({ ...s, [key]: !s[key] }));
 
+  // Semua input type cx() — tiap group pakai tw() agar CSS ngefek
   const boxClass = cx(
-    // string
-    'w-12 h-12 rounded-xl border-2 transition-all duration-200 cursor-pointer flex items-center justify-center',
-    // conditional
-    state.checked && 'bg-blue-600 border-blue-600 text-white',
-    !state.checked && 'bg-white border-gray-300',
-    // object
-    { 'scale-110 shadow-lg': state.hovered, 'ring-2 ring-blue-400 ring-offset-1': state.focused },
-    // array
-    ['select-none', state.checked && 'font-bold'],
+    // 1. String (via tw)
+    tw('w-12 h-12 rounded-xl border-2 transition-all duration-200 cursor-pointer flex items-center justify-center'),
+    // 2. Conditional
+    state.checked  && tw('bg-blue-600 border-blue-600 text-white'),
+    !state.checked && tw('bg-white border-gray-300'),
+    // 3. Object — key pakai tw()
+    {
+      [tw('scale-110 shadow-lg')]:              state.hovered,
+      [tw('ring-2 ring-blue-400 ring-offset-1')]: state.focused,
+    },
+    // 4. Array
+    [tw('select-none'), state.checked && tw('font-bold')],
   );
 
   return (
     <div className={section}>
       <h2 className={sectionTitle}>cx() — Mixed (Strings + Conditionals + Objects + Arrays)</h2>
-      <p className={label}>All input types can be freely combined in one call.</p>
+      <p className={label}>Semua input type bisa dikombinasikan bebas dalam satu call, selama masing-masing di-wrap <code style={{ background: '#f3f4f6', padding: '1px 5px', borderRadius: '4px' }}>tw()</code>.</p>
 
       <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '14px' }}>
         {Object.keys(state).map(k => (
@@ -311,18 +353,21 @@ function MixedSection() {
 
       <div className={codeBlock}>{
 `cx(
-  // 1. String — always applied
-  'w-12 h-12 rounded-xl border-2 transition-all',
+  // 1. tw() — selalu diterapkan, CSS di-inject
+  tw('w-12 h-12 rounded-xl border-2 transition-all'),
 
-  // 2. Conditional — && short-circuit
-  checked && 'bg-blue-600 border-blue-600 text-white',
-  !checked && 'bg-white border-gray-300',
+  // 2. Conditional dengan tw()
+  checked  && tw('bg-blue-600 border-blue-600 text-white'),
+  !checked && tw('bg-white border-gray-300'),
 
-  // 3. Object — key=class, value=condition
-  { 'scale-110 shadow-lg': hovered, 'ring-2 ring-blue-400': focused },
+  // 3. Object — key pakai computed tw()
+  {
+    [tw('scale-110 shadow-lg')]:               hovered,
+    [tw('ring-2 ring-blue-400 ring-offset-1')]: focused,
+  },
 
-  // 4. Array — flattened, supports conditionals inside
-  ['select-none', checked && 'font-bold'],
+  // 4. Array — tw() di dalam array
+  [tw('select-none'), checked && tw('font-bold')],
 )`
       }</div>
     </div>
