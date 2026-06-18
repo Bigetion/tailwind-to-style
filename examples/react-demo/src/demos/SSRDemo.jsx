@@ -109,41 +109,51 @@ const page = \`
 // ── createSSRCollector() ──────────────────────────────────────────────────────
 
 function SSRCollectorSection() {
-  const [collectorOutput, setCollectorOutput] = useState('');
-  const [stats, setStats] = useState(null);
   const [mode, setMode] = useState('styleTag');
 
-  const runDemo = () => {
-    const ssr = createSSRCollector({ dedupe: true });
+  // Simulated SSR output — in a real server environment, createSSRCollector()
+  // captures CSS from tw() calls made during renderToString(). Since we're
+  // in a browser SPA, we show a representative simulation of the output.
+  const simulatedRawCSS = `.tw-flex { display: flex; }
+.tw-items-center { align-items: center; }
+.tw-gap-4 { gap: 1rem; }
+.tw-p-4 { padding: 1rem; }
+.tw-bg-white { background-color: rgba(255, 255, 255, 1); }
+.tw-rounded-xl { border-radius: 0.75rem; }
+.tw-border { border-width: 1px; border-style: solid; }
+.tw-shadow-sm { box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
+.tw-text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+.tw-font-semibold { font-weight: 600; }
+.tw-text-gray-900 { color: rgba(17, 24, 39, 1); }
+.tw-text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+.tw-text-gray-500 { color: rgba(107, 114, 128, 1); }
+.tw-px-4 { padding-left: 1rem; padding-right: 1rem; }
+.tw-py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.tw-bg-blue-600 { background-color: rgba(37, 99, 235, 1); }
+.tw-text-white { color: rgba(255, 255, 255, 1); }
+.tw-rounded-lg { border-radius: 0.5rem; }
+.tw-hover-bg-blue-700:hover { background-color: rgba(29, 78, 216, 1); }`;
 
-    // Simulate rendering components that use tw()
-    // (In real SSR these would be called during renderToString)
-    const simulated = [
-      tw('flex items-center gap-4 p-4'),
-      tw('bg-white rounded-xl border border-gray-200 shadow-sm'),
-      tw('text-lg font-semibold text-gray-900'),
-      tw('text-sm text-gray-500'),
-      tw('px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700'),
-    ];
+  const simulatedStyleTag = `<style id="tws-ssr" data-tws="">\n${simulatedRawCSS}\n</style>`;
 
-    const rawCSS   = ssr.extractRaw();
-    const styleTag = ssr.extract({ id: 'tws-ssr' });
-    const peeked   = ssr.peek ? ssr.peek() : rawCSS;
-    const st       = ssr.getStats ? ssr.getStats() : { ruleCount: 0, uniqueCount: 0, totalSize: rawCSS.length };
-
-    setCollectorOutput(mode === 'styleTag' ? styleTag : rawCSS);
-    setStats(st);
-  };
-
-  useEffect(() => { runDemo(); }, [mode]);
+  const output = mode === 'styleTag' ? simulatedStyleTag : simulatedRawCSS;
+  const lineCount = output.split('\n').length;
+  const sizeKB = (new TextEncoder().encode(output).length / 1024).toFixed(2);
 
   return (
     <div className={section}>
       <h2 className={sectionTitle}>createSSRCollector() — Fine-grained CSS Collection</h2>
       <p className={label}>
-        <code style={{ background: '#f3f4f6', padding: '1px 5px', borderRadius: '4px' }}>createSSRCollector(options)</code> gives you
-        explicit control over collection: deduplication, minification, style tag wrapping, and stats.
+        <code style={{ background: '#f3f4f6', padding: '1px 5px', borderRadius: '4px' }}>createSSRCollector(options)</code> dipakai
+        di <strong>server</strong> untuk mengumpulkan CSS dari semua <code>tw()</code> calls selama <code>renderToString()</code>.
+        Di bawah adalah simulasi output-nya.
       </p>
+
+      {/* Browser context warning */}
+      <div style={{ background: '#fefce8', border: '1px solid #fde68a', borderRadius: '8px', padding: '10px 14px', fontSize: '0.8rem', color: '#92400e', marginBottom: '12px' }}>
+        <strong>⚠️ Konteks browser:</strong> Di SPA (browser), CSS langsung inject ke DOM — collector tidak menerima data.
+        Fitur ini hanya aktif saat render di server (Node.js). Output di bawah adalah <strong>simulasi</strong> apa yang akan dihasilkan.
+      </div>
 
       <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
         <button onClick={() => setMode('styleTag')}
@@ -160,44 +170,54 @@ function SSRCollectorSection() {
         </button>
       </div>
 
-      {stats && (
-        <div style={{ display: 'flex', gap: '10px', marginBottom: '12px', flexWrap: 'wrap' }}>
-          {[
-            { label: 'Rules', value: stats.ruleCount ?? '–' },
-            { label: 'Unique', value: stats.uniqueCount ?? '–' },
-            { label: 'Size', value: `${((stats.totalSize || 0) / 1024).toFixed(2)} KB` },
-          ].map(s => (
-            <div key={s.label} style={{ background: '#f3f4f6', borderRadius: '8px', padding: '8px 14px', textAlign: 'center' }}>
-              <p style={{ fontSize: '1rem', fontWeight: 700, color: '#1e40af' }}>{s.value}</p>
-              <p style={{ fontSize: '0.7rem', color: '#6b7280' }}>{s.label}</p>
-            </div>
-          ))}
+      {/* Simulated stats */}
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '12px', flexWrap: 'wrap' }}>
+        {[
+          { label: 'Rules',  value: simulatedRawCSS.split('\n').length },
+          { label: 'Unique', value: simulatedRawCSS.split('\n').length },
+          { label: 'Size',   value: `${sizeKB} KB` },
+        ].map(s => (
+          <div key={s.label} style={{ background: '#f3f4f6', borderRadius: '8px', padding: '8px 14px', textAlign: 'center' }}>
+            <p style={{ fontSize: '1rem', fontWeight: 700, color: '#1e40af' }}>{s.value}</p>
+            <p style={{ fontSize: '0.7rem', color: '#6b7280' }}>{s.label}</p>
+          </div>
+        ))}
+        <div style={{ alignSelf: 'center', fontSize: '0.72rem', color: '#9ca3af', fontStyle: 'italic' }}>
+          (simulated — run on server to get real values)
         </div>
-      )}
+      </div>
 
       <div style={{ maxHeight: '220px', overflow: 'auto', background: '#1e1e2e', borderRadius: '10px', padding: '14px' }}>
         <pre style={{ fontSize: '0.7rem', color: '#a6e3a1', margin: 0, fontFamily: 'monospace', lineHeight: 1.6 }}>
-          {collectorOutput || '(running…)'}
+          {output}
         </pre>
       </div>
 
       <div className={codeBlock}>{
 `import { createSSRCollector } from 'tailwind-to-style';
 
-// Create a collector (options are optional)
+// 1. Buat collector SEBELUM render
 const ssr = createSSRCollector({ dedupe: true, minify: false });
 
-// Render your React app (all tw() calls are tracked)
+// 2. Render app di server — semua tw() calls ter-capture oleh collector
 const html = renderToString(<App />);
 
-// Extract as raw CSS string
+// 3. Extract sebagai raw CSS string
 const rawCSS = ssr.extractRaw();
 
-// OR extract wrapped in a <style> tag (ready to inject into <head>)
+// 4. ATAU extract wrapped dalam <style> tag (langsung inject ke <head>)
 const styleTag = ssr.extract({ id: 'tws-ssr', nonce: cspNonce });
 
-// Stats
-const { ruleCount, uniqueCount, totalSize } = ssr.getStats();`
+// 5. Stats
+const { ruleCount, uniqueCount, totalSize } = ssr.getStats();
+
+// 6. Embed ke HTML response
+const page = \`
+  <html>
+    <head>\${styleTag}</head>
+    <body>\${html}</body>
+  </html>
+\`;`
       }</div>
     </div>
   );
