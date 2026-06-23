@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { tw } from 'tailwind-to-style';
 import { Check } from 'lucide-react';
+import { useControllableState } from './_core/componentUtils';
 
 /**
  * Stepper component — multi-step wizard navigation.
@@ -58,17 +59,28 @@ const connector = tw({
   defaultVariants: { completed: false, orientation: 'horizontal' },
 });
 
-export function Stepper({
+export const Stepper = forwardRef(function Stepper({
   steps = [],
-  current = 0,
+  current,
+  defaultCurrent = 0,
+  onCurrentChange,
   orientation = 'horizontal',
   size = 'md',
   className,
-}) {
+  ...props
+}, ref) {
+  const [currentStep] = useControllableState({
+    value: current,
+    defaultValue: defaultCurrent,
+    onChange: onCurrentChange,
+  });
+
   const isHorizontal = orientation === 'horizontal';
 
   return (
     <div
+      {...props}
+      ref={ref}
       style={{
         display: 'flex',
         flexDirection: isHorizontal ? 'row' : 'column',
@@ -76,10 +88,11 @@ export function Stepper({
       }}
       className={className}
       role="list"
+      aria-label="Step navigation"
     >
       {steps.map((step, i) => {
-        const isCompleted = i < current;
-        const isActive = i === current;
+        const isCompleted = i < currentStep;
+        const isActive = i === currentStep;
         const isError = step.error;
         const state = isError ? 'error' : isCompleted ? 'completed' : isActive ? 'active' : 'upcoming';
 
@@ -101,6 +114,7 @@ export function Stepper({
                 gap: isHorizontal ? '6px' : '12px',
                 flex: isHorizontal ? 1 : undefined,
               }}
+              aria-current={isActive ? 'step' : undefined}
               role="listitem"
             >
               {/* Icon + vertical connector wrapper */}
@@ -142,4 +156,4 @@ export function Stepper({
       })}
     </div>
   );
-}
+});

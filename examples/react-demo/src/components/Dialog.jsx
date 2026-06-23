@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useId } from 'react';
 import { tw, cx } from 'tailwind-to-style';
 import { X } from 'lucide-react';
 
@@ -71,22 +71,38 @@ const closeBtn = tw({
   defaultVariants: { hover: true },
 });
 
-export function Dialog({
-  open,
-  onClose,
-  title,
-  children,
-  footer,
-  size = 'md',
-  className,
-}) {
+export const Dialog = React.forwardRef(function Dialog(props, ref) {
+  const {
+    open,
+    onClose,
+    onOpenChange,
+    title,
+    children,
+    footer,
+    size = 'md',
+    className,
+    closeOnEscape = true,
+    closeOnOverlayClick = true,
+    ariaLabel,
+    ariaLabelledBy,
+    initialFocusRef,
+    ...rest
+  } = props;
+
+  const autoTitleId = useId();
+
+  const requestClose = () => {
+    onOpenChange?.(false);
+    onClose?.();
+  };
+
   // Close on Escape key
   useEffect(() => {
-    if (!open) return;
-    const handleKey = (e) => { if (e.key === 'Escape') onClose?.(); };
+    if (!open || !closeOnEscape) return;
+    const handleKey = (e) => { if (e.key === 'Escape') requestClose(); };
     document.addEventListener('keydown', handleKey);
     return () => document.removeEventListener('keydown', handleKey);
-  }, [open, onClose]);
+  }, [open, closeOnEscape]);
 
   // Prevent body scroll when open
   useEffect(() => {
@@ -94,19 +110,33 @@ export function Dialog({
     return () => { document.body.style.overflow = ''; };
   }, [open]);
 
+  useEffect(() => {
+    if (!open || !initialFocusRef?.current) return;
+    initialFocusRef.current.focus();
+  }, [open, initialFocusRef]);
+
   if (!open) return null;
 
   const slots = dialog({ size });
+  const resolvedTitleId = ariaLabelledBy || (title ? autoTitleId : undefined);
 
   return (
     <div className={slots.overlay}>
-      <div className={slots.backdrop} onClick={onClose} />
-      <div className={cx(slots.content, className)}>
+      <div className={slots.backdrop} onClick={closeOnOverlayClick ? requestClose : undefined} />
+      <div
+        className={cx(slots.content, className)}
+        role="dialog"
+        aria-modal="true"
+        aria-label={ariaLabel}
+        aria-labelledby={resolvedTitleId}
+        ref={ref}
+        {...rest}
+      >
         {title && (
           <div className={slots.header}>
-            <h2 className={slots.title}>{title}</h2>
+            <h2 id={resolvedTitleId} className={slots.title}>{title}</h2>
             <button
-              onClick={onClose}
+              onClick={requestClose}
               className={closeBtn()}
               aria-label="Close"
               style={{ background: 'none', border: 'none' }}
@@ -126,4 +156,4 @@ export function Dialog({
       </div>
     </div>
   );
-}
+});

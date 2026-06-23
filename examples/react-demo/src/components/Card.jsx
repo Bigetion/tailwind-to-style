@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { tw, cx } from 'tailwind-to-style';
 
 /**
@@ -69,7 +69,7 @@ const card = tw({
   defaultVariants: { variant: 'default', size: 'md' },
 });
 
-export function Card({
+export const Card = forwardRef(function Card({
   children,
   title,
   description,
@@ -79,15 +79,18 @@ export function Card({
   size,
   className,
   noPadding,
-}) {
+  as,
+  ...props
+}, ref) {
   const variantProps = {};
   if (variant !== undefined) variantProps.variant = variant;
   if (size !== undefined) variantProps.size = size;
 
   const slots = card(variantProps);
+  const RootTag = as || 'div';
 
   return (
-    <div className={cx(slots.root, className)}>
+    <RootTag {...props} ref={ref} className={cx(slots.root, className)}>
       {(title || description || headerAction) && (
         <div className={slots.header}>
           <div>
@@ -103,6 +106,6 @@ export function Card({
       {footer && (
         <div className={slots.footer}>{footer}</div>
       )}
-    </div>
+    </RootTag>
   );
-}
+});

@@ -20,6 +20,8 @@ const toast = tw({
 const toastTitle = tw('toast-title', 'text-sm font-semibold text-gray-900');
 const toastMessage = tw('toast-msg', 'text-sm text-gray-600');
 const toastClose = tw('toast-close', 'text-gray-400 cursor-pointer hover:text-gray-600 transition-colors');
+const toastIcon = tw('toast-icon', 'shrink-0');
+const toastContent = tw('toast-content', 'flex-1 min-w-0');
 
 const icons = {
   success: { Icon: CheckCircle, color: '#10b981' },
@@ -48,14 +50,17 @@ function ToastItem({ id, type = 'info', title, message, duration = 4000, onRemov
   };
 
   const { Icon, color } = icons[type] || icons.info;
+  const liveRole = type === 'error' || type === 'warning' ? 'alert' : 'status';
 
   return (
     <div
       className={toast({ entering: visible })}
       style={{ transition: 'opacity 200ms, transform 200ms' }}
+      role={liveRole}
+      aria-live={liveRole === 'alert' ? 'assertive' : 'polite'}
     >
-      <Icon size={18} color={color} className={tw('shrink-0')} style={{ marginTop: '1px' }} />
-      <div className={tw('flex-1 min-w-0')}>
+      <Icon size={18} color={color} className={toastIcon} style={{ marginTop: '1px' }} />
+      <div className={toastContent}>
         {title && <p className={toastTitle}>{title}</p>}
         {message && <p className={toastMessage}>{message}</p>}
       </div>
@@ -97,14 +102,22 @@ export function ToastContainer({ toasts, onRemove, position = 'top-right' }) {
 /**
  * useToast hook — manage toast state.
  */
-export function useToast() {
+export function useToast(options = {}) {
+  const { max = 6, defaultDuration = 4000 } = options;
+
   const [toasts, setToasts] = useState([]);
 
   const addToast = useCallback(({ type, title, message, duration }) => {
     const id = Date.now() + Math.random();
-    setToasts((prev) => [...prev, { id, type, title, message, duration }]);
+    setToasts((prev) => {
+      const next = [...prev, { id, type, title, message, duration: duration ?? defaultDuration }];
+      if (next.length > max) {
+        return next.slice(next.length - max);
+      }
+      return next;
+    });
     return id;
-  }, []);
+  }, [max, defaultDuration]);
 
   const removeToast = useCallback((id) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));

@@ -34,54 +34,69 @@ const errorStyle = tw('select-error', 'mt-1.5 text-sm text-red-600 flex items-ce
 const successStyle = tw('select-success', 'mt-1.5 text-sm text-emerald-600 flex items-center gap-1');
 const iconWrapper = tw('select-icon', 'absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400');
 
-export function Select({
-  label,
-  options = [],
-  groups = [],
-  placeholder,
-  value,
-  onChange,
-  size,
-  disabled,
-  error,
-  success,
-  helperText,
-  id,
-  className,
-  ...props
-}) {
+export const Select = React.forwardRef(function Select(props, ref) {
+  const {
+    label,
+    options = [],
+    groups = [],
+    placeholder,
+    value,
+    onChange,
+    size,
+    disabled,
+    error,
+    success,
+    helperText,
+    id,
+    className,
+    wrapperClassName,
+    ...rest
+  } = props;
+
   const autoId = useId();
   const inputId = id || autoId;
+  const errorId = `${inputId}-error`;
+  const successId = `${inputId}-success`;
+  const helperId = `${inputId}-helper`;
   const state = error ? 'error' : success ? 'success' : 'default';
 
   const variantProps = { state };
   if (size !== undefined) variantProps.size = size;
   if (disabled) variantProps.disabled = true;
 
+  const describedBy = [
+    error ? errorId : null,
+    !error && success ? successId : null,
+    !error && !success && helperText ? helperId : null,
+  ].filter(Boolean).join(' ');
+
   return (
     <div className={className}>
       {label && <label htmlFor={inputId} className={labelStyle}>{label}</label>}
-      <div className={selectWrapper}>
+      <div className={cx(selectWrapper, wrapperClassName)}>
         <select
           id={inputId}
           className={selectField(variantProps)}
           value={value}
           onChange={onChange}
           disabled={disabled}
-          {...props}
+          ref={ref}
+          aria-invalid={!!error}
+          aria-describedby={describedBy || undefined}
+          {...rest}
         >
           {placeholder && (
             <option value="" disabled>{placeholder}</option>
           )}
           {options.map((opt) => (
-            <option key={opt.value} value={opt.value} disabled={opt.disabled}>
+            <option key={opt.value ?? opt.label} value={opt.value} disabled={opt.disabled}>
               {opt.label}
             </option>
           ))}
           {groups.map((group) => (
             <optgroup key={group.label} label={group.label}>
               {group.options.map((opt) => (
-                <option key={opt.value} value={opt.value} disabled={opt.disabled}>
+                <option key={`${group.label}-${opt.value ?? opt.label}`} value={opt.value} disabled={opt.disabled}>
                   {opt.label}
                 </option>
               ))}
@@ -93,18 +108,18 @@ export function Select({
         </span>
       </div>
       {error && (
-        <p className={errorStyle}>
+        <p id={errorId} className={errorStyle}>
           <AlertCircle size={14} />
           {error}
         </p>
       )}
       {success && !error && (
-        <p className={successStyle}>
+        <p id={successId} className={successStyle}>
           <CheckCircle size={14} />
           {success}
         </p>
       )}
-      {helperText && !error && !success && <p className={helperStyle}>{helperText}</p>}
+      {helperText && !error && !success && <p id={helperId} className={helperStyle}>{helperText}</p>}
     </div>
   );
-}
+});

@@ -1,5 +1,6 @@
-import React, { useId, useRef, useEffect } from 'react';
+import React, { useId, useRef, useEffect, forwardRef } from 'react';
 import { tw } from 'tailwind-to-style';
+import { mergeRefs, useControllableState } from './_core/componentUtils';
 
 /**
  * Textarea component — multi-line input with label, states, sizes, auto-resize.
@@ -31,7 +32,7 @@ const errorStyle = tw('textarea-error', 'mt-1.5 text-sm text-red-600');
 const successStyle = tw('textarea-success', 'mt-1.5 text-sm text-emerald-600');
 const countStyle = tw('textarea-count', 'text-xs text-gray-400');
 
-export function Textarea({
+export const Textarea = forwardRef(function Textarea({
   label,
   helperText,
   error,
@@ -43,14 +44,27 @@ export function Textarea({
   autoResize = false,
   rows = 3,
   value,
+  defaultValue = '',
+  onValueChange,
   onChange,
   id,
   className,
   ...props
-}) {
+}, ref) {
   const autoId = useId();
   const inputId = id || autoId;
-  const ref = useRef(null);
+  const innerRef = useRef(null);
+
+  const [textValue, setTextValue] = useControllableState({
+    value,
+    defaultValue,
+    onChange: onValueChange,
+  });
+
+  const helperId = helperText ? `${inputId}-helper` : undefined;
+  const errorId = error ? `${inputId}-error` : undefined;
+  const successId = success ? `${inputId}-success` : undefined;
+  const describedBy = [errorId, successId, helperId].filter(Boolean).join(' ') || undefined;
 
   const state = error ? 'error' : success ? 'success' : 'default';
   const variantProps = { state };
@@ -59,34 +73,39 @@ export function Textarea({
 
   // Auto-resize effect
   useEffect(() => {
-    if (!autoResize || !ref.current) return;
-    ref.current.style.height = 'auto';
-    ref.current.style.height = ref.current.scrollHeight + 'px';
-  }, [value, autoResize]);
+    if (!autoResize || !innerRef.current) return;
+    innerRef.current.style.height = 'auto';
+    innerRef.current.style.height = innerRef.current.scrollHeight + 'px';
+  }, [textValue, autoResize]);
 
-  const charCount = typeof value === 'string' ? value.length : 0;
+  const charCount = typeof textValue === 'string' ? textValue.length : 0;
   const isOverLimit = maxLength && charCount > maxLength;
 
   return (
     <div className={className}>
       {label && <label htmlFor={inputId} className={labelStyle}>{label}</label>}
       <textarea
-        ref={ref}
+        ref={mergeRefs(innerRef, ref)}
         id={inputId}
         rows={autoResize ? 1 : rows}
-        value={value}
-        onChange={onChange}
+        value={textValue}
+        onChange={(e) => {
+          setTextValue(e.target.value);
+          onChange?.(e);
+        }}
         disabled={disabled}
         maxLength={maxLength}
+        aria-invalid={!!error}
+        aria-describedby={describedBy}
         className={textareaField(variantProps)}
         style={autoResize ? { overflow: 'hidden', resize: 'none' } : undefined}
         {...props}
       />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginTop: '4px' }}>
         <div>
-          {error && <p className={errorStyle}>{error}</p>}
-          {success && !error && <p className={successStyle}>{success}</p>}
-          {helperText && !error && !success && <p className={helperStyle}>{helperText}</p>}
+          {error && <p id={errorId} className={errorStyle}>{error}</p>}
+          {success && !error && <p id={successId} className={successStyle}>{success}</p>}
+          {helperText && !error && !success && <p id={helperId} className={helperStyle}>{helperText}</p>}
         </div>
         {(showCount || maxLength) && (
           <span className={countStyle} style={isOverLimit ? { color: '#dc2626' } : undefined}>
@@ -96,4 +115,4 @@ export function Textarea({
       </div>
     </div>
   );
-}
+});

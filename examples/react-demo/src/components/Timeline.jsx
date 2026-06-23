@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { tw, cx } from 'tailwind-to-style';
 
 /**
@@ -34,9 +34,9 @@ const timelineContent = tw({
   defaultVariants: { last: false },
 });
 
-export function Timeline({ items = [], size = 'md', className }) {
+export const Timeline = forwardRef(function Timeline({ items = [], size = 'md', className, ...props }, ref) {
   return (
-    <div className={cx(tw('relative'), className)}>
+    <div {...props} ref={ref} className={cx(tw('relative'), className)}>
       {items.map((item, i) => {
         const isLast = i === items.length - 1;
         const dotProps = {};
@@ -49,14 +49,14 @@ export function Timeline({ items = [], size = 'md', className }) {
           <div key={i} className={tw('flex gap-4')}>
             {/* Left column: dot + connector */}
             <div className={tw('flex flex-col items-center')}>
-              <div className={timelineDot(dotProps)}>
+              <div className={timelineDot(dotProps)} role="presentation">
                 {item.icon
                   ? React.cloneElement(item.icon, { size: iconSize })
                   : <span style={{ width: size === 'sm' ? '6px' : size === 'lg' ? '10px' : '8px', height: size === 'sm' ? '6px' : size === 'lg' ? '10px' : '8px', borderRadius: '50%', backgroundColor: 'white' }} />
                 }
               </div>
               {!isLast && (
-                <div className={tw('flex-1 mt-1')} style={{ width: '2px', backgroundColor: '#e5e7eb' }} />
+                <div className={tw('flex-1 mt-1')} style={{ width: '2px', backgroundColor: '#e5e7eb' }} aria-hidden="true" />
               )}
             </div>
 
@@ -67,7 +67,7 @@ export function Timeline({ items = [], size = 'md', className }) {
                   {item.title}
                 </p>
                 {item.time && (
-                  <span className={tw('text-xs text-gray-400')}>
+                  <span className={tw('text-xs text-gray-400')} role="doc-subtitle">
                     {item.time}
                   </span>
                 )}
@@ -86,4 +86,4 @@ export function Timeline({ items = [], size = 'md', className }) {
       })}
     </div>
   );
-}
+});

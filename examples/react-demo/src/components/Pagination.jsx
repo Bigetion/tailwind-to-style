@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { tw, cx } from 'tailwind-to-style';
 import { MoreHorizontal, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useControllableState } from './_core/componentUtils';
 
 /**
  * Pagination — uses tw like other components.
@@ -56,24 +57,37 @@ function getPages(current, total) {
   return [1, '...', current - 1, current, current + 1, '...', total];
 }
 
-export function Pagination({
-  current = 1,
+export const Pagination = forwardRef(function Pagination({
+  current,
+  defaultCurrent = 1,
+  onCurrentChange,
   total = 1,
   onChange,
   size = 'md',
   colorScheme = 'blue',
   className,
-}) {
+  ...props
+}, ref) {
+  const [currentPage, setCurrentPage] = useControllableState({
+    value: current,
+    defaultValue: defaultCurrent,
+    onChange: onCurrentChange,
+  });
+
   if (total <= 1) return null;
 
-  const pages = getPages(current, total);
+  const pages = getPages(currentPage, total);
   const iconSize = size === 'sm' ? 14 : size === 'lg' ? 18 : 16;
+
+  const handleChange = (page) => {
+    setCurrentPage(page);
+    onChange?.(page);
+  };
 
   function getPageClass(isActive) {
     const props = {};
-    if (size) props.size = size;
-    const key = isActive ? `${colorScheme}_active` : `${colorScheme}_default`;
-    props[key] = true;
+    props[`${colorScheme}_${isActive ? 'active' : 'default'}`] = true;
+    props.size = size;
     return pageBtn(props);
   }
 
@@ -85,15 +99,18 @@ export function Pagination({
 
   return (
     <nav
+      {...props}
+      ref={ref}
       className={cx(tw('inline-flex items-center'), className)}
       style={{ gap: size === 'sm' ? '3px' : size === 'lg' ? '5px' : '4px' }}
       aria-label="Pagination"
     >
       <button
         type="button"
-        disabled={current === 1}
-        onClick={() => current > 1 && onChange?.(current - 1)}
-        className={getNavClass(current === 1)}
+        disabled={currentPage === 1}
+        onClick={() => currentPage > 1 && handleChange(currentPage - 1)}
+        className={getNavClass(currentPage === 1)}
+        aria-label="Previous page"
       >
         <ChevronLeft size={iconSize} />
       </button>
@@ -103,6 +120,7 @@ export function Pagination({
           <span
             key={`el-${i}`}
             className={cx(tw('inline-flex items-center justify-center text-gray-400'), pageBtn({ size, minimal_default: true }))}
+            aria-hidden="true"
           >
             <MoreHorizontal size={iconSize - 2} />
           </span>
@@ -110,9 +128,10 @@ export function Pagination({
           <button
             key={p}
             type="button"
-            onClick={() => p !== current && onChange?.(p)}
-            className={getPageClass(p === current)}
-            aria-current={p === current ? 'page' : undefined}
+            onClick={() => p !== currentPage && handleChange(p)}
+            className={getPageClass(p === currentPage)}
+            aria-current={p === currentPage ? 'page' : undefined}
+            aria-label={`Page ${p}`}
           >
             {p}
           </button>
@@ -121,12 +140,13 @@ export function Pagination({
 
       <button
         type="button"
-        disabled={current === total}
-        onClick={() => current < total && onChange?.(current + 1)}
-        className={getNavClass(current === total)}
+        disabled={currentPage === total}
+        onClick={() => currentPage < total && handleChange(currentPage + 1)}
+        className={getNavClass(currentPage === total)}
+        aria-label="Next page"
       >
         <ChevronRight size={iconSize} />
       </button>
     </nav>
   );
-}
+});

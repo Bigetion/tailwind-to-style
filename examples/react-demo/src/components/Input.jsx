@@ -41,21 +41,27 @@ const wrapperStyle = tw('input-wrapper', 'relative');
 const iconLeftStyle = tw('input-icon-left', 'absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none');
 const iconRightStyle = tw('input-icon-right', 'absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none');
 
-export function Input({
-  label,
-  helperText,
-  error,
-  success,
-  size,
-  disabled,
-  leftIcon,
-  rightIcon,
-  className,
-  id,
-  ...props
-}) {
+export const Input = React.forwardRef(function Input(props, ref) {
+  const {
+    label,
+    helperText,
+    error,
+    success,
+    size,
+    disabled,
+    leftIcon,
+    rightIcon,
+    className,
+    wrapperClassName,
+    id,
+    ...rest
+  } = props;
+
   const autoId = useId();
   const inputId = id || autoId;
+  const errorId = `${inputId}-error`;
+  const successId = `${inputId}-success`;
+  const helperId = `${inputId}-helper`;
 
   // Determine state
   const state = error ? 'error' : success ? 'success' : 'default';
@@ -70,25 +76,34 @@ export function Input({
   if (leftIcon) iconPadding.paddingLeft = size === 'lg' ? '2.75rem' : size === 'sm' ? '2rem' : '2.5rem';
   if (rightIcon) iconPadding.paddingRight = size === 'lg' ? '2.75rem' : size === 'sm' ? '2rem' : '2.5rem';
 
+  const describedBy = [
+    error ? errorId : null,
+    !error && success ? successId : null,
+    !error && !success && helperText ? helperId : null,
+  ].filter(Boolean).join(' ');
+
   return (
-    <div className={className}>
+    <div className={cx(className)}>
       {label && (
         <label htmlFor={inputId} className={labelStyle}>{label}</label>
       )}
-      <div className={wrapperStyle}>
+      <div className={cx(wrapperStyle, wrapperClassName)}>
         {leftIcon && <span className={iconLeftStyle}>{leftIcon}</span>}
         <input
           id={inputId}
           className={inputField(variantProps)}
           disabled={disabled}
           style={Object.keys(iconPadding).length > 0 ? iconPadding : undefined}
-          {...props}
+          ref={ref}
+          aria-invalid={!!error}
+          aria-describedby={describedBy || undefined}
+          {...rest}
         />
         {rightIcon && <span className={iconRightStyle}>{rightIcon}</span>}
       </div>
-      {error && <p className={errorStyle}>{error}</p>}
-      {success && !error && <p className={successStyle}>{success}</p>}
-      {helperText && !error && !success && <p className={helperStyle}>{helperText}</p>}
+      {error && <p id={errorId} className={errorStyle}>{error}</p>}
+      {success && !error && <p id={successId} className={successStyle}>{success}</p>}
+      {helperText && !error && !success && <p id={helperId} className={helperStyle}>{helperText}</p>}
     </div>
   );
-}
+});

@@ -16,24 +16,30 @@ export function AccordionDemo() {
         <p className={label}>Single panel open at a time (default behavior)</p>
         <div style={{ maxWidth: '36rem' }}>
           <Accordion
-            defaultOpen={[0]}
+            tone="neutral"
+            density="comfortable"
+            defaultOpen={['what-is']}
             items={[
               {
+                id: 'what-is',
                 title: 'What is tailwind-to-style?',
                 icon: <HelpCircle size={14} color="#6b7280" />,
                 content: 'A zero-build runtime Tailwind CSS engine that converts utility classes to real CSS with variants, slots, design tokens, and React bindings. No PostCSS, no config file needed.',
               },
               {
+                id: 'need-tailwind',
                 title: 'Do I need Tailwind CSS installed?',
                 icon: <HelpCircle size={14} color="#6b7280" />,
                 content: 'No! tailwind-to-style works completely standalone. It has its own runtime CSS generator that understands all Tailwind utility classes. No build step required.',
               },
               {
+                id: 'production-ready',
                 title: 'Is it production ready?',
                 icon: <HelpCircle size={14} color="#6b7280" />,
                 content: 'Yes. It uses LRU caching, batched DOM injection, and tree-shakeable imports for optimal performance. SSR is fully supported.',
               },
               {
+                id: 'compare-cva',
                 title: 'How does it compare to CVA?',
                 icon: <HelpCircle size={14} color="#6b7280" />,
                 content: 'CVA is just a class string builder — it still requires Tailwind CSS to be compiled. tailwind-to-style generates actual CSS at runtime, so hover states, responsive breakpoints, and animations all work without a build step.',
@@ -50,24 +56,30 @@ export function AccordionDemo() {
         <div style={{ maxWidth: '36rem' }}>
           <Accordion
             multiple
-            defaultOpen={[0, 1]}
+            tone="subtle"
+            density="compact"
+            defaultOpen={['shipping', 'payment']}
             items={[
               {
+                id: 'shipping',
                 title: 'Shipping Information',
                 icon: <Truck size={14} color="#6b7280" />,
                 content: 'Free shipping on orders over $50. Standard delivery takes 3-5 business days. Express shipping available for an additional fee.',
               },
               {
+                id: 'payment',
                 title: 'Payment Methods',
                 icon: <CreditCard size={14} color="#6b7280" />,
                 content: 'We accept Visa, Mastercard, American Express, PayPal, and Apple Pay. All transactions are encrypted and secure.',
               },
               {
+                id: 'returns',
                 title: 'Returns & Refunds',
                 icon: <RotateCcw size={14} color="#6b7280" />,
                 content: '30-day money-back guarantee. Items must be in original condition. Refunds are processed within 5-7 business days.',
               },
               {
+                id: 'privacy',
                 title: 'Privacy & Security',
                 icon: <Shield size={14} color="#6b7280" />,
                 content: 'Your data is encrypted with AES-256. We never share personal information with third parties. GDPR compliant.',
@@ -83,8 +95,11 @@ export function AccordionDemo() {
         <p className={label}>Content can be any React element</p>
         <div style={{ maxWidth: '36rem' }}>
           <Accordion
+            tone="subtle"
+            density="spacious"
             items={[
               {
+                id: 'zero-build',
                 title: 'Zero Build Step',
                 icon: <Zap size={14} color="#f59e0b" />,
                 content: (
@@ -97,6 +112,7 @@ export function AccordionDemo() {
                 ),
               },
               {
+                id: 'runtime-variants',
                 title: 'Runtime Variants',
                 icon: <Code size={14} color="#3b82f6" />,
                 content: (
@@ -113,6 +129,7 @@ export function AccordionDemo() {
                 ),
               },
               {
+                id: 'design-tokens',
                 title: 'Design Tokens',
                 icon: <Palette size={14} color="#8b5cf6" />,
                 content: (

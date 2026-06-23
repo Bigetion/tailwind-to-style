@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect, useId } from 'react';
 import { tw, cx } from 'tailwind-to-style';
 
 /**
@@ -81,6 +81,7 @@ export function Tooltip({
 }) {
   const [visible, setVisible] = useState(false);
   const timeoutRef = useRef(null);
+  const tooltipId = useId();
 
   const show = useCallback(() => {
     if (disabled) return;
@@ -93,7 +94,17 @@ export function Tooltip({
     setVisible(false);
   }, []);
 
+  useEffect(() => {
+    return () => clearTimeout(timeoutRef.current);
+  }, []);
+
   if (!content) return children;
+
+  const childNode = React.isValidElement(children)
+    ? React.cloneElement(children, {
+        'aria-describedby': !disabled ? tooltipId : undefined,
+      })
+    : children;
 
   return (
     <span
@@ -104,8 +115,9 @@ export function Tooltip({
       onFocus={show}
       onBlur={hide}
     >
-      {children}
+      {childNode}
       <span
+        id={tooltipId}
         className={tooltipBox({ position, visible: visible ? true : false })}
         style={{ transition: 'opacity 150ms, transform 150ms' }}
         role="tooltip"

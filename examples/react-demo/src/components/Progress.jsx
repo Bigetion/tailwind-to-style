@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { tw, cx } from 'tailwind-to-style';
+import { useControllableState } from './_core/componentUtils';
 
 /**
  * Progress component — visual progress indicator.
@@ -40,8 +41,10 @@ const labelStyle = tw('progress-label', 'flex justify-between items-center mb-1'
 const labelText = tw('progress-label-text', 'text-sm font-medium text-gray-700');
 const labelValue = tw('progress-label-value', 'text-sm text-gray-500');
 
-export function Progress({
-  value = 0,
+export const Progress = forwardRef(function Progress({
+  value,
+  defaultValue = 0,
+  onValueChange,
   max = 100,
   color,
   size,
@@ -50,8 +53,15 @@ export function Progress({
   striped = false,
   animated = false,
   className,
-}) {
-  const pct = Math.min(100, Math.max(0, (value / max) * 100));
+  ...props
+}, ref) {
+  const [progressValue] = useControllableState({
+    value,
+    defaultValue,
+    onChange: onValueChange,
+  });
+
+  const pct = Math.min(100, Math.max(0, (progressValue / max) * 100));
 
   const trackProps = {};
   if (size !== undefined) trackProps.size = size;
@@ -66,14 +76,21 @@ export function Progress({
   } : {};
 
   return (
-    <div className={className}>
+    <div {...props} ref={ref} className={className}>
       {label && (
         <div className={labelStyle}>
           <span className={labelText}>{label}</span>
           {showValue && <span className={labelValue}>{Math.round(pct)}%</span>}
         </div>
       )}
-      <div className={track(trackProps)} role="progressbar" aria-valuenow={value} aria-valuemax={max}>
+      <div
+        className={track(trackProps)}
+        role="progressbar"
+        aria-valuenow={Math.round(progressValue)}
+        aria-valuemin={0}
+        aria-valuemax={max}
+        aria-label={label}
+      >
         <div
           className={fill(fillProps)}
           style={{ width: `${pct}%`, ...stripedStyle }}
@@ -81,4 +98,4 @@ export function Progress({
       </div>
     </div>
   );
-}
+});

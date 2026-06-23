@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { tw, cx } from 'tailwind-to-style';
 import { token } from 'tailwind-to-style/tokens';
 
@@ -54,9 +54,9 @@ const themedBadge = tw({
   defaultVariants: { color: 'primary' },
 });
 
-export function ThemedComponents() {
+export const ThemedComponents = forwardRef(function ThemedComponents(props, ref) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div {...props} ref={ref} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       {/* Buttons */}
       <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
         <button className={themedBtn({ intent: 'primary' })}>Primary Action</button>
@@ -82,4 +82,4 @@ export function ThemedComponents() {
       </div>
     </div>
   );
-}
+});

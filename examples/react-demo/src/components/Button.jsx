@@ -44,18 +44,21 @@ const disabledStyle = tw('btn-disabled', 'opacity-50 cursor-not-allowed pointer-
 // Loading spinner
 const spinnerStyle = tw('btn-spinner', 'w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin');
 
-export function Button({
-  children,
-  color,
-  size,
-  fullWidth,
-  disabled,
-  loading,
-  leftIcon,
-  rightIcon,
-  className,
-  ...props
-}) {
+export const Button = React.forwardRef(function Button(props, ref) {
+  const {
+    children,
+    color,
+    size,
+    fullWidth,
+    disabled,
+    loading,
+    leftIcon,
+    rightIcon,
+    className,
+    type = 'button',
+    ...rest
+  } = props;
+
   // Filter out undefined values so defaultVariants apply correctly
   const variantProps = {};
   if (color !== undefined) variantProps.color = color;
@@ -70,11 +73,18 @@ export function Button({
   );
 
   return (
-    <button className={classes} disabled={disabled || loading} {...props}>
+    <button
+      className={classes}
+      disabled={disabled || loading}
+      type={type}
+      aria-busy={loading || undefined}
+      ref={ref}
+      {...rest}
+    >
       {loading && <span className={spinnerStyle} />}
       {!loading && leftIcon}
       {children}
       {!loading && rightIcon}
     </button>
   );
-}
+});

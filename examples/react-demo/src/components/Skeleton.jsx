@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { tw, cx } from 'tailwind-to-style';
 
 /**
@@ -17,31 +17,34 @@ const skeleton = tw({
   defaultVariants: { shape: 'line' },
 });
 
-export function Skeleton({
+export const Skeleton = forwardRef(function Skeleton({
   width,
   height,
   shape = 'line',
   className,
   style,
-}) {
+  ...props
+}, ref) {
   const variantProps = {};
   if (shape !== undefined) variantProps.shape = shape;
 
   return (
     <div
+      {...props}
+      ref={ref}
       className={cx(skeleton(variantProps), className)}
       style={{ width, height, ...style }}
       aria-hidden="true"
     />
   );
-}
+});
 
 /**
  * SkeletonText — multiple lines of skeleton text
  */
-export function SkeletonText({ lines = 3, lastLineWidth = '70%' }) {
+export const SkeletonText = forwardRef(function SkeletonText({ lines = 3, lastLineWidth = '70%', ...props }, ref) {
   return (
-    <div className={tw('flex flex-col gap-2')}>
+    <div {...props} ref={ref} className={tw('flex flex-col gap-2')}>
       {Array.from({ length: lines }).map((_, i) => (
         <Skeleton
           key={i}
@@ -51,14 +54,14 @@ export function SkeletonText({ lines = 3, lastLineWidth = '70%' }) {
       ))}
     </div>
   );
-}
+});
 
 /**
  * SkeletonCard — full card loading placeholder
  */
-export function SkeletonCard({ avatar = false, lines = 3 }) {
+export const SkeletonCard = forwardRef(function SkeletonCard({ avatar = false, lines = 3, ...props }, ref) {
   return (
-    <div className={tw('p-4 bg-white rounded-xl border border-gray-200')}>
+    <div {...props} ref={ref} className={tw('p-4 bg-white rounded-xl border border-gray-200')}>
       {avatar && (
         <div className={tw('flex items-center gap-3 mb-4')}>
           <Skeleton shape="circle" width="40px" height="40px" />
@@ -72,4 +75,4 @@ export function SkeletonCard({ avatar = false, lines = 3 }) {
       <SkeletonText lines={lines} />
     </div>
   );
-}
+});

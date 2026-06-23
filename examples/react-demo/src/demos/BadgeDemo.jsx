@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { tw } from 'tailwind-to-style';
 import { Badge } from '../components/Badge';
 import { Check, X, Clock, AlertTriangle, Zap, Star, ArrowUp, ArrowDown } from 'lucide-react';
@@ -8,6 +8,23 @@ const sectionTitle = tw('demo-title', 'text-xl font-semibold text-gray-900 mb-4'
 const label = tw('demo-label', 'text-sm text-gray-500 mb-3 font-medium');
 const row = tw('demo-row', 'flex flex-wrap items-center gap-2 mb-4');
 const divider = tw('demo-divider', 'border-t border-gray-100 my-4');
+
+function DismissibleBadges() {
+  const [visible, setVisible] = useState(true);
+
+  if (!visible) return null;
+
+  return (
+    <div className={row}>
+      <Badge color="blue" dismissible onDismiss={() => setVisible(false)}>
+        Saved search
+      </Badge>
+      <Badge color="green" variant="outline" dismissible>
+        Synced
+      </Badge>
+    </div>
+  );
+}
 
 export function BadgeDemo() {
   return (
@@ -36,6 +53,14 @@ export function BadgeDemo() {
           <Badge color="yellow" variant="outline">Yellow</Badge>
           <Badge color="purple" variant="outline">Purple</Badge>
         </div>
+        <div className={divider} />
+        <p className={label}>Soft and ghost variants</p>
+        <div className={row}>
+          <Badge color="blue" variant="soft">Soft Blue</Badge>
+          <Badge color="green" variant="soft">Soft Green</Badge>
+          <Badge color="purple" variant="ghost">Ghost Purple</Badge>
+          <Badge color="red" variant="ghost">Ghost Red</Badge>
+        </div>
       </div>
 
       {/* Sizes */}
@@ -45,6 +70,7 @@ export function BadgeDemo() {
           <Badge size="sm" color="blue">Small</Badge>
           <Badge size="md" color="blue">Medium</Badge>
           <Badge size="lg" color="blue">Large</Badge>
+          <Badge size="lg" color="purple" rounded="square">Square</Badge>
         </div>
       </div>
 
@@ -79,6 +105,24 @@ export function BadgeDemo() {
           <Badge color="red" leftIcon={<ArrowDown size={12} />}>-3.2%</Badge>
           <Badge color="blue" rightIcon={<ArrowUp size={12} />}>Trending</Badge>
         </div>
+      </div>
+
+      {/* Interactive / dismissible */}
+      <div className={section}>
+        <h2 className={sectionTitle}>Badge — Interactive & Dismissible</h2>
+        <p className={label}>Badges can work like clickable filters or removable tags</p>
+        <div className={row}>
+          <Badge color="blue" interactive onClick={() => {}}>
+            Clickable
+          </Badge>
+          <Badge color="green" variant="outline" interactive onClick={() => {}}>
+            Filter
+          </Badge>
+          <Badge color="purple" variant="soft" interactive onClick={() => {}}>
+            Chip
+          </Badge>
+        </div>
+        <DismissibleBadges />
       </div>
 
       {/* Real-World Patterns */}

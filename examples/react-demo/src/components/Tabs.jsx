@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useId } from 'react';
 import { tw, cx } from 'tailwind-to-style';
+import { useControllableState } from './_core/componentUtils';
 
 /**
  * Tabs component — switchable content panels.
@@ -46,12 +47,19 @@ const tab = tw({
 const tabPanel = tw('tab-panel', 'py-4');
 
 export function Tabs({
-  items,
+  items = [],
   defaultIndex = 0,
+  activeIndex,
+  onActiveIndexChange,
   variant,
   className,
 }) {
-  const [active, setActive] = useState(defaultIndex);
+  const [active, setActive] = useControllableState({
+    value: activeIndex,
+    defaultValue: defaultIndex,
+    onChange: onActiveIndexChange,
+  });
+  const tabsId = useId();
 
   const listProps = {};
   if (variant !== undefined) listProps.variant = variant;
@@ -62,12 +70,17 @@ export function Tabs({
         {items.map((item, i) => {
           const tabProps = { active: i === active };
           if (variant !== undefined) tabProps.variant = variant;
+          const tabId = `${tabsId}-tab-${i}`;
+          const panelId = `${tabsId}-panel-${i}`;
 
           return (
             <button
               key={item.label}
+              id={tabId}
               role="tab"
               aria-selected={i === active}
+              aria-controls={panelId}
+              tabIndex={i === active ? 0 : -1}
               className={tab(tabProps)}
               onClick={() => setActive(i)}
               type="button"
@@ -83,7 +96,12 @@ export function Tabs({
           );
         })}
       </div>
-      <div className={tabPanel} role="tabpanel">
+      <div
+        className={tabPanel}
+        role="tabpanel"
+        id={`${tabsId}-panel-${active}`}
+        aria-labelledby={`${tabsId}-tab-${active}`}
+      >
         {items[active]?.content}
       </div>
     </div>

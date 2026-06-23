@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { tw, cx } from 'tailwind-to-style';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 
@@ -28,7 +28,7 @@ const trendColors = {
   flat: { text: '#6b7280', bg: '#f3f4f6', icon: Minus },
 };
 
-export function StatCard({
+export const StatCard = forwardRef(function StatCard({
   label,
   value,
   subtext,
@@ -37,49 +37,83 @@ export function StatCard({
   iconBg,        // icon background color
   variant,
   className,
-}) {
+  onClick,
+  as,
+  ...props
+}, ref) {
   const variantProps = {};
   if (variant !== undefined) variantProps.variant = variant;
 
   const trendCfg = trend ? (trendColors[trend.direction] || trendColors.flat) : null;
   const TrendIcon = trendCfg?.icon;
+  const RootTag = as || 'div';
+  const isClickable = !!onClick;
 
   return (
-    <div className={cx(card(variantProps), className)}>
+    <RootTag
+      {...props}
+      ref={ref}
+      className={cx(card(variantProps), className, isClickable && 'cursor-pointer hover:shadow-md transition-shadow')}
+      onClick={onClick}
+      role={isClickable ? 'button' : undefined}
+      tabIndex={isClickable ? 0 : undefined}
+      onKeyDown={isClickable ? (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick?.(e);
+        }
+      } : undefined}
+    >
       <div className={tw('flex justify-between items-start')}>
-        <div className={tw('flex-1 min-w-0')}>
+        {/* Left: label + value + subtext */}
+        <div className={tw('flex-1')}>
           <p className={statLabel}>{label}</p>
           <p className={statValue}>{value}</p>
           {subtext && <p className={statSubtext}>{subtext}</p>}
-          {trend && trendCfg && (
-            <div className={tw('inline-flex items-center gap-1 mt-2 rounded-full')} style={{ padding: '2px 8px', backgroundColor: trendCfg.bg }}>
-              <TrendIcon size={12} color={trendCfg.text} />
-              <span className={tw('text-xs font-semibold')} style={{ color: trendCfg.text }}>{trend.value}</span>
-              {trend.label && <span className={tw('text-xs')} style={{ color: trendCfg.text, opacity: 0.8 }}>{trend.label}</span>}
+        </div>
+
+        {/* Right: icon + trend */}
+        <div className={tw('flex gap-2 items-start')}>
+          {icon && (
+            <div style={{ backgroundColor: iconBg || '#f3f4f6', borderRadius: '6px', padding: '6px', display: 'flex', alignItems: 'center' }}>
+              {React.cloneElement(icon, { size: 18 })}
+            </div>
+          )}
+          {trend && TrendIcon && (
+            <div style={{ backgroundColor: trendCfg.bg, borderRadius: '6px', padding: '4px 6px', display: 'flex', alignItems: 'center', gap: '2px' }}>
+              <TrendIcon size={14} color={trendCfg.text} />
+              <span style={{ fontSize: '12px', fontWeight: 600, color: trendCfg.text }}>{trend.value}</span>
             </div>
           )}
         </div>
-        {icon && (
-          <div className={tw('flex items-center justify-center shrink-0 rounded-xl')} style={{ width: '44px', height: '44px', backgroundColor: iconBg || '#eff6ff', marginLeft: '12px' }}>
-            {icon}
-          </div>
-        )}
       </div>
-    </div>
+    </RootTag>
   );
-}
+});
 
 /**
  * MiniStatCard — compact single-line metric
  */
-export function MiniStatCard({ label, value, color = '#3b82f6', className }) {
+export const MiniStatCard = forwardRef(function MiniStatCard({ label, value, color = '#3b82f6', className, onClick, ...props }, ref) {
+  const isClickable = !!onClick;
   return (
     <div
-      className={cx(card(), className)}
+      {...props}
+      ref={ref}
+      className={cx(card(), className, isClickable && 'cursor-pointer hover:shadow-md transition-shadow')}
       style={{ borderLeft: `4px solid ${color}`, paddingLeft: '16px' }}
+      onClick={onClick}
+      role={isClickable ? 'button' : undefined}
+      tabIndex={isClickable ? 0 : undefined}
+      onKeyDown={isClickable ? (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick?.(e);
+        }
+      } : undefined}
     >
       <p className={tw('text-xs text-gray-500 font-medium')}>{label}</p>
       <p className={tw('text-2xl font-bold text-gray-900 mt-0.5')}>{value}</p>
     </div>
   );
-}
+});

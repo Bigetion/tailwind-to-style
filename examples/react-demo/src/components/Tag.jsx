@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef, useId, useRef } from 'react';
 import { tw, cx } from 'tailwind-to-style';
 import { X } from 'lucide-react';
 
@@ -66,21 +66,25 @@ const removeBtn = tw({
   defaultVariants: { color: 'gray', size: 'md' },
 });
 
-export function Tag({
+export const Tag = forwardRef(function Tag({
   children,
+  as,
   color,
   size,
   variant,
+  disabled,
   onRemove,
   onClick,
+  onKeyDown,
   leftIcon,
   className,
-}) {
+  ...props
+}, ref) {
   const variantProps = {};
   if (color !== undefined) variantProps.color = color;
   if (size !== undefined) variantProps.size = size;
   if (variant !== undefined) variantProps.variant = variant;
-  if (onClick) variantProps.interactive = true;
+  if (onClick && !disabled) variantProps.interactive = true;
 
   const removeBtnProps = {};
   if (color !== undefined) removeBtnProps.color = color;
@@ -88,17 +92,32 @@ export function Tag({
 
   const iconSize = size === 'sm' ? 10 : size === 'lg' ? 14 : 12;
   const removeSize = size === 'sm' ? 8 : size === 'lg' ? 12 : 10;
+  const RootTag = as || 'span';
+  const interactive = !!onClick && !disabled;
 
   return (
-    <span
+    <RootTag
+      {...props}
+      ref={ref}
       className={cx(tag(variantProps), className)}
-      onClick={onClick}
+      onClick={interactive ? onClick : undefined}
+      onKeyDown={(e) => {
+        if (interactive && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault();
+          onClick?.(e);
+        }
+        onKeyDown?.(e);
+      }}
+      role={interactive ? 'button' : undefined}
+      tabIndex={interactive ? 0 : undefined}
+      aria-disabled={disabled || undefined}
     >
       {leftIcon && <span style={{ display: 'inline-flex' }}>{leftIcon}</span>}
       {children}
       {onRemove && (
         <button
           type="button"
+          disabled={disabled}
           className={removeBtn(removeBtnProps)}
           onClick={e => { e.stopPropagation(); onRemove(); }}
           aria-label="Remove"
@@ -107,15 +126,17 @@ export function Tag({
           <X size={removeSize} strokeWidth={2.5} />
         </button>
       )}
-    </span>
+    </RootTag>
   );
-}
+});
 
 /**
  * TagInput — input for adding tags dynamically
  */
 export function TagInput({ tags, onAdd, onRemove, color, placeholder = 'Add tag...', maxTags }) {
   const [input, setInput] = React.useState('');
+  const inputId = useId();
+  const inputRef = useRef(null);
 
   const handleKeyDown = (e) => {
     if ((e.key === 'Enter' || e.key === ',') && input.trim()) {
@@ -144,7 +165,7 @@ export function TagInput({ tags, onAdd, onRemove, color, placeholder = 'Add tag.
         minHeight: '42px',
         alignItems: 'center',
       }}
-      onClick={() => document.querySelector('.tag-input-field')?.focus()}
+      onClick={() => inputRef.current?.focus()}
     >
       {tags.map((tag, i) => (
         <Tag key={i} color={color || 'blue'} size="sm" onRemove={() => onRemove(i)}>
@@ -152,7 +173,8 @@ export function TagInput({ tags, onAdd, onRemove, color, placeholder = 'Add tag.
         </Tag>
       ))}
       <input
-        className="tag-input-field"
+        id={inputId}
+        ref={inputRef}
         value={input}
         onChange={e => setInput(e.target.value)}
         onKeyDown={handleKeyDown}

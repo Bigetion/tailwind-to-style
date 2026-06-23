@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { forwardRef, useId } from 'react';
 import { tw, cx } from 'tailwind-to-style';
+import { useControllableState } from './_core/componentUtils';
 
 /**
  * Toggle/Switch component — on/off control.
@@ -59,8 +60,10 @@ const translateMap = {
   lg: '28px',
 };
 
-export function Toggle({
-  checked = false,
+export const Toggle = forwardRef(function Toggle({
+  checked,
+  defaultChecked = false,
+  onCheckedChange,
   onChange,
   label,
   description,
@@ -68,38 +71,61 @@ export function Toggle({
   color = 'blue',
   disabled,
   className,
-}) {
-  const trackProps = { checked: checked ? true : false };
+  id,
+  ...props
+}, ref) {
+  const [isChecked, setIsChecked] = useControllableState({
+    value: checked,
+    defaultValue: defaultChecked,
+    onChange: onCheckedChange,
+  });
+
+  const fallbackId = useId();
+  const switchId = id || `toggle-${fallbackId}`;
+  const descriptionId = description ? `${switchId}-desc` : undefined;
+
+  const trackProps = { checked: isChecked ? true : false };
   if (size !== undefined) trackProps.size = size;
   if (disabled) trackProps.disabled = true;
 
-  const thumbProps = { checked: checked ? true : false };
+  const thumbProps = { checked: isChecked ? true : false };
   if (size !== undefined) thumbProps.size = size;
 
   const effectiveSize = size || 'md';
 
+  const handleToggle = () => {
+    if (disabled) return;
+    const next = !isChecked;
+    setIsChecked(next);
+    onChange?.(next);
+  };
+
   return (
     <label className={cx('inline-flex items-center gap-3', className)} style={{ cursor: disabled ? 'not-allowed' : 'pointer' }}>
       <button
+        {...props}
+        ref={ref}
+        id={switchId}
         type="button"
         role="switch"
-        aria-checked={checked}
+        aria-checked={isChecked}
+        aria-describedby={descriptionId}
         disabled={disabled}
-        onClick={() => !disabled && onChange?.(!checked)}
+        onClick={handleToggle}
         className={track(trackProps)}
-        style={checked ? { backgroundColor: checkedColors[color] || checkedColors.blue } : undefined}
+        style={isChecked ? { backgroundColor: checkedColors[color] || checkedColors.blue } : undefined}
       >
         <span
           className={thumb(thumbProps)}
-          style={checked ? { transform: `translateX(${translateMap[effectiveSize]})` } : undefined}
+          style={isChecked ? { transform: `translateX(${translateMap[effectiveSize]})` } : undefined}
         />
       </button>
       {(label || description) && (
         <div>
           {label && <span className={labelStyle}>{label}</span>}
-          {description && <p className={descStyle}>{description}</p>}
+          {description && <p id={descriptionId} className={descStyle}>{description}</p>}
         </div>
       )}
     </label>
   );
-}
+});

@@ -1,5 +1,6 @@
-import React, { useId } from 'react';
+import React, { forwardRef, useEffect, useId, useRef } from 'react';
 import { tw } from 'tailwind-to-style';
+import { mergeRefs, useControllableState } from './_core/componentUtils';
 
 // Color map for checked state
 const colorStyles = {
@@ -27,10 +28,12 @@ const errorCls = tw('cb-error', 'text-xs text-red-600 mt-1');
 
 // ─── Checkbox ────────────────────────────────────────────────────────────────
 
-export function Checkbox({
+export const Checkbox = forwardRef(function Checkbox({
   label,
   description,
   checked,
+  defaultChecked = false,
+  onCheckedChange,
   onChange,
   size = 'md',
   color = 'blue',
@@ -40,12 +43,27 @@ export function Checkbox({
   id,
   style,
   className,
-}) {
+  ...props
+}, ref) {
   const autoId = useId();
   const inputId = id || autoId;
+  const descriptionId = description ? `${inputId}-desc` : undefined;
+  const errorId = error ? `${inputId}-error` : undefined;
   const colors = colorStyles[color] || colorStyles.blue;
   const dims = sizeMap[size] || sizeMap.md;
-  const isActive = !!checked || !!indeterminate;
+  const inputRef = useRef(null);
+  const [isChecked, setIsChecked] = useControllableState({
+    value: checked,
+    defaultValue: defaultChecked,
+    onChange: onCheckedChange,
+  });
+  const isActive = !!isChecked || !!indeterminate;
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.indeterminate = !!indeterminate;
+    }
+  }, [indeterminate]);
 
   // Box appearance
   let boxBg = '#fff';
@@ -64,14 +82,20 @@ export function Checkbox({
     <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', ...style }} className={className}>
       {/* Hidden real input for a11y + form submit */}
       <input
+        {...props}
         type="checkbox"
         id={inputId}
-        checked={!!checked}
-        onChange={onChange}
+        checked={!!isChecked}
+        onChange={(e) => {
+          setIsChecked(e.target.checked);
+          onChange?.(e);
+        }}
         disabled={disabled}
-        ref={el => { if (el) el.indeterminate = !!indeterminate; }}
+        ref={mergeRefs(inputRef, ref)}
         style={{ position: 'absolute', opacity: 0, width: 0, height: 0 }}
         aria-label={typeof label === 'string' ? label : undefined}
+        aria-invalid={!!error}
+        aria-describedby={[descriptionId, errorId].filter(Boolean).join(' ') || undefined}
       />
 
       {/* Custom box */}
@@ -118,13 +142,13 @@ export function Checkbox({
               {label}
             </label>
           )}
-          {description && <p className={descCls}>{description}</p>}
-          {error && <p className={errorCls}>{error}</p>}
+          {description && <p id={descriptionId} className={descCls}>{description}</p>}
+          {error && <p id={errorId} className={errorCls}>{error}</p>}
         </div>
       )}
     </div>
   );
-}
+});
 
 // ─── Radio ────────────────────────────────────────────────────────────────────
 

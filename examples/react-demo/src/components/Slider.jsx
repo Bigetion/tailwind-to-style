@@ -1,5 +1,6 @@
-import React, { useId } from 'react';
+import React, { useId, forwardRef } from 'react';
 import { tw, cx } from 'tailwind-to-style';
+import { useControllableState } from './_core/componentUtils';
 
 /**
  * Slider component — range input with track, fill, and thumb.
@@ -17,8 +18,10 @@ const colorMap = {
   amber:  '#d97706',
 };
 
-export function Slider({
+export const Slider = forwardRef(function Slider({
   value,
+  defaultValue = 0,
+  onValueChange,
   min = 0,
   max = 100,
   step = 1,
@@ -30,15 +33,27 @@ export function Slider({
   formatValue,
   id,
   className,
-}) {
+  ...props
+}, ref) {
+  const [sliderValue, setSliderValue] = useControllableState({
+    value,
+    defaultValue,
+    onChange: onValueChange,
+  });
+
   const autoId = useId();
   const inputId = id || autoId;
-  const pct = ((value - min) / (max - min)) * 100;
+  const pct = ((sliderValue - min) / (max - min)) * 100;
   const trackColor = colorMap[color] || colorMap.blue;
-  const displayValue = formatValue ? formatValue(value) : value;
+  const displayValue = formatValue ? formatValue(sliderValue) : sliderValue;
+
+  const handleChange = (newVal) => {
+    setSliderValue(newVal);
+    onChange?.(newVal);
+  };
 
   return (
-    <div className={cx(tw('flex flex-col gap-2'), className)}>
+    <div {...props} ref={ref} className={cx(tw('flex flex-col gap-2'), className)}>
       {/* Header row */}
       {(label || showValue) && (
         <div className={tw('flex justify-between items-center')}>
@@ -48,7 +63,7 @@ export function Slider({
       )}
 
       {/* Track */}
-      <div className={trackWrapper} style={{ opacity: disabled ? 0.5 : 1 }}>
+      <div className={trackWrapper} style={{ opacity: disabled ? 0.5 : 1 }} role="presentation">
         {/* Filled portion */}
         <div
           style={{
@@ -70,9 +85,10 @@ export function Slider({
           min={min}
           max={max}
           step={step}
-          value={value}
+          value={sliderValue}
           disabled={disabled}
-          onChange={e => onChange?.(Number(e.target.value))}
+          onChange={e => handleChange(Number(e.target.value))}
+          aria-label={label}
           style={{
             position: 'absolute',
             inset: 0,
@@ -109,42 +125,72 @@ export function Slider({
       </div>
     </div>
   );
-}
+});
 
 /**
  * RangeSlider — dual handle slider (min/max range)
  */
-export function RangeSlider({ minValue, maxValue, min = 0, max = 100, step = 1, onChange, label, color = 'blue', disabled, formatValue, className }) {
-  const pctMin = ((minValue - min) / (max - min)) * 100;
-  const pctMax = ((maxValue - min) / (max - min)) * 100;
+export const RangeSlider = forwardRef(function RangeSlider({
+  minValue,
+  maxValue,
+  defaultMinValue,
+  defaultMaxValue,
+  onMinValueChange,
+  onMaxValueChange,
+  min = 0,
+  max = 100,
+  step = 1,
+  onChange,
+  label,
+  color = 'blue',
+  disabled,
+  formatValue,
+  className,
+  ...props
+}, ref) {
+  const [minVal, setMinVal] = useControllableState({
+    value: minValue,
+    defaultValue: defaultMinValue,
+    onChange: onMinValueChange,
+  });
+  const [maxVal, setMaxVal] = useControllableState({
+    value: maxValue,
+    defaultValue: defaultMaxValue,
+    onChange: onMaxValueChange,
+  });
+
+  const pctMin = ((minVal - min) / (max - min)) * 100;
+  const pctMax = ((maxVal - min) / (max - min)) * 100;
   const trackColor = colorMap[color] || colorMap.blue;
 
   const handleMinChange = (e) => {
-    const val = Math.min(Number(e.target.value), maxValue - step);
-    onChange?.([val, maxValue]);
+    const val = Math.min(Number(e.target.value), maxVal - step);
+    setMinVal(val);
+    onChange?.([val, maxVal]);
   };
 
   const handleMaxChange = (e) => {
-    const val = Math.max(Number(e.target.value), minValue + step);
-    onChange?.([minValue, val]);
+    const val = Math.max(Number(e.target.value), minVal + step);
+    setMaxVal(val);
+    onChange?.([minVal, val]);
   };
 
-  const displayMin = formatValue ? formatValue(minValue) : minValue;
-  const displayMax = formatValue ? formatValue(maxValue) : maxValue;
+  const displayMin = formatValue ? formatValue(minVal) : minVal;
+  const displayMax = formatValue ? formatValue(maxVal) : maxVal;
 
   // z-index trick: if min thumb is near max end, put it on top so it's draggable
   const minZIndex = pctMin > 90 ? 5 : 4;
   const maxZIndex = pctMin > 90 ? 4 : 5;
 
   return (
-    <div className={cx(tw('flex flex-col gap-2'), className)}>
+    <div {...props} ref={ref} className={cx(tw('flex flex-col gap-2'), className)}>
       {label && (
         <div className={tw('flex justify-between')}>
           <span className={labelStyle}>{label}</span>
           <span className={valueStyle}>{displayMin} – {displayMax}</span>
         </div>
       )}
-      <div className={trackWrapper} style={{ opacity: disabled ? 0.5 : 1 }}>
+      <div className={trackWrapper} style={{ opacity: disabled ? 0.5 : 1 }} role="presentation">
         {/* Background fill between thumbs */}
         <div
           style={{
@@ -159,42 +205,78 @@ export function RangeSlider({ minValue, maxValue, min = 0, max = 100, step = 1, 
         />
         {/* Min input — sits above max when min is near the high end */}
         <input
-          type="range" min={min} max={max} step={step} value={minValue}
+          type="range"
+          min={min}
+          max={max}
+          step={step}
+          value={minVal}
           disabled={disabled}
           onChange={handleMinChange}
+          aria-label={label ? `${label} minimum` : 'Minimum value'}
           style={{
-            position: 'absolute', inset: 0, width: '100%', height: '100%',
-            opacity: 0, cursor: 'pointer', margin: 0,
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            opacity: 0,
+            cursor: 'pointer',
+            margin: 0,
             zIndex: minZIndex,
           }}
         />
         {/* Max input */}
         <input
-          type="range" min={min} max={max} step={step} value={maxValue}
+          type="range"
+          min={min}
+          max={max}
+          step={step}
+          value={maxVal}
           disabled={disabled}
           onChange={handleMaxChange}
+          aria-label={label ? `${label} maximum` : 'Maximum value'}
           style={{
-            position: 'absolute', inset: 0, width: '100%', height: '100%',
-            opacity: 0, cursor: 'pointer', margin: 0,
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            opacity: 0,
+            cursor: 'pointer',
+            margin: 0,
             zIndex: maxZIndex,
           }}
         />
         {/* Min thumb (visual only) */}
-        <div style={{
-          position: 'absolute', top: '50%', left: `${pctMin}%`,
-          transform: 'translate(-50%, -50%)',
-          width: '18px', height: '18px', borderRadius: '50%',
-          backgroundColor: '#fff', border: `2px solid ${trackColor}`,
-          boxShadow: '0 1px 4px rgba(0,0,0,0.15)', pointerEvents: 'none',
-        }} />
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: `${pctMin}%`,
+            transform: 'translate(-50%, -50%)',
+            width: '18px',
+            height: '18px',
+            borderRadius: '50%',
+            backgroundColor: '#fff',
+            border: `2px solid ${trackColor}`,
+            boxShadow: '0 1px 4px rgba(0,0,0,0.15)',
+            pointerEvents: 'none',
+          }}
+        />
         {/* Max thumb (visual only) */}
-        <div style={{
-          position: 'absolute', top: '50%', left: `${pctMax}%`,
-          transform: 'translate(-50%, -50%)',
-          width: '18px', height: '18px', borderRadius: '50%',
-          backgroundColor: '#fff', border: `2px solid ${trackColor}`,
-          boxShadow: '0 1px 4px rgba(0,0,0,0.15)', pointerEvents: 'none',
-        }} />
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: `${pctMax}%`,
+            transform: 'translate(-50%, -50%)',
+            width: '18px',
+            height: '18px',
+            borderRadius: '50%',
+            backgroundColor: '#fff',
+            border: `2px solid ${trackColor}`,
+            boxShadow: '0 1px 4px rgba(0,0,0,0.15)',
+            pointerEvents: 'none',
+          }}
+        />
       </div>
       <div className={tw('flex justify-between')}>
         <span className={tw('text-xs text-gray-400')}>{min}</span>
@@ -202,4 +284,4 @@ export function RangeSlider({ minValue, maxValue, min = 0, max = 100, step = 1, 
       </div>
     </div>
   );
-}
+});

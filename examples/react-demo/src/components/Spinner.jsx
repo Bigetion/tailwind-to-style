@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { tw, cx } from 'tailwind-to-style';
 
 /**
@@ -30,18 +30,21 @@ const spinner = tw({
 
 const spinnerLabel = tw('spinner-label', 'text-sm text-gray-600');
 
-export function Spinner({
+export const Spinner = forwardRef(function Spinner({
   size,
   color,
   label,
   className,
-}) {
+  ...props
+}, ref) {
   const variantProps = {};
   if (size !== undefined) variantProps.size = size;
   if (color !== undefined) variantProps.color = color;
 
   return (
     <span
+      {...props}
+      ref={ref}
       className={cx(tw('inline-flex items-center gap-2'), className)}
       role="status"
       aria-label={label || 'Loading'}
@@ -50,7 +53,7 @@ export function Spinner({
       {label && <span className={spinnerLabel}>{label}</span>}
     </span>
   );
-}
+});
 
 /**
  * SpinnerOverlay — full-page or container loading overlay
@@ -67,15 +70,15 @@ const overlay = tw({
   defaultVariants: { fullscreen: false },
 });
 
-export function SpinnerOverlay({ label, fullscreen, size = 'lg' }) {
-  const props = {};
-  if (fullscreen) props.fullscreen = true;
-  else props.fullscreen = false;
+export const SpinnerOverlay = forwardRef(function SpinnerOverlay({ label, fullscreen, size = 'lg', ...props }, ref) {
+  const overlayProps = {};
+  if (fullscreen) overlayProps.fullscreen = true;
+  else overlayProps.fullscreen = false;
 
   return (
-    <div className={overlay(props)}>
-      <Spinner size={size} />
+    <div {...props} ref={ref} className={overlay(overlayProps)} role="status" aria-label={label || 'Loading'}>
+      <Spinner size={size} aria-hidden="true" />
       {label && <p className={tw('text-sm text-gray-600 font-medium')}>{label}</p>}
     </div>
   );
-}
+});

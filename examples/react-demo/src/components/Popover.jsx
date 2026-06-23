@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useId, useState } from 'react';
 import { tw, cx } from 'tailwind-to-style';
+import { useControllableState } from './_core/componentUtils';
 
 /**
  * Popover component — floating content panel with auto-placement.
@@ -77,36 +78,48 @@ export function Popover({
   position = 'bottom-start',
   width = '240px',
   className,
+  open,
+  defaultOpen = false,
+  onOpenChange,
+  closeOnEscape = true,
+  closeOnOutsideClick = true,
 }) {
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useControllableState({
+    value: open,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
   const [panelStyles, setPanelStyles] = useState({ visibility: 'hidden' });
   const containerRef = useRef(null);
   const panelRef = useRef(null);
+  const popoverId = useId();
 
   // Close on outside click
   useEffect(() => {
+    if (!closeOnOutsideClick) return;
     const handleClick = (e) => {
-      if (containerRef.current && !containerRef.current.contains(e.target)) setOpen(false);
+      if (containerRef.current && !containerRef.current.contains(e.target)) setIsOpen(false);
     };
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
-  }, []);
+  }, [closeOnOutsideClick, setIsOpen]);
 
   // Close on Escape
   useEffect(() => {
-    const handleKey = (e) => { if (e.key === 'Escape') setOpen(false); };
+    if (!closeOnEscape) return;
+    const handleKey = (e) => { if (e.key === 'Escape') setIsOpen(false); };
     document.addEventListener('keydown', handleKey);
     return () => document.removeEventListener('keydown', handleKey);
-  }, []);
+  }, [closeOnEscape, setIsOpen]);
 
   // Reset visibility when closed
   useEffect(() => {
-    if (!open) setPanelStyles({ visibility: 'hidden' });
-  }, [open]);
+    if (!isOpen) setPanelStyles({ visibility: 'hidden' });
+  }, [isOpen]);
 
   // Recompute position on resize (debounced)
   useEffect(() => {
-    if (!open) return;
+    if (!isOpen) return;
     let raf = null;
     const handleResize = () => {
       cancelAnimationFrame(raf);
@@ -120,11 +133,11 @@ export function Popover({
     };
     window.addEventListener('resize', handleResize);
     return () => { window.removeEventListener('resize', handleResize); cancelAnimationFrame(raf); };
-  }, [open, position]);
+  }, [isOpen, position]);
 
   // Compute position after panel mounts (it's invisible so no layout flash)
   useEffect(() => {
-    if (!open || !containerRef.current || !panelRef.current) return;
+    if (!isOpen || !containerRef.current || !panelRef.current) return;
 
     // rAF ensures DOM has rendered the panel at hidden state
     const raf = requestAnimationFrame(() => {
@@ -139,7 +152,7 @@ export function Popover({
     });
 
     return () => cancelAnimationFrame(raf);
-  }, [open, position]);
+  }, [isOpen, position]);
 
   return (
     <div
@@ -147,13 +160,21 @@ export function Popover({
       style={{ position: 'relative', display: 'inline-block' }}
       className={className}
     >
-      <div onClick={() => setOpen(!open)}>
+      <div
+        onClick={() => setIsOpen(!isOpen)}
+        role="button"
+        aria-haspopup="dialog"
+        aria-expanded={isOpen}
+        aria-controls={popoverId}
+      >
         {trigger}
       </div>
-      {open && (
+      {isOpen && (
         <div
+          id={popoverId}
           ref={panelRef}
           className={POPOVER_CLS()}
+          role="dialog"
           style={{ position: 'absolute', zIndex: 50, width, minWidth: '180px', ...panelStyles }}
         >
           {children}

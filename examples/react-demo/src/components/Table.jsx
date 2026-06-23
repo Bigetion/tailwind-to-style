@@ -63,11 +63,15 @@ const VARIANT_STYLES = {
 // ── Component ────────────────────────────────────────────────────────────────
 
 export function Table({
-  columns,
-  data,
+  columns = [],
+  data = [],
   density,
   variant,
   className,
+  caption,
+  emptyText = 'No data available.',
+  getRowKey,
+  onRowClick,
   // legacy aliases
   striped,
   compact,
@@ -82,6 +86,7 @@ export function Table({
   return (
     <div className={cx(wrapperCls, className)} style={vs.wrapper}>
       <table className={tableCls}>
+        {caption && <caption style={{ textAlign: 'left', padding: '10px 14px', color: '#6b7280', fontSize: '0.8rem' }}>{caption}</caption>}
         <thead className={theadCls} style={vs.thead}>
           <tr>
             {columns.map((col, ci) => (
@@ -100,17 +105,26 @@ export function Table({
           </tr>
         </thead>
         <tbody className={tbodyCls}>
+          {data.length === 0 && (
+            <tr>
+              <td className={tdBaseCls} style={{ ...cellPadding, textAlign: 'center', color: '#6b7280' }} colSpan={Math.max(columns.length, 1)}>
+                {emptyText}
+              </td>
+            </tr>
+          )}
           {data.map((row, i) => {
             const isEven = i % 2 === 1;
             const rowStyle = isEven ? vs.rowEven : vs.rowOdd;
+            const key = getRowKey ? getRowKey(row, i) : row.id ?? i;
 
             return (
               <tr
-                key={row.id ?? i}
+                key={key}
                 className={trBaseCls}
-                style={rowStyle}
+                style={{ ...rowStyle, cursor: onRowClick ? 'pointer' : undefined }}
                 onMouseEnter={e => { e.currentTarget.style.backgroundColor = vs.rowHover; }}
                 onMouseLeave={e => { e.currentTarget.style.backgroundColor = (isEven ? vs.rowEven : vs.rowOdd).backgroundColor ?? ''; }}
+                onClick={onRowClick ? () => onRowClick(row, i) : undefined}
               >
                 {columns.map((col, ci) => (
                   <td

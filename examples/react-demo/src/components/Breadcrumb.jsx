@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { tw, cx } from 'tailwind-to-style';
 import { ChevronRight, Slash, Home } from 'lucide-react';
 
@@ -27,12 +27,13 @@ const separatorMap = {
   dot: <span style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: '#d1d5db', display: 'inline-block' }} />,
 };
 
-export function Breadcrumb({
+export const Breadcrumb = forwardRef(function Breadcrumb({
   items = [],
   separator = 'chevron',
   showHome = false,
   className,
-}) {
+  ...props
+}, ref) {
   const sep = typeof separator === 'string' ? separatorMap[separator] ?? separatorMap.chevron : separator;
 
   const allItems = showHome
@@ -40,7 +41,12 @@ export function Breadcrumb({
     : items;
 
   return (
-    <nav aria-label="Breadcrumb" className={className}>
+    <nav
+      {...props}
+      ref={ref}
+      aria-label="Breadcrumb"
+      className={className}
+    >
       <ol className={breadcrumbList}>
         {allItems.map((item, i) => {
           const isLast = i === allItems.length - 1;
@@ -52,11 +58,15 @@ export function Breadcrumb({
                     href={item.href}
                     className={breadcrumbLink({ active: false })}
                     onClick={e => { e.preventDefault(); item.onClick?.(); }}
+                    aria-current={isLast ? 'page' : undefined}
                   >
                     {item.label}
                   </a>
                 ) : (
-                  <span className={breadcrumbLink({ active: isLast })}>
+                  <span
+                    className={breadcrumbLink({ active: isLast })}
+                    aria-current={isLast ? 'page' : undefined}
+                  >
                     {item.label}
                   </span>
                 )}
@@ -72,4 +82,4 @@ export function Breadcrumb({
       </ol>
     </nav>
   );
-}
+});

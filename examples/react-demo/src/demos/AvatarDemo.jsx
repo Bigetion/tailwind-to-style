@@ -50,6 +50,18 @@ export function AvatarDemo() {
         </div>
       </div>
 
+      {/* Tone */}
+      <div className={section}>
+        <h2 className={sectionTitle}>Avatar — Tones</h2>
+        <p className={label}>Optional tone keeps the same layout, just changes fallback coloring</p>
+        <div className={row}>
+          <Avatar size="md" name="Neutral" tone="neutral" />
+          <Avatar size="md" name="Blue" tone="blue" />
+          <Avatar size="md" name="Green" tone="green" />
+          <Avatar size="md" name="Purple" tone="purple" />
+        </div>
+      </div>
+
       {/* Status */}
       <div className={section}>
         <h2 className={sectionTitle}>Avatar — Status</h2>
@@ -82,6 +94,17 @@ export function AvatarDemo() {
               <Avatar size="md" src="https://i.pravatar.cc/80?img=11" name="Bob" />
               <Avatar size="md" src="https://i.pravatar.cc/80?img=12" name="Carol" />
               <Avatar size="md" name="David E" />
+            </AvatarGroup>
+          </div>
+          <div>
+            <p style={{ fontSize: '0.75rem', color: '#9ca3af', marginBottom: '8px' }}>Custom overlap</p>
+            <AvatarGroup max={4} overlap={-12}>
+              <Avatar size="md" src="https://i.pravatar.cc/80?img=30" name="A" />
+              <Avatar size="md" src="https://i.pravatar.cc/80?img=31" name="B" />
+              <Avatar size="md" src="https://i.pravatar.cc/80?img=32" name="C" />
+              <Avatar size="md" src="https://i.pravatar.cc/80?img=33" name="D" />
+              <Avatar size="md" name="E" />
+              <Avatar size="md" name="F" />
             </AvatarGroup>
           </div>
           <div>

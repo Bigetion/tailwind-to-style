@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { tw, cx } from 'tailwind-to-style';
 
 /**
  * Avatar component — profile image with fallback initials.
- * Variants: size, shape
+ * Variants: size, shape, tone
  */
 const avatar = tw({
   name: 'avatar',
@@ -21,8 +21,16 @@ const avatar = tw({
       circle: 'rounded-full',
       square: 'rounded-lg',
     },
+    tone: {
+      neutral: 'bg-gray-200 text-gray-600',
+      blue: 'bg-blue-100 text-blue-700',
+      green: 'bg-emerald-100 text-emerald-700',
+      purple: 'bg-purple-100 text-purple-700',
+      orange: 'bg-orange-100 text-orange-700',
+      pink: 'bg-pink-100 text-pink-700',
+    },
   },
-  defaultVariants: { size: 'md', shape: 'circle' },
+  defaultVariants: { size: 'md', shape: 'circle', tone: 'neutral' },
 });
 
 const statusDot = tw({
@@ -60,25 +68,41 @@ export function Avatar({
   name,
   size,
   shape,
+  tone,
   status,
   className,
+  fallbackOnError = true,
+  onImageError,
+  imgProps,
 }) {
+  const [imageError, setImageError] = useState(false);
+
   const variantProps = {};
   if (size !== undefined) variantProps.size = size;
   if (shape !== undefined) variantProps.shape = shape;
+  if (tone !== undefined) variantProps.tone = tone;
 
   const statusProps = {};
   if (status) statusProps.color = status;
   if (size !== undefined) statusProps.size = size;
 
+  const showImage = !!src && (!imageError || !fallbackOnError);
+
   return (
     <span className={cx(avatar(variantProps), className)}>
-      {src ? (
+      {showImage ? (
         <img
           src={src}
           alt={alt || name || 'Avatar'}
           className={tw('w-full h-full object-cover')}
           style={{ borderRadius: 'inherit' }}
+          onError={(event) => {
+            if (fallbackOnError) {
+              setImageError(true);
+            }
+            onImageError?.(event);
+          }}
+          {...imgProps}
         />
       ) : (
         <span>{getInitials(name)}</span>
@@ -91,22 +115,22 @@ export function Avatar({
 /**
  * AvatarGroup — stack avatars with overlap
  */
-export function AvatarGroup({ children, max, size }) {
+export function AvatarGroup({ children, max, size, overlap = -8, className, itemClassName, overflowClassName }) {
   const items = React.Children.toArray(children);
   const visible = max ? items.slice(0, max) : items;
   const remaining = max ? items.length - max : 0;
 
   return (
-    <div className={tw('flex items-center')}>
+    <div className={cx(tw('flex items-center'), className)}>
       {visible.map((child, i) => (
-        <div key={i} className={tw('relative')} style={{ marginLeft: i === 0 ? 0 : '-8px', zIndex: visible.length - i }}>
+        <div key={i} className={cx(tw('relative'), itemClassName)} style={{ marginLeft: i === 0 ? 0 : `${overlap}px`, zIndex: visible.length - i }}>
           {child}
         </div>
       ))}
       {remaining > 0 && (
         <span
-          className={avatar({ size: size || 'md', shape: 'circle' })}
-          style={{ marginLeft: '-8px', background: '#e5e7eb', fontSize: '0.7rem', zIndex: 0 }}
+          className={cx(avatar({ size: size || 'md', shape: 'circle', tone: 'neutral' }), overflowClassName)}
+          style={{ marginLeft: `${overlap}px`, background: '#e5e7eb', fontSize: '0.7rem', zIndex: 0 }}
         >
           +{remaining}
         </span>

@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useId } from 'react';
 import { tw, cx } from 'tailwind-to-style';
 import { ChevronDown, Check } from 'lucide-react';
+import { useControllableState } from './_core/componentUtils';
 
 /**
  * Dropdown / Menu component — contextual menu triggered by a button.
@@ -40,44 +41,71 @@ const menuItem = tw({
 const menuDivider = tw('dropdown-divider', 'my-1 border-t border-gray-100');
 const menuLabel = tw('dropdown-label', 'px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider');
 
+const triggerWrap = tw('dropdown-trigger-wrap', 'inline-flex');
+const itemIcon = tw('dropdown-item-icon', 'inline-flex text-gray-400');
+const itemText = tw('dropdown-item-text', 'flex-1');
+const itemShortcut = tw('dropdown-item-shortcut', 'text-[0.7rem] text-gray-400');
+const itemCheck = tw('dropdown-item-check', 'text-blue-500');
+
 export function Dropdown({
   trigger,
-  items,
+  items = [],
   align = 'left',
   position = 'bottom',
   className,
+  open,
+  defaultOpen = false,
+  onOpenChange,
+  closeOnSelect = true,
+  closeOnEscape = true,
+  closeOnOutsideClick = true,
 }) {
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useControllableState({
+    value: open,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
+
+  const menuId = useId();
   const ref = useRef(null);
 
   // Close on outside click
   useEffect(() => {
+    if (!closeOnOutsideClick) return;
     const handleClick = (e) => {
       if (ref.current && !ref.current.contains(e.target)) {
-        setOpen(false);
+        setIsOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
-  }, []);
+  }, [closeOnOutsideClick, setIsOpen]);
 
   // Close on Escape
   useEffect(() => {
-    const handleKey = (e) => { if (e.key === 'Escape') setOpen(false); };
+    if (!closeOnEscape) return;
+    const handleKey = (e) => { if (e.key === 'Escape') setIsOpen(false); };
     document.addEventListener('keydown', handleKey);
     return () => document.removeEventListener('keydown', handleKey);
-  }, []);
+  }, [closeOnEscape, setIsOpen]);
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'inline-block' }} className={className}>
       {/* Trigger */}
-      <div onClick={() => setOpen(!open)}>
+      <div
+        className={triggerWrap}
+        onClick={() => setIsOpen(!isOpen)}
+        role="button"
+        aria-haspopup="menu"
+        aria-expanded={isOpen}
+        aria-controls={menuId}
+      >
         {trigger}
       </div>
 
       {/* Menu panel */}
-      {open && (
-        <div className={menuPanel({ align, position })}>
+      {isOpen && (
+        <div id={menuId} role="menu" className={menuPanel({ align, position })}>
           {items.map((item, i) => {
             if (item.type === 'divider') {
               return <div key={i} className={menuDivider} />;
@@ -96,18 +124,19 @@ export function Dropdown({
                 type="button"
                 className={menuItem(itemProps)}
                 disabled={item.disabled}
+                role="menuitem"
                 onClick={() => {
                   if (!item.disabled) {
                     item.onClick?.();
-                    if (!item.keepOpen) setOpen(false);
+                    if (closeOnSelect && !item.keepOpen) setIsOpen(false);
                   }
                 }}
                 style={{ background: 'none', border: 'none' }}
               >
-                {item.icon && <span style={{ display: 'inline-flex', color: item.variant === 'danger' ? '#dc2626' : '#9ca3af' }}>{item.icon}</span>}
-                <span style={{ flex: 1 }}>{item.label}</span>
-                {item.shortcut && <span style={{ fontSize: '0.7rem', color: '#9ca3af' }}>{item.shortcut}</span>}
-                {item.active && <Check size={14} style={{ color: '#3b82f6' }} />}
+                {item.icon && <span className={cx(itemIcon, item.variant === 'danger' && 'text-red-600')}>{item.icon}</span>}
+                <span className={itemText}>{item.label}</span>
+                {item.shortcut && <span className={itemShortcut}>{item.shortcut}</span>}
+                {item.active && <Check size={14} className={itemCheck} />}
               </button>
             );
           })}
