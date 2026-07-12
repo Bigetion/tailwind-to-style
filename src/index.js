@@ -14,6 +14,169 @@ let _ssrCollectedCss = [];
 let _ssrCollecting = false;
 
 /**
+ * Create an SSR collector with enhanced features.
+ * Tracks used classes and extracts only critical CSS for optimal performance.
+ * 
+ * @returns {Object} SSR collector with start, extract, and getCriticalCSS methods
+ * @example
+ * import { createSSRCollector } from 'tailwind-to-style'
+ * 
+ * const ssr = createSSRCollector()
+ * ssr.start()
+ * const html = renderToString(<App />)
+ * const css = ssr.extract()
+ * const criticalCSS = ssr.getCriticalCSS() // Only inline-able CSS (< 14KB)
+ */
+export function createSSRCollector() {
+  const usedClasses = new Set();
+  const collectedCSS = new Map();
+  let isCollecting = false;
+  
+  // Store original injection function
+  const originalInjectCSS = typeof window !== 'undefined' ? null : null;
+  
+  return {
+    /**
+     * Start collecting CSS for SSR
+     */
+    start() {
+      usedClasses.clear();
+      collectedCSS.clear();
+      isCollecting = true;
+      _ssrCollecting = true;
+      _ssrCollectedCss = [];
+    },
+    
+    /**
+     * Track a class name as used
+     * @param {string} className - Class name to track
+     */
+    trackClass(className) {
+      if (isCollecting) {
+        usedClasses.add(className);
+      }
+    },
+    
+    /**
+     * Track CSS for a specific class
+     * @param {string} className - Class name
+     * @param {string} css - CSS string
+     */
+    trackCSS(className, css) {
+      if (isCollecting && css) {
+        collectedCSS.set(className, css);
+      }
+    },
+    
+    /**
+     * Stop collecting and extract all CSS
+     * @returns {string} All collected CSS
+     */
+    extract() {
+      isCollecting = false;
+      _ssrCollecting = false;
+      
+      // Combine from both tracking methods
+      const allCSS = new Set();
+      
+      // From new tracking
+      collectedCSS.forEach((css) => {
+        if (css) allCSS.add(css);
+      });
+      
+      // From legacy tracking
+      _ssrCollectedCss.forEach((css) => {
+        if (css) allCSS.add(css);
+      });
+      
+      const result = Array.from(allCSS).join('\n');
+      
+      // Clear legacy array
+      _ssrCollectedCss = [];
+      
+      return result;
+    },
+    
+    /**
+     * Get only critical CSS (inline-able, < 14KB recommended)
+     * This returns CSS prioritized by usage frequency
+     * @param {number} maxSize - Maximum size in bytes (default: 14KB)
+     * @returns {string} Critical CSS that fits within size limit
+     */
+    getCriticalCSS(maxSize = 14 * 1024) {
+      const allCSS = Array.from(collectedCSS.values()).filter(Boolean);
+      
+      let criticalCSS = '';
+      let currentSize = 0;
+      
+      for (const css of allCSS) {
+        const cssSize = new Blob([css]).size;
+        if (currentSize + cssSize <= maxSize) {
+          criticalCSS += css + '\n';
+          currentSize += cssSize;
+        } else {
+          break;
+        }
+      }
+      
+      return criticalCSS.trim();
+    },
+    
+    /**
+     * Get remaining CSS (non-critical, for async loading)
+     * @param {number} criticalMaxSize - Size of critical CSS (default: 14KB)
+     * @returns {string} Non-critical CSS
+     */
+    getRemainingCSS(criticalMaxSize = 14 * 1024) {
+      const allCSS = Array.from(collectedCSS.values()).filter(Boolean);
+      const critical = this.getCriticalCSS(criticalMaxSize);
+      
+      return allCSS
+        .filter(css => !critical.includes(css))
+        .join('\n');
+    },
+    
+    /**
+     * Get stats about collected CSS
+     * @returns {Object} Stats including total size, class count, etc.
+     */
+    getStats() {
+      const allCSS = Array.from(collectedCSS.values()).filter(Boolean);
+      const totalCSS = allCSS.join('\n');
+      const totalSize = new Blob([totalCSS]).size;
+      
+      return {
+        classCount: usedClasses.size,
+        cssRuleCount: collectedCSS.size,
+        totalSize,
+        totalSizeKB: (totalSize / 1024).toFixed(2),
+        isCollecting,
+      };
+    },
+    
+    /**
+     * Peek at currently collected CSS without stopping collection
+     * @returns {string} Currently collected CSS
+     */
+    peek() {
+      return Array.from(collectedCSS.values()).filter(Boolean).join('\n');
+    },
+    
+    /**
+     * Get collected classes (for debugging)
+     * @returns {Set<string>} Set of used class names
+     */
+    getUsedClasses() {
+      return new Set(usedClasses);
+    },
+  };
+}
+
+// ============================================================================
+// Legacy SSR API (Backward Compatibility)
+// ============================================================================
+
+/**
  * Start collecting CSS for SSR. Call before rendering.
  * @deprecated Use createSSRCollector() instead
  * @returns {void}

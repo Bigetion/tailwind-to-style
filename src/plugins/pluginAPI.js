@@ -5,6 +5,38 @@
 
 import { logger } from "../utils/logger.js";
 
+// ============================================================================
+// Global Plugin Registry
+// ============================================================================
+
+const pluginRegistry = new Map();
+const pluginLoadOrder = [];
+
+/**
+ * Register a plugin globally
+ * @private
+ */
+function registerPlugin(plugin) {
+  if (!plugin || !plugin.name) {
+    logger.warn('[tailwind-to-style/plugins] Plugin must have a name');
+    return false;
+  }
+
+  if (pluginRegistry.has(plugin.name)) {
+    logger.warn(`[tailwind-to-style/plugins] Plugin "${plugin.name}" is already registered`);
+    return false;
+  }
+
+  pluginRegistry.set(plugin.name, {
+    ...plugin,
+    registeredAt: Date.now(),
+  });
+  pluginLoadOrder.push(plugin.name);
+  
+  logger.debug(`[tailwind-to-style/plugins] Registered plugin: ${plugin.name}`);
+  return true;
+}
+
 /**
  * Create a plugin for tailwind-to-style
  *
@@ -13,6 +45,7 @@ import { logger } from "../utils/logger.js";
  * @param {Object} [definition.utilities] - Custom utility classes
  * @param {Object} [definition.components] - Custom component classes
  * @param {Function} [definition.handler] - Custom handler function
+ * @param {boolean} [definition.autoRegister] - Auto-register plugin globally (default: true)
  * @returns {Object} Plugin object
  *
  * @example
@@ -39,13 +72,22 @@ export function createPlugin(name, definition) {
     throw new Error("Plugin definition must be an object");
   }
 
+  const { autoRegister = true, ...restDefinition } = definition;
+
   const plugin = {
     name,
     type: "user-plugin",
-    utilities: definition.utilities || {},
-    components: definition.components || {},
-    handler: definition.handler || null,
+    utilities: restDefinition.utilities || {},
+    components: restDefinition.components || {},
+    handler: restDefinition.handler || null,
+    version: restDefinition.version || '1.0.0',
+    description: restDefinition.description || '',
   };
+
+  // Auto-register plugin if enabled
+  if (autoRegister) {
+    registerPlugin(plugin);
+  }
 
   logger.debug(`Created plugin: ${name}`);
   return plugin;
@@ -246,4 +288,132 @@ export function validatePlugin(plugin) {
   }
 
   return true;
+}
+
+// ============================================================================
+// Plugin Registry API
+// ============================================================================
+
+/**
+ * Get all registered plugins
+ * @returns {Array<Object>} Array of plugin objects
+ * 
+ * @example
+ * import { getPlugins } from 'tailwind-to-style/plugins';
+ * 
+ * const plugins = getPlugins();
+ * console.log(`Loaded ${plugins.length} plugins`);
+ */
+export function getPlugins() {
+  return Array.from(pluginRegistry.values());
+}
+
+/**
+ * Get a specific plugin by name
+ * @param {string} name - Plugin name
+ * @returns {Object|undefined} Plugin object or undefined if not found
+ * 
+ * @example
+ * import { getPlugin } from 'tailwind-to-style/plugins';
+ * 
+ * const myPlugin = getPlugin('my-plugin');
+ * if (myPlugin) {
+ *   console.log('Plugin found:', myPlugin.description);
+ * }
+ */
+export function getPlugin(name) {
+  return pluginRegistry.get(name);
+}
+
+/**
+ * Check if a plugin is registered
+ * @param {string} name - Plugin name
+ * @returns {boolean} True if plugin exists
+ * 
+ * @example
+ * import { hasPlugin } from 'tailwind-to-style/plugins';
+ * 
+ * if (hasPlugin('my-plugin')) {
+ *   console.log('Plugin is available');
+ * }
+ */
+export function hasPlugin(name) {
+  return pluginRegistry.has(name);
+}
+
+/**
+ * Unregister a plugin
+ * @param {string} name - Plugin name
+ * @returns {boolean} True if successfully unregistered
+ * 
+ * @example
+ * import { unregisterPlugin } from 'tailwind-to-style/plugins';
+ * 
+ * if (unregisterPlugin('my-plugin')) {
+ *   console.log('Plugin unregistered');
+ * }
+ */
+export function unregisterPlugin(name) {
+  if (!pluginRegistry.has(name)) {
+    logger.warn(`[tailwind-to-style/plugins] Plugin "${name}" not found`);
+    return false;
+  }
+
+  pluginRegistry.delete(name);
+  const index = pluginLoadOrder.indexOf(name);
+  if (index > -1) {
+    pluginLoadOrder.splice(index, 1);
+  }
+
+  logger.debug(`[tailwind-to-style/plugins] Unregistered plugin: ${name}`);
+  return true;
+}
+
+/**
+ * Get plugin load order
+ * @returns {Array<string>} Array of plugin names in load order
+ */
+export function getPluginLoadOrder() {
+  return [...pluginLoadOrder];
+}
+
+/**
+ * Get plugin registry stats
+ * @returns {Object} Stats about registered plugins
+ * 
+ * @example
+ * import { getPluginStats } from 'tailwind-to-style/plugins';
+ * 
+ * const stats = getPluginStats();
+ * console.log(`Total plugins: ${stats.totalPlugins}`);
+ * console.log(`With utilities: ${stats.withUtilities}`);
+ */
+export function getPluginStats() {
+  const plugins = Array.from(pluginRegistry.values());
+  
+  return {
+    totalPlugins: plugins.length,
+    withUtilities: plugins.filter(p => Object.keys(p.utilities || {}).length > 0).length,
+    withComponents: plugins.filter(p => Object.keys(p.components || {}).length > 0).length,
+    withHandler: plugins.filter(p => p.handler !== null).length,
+    loadOrder: [...pluginLoadOrder],
+  };
+}
+
+/**
+ * Clear all plugins from registry
+ * @returns {number} Number of plugins removed
+ * 
+ * @example
+ * import { clearPlugins } from 'tailwind-to-style/plugins';
+ * 
+ * const removed = clearPlugins();
+ * console.log(`Cleared ${removed} plugins`);
+ */
+export function clearPlugins() {
+  const count = pluginRegistry.size;
+  pluginRegistry.clear();
+  pluginLoadOrder.length = 0;
+  logger.debug(`[tailwind-to-style/plugins] Cleared ${count} plugins`);
+  return count;
 }

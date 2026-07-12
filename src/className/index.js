@@ -9,6 +9,8 @@
 
 import { twsx } from "../index.js";
 import { cx } from "../cx.js";
+import { LRUCache } from "../utils/lruCache.js";
+import { initDevTools, registerCache } from "../utils/devtools.js";
 
 // ============================================================================
 // Custom Error Class
@@ -362,16 +364,26 @@ const ANIMATION_PRESETS = {
 };
 
 // ============================================================================
-// Caching System
+// Caching System (LRU-based for memory safety)
 // ============================================================================
 
-const classNameCache = new Map();
-const cssCache = new Map();
+const MAX_CACHE_SIZE = 2000;
+const MAX_STYLE_REGISTRY_SIZE = 3000;
+
+const classNameCache = new LRUCache(MAX_CACHE_SIZE);
+const cssCache = new LRUCache(MAX_CACHE_SIZE);
 const objectIdentityCache = new WeakMap();
-const styleRegistry = new Map();
+const styleRegistry = new LRUCache(MAX_STYLE_REGISTRY_SIZE);
 const extendedConfigCache = new WeakMap();
 
-const MAX_CACHE_SIZE = 2000;
+// Initialize DevTools and register caches
+if (IS_BROWSER) {
+  initDevTools({
+    classNameCache,
+    cssCache,
+    styleRegistry,
+  });
+}
 
 // ============================================================================
 // Hashing Utilities
@@ -410,6 +422,10 @@ function getConfigHash(config) {
 }
 
 function evictCache(cache, maxSize = MAX_CACHE_SIZE) {
+  // LRUCache handles its own eviction automatically - this is a no-op for backward compatibility
+  if (cache instanceof LRUCache) return;
+  
+  // Fallback for non-LRU caches (WeakMap, etc.)
   if (cache.size <= maxSize) return;
   const excess = cache.size - maxSize;
   const iter = cache.keys();
@@ -419,25 +435,22 @@ function evictCache(cache, maxSize = MAX_CACHE_SIZE) {
 }
 
 // ============================================================================
-// CSS Injection System (Optimized)
+// CSS Injection System (Optimized with LRU)
 // ============================================================================
 
 let styleTag = null;
 let pendingCSS = [];
 let rafScheduled = false;
-const MAX_STYLE_REGISTRY_SIZE = 3000;
 
 function injectCSS(className, css) {
-  // Skip if already injected with same CSS
+  // Check if already injected with same CSS (LRU will handle eviction)
   if (styleRegistry.has(className)) {
     const existing = styleRegistry.get(className);
     if (existing === css) return;
   }
 
+  // LRUCache automatically handles eviction when full
   styleRegistry.set(className, css);
-  
-  // Evict old styles if registry too large
-  evictStyleRegistry();
 
   if (IS_BROWSER) {
     // Batch CSS injection with requestAnimationFrame
@@ -480,26 +493,21 @@ function ensureStyleTag() {
   return styleTag;
 }
 
-function evictStyleRegistry() {
-  if (styleRegistry.size <= MAX_STYLE_REGISTRY_SIZE) return;
-  
-  // Remove oldest 20% entries
-  const removeCount = Math.floor(MAX_STYLE_REGISTRY_SIZE * 0.2);
-  const iter = styleRegistry.keys();
-  for (let i = 0; i < removeCount; i++) {
-    styleRegistry.delete(iter.next().value);
-  }
-  
-  // Rebuild style tag after eviction (rare operation)
-  if (IS_BROWSER) {
-    rebuildStyleTag();
-  }
-}
-
+/**
+ * Rebuild style tag from current registry
+ * Called when LRU cache evicts entries or on demand
+ */
 function rebuildStyleTag() {
   if (!IS_BROWSER) return;
   ensureStyleTag();
-  styleTag.textContent = [...styleRegistry.values()].join("\n");
+  
+  // Get all values from LRU cache
+  const allCSS = [];
+  styleRegistry.cache.forEach((value) => {
+    allCSS.push(value);
+  });
+  
+  styleTag.textContent = allCSS.join("\n");
 }
 
 // ============================================================================
@@ -626,6 +634,40 @@ function processNestedStyles(config, baseSelector) {
 // Animation Processing
 // ============================================================================
 
+/**
+ * Convert Tailwind class string to CSS properties
+ * @private
+ */
+function tailwindClassToCSS(classString) {
+  // This is a simplified converter - in production, use twsx
+  const rules = [];
+  const classes = classString.split(' ');
+  
+  for (const cls of classes) {
+    // Basic conversions (extend as needed)
+    if (cls.startsWith('opacity-')) {
+      const value = cls.replace('opacity-', '');
+      rules.push(`opacity: ${parseInt(value) / 100}`);
+    } else if (cls.startsWith('scale-')) {
+      const value = cls.replace('scale-', '');
+      rules.push(`transform: scale(${parseInt(value) / 100})`);
+    } else if (cls.startsWith('rotate-')) {
+      const value = cls.replace('rotate-', '');
+      rules.push(`transform: rotate(${value}deg)`);
+    } else if (cls.startsWith('translate-')) {
+      // Parse translate classes
+      const match = cls.match(/translate-([xy])-(-?\d+)/);
+      if (match) {
+        const axis = match[1];
+        const value = match[2];
+        rules.push(`transform: translate${axis.toUpperCase()}(${parseInt(value) * 0.25}rem)`);
+      }
+    }
+  }
+  
+  return rules.join('; ');
+}
+
 function processAnimations(config, baseSelector, className) {
   const result = {};
   let keyframesCSS = "";
@@ -642,7 +684,7 @@ function processAnimations(config, baseSelector, className) {
     result[baseSelector] = (result[baseSelector] || "") + ` animate-[${animationValue}]`;
   }
   
-  // Custom animation object
+  // Custom animation object with enhanced CSS support
   else if (animation && typeof animation === "object") {
     const keyframeName = `${className}-custom`;
     
@@ -675,16 +717,31 @@ function processAnimations(config, baseSelector, className) {
   return { styles: result, keyframes: keyframesCSS };
 }
 
+/**
+ * Generate keyframes CSS with support for both Tailwind classes and raw CSS objects
+ * @private
+ */
 function generateKeyframes(name, frames) {
   let css = `@keyframes ${name} {\n`;
   
   for (const [key, value] of Object.entries(frames)) {
-    // Convert Tailwind classes to approximate CSS (simplified)
-    const cssValue = value.replace(/([a-z]+)-([a-z0-9-]+)/g, (match, prop, val) => {
-      // This is a simplified conversion - real implementation would use twsx
-      return match;
-    });
-    css += `  ${key} { ${cssValue} }\n`;
+    css += `  ${key} {\n`;
+    
+    // Check if value is CSS object or Tailwind class string
+    if (typeof value === 'object' && !Array.isArray(value)) {
+      // Raw CSS object (new feature!)
+      for (const [prop, val] of Object.entries(value)) {
+        css += `    ${prop}: ${val};\n`;
+      }
+    } else if (typeof value === 'string') {
+      // Tailwind class string (legacy support)
+      const cssProps = tailwindClassToCSS(value);
+      if (cssProps) {
+        css += `    ${cssProps};\n`;
+      }
+    }
+    
+    css += "  }\n";
   }
   
   css += "}\n";

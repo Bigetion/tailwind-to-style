@@ -123,6 +123,9 @@ export const tokenRegistry = {
  * @param {Object} [options] - Options
  * @param {string} [options.name] - Theme name for reference
  * @param {string} [options.selector] - CSS selector to scope theme (default: ":root")
+ * @param {boolean} [options.persist] - Whether to persist theme to localStorage (default: false)
+ * @param {string} [options.storageKey] - localStorage key (default: "tws-theme")
+ * @param {number} [options.ttl] - Time to live in milliseconds (default: 7 days)
  * @returns {Object} Theme object with name and token values
  *
  * @example
@@ -132,15 +135,44 @@ export const tokenRegistry = {
  *   radius: { sm: '0.25rem', md: '0.5rem' },
  * });
  * // Injects: --tws-colors-primary: #3b82f6; --tws-colors-secondary: #8b5cf6; ...
+ * 
+ * @example
+ * // With persistence
+ * createTheme({
+ *   colors: { primary: '#3b82f6' }
+ * }, { name: 'blue-theme', persist: true });
+ * // Theme persists across page refreshes
  */
 export function createTheme(tokens, options = {}) {
-  const { name = 'default', selector = ':root' } = options;
+  const { 
+    name = 'default', 
+    selector = ':root',
+    persist = false,
+    storageKey = 'tws-theme',
+    ttl = 7 * 24 * 60 * 60 * 1000 // 7 days default
+  } = options;
   const registry = getRegistry();
 
   // Merge tokens into registry
   deepMerge(registry.tokens, tokens);
   registry.activeTheme = name;
   registry.themes[name] = { tokens: { ...tokens }, selector };
+
+  // Persist to localStorage if enabled
+  if (persist && typeof localStorage !== 'undefined') {
+    try {
+      const themeData = {
+        name,
+        tokens,
+        selector,
+        timestamp: Date.now(),
+        ttl,
+      };
+      localStorage.setItem(storageKey, JSON.stringify(themeData));
+    } catch (error) {
+      console.warn('[tailwind-to-style/tokens] Failed to persist theme:', error);
+    }
+  }
 
   notifySubscribers();
   injectTokenCSS(selector);
@@ -152,6 +184,16 @@ export function createTheme(tokens, options = {}) {
     /** Get a CSS variable reference for use in styles */
     var(path) {
       return `var(--tws-${path.replace(/\./g, '-')})`;
+    },
+    /** Clear persisted theme from localStorage */
+    clear() {
+      if (typeof localStorage !== 'undefined') {
+        try {
+          localStorage.removeItem(storageKey);
+        } catch (error) {
+          console.warn('[tailwind-to-style/tokens] Failed to clear theme:', error);
+        }
+      }
     },
   };
 }
@@ -182,6 +224,111 @@ export function activateTheme(name) {
 export function token(path, fallback) {
   const varName = `--tws-${path.replace(/\./g, '-')}`;
   return fallback ? `var(${varName}, ${fallback})` : `var(${varName})`;
+}
+
+/**
+ * Restore a persisted theme from localStorage.
+ * Call this on app initialization to restore user's theme preference.
+ *
+ * @param {Object} [options] - Options
+ * @param {string} [options.storageKey] - localStorage key (default: "tws-theme")
+ * @param {boolean} [options.autoApply] - Automatically apply the restored theme (default: true)
+ * @returns {Object|null} Restored theme object or null if not found/expired
+ *
+ * @example
+ * // On app init
+ * import { restoreTheme } from 'tailwind-to-style/tokens';
+ * 
+ * const theme = restoreTheme();
+ * if (theme) {
+ *   console.log('Restored theme:', theme.name);
+ * } else {
+ *   // Apply default theme
+ *   createTheme(defaultTokens, { persist: true });
+ * }
+ */
+export function restoreTheme(options = {}) {
+  const { storageKey = 'tws-theme', autoApply = true } = options;
+
+  if (typeof localStorage === 'undefined') {
+    return null;
+  }
+
+  try {
+    const stored = localStorage.getItem(storageKey);
+    if (!stored) {
+      return null;
+    }
+
+    const themeData = JSON.parse(stored);
+    const { name, tokens, selector, timestamp, ttl } = themeData;
+
+    // Check if theme is expired
+    if (ttl && Date.now() - timestamp > ttl) {
+      localStorage.removeItem(storageKey);
+      return null;
+    }
+
+    // Auto-apply if enabled
+    if (autoApply && tokens) {
+      createTheme(tokens, { name, selector, persist: false }); // Don't re-persist
+    }
+
+    return {
+      name,
+      tokens,
+      selector,
+      age: Date.now() - timestamp,
+    };
+  } catch (error) {
+    console.warn('[tailwind-to-style/tokens] Failed to restore theme:', error);
+    // Clear corrupted data
+    try {
+      localStorage.removeItem(storageKey);
+    } catch (e) {
+      // Ignore
+    }
+    return null;
+  }
+}
+
+/**
+ * Clear persisted theme from localStorage.
+ *
+ * @param {string} [storageKey] - localStorage key (default: "tws-theme")
+ * @returns {boolean} True if cleared successfully
+ */
+export function clearPersistedTheme(storageKey = 'tws-theme') {
+  if (typeof localStorage === 'undefined') {
+    return false;
+  }
+
+  try {
+    localStorage.removeItem(storageKey);
+    return true;
+  } catch (error) {
+    console.warn('[tailwind-to-style/tokens] Failed to clear theme:', error);
+    return false;
+  }
+}
+
+/**
+ * Check if a persisted theme exists in localStorage.
+ *
+ * @param {string} [storageKey] - localStorage key (default: "tws-theme")
+ * @returns {boolean} True if theme exists
+ */
+export function hasPersistedTheme(storageKey = 'tws-theme') {
+  if (typeof localStorage === 'undefined') {
+    return false;
+  }
+
+  try {
+    const stored = localStorage.getItem(storageKey);
+    return stored !== null;
+  } catch (error) {
+    return false;
+  }
 }
 
 // ============================================================================

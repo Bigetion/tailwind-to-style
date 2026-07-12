@@ -19,6 +19,7 @@ import {
   FRACTION_DENOMINATORS,
   FRACTION_PREFIXES,
 } from "../core/constants.js";
+import { compileClassesSync, compileClassesProgressive, shouldUseProgressive } from "./progressiveCompiler.js";
 
 /**
  * Convert Tailwind class string to inline CSS styles or JSON object
@@ -32,7 +33,10 @@ import {
  * 
  * @param {string} classNames - String containing Tailwind classes to convert
  * @param {boolean} convertToJson - If true, returns JSON object; if false, returns CSS string
- * @returns {string|Object} Inline CSS string or style JSON object
+ * @param {Object} options - Additional options
+ * @param {boolean} options.progressive - Enable progressive compilation for large class lists (default: auto)
+ * @param {number} options.chunkSize - Number of classes per chunk (default: 50)
+ * @returns {string|Object|Promise<string|Object>} Inline CSS string, style JSON object, or Promise for progressive mode
  * 
  * @example
  * // CSS string output
@@ -45,6 +49,10 @@ import {
  * // Returns: { display: 'flex', alignItems: 'center', gap: '1rem' }
  * 
  * @example
+ * // Progressive compilation for large lists
+ * await tws('class1 class2 ... class100', false, { progressive: true })
+ * 
+ * @example
  * // Opacity modifiers
  * tws('text-red-500/50')
  * // Returns: 'color: rgba(239, 68, 68, 0.5);'
@@ -54,7 +62,7 @@ import {
  * tws('w-[123px] text-[#abc]')
  * // Returns: 'width: 123px; color: #abc;'
  */
-export function tws(classNames, convertToJson = false) {
+export function tws(classNames, convertToJson = false, options = {}) {
   const totalMarker = performanceMonitor.start("tws:total");
 
   try {
@@ -96,91 +104,23 @@ export function tws(classNames, convertToJson = false) {
       return convertToJson ? {} : "";
     }
 
-    // Process classes with performance monitoring
-    const processMarker = performanceMonitor.start("tws:process");
-    let cssResult = classes.map((className) => {
-      // Extract base class name without opacity modifier
-      // Only remove /digits if it's an opacity modifier (not a fraction like w-2/3)
-      // Opacity modifiers are typically /0-100, fractions are /2, /3, /4, /5, /6, /12
-      const opacityMatch = OPACITY_MODIFIER_REGEX.exec(className);
-      let baseClassName = className;
-      let hasOpacityModifier = false;
+    // Progressive compilation for large class lists (auto-enabled for 50+ classes)
+    const {
+      progressive,
+      chunkSize = 50
+    } = options;
 
-      if (opacityMatch) {
-        const opacityValue = parseInt(opacityMatch[1], 10);
-        // If it's a valid opacity value (0-100), treat it as opacity modifier
-        if (opacityValue >= 0 && opacityValue <= 100) {
-          // Check if this could be a fraction (e.g., w-2/3, h-1/2)
-          // Fractions typically have denominators of 2, 3, 4, 5, 6, 12
-          const couldBeFraction =
-            FRACTION_DENOMINATORS.includes(opacityValue) &&
-            FRACTION_PREFIXES.some(
-              (prefix) =>
-                className.startsWith(prefix) ||
-                className.startsWith(`-${prefix}`)
-            );
-          if (!couldBeFraction) {
-            baseClassName = className.replace(/\/\d+$/, "");
-            hasOpacityModifier = true;
-          }
-        }
-      }
+    const useProgressive = shouldUseProgressive(classes.length, progressive);
 
-      let result =
-        cssObject[baseClassName] ||
-        cssObject[baseClassName.replace(/\//g, "\\/")] ||
-        cssObject[baseClassName.replace(/\./g, "\\.")];
-
-      if (result) {
-        // Apply opacity modifier if present
-        if (
-          hasOpacityModifier &&
-          className.includes("/") &&
-          /\/\d+$/.test(className)
-        ) {
-          result = processOpacityModifier(className, result);
-        }
-        return resolveCssToClearCss(result);
-      } else if (baseClassName.includes("[")) {
-        const match = CUSTOM_VALUE_BRACKET_REGEX.exec(baseClassName);
-        if (match) {
-          const customValue = match[1];
-          const baseKey = baseClassName.split("[")[0];
-          if (cssObject[`${baseKey}custom`]) {
-            let customResult = cssObject[`${baseKey}custom`].replace(
-              /custom_value/g,
-              customValue
-            );
-            // Apply opacity modifier to custom values too
-            if (
-              hasOpacityModifier &&
-              className.includes("/") &&
-              /\/\d+$/.test(className)
-            ) {
-              customResult = processOpacityModifier(className, customResult);
-            }
-            return customResult;
-          }
-        }
-      }
-      return "";
-    });
-    performanceMonitor.end(processMarker);
-
-    // Resolve CSS
-    cssResult = performanceMonitor.measure(
-      () => separateAndResolveCSS(cssResult),
-      "tws:resolve"
-    );
-
-    // Convert to JSON if needed
-    if (convertToJson) {
-      cssResult = performanceMonitor.measure(
-        () => inlineStyleToJson(cssResult),
-        "tws:json"
-      );
+    if (useProgressive) {
+      performanceMonitor.end(totalMarker);
+      return compileClassesProgressive(classes, cssObject, convertToJson, chunkSize);
     }
 
+    // Synchronous compilation for small lists
+    const processMarker = performanceMonitor.start("tws:process");
+    const cssResult = compileClassesSync(classes, cssObject, convertToJson);
+    performanceMonitor.end(processMarker);
     performanceMonitor.end(totalMarker);
     return cssResult;
   } catch (error) {

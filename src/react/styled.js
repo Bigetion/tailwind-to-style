@@ -8,6 +8,36 @@ import React from 'react';
 import { twsxClassName } from '../className/index.js';
 import { cx } from '../cx.js';
 
+// Check if useSyncExternalStore is available (React 18+)
+const useSyncExternalStore = React.useSyncExternalStore || null;
+
+/**
+ * Create a variant subscription system for concurrent-safe rendering
+ * @private
+ */
+function createVariantStore(variantSelector) {
+  const subscribers = new Set();
+  let currentProps = {};
+
+  return {
+    subscribe(callback) {
+      subscribers.add(callback);
+      return () => subscribers.delete(callback);
+    },
+    getSnapshot(props) {
+      // Cache the result based on props
+      const propsKey = JSON.stringify(props);
+      if (JSON.stringify(currentProps) !== propsKey) {
+        currentProps = props;
+      }
+      return variantSelector(props);
+    },
+    notify() {
+      subscribers.forEach(fn => fn());
+    }
+  };
+}
+
 /**
  * Create a styled React component with Tailwind classes and variant support.
  *
@@ -77,6 +107,9 @@ export function styled(element, config = {}) {
     });
   }
 
+  // Create variant store for concurrent-safe rendering
+  const variantStore = createVariantStore(variantSelector);
+
   // Create the component with forwardRef
   const StyledComponent = React.forwardRef(function StyledComponent(props, ref) {
     const { className, children, ...rest } = props;
@@ -93,14 +126,30 @@ export function styled(element, config = {}) {
       }
     }
 
-    // Generate class names
+    // Generate class names with concurrent-safe approach
     let generatedClassName;
-    if (slots) {
-      // For slot-based components, use root slot
-      const slotClasses = variantSelector(variantProps);
-      generatedClassName = slotClasses.root || Object.values(slotClasses)[0] || '';
+    
+    if (useSyncExternalStore) {
+      // React 18+ concurrent mode support
+      generatedClassName = useSyncExternalStore(
+        variantStore.subscribe,
+        () => variantStore.getSnapshot(variantProps),
+        () => variantStore.getSnapshot(variantProps) // Server snapshot
+      );
     } else {
-      generatedClassName = variantSelector(variantProps);
+      // Fallback for React 17 and below
+      generatedClassName = React.useMemo(() => {
+        if (slots) {
+          const slotClasses = variantSelector(variantProps);
+          return slotClasses.root || Object.values(slotClasses)[0] || '';
+        }
+        return variantSelector(variantProps);
+      }, [JSON.stringify(variantProps)]);
+    }
+
+    // Handle slots
+    if (slots && typeof generatedClassName === 'object') {
+      generatedClassName = generatedClassName.root || Object.values(generatedClassName)[0] || '';
     }
 
     const finalClassName = cx(generatedClassName, className);
