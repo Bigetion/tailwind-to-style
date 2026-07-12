@@ -68,4 +68,35 @@ export class LRUCache {
   delete(key) {
     return this.cache.delete(key);
   }
+
+  /**
+   * Get all values from cache
+   * Returns an iterator of values for compatibility with Map API
+   */
+  values() {
+    return this.cache.values();
+  }
+
+  /**
+   * Get all keys from cache
+   * Returns an iterator of keys for compatibility with Map API
+   */
+  keys() {
+    return this.cache.keys();
+  }
+
+  /**
+   * Get all entries from cache
+   * Returns an iterator of [key, value] pairs for compatibility with Map API
+   */
+  entries() {
+    return this.cache.entries();
+  }
+
+  /**
+   * Iterate over all values (for...of support)
+   */
+  [Symbol.iterator]() {
+    return this.cache[Symbol.iterator]();
+  }
 }

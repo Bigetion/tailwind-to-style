@@ -3248,9 +3248,8 @@ export {
 // ============================================================================
 // SSR Exports
 // ============================================================================
-// Modern SSR API (recommended)
-export { createSSRCollector } from "./utils/ssr.js";
-// Legacy SSR functions are exported via function declarations above for backward compatibility
+// Modern SSR API (createSSRCollector) is exported via function declaration above
+// Legacy SSR functions (startSSR, stopSSR, getSSRStyles) are also exported above for backward compatibility
 
 // Export environment detection
 export { IS_BROWSER, IS_SERVER };
