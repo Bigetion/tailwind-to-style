@@ -9,6 +9,7 @@
 
 import { twsx } from "../index.js";
 import { cx } from "../cx.js";
+import { isSSRCollecting, collectSSRCSS } from "../utils/ssr.js";
 
 // ============================================================================
 // Custom Error Class
@@ -443,6 +444,11 @@ function injectCSS(className, css) {
     // Batch CSS injection with requestAnimationFrame
     pendingCSS.push(css);
     scheduleStyleUpdate();
+  } else if (isSSRCollecting()) {
+    // Server-side rendering: forward to the shared SSR collector. Previously
+    // this branch didn't exist, so tw()/styled() produced no usable CSS
+    // output at all during SSR (only the browser path injected anything).
+    collectSSRCSS(css);
   }
 }
 

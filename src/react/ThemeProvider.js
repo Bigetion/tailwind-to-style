@@ -45,10 +45,19 @@ export function ThemeProvider(props) {
   const { theme: themeProp, name = 'default', children } = props;
   const [tokens, setTokens] = React.useState(themeProp);
 
-  // Inject theme on mount and when theme changes
+  // Re-inject only when the theme's *content* actually changes, not merely
+  // its object identity. `useEffect([themeProp])` alone would re-run (and
+  // re-inject CSS) on every render for callers who pass an inline object
+  // literal (e.g. <ThemeProvider theme={{ colors: {...} }}>), which is the
+  // common/natural way to use this component.
+  const themeSignature = JSON.stringify(themeProp);
+
   React.useEffect(() => {
     createTheme(themeProp, { name });
-  }, [themeProp, name]);
+    // themeSignature is the real dependency here; themeProp is read fresh
+    // from the closure so the injected theme always reflects the latest object.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [themeSignature, name]);
 
   // Subscribe to token changes
   React.useEffect(() => {

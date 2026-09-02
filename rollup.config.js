@@ -43,6 +43,12 @@ const createPlugins = (opts = {}) => [
   ...(opts.copyPlugin ? [copy({ targets: opts.copyPlugin })] : []),
 ];
 
+// node:async_hooks is dynamically imported (guarded, Node-only) by
+// src/utils/ssr.js to isolate concurrent SSR requests. It must stay external
+// so bundlers never try to resolve/inline this Node builtin into browser/CDN
+// output; the guard means the import is simply never reached in browsers.
+const NODE_EXTERNAL = ['node:async_hooks'];
+
 // Sub-path entry points for tree-shakeable imports
 const subPathEntries = [
   { input: 'src/react/index.js', name: 'react/index' },
@@ -56,7 +62,7 @@ const subPathEntries = [
 // Generate sub-path builds (ESM + CJS for each)
 const subPathBuilds = subPathEntries.flatMap(({ input: entryInput, name }) => {
   const isReact = name.startsWith('react');
-  const external = isReact ? ['react', 'react-dom'] : [];
+  const external = isReact ? ['react', 'react-dom', ...NODE_EXTERNAL] : [...NODE_EXTERNAL];
 
   return [
     {
@@ -97,6 +103,7 @@ export default [
       inlineDynamicImports: true,
       sourcemap: true,
     },
+    external: NODE_EXTERNAL,
     plugins: createPlugins({
       copyPlugin: [
         { src: 'types/index.d.ts', dest: 'dist/' },
@@ -119,6 +126,7 @@ export default [
       exports: 'named',
       inlineDynamicImports: true,
     },
+    external: NODE_EXTERNAL,
     plugins: createPlugins(),
   },
 
@@ -134,6 +142,7 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
     },
+    external: NODE_EXTERNAL,
     plugins: createPlugins({ browser: true, terserPlugin: true }),
   },
 
