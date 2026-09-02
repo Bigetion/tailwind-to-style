@@ -56,7 +56,6 @@ export function ThemeProvider(props) {
     createTheme(themeProp, { name });
     // themeSignature is the real dependency here; themeProp is read fresh
     // from the closure so the injected theme always reflects the latest object.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [themeSignature, name]);
 
   // Subscribe to token changes
