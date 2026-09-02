@@ -22,8 +22,51 @@ let _globalCollectedCSS = [];
 let _globalIsCollecting = false;
 let _globalSeenCSS = new Set();
 
-// Active collector instance (for internal use by twsx)
+// Fallback "active collector" used when AsyncLocalStorage isn't available
+// (browsers, edge runtimes without async_hooks) or before it has finished
+// loading. Safe for the common single-request-at-a-time case, but multiple
+// concurrent requests on the same Node process can interleave and see each
+// other's CSS — use `collector.run(fn)` below to avoid that.
 let _activeCollector = null;
+
+// ============================================================================
+// Async-context isolation (Node only)
+// ============================================================================
+// AsyncLocalStorage lets each concurrent request keep its own "active
+// collector" even though CSS is collected deep inside tw()/twsx() calls that
+// have no direct reference to the collector. It only exists in Node, and
+// this module is also bundled for browsers (via styled()/index.js), so the
+// Node builtin must never be statically imported — that would break the
+// browser/CDN build. It's loaded lazily via a dynamic import instead, and
+// every call site below falls back gracefully when it isn't available.
+const IS_NODE =
+  typeof process !== "undefined" &&
+  !!process.versions &&
+  !!process.versions.node;
+
+let _als = null;
+let _alsLoadPromise = null;
+
+function loadAsyncLocalStorage() {
+  if (!IS_NODE) return Promise.resolve(null);
+  if (!_alsLoadPromise) {
+    const specifier = "node:async_hooks";
+    _alsLoadPromise = import(/* @vite-ignore */ specifier)
+      .then((mod) => new mod.AsyncLocalStorage())
+      .catch(() => null);
+  }
+  return _alsLoadPromise;
+}
+
+if (IS_NODE) {
+  // Kick off loading immediately so it's ready before the first request in
+  // the common case. There's an unavoidable brief window right at process
+  // startup where this hasn't resolved yet; the singleton fallback above
+  // covers that window for single-request-at-a-time usage.
+  loadAsyncLocalStorage().then((als) => {
+    _als = als;
+  });
+}
 
 // ============================================================================
 // CSS Utilities
@@ -156,7 +199,9 @@ export function createSSRCollector(options = {}) {
     extractRaw(extractOptions = {}) {
       const { shouldMinify = minify } = extractOptions;
       isCollecting = false;
-      _activeCollector = null;
+      if (_activeCollector === collector) {
+        _activeCollector = null;
+      }
       
       const sorted = sort ? sortBySpecificity([...collectedCSS]) : collectedCSS;
       let css = sorted.join('\n');
@@ -247,7 +292,7 @@ export function createSSRCollector(options = {}) {
       
       if (restart) {
         _activeCollector = collector;
-      } else {
+      } else if (_activeCollector === collector) {
         _activeCollector = null;
       }
       
@@ -255,6 +300,35 @@ export function createSSRCollector(options = {}) {
       _globalCollectedCSS = [];
       _globalSeenCSS = new Set();
       _globalIsCollecting = restart;
+    },
+
+    /**
+     * Run a function with this collector active for the duration of the call
+     * (including CSS collected after `await`s inside `fn`, e.g. streaming or
+     * async SSR). On Node, this uses AsyncLocalStorage so concurrent requests
+     * each see their own collector instead of sharing/overwriting one global.
+     *
+     * @param {Function} fn - Function to run (e.g. () => renderToString(<App />))
+     * @returns {*} Whatever `fn` returns
+     *
+     * @example
+     * const ssr = createSSRCollector()
+     * const html = ssr.run(() => renderToString(<App />))
+     * const css = ssr.extract()
+     */
+    run(fn) {
+      if (_als) {
+        return _als.run(collector, fn);
+      }
+      // Fallback: no true cross-request isolation, but still correct for the
+      // common case of handling one request at a time.
+      const previous = _activeCollector;
+      _activeCollector = collector;
+      try {
+        return fn();
+      } finally {
+        _activeCollector = previous;
+      }
     },
 
     /**
@@ -307,7 +381,8 @@ export function createSSRCollector(options = {}) {
  * @internal
  */
 export function isSSRCollecting() {
-  return _globalIsCollecting;
+  const active = getActiveCollector();
+  return !!(active && active.isCollecting) || _globalIsCollecting;
 }
 
 /**
@@ -316,10 +391,12 @@ export function isSSRCollecting() {
  */
 export function collectSSRCSS(css) {
   if (!css) return;
-  
-  // Use active collector if available (modern API)
-  if (_activeCollector && _activeCollector.isCollecting) {
-    _activeCollector._collect(css);
+
+  // Use active collector if available (modern API) — prefers the
+  // AsyncLocalStorage-scoped collector for the current request when present.
+  const active = getActiveCollector();
+  if (active && active.isCollecting) {
+    active._collect(css);
     return;
   }
   
@@ -355,9 +432,16 @@ export function clearSSRState() {
 
 /**
  * Get active collector (for advanced usage)
+ * Prefers the AsyncLocalStorage-scoped collector for the current async
+ * context (set via `collector.run(fn)`) and falls back to the shared
+ * singleton otherwise.
  * @internal
  */
 export function getActiveCollector() {
+  if (_als) {
+    const store = _als.getStore();
+    if (store) return store;
+  }
   return _activeCollector;
 }
 
