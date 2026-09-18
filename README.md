@@ -3,8 +3,11 @@
 [![npm version](https://img.shields.io/npm/v/tailwind-to-style.svg)](https://www.npmjs.com/package/tailwind-to-style)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/tailwind-to-style)](https://bundlephobia.com/package/tailwind-to-style)
 [![license](https://img.shields.io/npm/l/tailwind-to-style.svg)](https://github.com/Bigetion/tailwind-to-style/blob/main/LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](./TYPESCRIPT.md)
 
 **Zero-build runtime Tailwind CSS engine.** Convert utility classes to real CSS — with variants, slots, design tokens, and React bindings. No build step, no PostCSS, no config file. Just works.
+
+**[📘 TypeScript Guide](./TYPESCRIPT.md)** • **[📊 Bundle Analysis](./BUNDLE_SIZE_REPORT.md)** • **[🎯 Examples](./examples/)**
 
 ---
 

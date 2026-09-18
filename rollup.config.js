@@ -4,6 +4,7 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import { babel } from '@rollup/plugin-babel';
 import copy from 'rollup-plugin-copy';
+import { visualizer } from 'rollup-plugin-visualizer';
 import { createRequire } from 'module';
 
 const require = createRequire(import.meta.url);
@@ -41,6 +42,12 @@ const createPlugins = (opts = {}) => [
   babel(babelConfig),
   ...(opts.terserPlugin ? [terser({ output: { comments: false } })] : []),
   ...(opts.copyPlugin ? [copy({ targets: opts.copyPlugin })] : []),
+  ...(opts.visualizer ? [visualizer({
+    filename: opts.visualizer.filename || 'bundle-stats.html',
+    gzipSize: true,
+    brotliSize: true,
+    template: 'treemap', // sunburst, treemap, network
+  })] : []),
 ];
 
 // node:async_hooks is dynamically imported (guarded, Node-only) by
@@ -111,8 +118,10 @@ export default [
         { src: 'types/tokens', dest: 'dist/' },
         { src: 'types/react', dest: 'dist/' },
         { src: 'types/animations', dest: 'dist/' },
+        { src: 'types/className', dest: 'dist/' },
         { src: 'types/cx.d.ts', dest: 'dist/' },
       ],
+      visualizer: process.env.ANALYZE ? { filename: 'stats/main-esm.html' } : false,
     }),
   },
 
@@ -143,7 +152,11 @@ export default [
       inlineDynamicImports: true,
     },
     external: NODE_EXTERNAL,
-    plugins: createPlugins({ browser: true, terserPlugin: true }),
+    plugins: createPlugins({ 
+      browser: true, 
+      terserPlugin: true,
+      visualizer: process.env.ANALYZE ? { filename: 'stats/umd-minified.html' } : false,
+    }),
   },
 
   // Sub-path builds

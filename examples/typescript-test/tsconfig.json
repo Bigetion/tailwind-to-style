@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": false,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "tailwind-to-style": ["../../dist/index.d.ts"],
+      "tailwind-to-style/*": ["../../dist/*"]
+    }
+  },
+  "include": ["*.ts", "*.tsx"],
+  "exclude": ["node_modules"]
+}

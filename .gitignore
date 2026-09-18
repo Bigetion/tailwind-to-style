@@ -13,6 +13,11 @@ yarn.lock
 examples/react-demo/dist/
 examples/twsx-classname-app/dist/
 
+# Bundle Analysis
+/stats
+bundle-stats.html
+*.stats.html
+
 # UI Library
 ui-library/dist/
 ui-library/node_modules/

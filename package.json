@@ -71,13 +71,17 @@
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
     "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
     "test:examples": "node examples/test/node-test.js",
-    "prepublishOnly": "npm run lint && npm run test && npm run build",
+    "analyze": "rollup -c rollup.config.js --environment ANALYZE",
+    "analyze:serve": "npm run analyze && npx serve stats -p 8080",
+    "size": "npm run build && node scripts/analyze-size.js",
+    "validate:types": "node scripts/validate-types.js",
+    "validate": "npm run lint && npm run validate:types && npm run test",
+    "prepublishOnly": "npm run validate && npm run build && npm run size",
     "version": "git add -A",
     "postversion": "git push && git push --tags",
     "prettify": "prettier --write \"src/**/*.js\" \"examples/**/*.js\" \"tests/**/*.js\"",
     "prettify:src": "prettier --write \"src/**/*.js\"",
-    "prettify:examples": "prettier --write \"examples/**/*.js\"",
-    "analyze": "rollup -c rollup.config.js --environment ANALYZE"
+    "prettify:examples": "prettier --write \"examples/**/*.js\""
   },
   "repository": {
     "type": "git",
@@ -144,6 +148,7 @@
     "react-dom": "^18.3.1",
     "rollup": "^4.27.4",
     "rollup-plugin-copy": "^3.5.0",
+    "rollup-plugin-visualizer": "^7.1.1",
     "terser": "^5.43.1",
     "webpack": "^5.99.9",
     "webpack-cli": "^6.0.1"
