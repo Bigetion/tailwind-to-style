@@ -1,11 +1,14 @@
 /**
- * TWSX Core - CSS Generator with SCSS-like Nesting
+ * Core TWSX Re-export
  * 
- * Re-exports twsx and related functions from the main module.
- * This file serves as the entry point for tree-shakeable imports:
- * import { twsx } from 'tailwind-to-style/twsx'
+ * This module breaks the circular dependency between:
+ * - src/index.js (exports twsx)
+ * - src/className/index.js (imports twsx, exported by index.js)
+ * 
+ * By re-exporting twsx from index.js here, className can import
+ * from this intermediate module instead of directly from index.js.
  * 
  * @module core/twsx
  */
 
-export { twsx, debouncedTwsx } from '../index.js';
+export { twsx } from "../index.js";

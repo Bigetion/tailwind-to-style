@@ -3091,5 +3091,7 @@ export {
 // ============================================================================
 // twsxClassName - Unified CSS-in-JS API with variants and slots
 // tw - Atomic CSS class generator with pseudo-class support
-export { twsxClassName, tw } from "./className/index.js";
+// REMOVED: Re-export removed to break circular dependency
+// Import directly from './className/index.js' if needed
+// export { twsxClassName, tw } from "./className/index.js";
 
