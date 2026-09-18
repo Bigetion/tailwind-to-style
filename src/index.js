@@ -9,13 +9,31 @@ import {
   createSSRCollector,
 } from "./utils/ssr.js";
 
+// Import extracted shared modules (Phase 1-4 refactoring)
+import {
+  IS_BROWSER,
+  IS_SERVER,
+  BUILTIN_KEYFRAMES,
+  UPPERCASE_LETTER_REGEX,
+  ANIMATION_NAME_REGEX,
+  OPACITY_MODIFIER_REGEX,
+  CLASS_PARSER_REGEX,
+  CSS_SEMICOLON_SPLIT_REGEX,
+  CSS_VAR_REGEX,
+} from "./shared/constants.js";
+import { getCssHash } from "./shared/hash.js";
+import { evictSet, cssBlockRegistry as _cssBlockRegistry, injectedCssHashSet } from "./shared/cache.js";
+import { generateMinifiedKeyframes } from "./generator/keyframes.js";
+import { processOpacityModifier } from "./generator/opacity.js";
+import { resolveCssToClearCss, inlineStyleToJson } from "./generator/css-string.js";
+import { autoInjectCss, rebuildStyleTag } from "./injector/dom.js";
+import { encodeBracketValues, decodeBracketValues } from "./parser/bracket.js";
+import { parseVariantString } from "./parser/variants.js";
+
 // ============================================================================
 // SSR (Server-Side Rendering) Support
 // Detect environment once at module load for zero-cost runtime checks
 // ============================================================================
-const IS_BROWSER =
-  typeof window !== "undefined" && typeof document !== "undefined";
-const IS_SERVER = !IS_BROWSER;
 
 // The legacy startSSR()/stopSSR()/getSSRStyles() pair and the modern
 // createSSRCollector() now share a single implementation in `./utils/ssr.js`.
@@ -55,73 +73,10 @@ function evictMap(map, maxSize = MAX_CACHE_SIZE) {
   }
 }
 
-/** @deprecated Use LRUCache instead - kept for backward compatibility */
-function evictSet(set, maxSize = MAX_SET_SIZE) {
-  if (set instanceof LRUCache) return; // LRUCache handles its own eviction
-  if (set.size <= maxSize) return;
-  const excess = set.size - maxSize;
-  const iter = set.values();
-  for (let i = 0; i < excess; i++) {
-    set.delete(iter.next().value);
-  }
-}
+// NOTE: evictSet now imported from ./shared/cache.js
 
-// Mapping of animation names to their keyframe definitions
-const BUILTIN_KEYFRAMES = {
-  spin: {
-    "0%": { transform: "rotate(0deg)" },
-    "100%": { transform: "rotate(360deg)" },
-  },
-  ping: {
-    "75%, 100%": { transform: "scale(2)", opacity: "0" },
-  },
-  pulse: {
-    "50%": { opacity: ".5" },
-  },
-  bounce: {
-    "0%, 100%": {
-      transform: "translateY(-25%)",
-      animationTimingFunction: "cubic-bezier(0.8,0,1,1)",
-    },
-    "50%": {
-      transform: "none",
-      animationTimingFunction: "cubic-bezier(0,0,0.2,1)",
-    },
-  },
-  fadeIn: {
-    "0%": { opacity: "0" },
-    "50%": { opacity: "1" },
-    "100%": { opacity: "0" },
-  },
-  slideUp: {
-    "0%": { transform: "translateY(20px)", opacity: "0" },
-    "50%": { transform: "translateY(0)", opacity: "1" },
-    "100%": { transform: "translateY(-20px)", opacity: "0" },
-  },
-};
-
-// Generate minified keyframes CSS
-function generateMinifiedKeyframes(animationNames) {
-  let css = "";
-  for (const name of animationNames) {
-    const keyframe = BUILTIN_KEYFRAMES[name];
-    if (!keyframe) continue;
-
-    css += `@keyframes ${name}{`;
-    for (const [percentage, styles] of Object.entries(keyframe)) {
-      css += `${percentage}{`;
-      for (const [prop, value] of Object.entries(styles)) {
-        const cssProp = prop
-          .replace(UPPERCASE_LETTER_REGEX, "-$1")
-          .toLowerCase();
-        css += `${cssProp}:${value};`;
-      }
-      css += "}";
-    }
-    css += "}";
-  }
-  return css;
-}
+// NOTE: BUILTIN_KEYFRAMES now imported from ./shared/constants.js
+// NOTE: generateMinifiedKeyframes now imported from ./generator/keyframes.js
 
 import generateAccentColor from "./generators/accentColor.js";
 import generateAccessibility from "./generators/accessibility.js";
@@ -318,10 +273,9 @@ import { handleError } from "./utils/errorHandler.js";
 // ============================================================================
 
 // Class parsing (includes . for decimal values like p-0.5)
-const CLASS_PARSER_REGEX = /[\w.\-\/]+(?:\/\d+)?(?:\[[^\]]+\])?/g;
+// NOTE: Regex constants now imported from ./shared/constants.js
+// Remaining constants that are NOT duplicated in shared/constants.js:
 
-// Opacity modifiers
-const OPACITY_MODIFIER_REGEX = /\/(\d+)$/;
 const OPACITY_PROP_REGEXES = {
   "--text-opacity": /--text-opacity\s*:\s*[\d.]+/gi,
   "--bg-opacity": /--bg-opacity\s*:\s*[\d.]+/gi,
@@ -355,18 +309,13 @@ const WHITESPACE_SPLIT_REGEX = /\s+/;
 const VARIANT_COLON_SPLIT_REGEX = /:/;
 
 // CSS variable resolution — supports nested parens in fallback (e.g. rgba(...))
-const CSS_VAR_REGEX = /var\((--[\w-]+)(?:,\s*((?:[^()]+|\([^()]*\))*))?\)/g;
 const CAMEL_CASE_REGEX = /-([a-z])/g;
-
-// Animation detection
-const ANIMATION_NAME_REGEX = /animation(?:-name)?:\s*([a-zA-Z0-9-]+)/gi;
 
 // Custom class detection
 const CUSTOM_VALUE_BRACKET_REGEX = /\[([^\]]+)\]/;
 const CUSTOM_VALUE_FULL_REGEX = /^(.+?)\[(.+)\]$/;
 
 // String splitting (CSS declarations)
-const CSS_SEMICOLON_SPLIT_REGEX = /;/;
 const CSS_COLON_SPLIT_REGEX = /:/;
 
 // Selector variants
@@ -412,9 +361,6 @@ for (const prop of COLOR_PROPERTIES) {
     hex: new RegExp(`(${escapedProp}\\s*:\\s*)(#[0-9a-fA-F]{3,6})`, "gi"),
   });
 }
-
-// CSS property name conversion
-const UPPERCASE_LETTER_REGEX = /([A-Z])/g;
 
 // Escape characters
 const ESCAPE_SLASH_REGEX = /\//g;
@@ -628,59 +574,7 @@ function parseCustomClassWithPatterns(className) {
  * @param {string} cssString
  * @returns {string} e.g. 'color: rgba(255,255,255,1); background: #fff;'
  */
-function resolveCssToClearCss(cssString) {
-  const customVars = {};
-  const props = {};
-
-  // Split by semicolon and process declarations
-  const declarations = cssString.split(CSS_SEMICOLON_SPLIT_REGEX);
-  for (let i = 0; i < declarations.length; i++) {
-    const decl = declarations[i];
-    if (!decl) continue;
-
-    const colonIndex = decl.indexOf(":");
-    if (colonIndex === -1) continue;
-
-    const key = decl.substring(0, colonIndex).trim();
-    const value = decl.substring(colonIndex + 1).trim();
-
-    if (!key || !value) continue;
-
-    if (key.startsWith("--")) {
-      customVars[key] = value;
-    } else {
-      props[key] = value;
-    }
-  }
-
-  // Replace var(--foo) in all values using pre-compiled regex
-  const propKeys = Object.keys(props);
-  for (let i = 0; i < propKeys.length; i++) {
-    const key = propKeys[i];
-    let val = props[key];
-    if (val.includes("var(")) {
-      CSS_VAR_REGEX.lastIndex = 0;
-      val = val.replace(CSS_VAR_REGEX, (m, varName) =>
-        customVars[varName] !== undefined ? customVars[varName] : m
-      );
-      props[key] = val;
-    }
-  }
-
-  // Build CSS string - INCLUDE CSS variables so they can be resolved later
-  let result = "";
-  const varKeys = Object.keys(customVars);
-  for (let i = 0; i < varKeys.length; i++) {
-    const key = varKeys[i];
-    result += `${key}: ${customVars[key]}; `;
-  }
-  for (let i = 0; i < propKeys.length; i++) {
-    const key = propKeys[i];
-    result += `${key}: ${props[key]}; `;
-  }
-
-  return result.trim();
-}
+// NOTE: resolveCssToClearCss now imported from ./generator/css-string.js
 
 // Cache for getConfigOptions - use LRU cache
 const configOptionsCache = new LRUCache(500);
@@ -839,36 +733,8 @@ const selectorVariants = {
   number: (arg) => `> :nth-child(${arg})`,
 };
 
-// Optimize encoding/decoding bracket values with memoization
-const encodeBracketCache = new LRUCache(1000);
-function encodeBracketValues(input) {
-  if (!input) return input;
-  if (encodeBracketCache.has(input)) return encodeBracketCache.get(input);
-
-  BRACKET_CONTENT_REGEX.lastIndex = 0; // Reset global regex
-  const result = input.replace(BRACKET_CONTENT_REGEX, (_, content) => {
-    const encoded = encodeURIComponent(content)
-      .replace(OPENING_PAREN_REGEX, "__P__")
-      .replace(CLOSING_PAREN_REGEX, "__C__");
-    return `[${encoded}]`;
-  });
-
-  encodeBracketCache.set(input, result);
-  return result;
-}
-
-const decodeBracketCache = new LRUCache(1000);
-function decodeBracketValues(input) {
-  if (!input) return input;
-  if (decodeBracketCache.has(input)) return decodeBracketCache.get(input);
-
-  const result = decodeURIComponent(input)
-    .replace(ENCODED_PAREN_OPEN_REGEX, "(")
-    .replace(ENCODED_PAREN_CLOSE_REGEX, ")");
-
-  decodeBracketCache.set(input, result);
-  return result;
-}
+// NOTE: encodeBracketValues and decodeBracketValues now imported from ./parser/bracket.js
+// NOTE: encodeBracketCache and decodeBracketCache are in ./parser/bracket.js
 
 function replaceSelector(selector) {
   SELECTOR_VARIANT_REGEX.lastIndex = 0; // Reset global regex
@@ -907,60 +773,7 @@ function resolveVariants(selector, variants) {
   return { media, finalSelector };
 }
 
-function inlineStyleToJson(styleString) {
-  const styles = styleString
-    .split(CSS_SEMICOLON_SPLIT_REGEX)
-    .filter((style) => style.trim() !== "");
-  const styleObject = {};
-  const cssVariables = {};
-
-  // First pass: collect CSS variables
-  for (let i = 0; i < styles.length; i++) {
-    const parts = styles[i].split(CSS_COLON_SPLIT_REGEX, 2);
-    if (parts.length !== 2) continue;
-    const key = parts[0].trim();
-    const value = parts[1].trim();
-    if (key && key.startsWith("--")) {
-      cssVariables[key] = value;
-    }
-  }
-
-  // Helper to resolve CSS variables recursively
-  const resolveVariables = (value) => {
-    if (!value || !value.includes("var(")) return value;
-
-    let resolved = value;
-    let maxIterations = 10; // Prevent infinite loops
-
-    while (resolved.includes("var(") && maxIterations-- > 0) {
-      CSS_VAR_REGEX.lastIndex = 0; // Reset global regex
-      resolved = resolved.replace(
-        CSS_VAR_REGEX,
-        (match, variable, fallback) => {
-          return cssVariables[variable] || fallback || match;
-        }
-      );
-    }
-
-    return resolved;
-  };
-
-  // Second pass: create style object with resolved values
-  for (let i = 0; i < styles.length; i++) {
-    const parts = styles[i].split(CSS_COLON_SPLIT_REGEX, 2);
-    if (parts.length !== 2) continue;
-    const key = parts[0].trim();
-    const value = parts[1].trim();
-    if (key && value && !key.startsWith("--")) {
-      const camelCaseKey = key.replace(CAMEL_CASE_REGEX, (_, letter) =>
-        letter.toUpperCase()
-      );
-      styleObject[camelCaseKey] = resolveVariables(value);
-    }
-  }
-
-  return styleObject;
-}
+// NOTE: inlineStyleToJson now imported from ./generator/css-string.js
 
 // Cache for CSS resolution
 const cssResolutionCache = new LRUCache(1000);
@@ -1155,89 +968,7 @@ function separateAndResolveCSS(arr) {
  * @param {string} cssDeclaration - CSS declaration to modify
  * @returns {string} Modified CSS declaration with opacity applied
  */
-function processOpacityModifier(className, cssDeclaration) {
-  const opacityMatch = OPACITY_MODIFIER_REGEX.exec(className);
-  if (!opacityMatch) return cssDeclaration;
-
-  const opacityValue = parseInt(opacityMatch[1], 10);
-  if (opacityValue < 0 || opacityValue > 100) return cssDeclaration;
-
-  const alphaValue = (opacityValue / 100).toString();
-
-  // Handle Tailwind's CSS custom property pattern
-  let modifiedDeclaration = cssDeclaration;
-
-  // Replace opacity custom properties using pre-compiled regexes
-  for (const prop in OPACITY_PROP_REGEXES) {
-    const regex = OPACITY_PROP_REGEXES[prop];
-    regex.lastIndex = 0; // Reset global regex
-    modifiedDeclaration = modifiedDeclaration.replace(
-      regex,
-      `${prop}: ${alphaValue}`
-    );
-  }
-
-  // Also handle direct color values using pre-compiled regex patterns
-  for (const prop of COLOR_PROPERTIES) {
-    const patterns = COLOR_REGEX_PATTERNS.get(prop);
-    if (!patterns) continue;
-
-    // Reset all regex lastIndex for reuse
-    patterns.rgb.lastIndex = 0;
-    patterns.rgba.lastIndex = 0;
-    patterns.hsl.lastIndex = 0;
-    patterns.hsla.lastIndex = 0;
-    patterns.hex.lastIndex = 0;
-
-    // Convert rgb to rgba with opacity
-    modifiedDeclaration = modifiedDeclaration.replace(
-      patterns.rgb,
-      `$1rgba($2, $3, $4, ${alphaValue})`
-    );
-
-    // Update existing rgba opacity
-    modifiedDeclaration = modifiedDeclaration.replace(
-      patterns.rgba,
-      `$1rgba($2, $3, $4, ${alphaValue})`
-    );
-
-    // Convert hsl to hsla with opacity
-    modifiedDeclaration = modifiedDeclaration.replace(
-      patterns.hsl,
-      `$1hsla($2, $3, $4, ${alphaValue})`
-    );
-
-    // Update existing hsla opacity
-    modifiedDeclaration = modifiedDeclaration.replace(
-      patterns.hsla,
-      `$1hsla($2, $3, $4, ${alphaValue})`
-    );
-
-    // Handle hex colors - convert to rgba
-    modifiedDeclaration = modifiedDeclaration.replace(
-      patterns.hex,
-      (match, propPart, hexColor) => {
-        // Convert hex to rgba
-        const hex = hexColor.replace("#", "");
-        let r, g, b;
-
-        if (hex.length === 3) {
-          r = parseInt(hex[0] + hex[0], 16);
-          g = parseInt(hex[1] + hex[1], 16);
-          b = parseInt(hex[2] + hex[2], 16);
-        } else {
-          r = parseInt(hex.substring(0, 2), 16);
-          g = parseInt(hex.substring(2, 4), 16);
-          b = parseInt(hex.substring(4, 6), 16);
-        }
-
-        return `${propPart}rgba(${r}, ${g}, ${b}, ${alphaValue})`;
-      }
-    );
-  }
-
-  return modifiedDeclaration;
-}
+// NOTE: processOpacityModifier now imported from ./generator/opacity.js
 
 /**
  * Convert Tailwind class string to inline CSS styles or JSON object
@@ -1474,10 +1205,11 @@ function expandGroupedClass(input) {
 
   return result;
 }
-// CSS Processing utilities
+// CSS Processing utilities  
 const parseSelectorCache = new LRUCache(500);
 
-function parseSelector(selector) {
+// Parse selector with @css property support (different from parser/selector.js)
+function parseSelectorWithCssProperty(selector) {
   if (parseSelectorCache.has(selector)) {
     return parseSelectorCache.get(selector);
   }
@@ -1652,7 +1384,7 @@ function walkStyleTree(selector, val, styles, walk) {
     return;
   }
 
-  const { baseSelector, cssProperty } = parseSelector(selector);
+  const { baseSelector, cssProperty } = parseSelectorWithCssProperty(selector);
   if (
     cssProperty &&
     typeof val === "object" &&
@@ -1696,7 +1428,7 @@ function walkStyleTree(selector, val, styles, walk) {
     }
     walk(selector, [expandGroupedClass(val)]);
   } else if (typeof val === "object" && val !== null) {
-    const { baseSelector, cssProperty } = parseSelector(selector);
+    const { baseSelector, cssProperty } = parseSelectorWithCssProperty(selector);
     if (cssProperty) {
       const cssValue = Object.values(val).join(" ");
       styles[baseSelector] = styles[baseSelector] || "";
@@ -2841,118 +2573,16 @@ export function twsxVariants(className, config = {}) {
   return result;
 }
 
-// Simple hashCode function for CSS deduplication
-function getCssHash(str) {
-  let hash = 0,
-    i,
-    chr;
-  if (str.length === 0) return hash;
-  for (i = 0; i < str.length; i++) {
-    chr = str.charCodeAt(i);
-    hash = (hash << 5) - hash + chr;
-    hash |= 0; // Convert to 32bit integer
-  }
-  return hash;
-}
-
-// Enhanced auto-inject CSS with performance monitoring & SSR support
-const injectedCssHashSet = new Set();
-
-// Registry of sourceKey → cssBlock for smart slot-based replacement.
-// Prevents stale CSS chunks from accumulating across HMR cycles.
-const _cssBlockRegistry = new Map();
+// NOTE: getCssHash now imported from ./shared/hash.js
+// NOTE: injectedCssHashSet now imported from ./shared/cache.js
+// NOTE: _cssBlockRegistry now imported from ./shared/cache.js (as cssBlockRegistry)
 
 /**
  * Rebuild the single twsx style tag from the full CSS block registry.
  * Called whenever a block is added or updated.
  */
-function rebuildStyleTag() {
-  let styleTag = document.getElementById("twsx-auto-style");
-  if (!styleTag) {
-    styleTag = document.createElement("style");
-    styleTag.id = "twsx-auto-style";
-    styleTag.setAttribute("data-twsx", "");
-    document.head.appendChild(styleTag);
-  }
-  styleTag.textContent = [..._cssBlockRegistry.values()].join("\n");
-}
-
-function autoInjectCss(cssString, sourceKey = null) {
-  const marker = performanceMonitor.start("css:inject");
-
-  try {
-    // SSR mode: collect CSS strings instead of DOM injection. Delegates to
-    // the shared collector in ./utils/ssr.js so both the legacy
-    // startSSR()/stopSSR() pair and the modern createSSRCollector() actually
-    // receive the CSS generated by tw()/twsx().
-    if (isSSRCollecting()) {
-      collectSSRCSS(cssString);
-      performanceMonitor.end(marker);
-      return;
-    }
-
-    if (IS_BROWSER) {
-      if (sourceKey) {
-        // Slot-based update: each unique twsx(obj) call owns its own CSS block.
-        // When styles change (new content, same logical call site via cacheKey)
-        // the old slot is replaced and the style tag is fully rebuilt, so no
-        // stale rules from previous HMR cycles can pile up.
-        const existing = _cssBlockRegistry.get(sourceKey);
-        if (existing === cssString) {
-          // Identical content – nothing to do.
-          performanceMonitor.end(marker);
-          return;
-        }
-        _cssBlockRegistry.set(sourceKey, cssString);
-        rebuildStyleTag();
-
-        if (_cssBlockRegistry.size % 10 === 0) {
-          logger.debug(
-            `CSS registry stats: ${_cssBlockRegistry.size} blocks registered`
-          );
-        }
-        performanceMonitor.end(marker);
-        return;
-      }
-
-      // Fallback path (e.g. direct autoInjectCss calls without a sourceKey):
-      // keep the original hash-based dedup + append behaviour.
-      const cssHash = getCssHash(cssString);
-      if (injectedCssHashSet.has(cssHash)) {
-        performanceMonitor.end(marker);
-        return;
-      }
-
-      injectedCssHashSet.add(cssHash);
-      evictSet(injectedCssHashSet);
-
-      let styleTag = document.getElementById("twsx-auto-style");
-      if (!styleTag) {
-        styleTag = document.createElement("style");
-        styleTag.id = "twsx-auto-style";
-        styleTag.setAttribute("data-twsx", "");
-        document.head.appendChild(styleTag);
-      }
-
-      // Append CSS to style tag using textContent for reliability
-      // Note: insertRule + textContent mixing destroys CSSOM rules,
-      // so we use textContent exclusively for consistent behavior
-      // with @keyframes, @media, and other nested CSS blocks.
-      styleTag.textContent += `\n${cssString}`;
-
-      // Log injection stats periodically
-      if (injectedCssHashSet.size % 10 === 0) {
-        logger.debug(
-          `CSS injection stats: ${injectedCssHashSet.size} unique stylesheets injected`
-        );
-      }
-    }
-    performanceMonitor.end(marker);
-  } catch (error) {
-    performanceMonitor.end(marker);
-    logger.error("Error injecting CSS:", error);
-  }
-}
+// NOTE: rebuildStyleTag now imported from ./injector/dom.js
+// NOTE: autoInjectCss now imported from ./injector/dom.js
 
 // Enhanced debounced functions with performance monitoring configuration
 /**
