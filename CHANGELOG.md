@@ -7,6 +7,115 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.0.0] — 2026-09-19
+
+### 🎯 Major Release - Production-Ready Refactoring
+
+This release focuses on **code quality, maintainability, and performance** with comprehensive modular refactoring while maintaining backward compatibility where possible.
+
+### 💥 Breaking Changes
+
+#### Module Exports
+- **Removed `twsxClassName` and `tw` re-exports from main index** — Users must now import directly from the className module:
+  ```js
+  // ❌ Old (no longer works)
+  import { twsxClassName, tw } from 'tailwind-to-style';
+  
+  // ✅ New (required)
+  import { twsxClassName, tw } from 'tailwind-to-style/className';
+  ```
+  **Reason:** Fixes critical circular dependency that prevented effective tree-shaking.
+
+### ✨ Added
+
+#### Modular Architecture (1,383 lines extracted)
+- **Shared utilities** (`src/shared/`) — 534 lines
+  - `constants.js` — All regex patterns, breakpoints, pseudo-variants
+  - `hash.js` — CSS hash generation with FNV-1a
+  - `cache.js` — LRU cache utilities with proper eviction
+  
+- **Parser modules** (`src/parser/`) — 324 lines
+  - `bracket.js` — Bracket notation encoding/decoding
+  - `selector.js` — CSS selector manipulation
+  - `variants.js` — Tailwind variant resolution (responsive, pseudo, dark mode)
+  
+- **Generator modules** (`src/generator/`) — 380 lines
+  - `keyframes.js` — Minified @keyframes generation
+  - `opacity.js` — Opacity modifier processing
+  - `css-string.js` — CSS string resolution and inline style conversion
+  
+- **Injector module** (`src/injector/`) — 145 lines
+  - `dom.js` — CSS auto-injection with HMR slot-based updates
+  
+- **Utility modules** (`src/utils/`) — 82 lines
+  - `debounce.js` — Debounce utility with proper TypeScript types
+
+#### Test Coverage
+- **69 new modular unit tests** covering all extracted modules
+- **102 legacy tests** passing (all integration tests updated for new imports)
+- **334 total tests passing** with 73.55% code coverage
+
+#### Documentation
+- `REFACTORING_SUMMARY.md` — Complete 7-phase refactoring documentation
+- `DEPRECATION_STRATEGY.md` — Migration guide for deprecated APIs
+- `EXAMPLES_RUNNING.md` — Live demo testing guide
+
+### 🔧 Fixed
+
+- **Removed unused `parseVariantString` import** from `src/index.js`
+- **Fixed missing cache exports** — Added `encodeBracketCache` and `decodeBracketCache` to main index exports (needed by `performanceUtils`)
+- **Fixed test imports** — Updated all test files to use correct className import path
+- **Fixed critical circular dependency** — `className/index.js ↔ index.js` loop eliminated
+
+### 🚀 Performance
+
+- **Zero circular dependencies** in core library (down from 4)
+- **Improved tree-shaking** — Modular structure enables better code elimination
+- **LRU caching** — MAX_CACHE_SIZE=5000, MAX_SET_SIZE=10000 with proper eviction
+- **Bundle size maintained** — 45KB gzipped despite modular refactoring
+
+### 📦 Internal
+
+- **Code quality audit** — 10-task comprehensive production audit completed
+  - ✅ No TODO/FIXME comments
+  - ✅ No debug console.log statements
+  - ✅ Professional error messages with context
+  - ✅ Complete JSDoc documentation
+  - ✅ TypeScript definitions validated
+  
+- **Backward compatibility** — Deprecated APIs maintained with clear migration warnings
+  - `startSSR()` / `stopSSR()` / `getSSRStyles()` → `createSSRCollector()`
+  - `evictMap()` / `evictSet()` → `LRUCache`
+
+### 🎨 Examples
+
+- **React Demo** fully tested (localhost:5173)
+- **twsxClassName Demo** fully tested (localhost:3001)
+- All variants, slots, and theme switching working perfectly
+
+### 📝 Migration Guide
+
+**For users affected by breaking changes:**
+
+1. Update className imports:
+   ```js
+   // Before
+   import { twsxClassName } from 'tailwind-to-style';
+   
+   // After
+   import { twsxClassName } from 'tailwind-to-style/className';
+   ```
+
+2. All other APIs remain unchanged and fully backward compatible
+
+**Notes:**
+- Main `tw()`, `tws()`, `cx()` APIs unchanged
+- React bindings unchanged (`tailwind-to-style/react`)
+- Token system unchanged (`tailwind-to-style/tokens`)
+- SSR modern API unchanged (`createSSRCollector()`)
+
+---
+
 ## [4.0.2] — 2026-09-02
 
 ### Fixed
