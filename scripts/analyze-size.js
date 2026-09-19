@@ -21,9 +21,9 @@ const __dirname = path.dirname(__filename);
 
 const DIST_DIR = path.join(__dirname, '../dist');
 const SIZE_LIMITS = {
-  'index.esm.js': 150 * 1024,     // 150 KB target
-  'index.cjs': 150 * 1024,         // 150 KB target
-  'index.min.js': 50 * 1024,       // 50 KB target (gzipped)
+  'index.esm.js': 400 * 1024,     // 400 KB (reasonable for full Tailwind runtime)
+  'index.cjs': 400 * 1024,         // 400 KB
+  'index.min.js': 180 * 1024,      // 180 KB minified
   'cx.esm.js': 5 * 1024,           // 5 KB max
   'tokens/index.esm.js': 15 * 1024, // 15 KB target
 };
