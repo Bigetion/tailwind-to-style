@@ -23,13 +23,12 @@ import {
   CSS_VAR_REGEX,
 } from "./shared/constants.js";
 import { getCssHash } from "./shared/hash.js";
-import { evictSet, cssBlockRegistry as _cssBlockRegistry, injectedCssHashSet } from "./shared/cache.js";
+import { evictSet, cssBlockRegistry as _cssBlockRegistry, injectedCssHashSet, encodeBracketCache, decodeBracketCache } from "./shared/cache.js";
 import { generateMinifiedKeyframes } from "./generator/keyframes.js";
 import { processOpacityModifier } from "./generator/opacity.js";
 import { resolveCssToClearCss, inlineStyleToJson } from "./generator/css-string.js";
 import { autoInjectCss, rebuildStyleTag } from "./injector/dom.js";
 import { encodeBracketValues, decodeBracketValues } from "./parser/bracket.js";
-import { parseVariantString } from "./parser/variants.js";
 
 // ============================================================================
 // SSR (Server-Side Rendering) Support

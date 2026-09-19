@@ -3,7 +3,8 @@
  * Covers unusual inputs, boundary conditions, and error scenarios
  */
 
-import { tws, twsxClassName } from '../../src/index.js';
+import { tws } from '../../src/index.js';
+import { twsxClassName } from '../../src/className/index.js';
 
 describe("Input Validation Edge Cases", () => {
   describe("null and undefined handling", () => {

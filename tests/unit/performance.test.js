@@ -3,7 +3,8 @@
  * Ensures that library performance remains fast and memory-efficient
  */
 
-import { tws, twsx, twsxClassName, performanceUtils } from '../../src/index.js';
+import { tws, twsx, performanceUtils } from '../../src/index.js';
+import { twsxClassName } from '../../src/className/index.js';
 
 // Helper to measure execution time
 function measureTime(fn, iterations = 1000) {
