@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nexora — Build the future, faster</title>
+  <meta name="description" content="Nexora is an AI-powered platform that helps teams ship products faster with intelligent automation, real-time collaboration, and enterprise-grade security." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◆</text></svg>" />
+  <!-- FOUC prevention -->
+  <style>body { opacity: 0 }</style>
+  <noscript><style>body { opacity: 1 }</style></noscript>
+  <script type="module">
+    // ── Import from local src (works when served from workspace root via Vite)
+    // For standalone use, swap to:
+    // import { register } from 'https://esm.sh/tailwind-to-style/register'
+    import { register } from '../../src/register/index.js';
+
+    // ════════════════════════════════════════════════════════════════════════
+    // Design tokens + reset
+    // ════════════════════════════════════════════════════════════════════════
+    register.all({
+      ':root': {
+        '--c-brand':      '#7c3aed',
+        '--c-brand-mid':  '#6d28d9',
+        '--c-brand-dark': '#5b21b6',
+        '--c-brand-glow': 'rgba(124,58,237,.25)',
+        '--c-surface':    '#fafafa',
+        '--c-border':     '#e5e7eb',
+        '--c-text':       '#111827',
+        '--c-muted':      '#6b7280',
+        '--radius':       '12px',
+        '--radius-lg':    '20px',
+        '--shadow-card':  '0 2px 12px rgba(0,0,0,.07)',
+        '--shadow-hover': '0 8px 32px rgba(0,0,0,.12)',
+        '--shadow-glow':  '0 0 40px rgba(124,58,237,.2)',
+      },
+      '*':    { 'box-sizing': 'border-box', margin: '0', padding: '0' },
+      'body': {
+        tw: 'text-gray-900 antialiased',
+        'font-family': "Inter, system-ui, -apple-system, 'Segoe UI', sans-serif",
+        'background-color': 'var(--c-surface)',
+      },
+      'img':  { 'max-width': '100%', display: 'block' },
+      'a':    { 'text-decoration': 'none', color: 'inherit' },
+    });
+
+    // ════════════════════════════════════════════════════════════════════════
+    // Layout helpers
+    // ════════════════════════════════════════════════════════════════════════
+    register.all({
+      'container': { tw: 'mx-auto w-full px-6', 'max-width': '1120px' },
+      'section':   { tw: 'py-28' },
+      'grid-2':    { tw: 'grid grid-cols-1 gap-12 items-center', 'grid-template-columns': 'repeat(auto-fit, minmax(440px, 1fr))' },
+      'grid-3':    { tw: 'grid grid-cols-1 gap-8', 'grid-template-columns': 'repeat(auto-fit, minmax(300px, 1fr))' },
+      'grid-4':    { tw: 'grid grid-cols-2 gap-6', 'grid-template-columns': 'repeat(auto-fit, minmax(220px, 1fr))' },
+      'divider':   { tw: 'border-none border-t border-gray-200' },
+    });
+
+    // ════════════════════════════════════════════════════════════════════════
+    // Typography
+    // ════════════════════════════════════════════════════════════════════════
+    register.all({
+      'eyebrow': {
+        tw: 'inline-flex items-center gap-2 font-semibold tracking-widest uppercase text-violet-600',
+        'font-size': '11px',
+        'letter-spacing': '0.12em',
+        'margin-bottom': '1rem',
+      },
+      'h-xl': {
+        tw: 'font-extrabold leading-none tracking-tight text-gray-900',
+        'font-size': 'clamp(3rem, 7vw, 5rem)',
+        'letter-spacing': '-0.03em',
+      },
+      'h-lg': {
+        tw: 'font-extrabold leading-tight tracking-tight text-gray-900',
+        'font-size': 'clamp(2rem, 4vw, 2.75rem)',
+        'letter-spacing': '-0.025em',
+      },
+      'h-md': {
+        tw: 'text-2xl font-bold tracking-tight text-gray-900',
+        'letter-spacing': '-0.02em',
+      },
+      'h-sm':   { tw: 'text-lg font-semibold text-gray-900' },
+      'lead':   { tw: 'text-xl leading-relaxed text-gray-500', 'max-width': '580px' },
+      'body-sm':{ tw: 'text-sm leading-relaxed text-gray-500' },
+      'label':  { tw: 'text-xs font-semibold uppercase tracking-widest text-gray-400' },
+    });
+
+    // ════════════════════════════════════════════════════════════════════════
+    // Navbar
+    // ════════════════════════════════════════════════════════════════════════
+    register.all({
+      'nav': {
+        tw: 'fixed top-0 left-0 right-0 z-50 flex items-center h-16',
+        'background-color': 'rgba(250,250,250,.88)',
+        'backdrop-filter': 'blur(16px)',
+        '-webkit-backdrop-filter': 'blur(16px)',
+        'border-bottom': '1px solid #e5e7eb',
+      },
+      'nav-inner':  { tw: 'flex items-center justify-between w-full' },
+      'nav-logo':   { tw: 'flex items-center gap-2 font-black text-gray-900', 'font-size': '20px', 'letter-spacing': '-0.04em' },
+      'nav-links':  { tw: 'hidden md:flex items-center gap-8' },
+      'nav-link':   { tw: 'text-sm font-medium text-gray-500 transition-colors hover:text-gray-900' },
+      'nav-right':  { tw: 'flex items-center gap-3' },
+    });
+
+    // ════════════════════════════════════════════════════════════════════════
+    // Buttons
+    // ════════════════════════════════════════════════════════════════════════
+    register('btn', {
+      base: {
+        tw: 'inline-flex items-center justify-center font-semibold leading-none cursor-pointer border-0 outline-none whitespace-nowrap transition-all',
+        'font-family': 'inherit',
+        'border-radius': 'var(--radius)',
+        '&:focus-visible': { 'outline': '2px solid var(--c-brand)', 'outline-offset': '2px' },
+      },
+      modifiers: {
+        brand: {
+          tw: 'text-white',
+          'background': 'linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)',
+          'box-shadow': '0 2px 12px rgba(124,58,237,.25)',
+          '&:hover': { transform: 'translateY(-1px)', 'box-shadow': '0 6px 24px rgba(124,58,237,.35)' },
+          '&:active': { transform: 'translateY(0)' },
+        },
+        outline: {
+          tw: 'bg-transparent',
+          color: '#7c3aed',
+          'border': '1.5px solid #7c3aed',
+          '&:hover': { 'background-color': 'rgba(124,58,237,.06)' },
+        },
+        ghost: {
+          tw: 'bg-transparent text-gray-500 hover:text-gray-900 hover:bg-gray-100',
+        },
+        white: {
+          tw: 'bg-white font-semibold text-gray-900',
+          'box-shadow': '0 2px 8px rgba(0,0,0,.12)',
+          '&:hover': { transform: 'translateY(-1px)', 'box-shadow': '0 6px 20px rgba(0,0,0,.16)' },
+        },
+        sm:   { tw: 'px-4 py-2 text-sm gap-1.5' },
+        md:   { tw: 'px-5 py-2.5 text-sm gap-2' },
+        lg:   { tw: 'px-7 py-3.5 text-base gap-2.5' },
+        xl:   { tw: 'px-9 py-4 text-base gap-3' },
+        pill: { 'border-radius': '9999px' },
+      },
+    });
+
+    // ════════════════════════════════════════════════════════════════════════
+    // Hero
+    // ════════════════════════════════════════════════════════════════════════
+    register.all({
+      'hero': { tw: 'relative pt-40 pb-32 text-center overflow-hidden' },
+      'hero-bg': {
+        tw: 'absolute inset-0 -z-10 pointer-events-none',
+        background: 'radial-gradient(ellipse 80% 60% at 50% -10%, rgba(124,58,237,.12) 0%, transparent 70%)',
+      },
+      'hero-grid': {
+        tw: 'absolute inset-0 -z-10 pointer-events-none opacity-30',
+        background: 'linear-gradient(#e5e7eb 1px, transparent 1px), linear-gradient(90deg, #e5e7eb 1px, transparent 1px)',
+        'background-size': '48px 48px',
+        'mask-image': 'radial-gradient(ellipse 80% 50% at 50% 0%, black 40%, transparent 100%)',
+        '-webkit-mask-image': 'radial-gradient(ellipse 80% 50% at 50% 0%, black 40%, transparent 100%)',
+      },
+      'hero-badge': {
+        tw: 'inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium text-violet-700 bg-violet-50 border border-violet-200 mb-8',
+      },
+      'hero-badge-dot': {
+        tw: 'inline-block rounded-full bg-violet-500',
+        width: '6px', height: '6px',
+        'animation': 'pulse 2s infinite',
+      },
+      'hero-actions': { tw: 'flex items-center justify-center gap-4 mt-10 flex-wrap' },
+      'hero-social-proof': { tw: 'flex items-center justify-center gap-6 mt-16 flex-wrap' },
+      'hero-stat': { tw: 'text-center' },
+      'hero-stat-num': {
+        tw: 'font-black text-gray-900 leading-none',
+        'font-size': '2rem',
+        'letter-spacing': '-0.04em',
+      },
+      'hero-stat-label': { tw: 'text-sm text-gray-400 mt-1 font-medium' },
+      'hero-divider-v': {
+        width: '1px', height: '40px',
+        'background-color': '#e5e7eb',
+        display: 'inline-block',
+      },
+    });
+
+    // ════════════════════════════════════════════════════════════════════════
+    // Logo bar
+    // ════════════════════════════════════════════════════════════════════════
+    register.all({
+      'logo-bar': { tw: 'py-16 border-t border-b border-gray-100' },
+      'logo-bar-inner': { tw: 'flex items-center justify-between gap-8 flex-wrap opacity-40 grayscale' },
+      'logo-item': {
+        tw: 'font-black text-gray-400 tracking-tight',
+        'font-size': '1.25rem',
+        'letter-spacing': '-0.04em',
+        'white-space': 'nowrap',
+      },
+    });
+
+    // ════════════════════════════════════════════════════════════════════════
+    // Feature cards
+    // ════════════════════════════════════════════════════════════════════════
+    register.all({
+      'section-header': { tw: 'text-center mb-16' },
+      'feature-card': {
+        tw: 'p-8 rounded-2xl bg-white border border-gray-100 transition-all',
+        'box-shadow': '0 2px 12px rgba(0,0,0,.07)',
+        '&:hover': { transform: 'translateY(-3px)', 'box-shadow': '0 8px 32px rgba(0,0,0,.12)' },
+      },
+      'feature-icon': {
+        tw: 'flex items-center justify-center rounded-xl text-2xl mb-5',
+        width: '52px', height: '52px',
+        'background': 'linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%)',
+      },
+      'feature-title': { tw: 'text-lg font-bold text-gray-900 mb-2' },
+      'feature-body':  { tw: 'text-sm text-gray-500 leading-relaxed' },
+    });
+
+    // ════════════════════════════════════════════════════════════════════════
+    // Product screenshot / window mock
+    // ════════════════════════════════════════════════════════════════════════
+    register.all({
+      'window-mock': {
+        tw: 'rounded-2xl overflow-hidden',
+        'background-color': '#0f172a',
+        'box-shadow': '0 24px 80px rgba(0,0,0,.3), 0 0 0 1px rgba(255,255,255,.06)',
+      },
+      'window-bar': {
+        tw: 'flex items-center gap-2 px-5 py-4',
+        'border-bottom': '1px solid rgba(255,255,255,.07)',
+        'background-color': 'rgba(255,255,255,.04)',
+      },
+      'window-dot': {
+        tw: 'rounded-full inline-block',
+        width: '10px', height: '10px',
+      },
+      'window-dot-red':    { 'background-color': '#ef4444' },
+      'window-dot-yellow': { 'background-color': '#f59e0b' },
+      'window-dot-green':  { 'background-color': '#22c55e' },
+      'window-url': {
+        tw: 'flex-1 text-center text-xs text-white/30 font-mono',
+        'margin-left': '8px',
+      },
+      'window-body': {
+        tw: 'p-6',
+        'min-height': '260px',
+        color: 'rgba(255,255,255,.8)',
+        'font-family': "'Fira Code', Consolas, monospace",
+        'font-size': '13px',
+        'line-height': '1.75',
+      },
+    });
+
+    // Syntax colors
+    register.group('syn', {
+      kw:      { color: '#c084fc' },
+      fn:      { color: '#60a5fa' },
+      str:     { color: '#86efac' },
+      prop:    { color: '#93c5fd' },
+      punct:   { color: 'rgba(255,255,255,.3)' },
+      comment: { color: 'rgba(255,255,255,.25)', 'font-style': 'italic' },
+      num:     { color: '#fb923c' },
+    });
+
+    // ════════════════════════════════════════════════════════════════════════
+    // Testimonials
+    // ════════════════════════════════════════════════════════════════════════
+    register.all({
+      'testimonial-card': {
+        tw: 'p-8 rounded-2xl bg-white border border-gray-100',
+        'box-shadow': '0 2px 12px rgba(0,0,0,.07)',
+      },
+      'testimonial-text': {
+        tw: 'text-gray-700 leading-relaxed mb-6',
+        'font-size': '15px',
+      },
+      'avatar': {
+        tw: 'rounded-full flex items-center justify-center text-white font-bold flex-shrink-0',
+        width: '40px', height: '40px',
+        'font-size': '14px',
+        'background': 'linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%)',
+      },
+      'stars': { tw: 'flex gap-1 text-amber-400 mb-4', 'font-size': '14px' },
+    });
+
+    // ════════════════════════════════════════════════════════════════════════
+    // Pricing
+    // ════════════════════════════════════════════════════════════════════════
+    register.all({
+      'pricing-card': {
+        tw: 'p-8 rounded-2xl border border-gray-200 bg-white transition-all',
+        'box-shadow': '0 2px 12px rgba(0,0,0,.07)',
+      },
+      'pricing-card-featured': {
+        tw: 'p-8 rounded-2xl text-white relative',
+        'background': 'linear-gradient(145deg, #6d28d9 0%, #5b21b6 100%)',
+        'box-shadow': '0 16px 48px rgba(124,58,237,.35)',
+      },
+      'pricing-price': {
+        tw: 'font-black text-gray-900 leading-none',
+        'font-size': '3rem',
+        'letter-spacing': '-0.04em',
+      },
+      'pricing-price-featured': {
+        tw: 'font-black text-white leading-none',
+        'font-size': '3rem',
+        'letter-spacing': '-0.04em',
+      },
+      'pricing-feature': { tw: 'flex items-center gap-3 text-sm text-gray-600 py-2' },
+      'pricing-feature-featured': { tw: 'flex items-center gap-3 text-sm text-white/80 py-2' },
+      'check-icon': { tw: 'text-green-500 font-bold flex-shrink-0' },
+      'check-icon-featured': { tw: 'text-violet-200 font-bold flex-shrink-0' },
+      'pricing-badge': {
+        tw: 'absolute top-0 right-8 -translate-y-1/2 px-3 py-1 rounded-full text-xs font-bold text-violet-700 bg-yellow-300',
+      },
+    });
+
+    // ════════════════════════════════════════════════════════════════════════
+    // CTA section
+    // ════════════════════════════════════════════════════════════════════════
+    register.all({
+      'cta-section': {
+        tw: 'relative rounded-3xl overflow-hidden text-center py-24 px-8',
+        'background': 'linear-gradient(135deg, #6d28d9 0%, #7c3aed 50%, #4f46e5 100%)',
+        'box-shadow': '0 0 40px rgba(124,58,237,.2)',
+      },
+      'cta-glow': {
+        tw: 'absolute inset-0 pointer-events-none',
+        'background': 'radial-gradient(ellipse 60% 40% at 50% 0%, rgba(255,255,255,.18) 0%, transparent 70%)',
+      },
+      'cta-noise': {
+        tw: 'absolute inset-0 pointer-events-none opacity-10',
+        'background-image': 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")',
+      },
+      'cta-actions': { tw: 'flex items-center justify-center gap-4 mt-10 flex-wrap relative z-10' },
+    });
+
+    // ════════════════════════════════════════════════════════════════════════
+    // Footer
+    // ════════════════════════════════════════════════════════════════════════
+    register.all({
+      'footer':        { tw: 'py-16 border-t border-gray-100' },
+      'footer-grid':   { tw: 'grid grid-cols-2 gap-8 mb-16', 'grid-template-columns': '2fr repeat(3, 1fr)' },
+      'footer-brand':  {},
+      'footer-col-title': { tw: 'text-sm font-semibold text-gray-900 mb-4' },
+      'footer-link':   { tw: 'block text-sm text-gray-500 hover:text-gray-900 transition-colors mb-3' },
+      'footer-bottom': { tw: 'flex items-center justify-between pt-8 border-t border-gray-100 flex-wrap gap-4' },
+      'footer-logo':   { tw: 'font-black text-gray-900', 'font-size': '20px', 'letter-spacing': '-0.04em' },
+    });
+
+    // ════════════════════════════════════════════════════════════════════════
+    // Badge / Tag
+    // ════════════════════════════════════════════════════════════════════════
+    register.all({
+      'tag': {
+        tw: 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold',
+        'background-color': 'rgba(124,58,237,.1)',
+        color: '#7c3aed',
+      },
+      'tag-green':  { tw: 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700' },
+      'tag-blue':   { tw: 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700' },
+    });
+
+    // ════════════════════════════════════════════════════════════════════════
+    // Animations
+    // ════════════════════════════════════════════════════════════════════════
+    register(':root', {
+      '--anim-in': 'fadeUp 0.6s ease both',
+    });
+
+    register('@keyframes fadeUp', {
+      'from': { opacity: '0', transform: 'translateY(24px)' },
+      'to':   { opacity: '1', transform: 'translateY(0)' },
+    });
+
+    register('@keyframes pulse', {
+      '0%, 100%': { opacity: '1' },
+      '50%': { opacity: '0.4' },
+    });
+
+    // ════════════════════════════════════════════════════════════════════════
+    // FOUC — fade in after styles injected
+    // ════════════════════════════════════════════════════════════════════════
+    requestAnimationFrame(() => {
+      document.body.style.cssText += ';transition:opacity 220ms ease;opacity:1';
+    });
+  </script>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════ NAVBAR -->
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a href="#" class="nav-logo">
+        <span style="color:var(--c-brand)">◆</span> Nexora
+      </a>
+      <div class="nav-links">
+        <a href="#features" class="nav-link">Product</a>
+        <a href="#pricing"  class="nav-link">Pricing</a>
+        <a href="#"         class="nav-link">Docs</a>
+        <a href="#"         class="nav-link">Blog</a>
+        <a href="#"         class="nav-link">Company</a>
+      </div>
+      <div class="nav-right">
+        <a href="#" class="btn btn-ghost btn-sm">Log in</a>
+        <a href="#" class="btn btn-brand btn-sm btn-pill">Get started free</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════════════════════ HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="container">
+
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        Announcing Nexora AI v2.0 — now with agent workflows
+      </div>
+
+      <h1 class="h-xl" style="margin-bottom:1.5rem;">
+        Build the future,<br>
+        <span style="background:linear-gradient(135deg,var(--c-brand),#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">faster.</span>
+      </h1>
+
+      <p class="lead" style="margin:0 auto 0 auto;text-align:center;">
+        Nexora is the AI-powered platform where teams design, build, and ship
+        remarkable products — with intelligent automation that actually works.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#" class="btn btn-brand btn-xl btn-pill">
+          Start building free
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#" class="btn btn-outline btn-xl btn-pill">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          Watch demo
+        </a>
+      </div>
+
+      <div class="hero-social-proof">
+        <div class="hero-stat">
+          <div class="hero-stat-num">40k+</div>
+          <div class="hero-stat-label">Teams worldwide</div>
+        </div>
+        <div class="hero-divider-v"></div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">99.9%</div>
+          <div class="hero-stat-label">Uptime SLA</div>
+        </div>
+        <div class="hero-divider-v"></div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">4.9★</div>
+          <div class="hero-stat-label">G2 rating</div>
+        </div>
+        <div class="hero-divider-v"></div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">3×</div>
+          <div class="hero-stat-label">Faster shipping</div>
+        </div>
+      </div>
+
+      <!-- Product mock -->
+      <div class="window-mock" style="margin-top:5rem;text-align:left;">
+        <div class="window-bar">
+          <span class="window-dot window-dot-red"></span>
+          <span class="window-dot window-dot-yellow"></span>
+          <span class="window-dot window-dot-green"></span>
+          <span class="window-url">app.nexora.io/dashboard</span>
+        </div>
+        <div class="window-body">
+          <pre style="white-space:pre"><span class="syn-comment">// Nexora AI — auto-generate your entire API in seconds</span>
+<span class="syn-kw">const</span> <span class="syn-fn">nexora</span> = <span class="syn-kw">await</span> <span class="syn-fn">Nexora</span><span class="syn-punct">.</span><span class="syn-fn">create</span><span class="syn-punct">({</span>
+  <span class="syn-prop">project</span><span class="syn-punct">:</span> <span class="syn-str">'my-saas-app'</span><span class="syn-punct">,</span>
+  <span class="syn-prop">ai</span><span class="syn-punct">:</span> <span class="syn-punct">{</span>
+    <span class="syn-prop">model</span><span class="syn-punct">:</span>  <span class="syn-str">'nexora-pro'</span><span class="syn-punct">,</span>
+    <span class="syn-prop">agents</span><span class="syn-punct">:</span> <span class="syn-punct">[</span><span class="syn-str">'design'</span><span class="syn-punct">,</span> <span class="syn-str">'code'</span><span class="syn-punct">,</span> <span class="syn-str">'test'</span><span class="syn-punct">]</span>
+  <span class="syn-punct">}</span>
+<span class="syn-punct">})</span>
+
+<span class="syn-comment">// ✅  API generated  · 847ms</span>
+<span class="syn-comment">// ✅  Tests passing  · 23/23</span>
+<span class="syn-comment">// ✅  Deployed       · nexora.app/my-saas-app</span></pre>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════ LOGO BAR -->
+  <div class="logo-bar">
+    <div class="container">
+      <p class="label" style="text-align:center;margin-bottom:2rem;">Trusted by teams at</p>
+      <div class="logo-bar-inner" style="justify-content:center;">
+        <span class="logo-item">Stripe</span>
+        <span class="logo-item">Vercel</span>
+        <span class="logo-item">Linear</span>
+        <span class="logo-item">Notion</span>
+        <span class="logo-item">Figma</span>
+        <span class="logo-item">GitHub</span>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- ═══════════════════════════════════════════════════════════ FEATURES -->
+  <section class="section" id="features">
+    <div class="container">
+      <div class="section-header">
+        <p class="eyebrow">Platform</p>
+        <h2 class="h-lg" style="margin-bottom:1rem;">Everything your team needs</h2>
+        <p class="lead" style="margin:0 auto;text-align:center;">
+          One platform to design, build, automate, and ship. No more tool-switching.
+        </p>
+      </div>
+
+      <div class="grid-3">
+
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <div class="feature-title">AI Code Generation</div>
+          <div class="feature-body">
+            Describe what you want in plain English. Nexora AI writes production-ready
+            code, complete with tests and documentation.
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔄</div>
+          <div class="feature-title">Real-time Collaboration</div>
+          <div class="feature-body">
+            Your whole team — designers, engineers, PMs — works in the same canvas.
+            No more sync meetings, no more merge conflicts.
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🚀</div>
+          <div class="feature-title">One-click Deploy</div>
+          <div class="feature-body">
+            Push to any cloud in seconds. Auto-scaling, zero-downtime deploys,
+            and rollbacks that actually work.
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <div class="feature-title">Enterprise Security</div>
+          <div class="feature-body">
+            SOC 2 Type II, GDPR, and HIPAA compliant. SSO, RBAC, audit logs,
+            and end-to-end encryption built in.
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <div class="feature-title">Observability</div>
+          <div class="feature-body">
+            Real-time metrics, distributed tracing, and smart alerting.
+            Know what's happening before your users do.
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🧩</div>
+          <div class="feature-title">500+ Integrations</div>
+          <div class="feature-body">
+            Connect to GitHub, Slack, Jira, Linear, Figma, and 500+ other
+            tools your team already uses.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- ═══════════════════════════════════════════════════════════ SOCIAL PROOF -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <p class="eyebrow">Testimonials</p>
+        <h2 class="h-lg" style="margin-bottom:0;">Loved by builders worldwide</h2>
+      </div>
+
+      <div class="grid-3">
+
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-text">
+            "Nexora cut our time-to-production by 60%. What used to take a sprint now
+            takes an afternoon. It's genuinely magic."
+          </p>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div class="avatar">SL</div>
+            <div>
+              <div style="font-size:14px;font-weight:600;color:#111827;">Sarah Lin</div>
+              <div style="font-size:12px;color:#9ca3af;">CTO, Archetype</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-text">
+            "We replaced five different tools with Nexora. Our engineers are happier,
+            our velocity is up, and our infra bill is down 40%."
+          </p>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div class="avatar" style="background:linear-gradient(135deg,#0ea5e9,#6366f1)">MK</div>
+            <div>
+              <div style="font-size:14px;font-weight:600;color:#111827;">Marcus Kim</div>
+              <div style="font-size:12px;color:#9ca3af;">VP Engineering, Folio</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-text">
+            "The AI agent workflows are a game changer. We automated our entire
+            QA pipeline in a day. I didn't think that was possible."
+          </p>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div class="avatar" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">AJ</div>
+            <div>
+              <div style="font-size:14px;font-weight:600;color:#111827;">Aisha Johnson</div>
+              <div style="font-size:12px;color:#9ca3af;">Lead Engineer, Mosaic</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- ═══════════════════════════════════════════════════════════ PRICING -->
+  <section class="section" id="pricing">
+    <div class="container">
+      <div class="section-header">
+        <p class="eyebrow">Pricing</p>
+        <h2 class="h-lg" style="margin-bottom:1rem;">Simple, transparent pricing</h2>
+        <p class="lead" style="margin:0 auto;text-align:center;">
+          Start free. Scale as you grow. No hidden fees.
+        </p>
+      </div>
+
+      <div class="grid-3" style="align-items:start;">
+
+        <!-- Starter -->
+        <div class="pricing-card">
+          <p class="label" style="margin-bottom:1rem;">Starter</p>
+          <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:0.5rem;">
+            <span class="pricing-price">$0</span>
+            <span style="color:#9ca3af;font-size:14px;">/mo</span>
+          </div>
+          <p class="body-sm" style="margin-bottom:2rem;">Perfect for indie hackers and small projects.</p>
+          <a href="#" class="btn btn-outline btn-md" style="width:100%;margin-bottom:2rem;">Get started</a>
+          <div>
+            <div class="pricing-feature"><span class="check-icon">✓</span> 3 projects</div>
+            <div class="pricing-feature"><span class="check-icon">✓</span> 5 GB storage</div>
+            <div class="pricing-feature"><span class="check-icon">✓</span> 100 AI credits/mo</div>
+            <div class="pricing-feature"><span class="check-icon">✓</span> Community support</div>
+          </div>
+        </div>
+
+        <!-- Pro (featured) -->
+        <div class="pricing-card-featured">
+          <div class="pricing-badge">Most popular</div>
+          <p style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:1rem;">Pro</p>
+          <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:0.5rem;">
+            <span class="pricing-price-featured">$49</span>
+            <span style="color:rgba(255,255,255,.4);font-size:14px;">/mo</span>
+          </div>
+          <p style="font-size:14px;color:rgba(255,255,255,.6);margin-bottom:2rem;">For growing teams that need more power.</p>
+          <a href="#" class="btn btn-white btn-md btn-pill" style="width:100%;margin-bottom:2rem;">Start free trial</a>
+          <div>
+            <div class="pricing-feature-featured"><span class="check-icon-featured">✓</span> Unlimited projects</div>
+            <div class="pricing-feature-featured"><span class="check-icon-featured">✓</span> 100 GB storage</div>
+            <div class="pricing-feature-featured"><span class="check-icon-featured">✓</span> 5,000 AI credits/mo</div>
+            <div class="pricing-feature-featured"><span class="check-icon-featured">✓</span> Priority support</div>
+            <div class="pricing-feature-featured"><span class="check-icon-featured">✓</span> Advanced analytics</div>
+            <div class="pricing-feature-featured"><span class="check-icon-featured">✓</span> Custom domains</div>
+          </div>
+        </div>
+
+        <!-- Enterprise -->
+        <div class="pricing-card">
+          <p class="label" style="margin-bottom:1rem;">Enterprise</p>
+          <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:0.5rem;">
+            <span class="pricing-price">Custom</span>
+          </div>
+          <p class="body-sm" style="margin-bottom:2rem;">For large teams with advanced security needs.</p>
+          <a href="#" class="btn btn-brand btn-md" style="width:100%;margin-bottom:2rem;">Talk to sales</a>
+          <div>
+            <div class="pricing-feature"><span class="check-icon">✓</span> Everything in Pro</div>
+            <div class="pricing-feature"><span class="check-icon">✓</span> SSO / SAML</div>
+            <div class="pricing-feature"><span class="check-icon">✓</span> HIPAA & SOC 2</div>
+            <div class="pricing-feature"><span class="check-icon">✓</span> Dedicated CSM</div>
+            <div class="pricing-feature"><span class="check-icon">✓</span> SLA guarantee</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════ CTA -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-section">
+        <div class="cta-glow"></div>
+        <div class="cta-noise"></div>
+        <p class="eyebrow" style="color:rgba(255,255,255,.6);justify-content:center;position:relative;z-index:1;">
+          Get started today
+        </p>
+        <h2 class="h-lg" style="color:#fff;margin-bottom:1rem;position:relative;z-index:1;">
+          Ready to ship faster?
+        </h2>
+        <p style="color:rgba(255,255,255,.65);font-size:1.125rem;max-width:500px;margin:0 auto;position:relative;z-index:1;line-height:1.7;">
+          Join 40,000+ teams building with Nexora. Free to start, no credit card required.
+        </p>
+        <div class="cta-actions">
+          <a href="#" class="btn btn-white btn-xl btn-pill">
+            Start building for free
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="#" class="btn btn-lg btn-pill"
+            style="color:rgba(255,255,255,.9);border:1.5px solid rgba(255,255,255,.3);background:transparent;">
+            Talk to sales
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════ FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo" style="margin-bottom:1rem;">
+            <span style="color:var(--c-brand)">◆</span> Nexora
+          </div>
+          <p class="body-sm" style="max-width:220px;margin-bottom:1.5rem;">
+            The AI-powered platform for teams that ship remarkable products.
+          </p>
+          <div style="display:flex;gap:12px;">
+            <a href="#" class="btn btn-ghost btn-sm" style="padding:8px;border-radius:8px;border:1px solid var(--c-border)">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            </a>
+            <a href="#" class="btn btn-ghost btn-sm" style="padding:8px;border-radius:8px;border:1px solid var(--c-border)">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="#" class="btn btn-ghost btn-sm" style="padding:8px;border-radius:8px;border:1px solid var(--c-border)">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.03.056a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Product</div>
+          <a href="#" class="footer-link">Features</a>
+          <a href="#" class="footer-link">Pricing</a>
+          <a href="#" class="footer-link">Changelog</a>
+          <a href="#" class="footer-link">Roadmap</a>
+          <a href="#" class="footer-link">Status</a>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Company</div>
+          <a href="#" class="footer-link">About</a>
+          <a href="#" class="footer-link">Blog</a>
+          <a href="#" class="footer-link">Careers</a>
+          <a href="#" class="footer-link">Press</a>
+          <a href="#" class="footer-link">Contact</a>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Legal</div>
+          <a href="#" class="footer-link">Privacy</a>
+          <a href="#" class="footer-link">Terms</a>
+          <a href="#" class="footer-link">Security</a>
+          <a href="#" class="footer-link">Cookies</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span class="body-sm">© 2025 Nexora, Inc. All rights reserved.</span>
+        <div style="display:flex;gap:24px;">
+          <a href="#" class="body-sm" style="color:#9ca3af;">Privacy</a>
+          <a href="#" class="body-sm" style="color:#9ca3af;">Terms</a>
+          <a href="#" class="body-sm" style="color:#9ca3af;">Cookies</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

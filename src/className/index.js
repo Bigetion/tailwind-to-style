@@ -540,17 +540,173 @@ function processTokens(classString) {
 // Style Processing Utilities
 // ============================================================================
 
+/**
+ * Known CSS property names (camelCase and kebab-case).
+ * Used to differentiate raw CSS properties from Tailwind shorthand keys.
+ * Covers the full set of standard CSS properties.
+ */
+const CSS_PROPERTIES = new Set([
+  // Box model
+  "width","height","minWidth","minHeight","maxWidth","maxHeight",
+  "min-width","min-height","max-width","max-height",
+  "margin","marginTop","marginRight","marginBottom","marginLeft",
+  "margin-top","margin-right","margin-bottom","margin-left",
+  "padding","paddingTop","paddingRight","paddingBottom","paddingLeft",
+  "padding-top","padding-right","padding-bottom","padding-left",
+  "boxSizing","box-sizing",
+  // Display & layout
+  "display","overflow","overflowX","overflowY","overflow-x","overflow-y",
+  "visibility","opacity","position","top","right","bottom","left","zIndex","z-index",
+  "float","clear",
+  // Flexbox
+  "flex","flexGrow","flexShrink","flexBasis","flexFlow","flexDirection","flexWrap",
+  "flex-grow","flex-shrink","flex-basis","flex-flow","flex-direction","flex-wrap",
+  "alignItems","alignContent","alignSelf","justifyContent","justifyItems","justifySelf",
+  "align-items","align-content","align-self","justify-content","justify-items","justify-self",
+  "gap","rowGap","columnGap","row-gap","column-gap",
+  "order","placeItems","placeContent","placeSelf","place-items","place-content","place-self",
+  // Grid
+  "grid","gridTemplate","gridTemplateColumns","gridTemplateRows","gridTemplateAreas",
+  "gridColumn","gridRow","gridArea","gridAutoFlow","gridAutoColumns","gridAutoRows",
+  "grid-template","grid-template-columns","grid-template-rows","grid-template-areas",
+  "grid-column","grid-row","grid-area","grid-auto-flow","grid-auto-columns","grid-auto-rows",
+  // Typography
+  "color","fontSize","fontWeight","fontFamily","fontStyle","fontVariant","fontStretch",
+  "font-size","font-weight","font-family","font-style","font-variant","font-stretch",
+  "lineHeight","letterSpacing","wordSpacing","textAlign","textDecoration","textTransform",
+  "line-height","letter-spacing","word-spacing","text-align","text-decoration","text-transform",
+  "textOverflow","whiteSpace","wordBreak","overflowWrap","hyphens","textIndent",
+  "text-overflow","white-space","word-break","overflow-wrap","text-indent",
+  "verticalAlign","vertical-align","fontFeatureSettings","font-feature-settings",
+  // Backgrounds
+  "background","backgroundColor","backgroundImage","backgroundSize","backgroundPosition",
+  "backgroundRepeat","backgroundAttachment","backgroundOrigin","backgroundClip",
+  "background-color","background-image","background-size","background-position",
+  "background-repeat","background-attachment","background-origin","background-clip",
+  // Borders
+  "border","borderTop","borderRight","borderBottom","borderLeft",
+  "border-top","border-right","border-bottom","border-left",
+  "borderWidth","borderStyle","borderColor","borderRadius",
+  "border-width","border-style","border-color","border-radius",
+  "borderTopWidth","borderTopStyle","borderTopColor","borderTopLeftRadius","borderTopRightRadius",
+  "borderBottomWidth","borderBottomStyle","borderBottomColor","borderBottomLeftRadius","borderBottomRightRadius",
+  "borderLeftWidth","borderLeftStyle","borderLeftColor",
+  "borderRightWidth","borderRightStyle","borderRightColor",
+  "outline","outlineWidth","outlineStyle","outlineColor","outlineOffset",
+  "outline-width","outline-style","outline-color","outline-offset",
+  // Transforms & transitions
+  "transform","transformOrigin","transformStyle","perspective","perspectiveOrigin",
+  "transform-origin","transform-style","perspective-origin",
+  "transition","transitionProperty","transitionDuration","transitionTimingFunction","transitionDelay",
+  "transition-property","transition-duration","transition-timing-function","transition-delay",
+  "animation","animationName","animationDuration","animationTimingFunction","animationDelay",
+  "animationIterationCount","animationDirection","animationFillMode","animationPlayState",
+  "animation-name","animation-duration","animation-timing-function","animation-delay",
+  "animation-iteration-count","animation-direction","animation-fill-mode","animation-play-state",
+  // Effects
+  "boxShadow","textShadow","filter","backdropFilter","opacity",
+  "box-shadow","text-shadow","backdrop-filter","mix-blend-mode","mixBlendMode",
+  "isolation","objectFit","objectPosition","object-fit","object-position",
+  // Lists & tables
+  "listStyle","listStyleType","listStylePosition","listStyleImage",
+  "list-style","list-style-type","list-style-position","list-style-image",
+  "tableLayout","borderCollapse","borderSpacing","captionSide","emptyCells",
+  "table-layout","border-collapse","border-spacing","caption-side","empty-cells",
+  // SVG
+  "fill","stroke","strokeWidth","strokeDasharray","strokeDashoffset","strokeLinecap","strokeLinejoin",
+  "stroke-width","stroke-dasharray","stroke-dashoffset","stroke-linecap","stroke-linejoin",
+  // Misc
+  "content","cursor","pointerEvents","userSelect","resize","appearance","caretColor",
+  "pointer-events","user-select","caret-color",
+  "willChange","will-change","scrollBehavior","scroll-behavior",
+  "clipPath","clip-path","mask","maskImage","mask-image",
+  "columns","columnCount","columnGap","columnRule","columnWidth","columnSpan",
+  "column-count","column-rule","column-width","column-span",
+  "pageBreakBefore","pageBreakAfter","pageBreakInside","breakBefore","breakAfter","breakInside",
+  "page-break-before","page-break-after","page-break-inside","break-before","break-after","break-inside",
+  // CSS variables & custom
+  "all","direction","unicodeBidi","unicode-bidi","writingMode","writing-mode",
+  "overscrollBehavior","overscroll-behavior","touchAction","touch-action",
+  "scrollSnapType","scrollSnapAlign","scroll-snap-type","scroll-snap-align",
+]);
+
+/**
+ * Detect if a key is a raw CSS property (camelCase or kebab-case).
+ * Also accepts CSS custom properties (--var-name) and any key containing a hyphen
+ * that doesn't match known Tailwind-ish patterns.
+ *
+ * @param {string} key
+ * @returns {boolean}
+ */
+function isCssProperty(key) {
+  // Explicit set match (fast path)
+  if (CSS_PROPERTIES.has(key)) return true;
+  // CSS custom properties
+  if (key.startsWith("--")) return true;
+  // kebab-case that isn't a Tailwind modifier pattern (no colons)
+  if (key.includes("-") && !key.includes(":") && !key.startsWith("@")) {
+    // Exclude known Tailwind-ish hyphenated shorthands already in PSEUDO_SHORTHANDS or BREAKPOINTS
+    if (PSEUDO_SHORTHANDS[key] || GROUP_PEER_STATES[key] || BREAKPOINTS[key]) return false;
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Convert a camelCase or kebab-case key to a kebab-case CSS property.
+ * @param {string} key
+ * @returns {string}
+ */
+function toCssPropertyName(key) {
+  // Already kebab-case
+  if (key.includes("-")) return key;
+  // camelCase → kebab-case
+  return key.replace(/([A-Z])/g, "-$1").toLowerCase();
+}
+
+/**
+ * Extract all raw CSS property key/value pairs from a config object.
+ * Returns an object suitable for the @css directive (kebab-case keys, string values).
+ *
+ * @param {Object} config
+ * @returns {Object|null} - null if nothing found
+ */
+function extractRawCssProps(config) {
+  let result = null;
+  for (const [key, value] of Object.entries(config)) {
+    if (!isCssProperty(key)) continue;
+    if (typeof value !== "string" && typeof value !== "number") continue;
+    if (!result) result = {};
+    result[toCssPropertyName(key)] = String(value);
+  }
+  return result;
+}
+
 function expandShorthands(config, baseSelector) {
   const expanded = {};
   const specialKeys = new Set([
     "name", "prefix", "hash", "hashLength", "inject", "base",
     "variants", "compoundVariants", "defaultVariants", "slots",
     "responsiveVariants", "extend", "animation", "enter", "exit",
-    "enterFrom", "enterTo", "leaveFrom", "leaveTo", "_"
+    "enterFrom", "enterTo", "leaveFrom", "leaveTo", "_", "tw"
   ]);
+
+  // Collect raw CSS properties into the @css directive for this selector
+  const rawCss = extractRawCssProps(config);
+  if (rawCss) {
+    // twsx supports { [selector]: { "@css": { prop: value } } }
+    // We expand that here so it lands in the style object correctly
+    if (!expanded[baseSelector]) expanded[baseSelector] = {};
+    // expanded[baseSelector] may already be a string (Tailwind classes) — keep both
+    // by using a special marker object that the caller (generateBasicClassName) will merge
+    expanded["__rawCss__"] = expanded["__rawCss__"] || {};
+    Object.assign(expanded["__rawCss__"], rawCss);
+  }
 
   for (const [key, value] of Object.entries(config)) {
     if (specialKeys.has(key)) continue;
+    // Skip raw CSS properties — already handled above
+    if (isCssProperty(key) && (typeof value === "string" || typeof value === "number")) continue;
 
     // Process tokens in value
     const processedValue = typeof value === "string" ? processTokens(value) : value;
@@ -606,14 +762,29 @@ function processNestedStyles(config, baseSelector) {
       const nested = processNestedStyles(value, nestedSelector);
       Object.assign(result, nested);
 
-      if (value._) {
-        result[nestedSelector] = processTokens(value._);
+      // Support both `_` and `tw` as the Tailwind class key inside nested objects
+      const nestedTwClasses = [value._, value.tw].filter(Boolean).join(" ");
+      if (nestedTwClasses) {
+        result[nestedSelector] = processTokens(nestedTwClasses);
         const nestedShorthands = expandShorthands(value, nestedSelector);
+        // Wire raw CSS from nested object
+        if (nestedShorthands.__rawCss__) {
+          const existingNested = result[nestedSelector] || "";
+          if (typeof existingNested === "string") {
+            result[nestedSelector] = [existingNested, { "@css": nestedShorthands.__rawCss__ }];
+          }
+          delete nestedShorthands.__rawCss__;
+        }
         Object.assign(result, nestedShorthands);
       }
     } else if (typeof value === "string") {
-      if (key === "_") {
-        result[baseSelector] = processTokens(value);
+      if (key === "_" || key === "tw") {
+        // Both _ and tw are Tailwind class shorthands for the current selector
+        if (result[baseSelector]) {
+          result[baseSelector] = result[baseSelector] + " " + processTokens(value);
+        } else {
+          result[baseSelector] = processTokens(value);
+        }
       } else {
         const selector = PSEUDO_SHORTHANDS[key]
           ? PSEUDO_SHORTHANDS[key].replace("&", baseSelector)
@@ -733,7 +904,6 @@ function generateBasicClassName(config) {
     hash: useHash = globalConfig.hash,
     hashLength = globalConfig.hashLength,
     inject = globalConfig.inject,
-    _: baseStyles = "",
     ...rest
   } = config;
 
@@ -756,22 +926,11 @@ function generateBasicClassName(config) {
   }
 
   const baseSelector = `.${className}`;
-  const styleObj = {};
 
-  // Add base styles with token processing
-  if (baseStyles) {
-    styleObj[baseSelector] = processTokens(baseStyles);
-  }
+  // buildStyleObj handles `_`, `tw`, raw CSS props, pseudo shorthands, nested — all in one place
+  const styleObj = buildStyleObj(rest, baseSelector);
 
-  // Process shorthands (hover, focus, dark, group-hover, etc.)
-  const expanded = expandShorthands(rest, baseSelector);
-  Object.assign(styleObj, expanded);
-
-  // Process nested objects
-  const nested = processNestedStyles(rest, baseSelector);
-  Object.assign(styleObj, nested);
-
-  // Process animations
+  // Process animations (has its own dedicated fields)
   const { styles: animStyles, keyframes } = processAnimations(rest, baseSelector, className);
   Object.assign(styleObj, animStyles);
 
@@ -791,6 +950,60 @@ function generateBasicClassName(config) {
   }
 
   return className;
+}
+
+// ============================================================================
+// Shared: Build a twsx-compatible style object from a style config object
+// Handles `_`, `tw` (Tailwind classes), raw CSS properties, pseudo shorthands,
+// breakpoints, and nested selectors — centralised so variants & slots reuse it.
+// ============================================================================
+
+/**
+ * Build a styleObj ready for twsx() from a style config value.
+ *
+ * @param {string|Object} styleValue - A Tailwind class string OR a mixed config object
+ * @param {string} selector          - The CSS selector to target (e.g. ".btn--color-primary")
+ * @returns {Object}                 - styleObj for twsx()
+ */
+function buildStyleObj(styleValue, selector) {
+  const styleObj = {};
+
+  if (typeof styleValue === "string") {
+    // Plain Tailwind class string
+    styleObj[selector] = processTokens(styleValue);
+    return styleObj;
+  }
+
+  if (typeof styleValue !== "object" || styleValue === null) return styleObj;
+
+  // Merge `_` and `tw` as Tailwind classes for this selector
+  const twClasses = [styleValue._, styleValue.tw].filter(Boolean).join(" ");
+
+  // Extract raw CSS properties
+  const rawCss = extractRawCssProps(styleValue);
+
+  if (twClasses && rawCss) {
+    // Both Tailwind classes AND raw CSS — use array form: [twClasses, { "@css": {...} }]
+    styleObj[selector] = [processTokens(twClasses), { "@css": rawCss }];
+  } else if (twClasses) {
+    styleObj[selector] = processTokens(twClasses);
+  } else if (rawCss) {
+    styleObj[selector] = [{ "@css": rawCss }];
+  }
+
+  // Expand pseudo shorthands, breakpoints, nested selectors
+  const expanded = expandShorthands(styleValue, selector);
+  if (expanded.__rawCss__) {
+    // top-level rawCss already handled above; drop the marker
+    delete expanded.__rawCss__;
+  }
+  Object.assign(styleObj, expanded);
+
+  // Process nested style objects
+  const nested = processNestedStyles(styleValue, selector);
+  Object.assign(styleObj, nested);
+
+  return styleObj;
 }
 
 // ============================================================================
@@ -828,20 +1041,7 @@ function createVariants(config) {
   // Generate base styles
   if (base) {
     const baseSelector = `.${baseClassName}`;
-    let styleObj = {};
-
-    if (typeof base === "string") {
-      styleObj[baseSelector] = processTokens(base);
-    } else if (typeof base === "object") {
-      if (base._) {
-        styleObj[baseSelector] = processTokens(base._);
-      }
-      const expanded = expandShorthands(base, baseSelector);
-      Object.assign(styleObj, expanded);
-      const nested = processNestedStyles(base, baseSelector);
-      Object.assign(styleObj, nested);
-    }
-
+    const styleObj = buildStyleObj(base, baseSelector);
     const baseCss = twsx(styleObj, { inject: false });
     variantStyles.set("__base__", baseCss);
   }
@@ -851,19 +1051,8 @@ function createVariants(config) {
     for (const [optionKey, optionValue] of Object.entries(variantOptions)) {
       const variantClassName = `${baseClassName}--${variantKey}-${optionKey}`;
       const selector = `.${variantClassName}`;
-      let styleObj = {};
 
-      if (typeof optionValue === "string") {
-        styleObj[selector] = processTokens(optionValue);
-      } else if (typeof optionValue === "object") {
-        if (optionValue._) {
-          styleObj[selector] = processTokens(optionValue._);
-        }
-        const expanded = expandShorthands(optionValue, selector);
-        Object.assign(styleObj, expanded);
-        const nested = processNestedStyles(optionValue, selector);
-        Object.assign(styleObj, nested);
-      }
+      const styleObj = buildStyleObj(optionValue, selector);
 
       const css = twsx(styleObj, { inject: false });
       variantStyles.set(`${variantKey}:${optionKey}`, {
@@ -1040,19 +1229,8 @@ function createSlots(config) {
   for (const [slotName, slotStyles] of Object.entries(slots)) {
     const slotClassName = `${componentName}__${slotName}`;
     const selector = `.${slotClassName}`;
-    let styleObj = {};
 
-    if (typeof slotStyles === "string") {
-      styleObj[selector] = processTokens(slotStyles);
-    } else if (typeof slotStyles === "object") {
-      if (slotStyles._) {
-        styleObj[selector] = processTokens(slotStyles._);
-      }
-      const expanded = expandShorthands(slotStyles, selector);
-      Object.assign(styleObj, expanded);
-      const nested = processNestedStyles(slotStyles, selector);
-      Object.assign(styleObj, nested);
-    }
+    const styleObj = buildStyleObj(slotStyles, selector);
 
     const css = twsx(styleObj, { inject: false });
     slotData.set(slotName, { className: slotClassName, css });
@@ -1064,22 +1242,22 @@ function createSlots(config) {
 
   for (const [variantKey, variantOptions] of Object.entries(variants)) {
     for (const [optionKey, optionValue] of Object.entries(variantOptions)) {
-      if (typeof optionValue === "object" && !optionValue._) {
+      // optionValue may be a slot-keyed object: { root: '...', header: '...' }
+      // Detect: it's an object, and its keys match slot names (not `_` / `tw` / raw CSS)
+      const isSlotMap = typeof optionValue === "object" &&
+        optionValue !== null &&
+        !optionValue._ &&
+        !optionValue.tw &&
+        !extractRawCssProps(optionValue) &&
+        Object.keys(optionValue).some(k => slots[k]);
+
+      if (isSlotMap) {
         for (const [slotName, slotStyles] of Object.entries(optionValue)) {
           if (typeof slotStyles === "string" || typeof slotStyles === "object") {
             const variantClassName = `${componentName}__${slotName}--${variantKey}-${optionKey}`;
             const selector = `.${variantClassName}`;
-            let styleObj = {};
 
-            if (typeof slotStyles === "string") {
-              styleObj[selector] = processTokens(slotStyles);
-            } else {
-              if (slotStyles._) {
-                styleObj[selector] = processTokens(slotStyles._);
-              }
-              const expanded = expandShorthands(slotStyles, selector);
-              Object.assign(styleObj, expanded);
-            }
+            const styleObj = buildStyleObj(slotStyles, selector);
 
             const css = twsx(styleObj, { inject: false });
             const key = `${variantKey}:${optionKey}:${slotName}`;
@@ -1098,10 +1276,13 @@ function createSlots(config) {
     
     // Check if compound has slot-specific styles
     for (const [slotName] of slotData.entries()) {
-      if (rest[slotName] && typeof rest[slotName] === "string") {
+      const slotValue = rest[slotName];
+      if (slotValue && (typeof slotValue === "string" || typeof slotValue === "object")) {
         const compoundClassName = `${componentName}__${slotName}--compound-${i}`;
         const selector = `.${compoundClassName}`;
-        const css = twsx({ [selector]: processTokens(rest[slotName]) }, { inject: false });
+
+        const styleObj = buildStyleObj(slotValue, selector);
+        const css = twsx(styleObj, { inject: false });
         
         const conditions = {};
         for (const [k, v] of Object.entries(rest)) {

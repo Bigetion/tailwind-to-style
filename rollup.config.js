@@ -63,6 +63,7 @@ const subPathEntries = [
   { input: 'src/animations/index.js', name: 'animations/index' },
   { input: 'src/core/tws.js', name: 'core/tws' },
   { input: 'src/className/index.js', name: 'className/index' },
+  { input: 'src/register/index.js', name: 'register/index' },
   { input: 'src/cx.js', name: 'cx' },
 ];
 

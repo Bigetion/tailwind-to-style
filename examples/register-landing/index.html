@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tailwind-to-style/register — Semantic CSS in JS</title>
+  <meta name="description"
+    content="Define semantic CSS classes once. Use clean HTML everywhere. Tailwind power, Bootstrap simplicity." />
+  <!-- FOUC prevention: hide body until register() finishes injecting all styles -->
+  <style>body { opacity: 0 }</style>
+  <noscript><style>body { opacity: 1 }</style></noscript>
+  <script type="module" src="./main.js"></script>
+</head>
+
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       NAVBAR
+  ════════════════════════════════════════════════════════════ -->
+  <nav class="navbar">
+    <div class="container navbar-inner">
+      <a href="#" class="nav-logo">
+        <span style="color:var(--brand)">◆</span>
+        tailwind-to-style
+      </a>
+      <div class="nav-links">
+        <a href="#features" class="nav-link">Features</a>
+        <a href="#how-it-works" class="nav-link">Docs</a>
+        <a href="https://github.com/Bigetion/tailwind-to-style" class="nav-link">GitHub</a>
+        <a href="#" class="btn btn-primary btn-sm btn-pill">
+          npm install →
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       HERO
+  ════════════════════════════════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="container">
+
+      <div class="hero-badge">
+        ✦ <strong>tailwind-to-style/register</strong> — v5
+      </div>
+
+      <h1 class="heading-xl">
+        Semantic classes.<br>Tailwind power.
+      </h1>
+
+      <p class="lead" style="margin:0 auto 0 auto; text-align:center;">
+        Define CSS classes once with <code class="code-inline">register()</code>.
+        Get clean, readable HTML everywhere — no long class strings, no build step.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#" class="btn btn-primary btn-lg btn-pill">Get Started →</a>
+        <a href="https://github.com/Bigetion/tailwind-to-style" class="btn btn-outline btn-lg btn-pill">View on
+          GitHub</a>
+      </div>
+
+      <!-- Code preview -->
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="code-block-dot"></span>
+          <span class="code-block-dot"></span>
+          <span class="code-block-dot"></span>
+          <span class="code-block-title">design-system.js</span>
+        </div>
+        <div class="code-block-body">
+          <pre>
+<span class="token-kw">import</span> <span class="token-punct">{</span> <span class="token-fn">register</span>, <span class="token-fn">cx</span> <span class="token-punct">}</span> <span class="token-kw">from</span> <span class="token-str">'tailwind-to-style/register'</span>
+
+<span class="token-comment">// Define your button once...</span>
+<span class="token-fn">register</span><span class="token-punct">(</span><span class="token-str">'btn'</span>, <span class="token-punct">{</span>
+  <span class="token-prop">base</span><span class="token-punct">:</span> <span class="token-punct">{</span> <span class="token-prop">tw</span><span class="token-punct">:</span> <span class="token-str">'px-5 py-2.5 rounded-lg font-semibold transition-all'</span>, <span class="token-prop">'font-family'</span><span class="token-punct">:</span> <span class="token-str">'inherit'</span> <span class="token-punct">},</span>
+  <span class="token-prop">modifiers</span><span class="token-punct">:</span> <span class="token-punct">{</span>
+    <span class="token-prop">primary</span><span class="token-punct">:</span> <span class="token-punct">{</span> <span class="token-prop">tw</span><span class="token-punct">:</span> <span class="token-str">'bg-indigo-600 text-white hover:bg-indigo-700'</span> <span class="token-punct">},</span>
+    <span class="token-prop">outline</span><span class="token-punct">:</span> <span class="token-punct">{</span> <span class="token-prop">tw</span><span class="token-punct">:</span> <span class="token-str">'bg-transparent border-2 border-indigo-600 text-indigo-600'</span> <span class="token-punct">},</span>
+    <span class="token-prop">sm</span><span class="token-punct">:</span>      <span class="token-punct">{</span> <span class="token-prop">tw</span><span class="token-punct">:</span> <span class="token-str">'px-3 py-1.5'</span><span class="token-punct">,</span> <span class="token-prop">'font-size'</span><span class="token-punct">:</span> <span class="token-str">'12px'</span> <span class="token-punct">},</span>
+    <span class="token-prop">lg</span><span class="token-punct">:</span>      <span class="token-punct">{</span> <span class="token-prop">tw</span><span class="token-punct">:</span> <span class="token-str">'px-7 py-3.5'</span><span class="token-punct">,</span> <span class="token-prop">'font-size'</span><span class="token-punct">:</span> <span class="token-str">'16px'</span> <span class="token-punct">},</span>
+    <span class="token-prop">pill</span><span class="token-punct">:</span>    <span class="token-punct">{</span> <span class="token-prop">'border-radius'</span><span class="token-punct">:</span> <span class="token-str">'9999px'</span> <span class="token-punct">},</span>
+  <span class="token-punct">}</span>
+<span class="token-punct">})</span>
+
+<span class="token-comment">// ...use anywhere, like Bootstrap ↓</span></pre>
+        </div>
+      </div>
+
+      <!-- HTML result -->
+      <div class="code-block" style="margin-top:1rem;">
+        <div class="code-block-header">
+          <span class="code-block-dot"></span>
+          <span class="code-block-dot"></span>
+          <span class="code-block-dot"></span>
+          <span class="code-block-title">index.html</span>
+        </div>
+        <div class="code-block-body">
+          <pre>
+<span class="token-tag">&lt;button</span> <span class="token-attr">class</span>=<span class="token-str">"btn btn-primary btn-lg"</span><span class="token-tag">&gt;</span>Submit<span class="token-tag">&lt;/button&gt;</span>
+<span class="token-tag">&lt;button</span> <span class="token-attr">class</span>=<span class="token-str">"btn btn-outline btn-sm btn-pill"</span><span class="token-tag">&gt;</span>Cancel<span class="token-tag">&lt;/button&gt;</span>
+<span class="token-tag">&lt;button</span> <span class="token-attr">class</span>=<span class="token-str">"btn btn-primary btn-lg btn-pill"</span><span class="token-tag">&gt;</span>Get Started<span class="token-tag">&lt;/button&gt;</span></pre>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FEATURES
+  ════════════════════════════════════════════════════════════ -->
+  <section class="section" id="features">
+    <div class="container">
+
+      <div class="section-header">
+        <p class="eyebrow">✦ Features</p>
+        <h2 class="heading-lg">Everything you need</h2>
+        <p class="section-lead">One import. One API. Covers 100% of styling needs.</p>
+      </div>
+
+      <div class="feature-grid">
+
+        <div class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <h3 class="heading-md">Semantic Classes</h3>
+          <p class="text-muted">
+            Clean HTML like Bootstrap. No more class soup in your templates —
+            define once, reuse everywhere with meaningful names.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3 class="heading-md">Runtime CSS</h3>
+          <p class="text-muted">
+            No Tailwind CLI, no purge config, no build step.
+            Styles are generated and injected at runtime — zero config.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3 class="heading-md">Unlimited Styling</h3>
+          <p class="text-muted">
+            Mix Tailwind utilities with any raw CSS property —
+            <code class="code-inline">font-size</code>,
+            <code class="code-inline">box-shadow</code>,
+            CSS variables, arbitrary values.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📦</div>
+          <h3 class="heading-md">Tiny Bundle</h3>
+          <p class="text-muted">
+            Under 10 KB gzipped. Zero dependencies.
+            Tree-shakeable sub-path imports for even smaller bundles.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">💪</div>
+          <h3 class="heading-md">Full TypeScript</h3>
+          <p class="text-muted">
+            Autocomplete for all CSS properties, Tailwind utilities,
+            pseudo shorthands, and modifier keys.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔗</div>
+          <h3 class="heading-md">Composable</h3>
+          <p class="text-muted">
+            Extend classes, group related components, merge conditionally
+            with <code class="code-inline">cx()</code> and <code class="code-inline">cn()</code>.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- ═══════════════════════════════════════════════════════════
+       HOW IT WORKS
+  ════════════════════════════════════════════════════════════ -->
+  <section class="section" id="how-it-works">
+    <div class="container">
+
+      <div class="section-header">
+        <p class="eyebrow">✦ How it works</p>
+        <h2 class="heading-lg">Three functions, endless possibilities</h2>
+        <p class="section-lead">register() · register.group() · cx()</p>
+      </div>
+
+      <!-- register() + modifiers -->
+      <div class="two-col" style="margin-bottom:5rem;">
+        <div>
+          <p class="eyebrow">01 — register()</p>
+          <h3 class="heading-md">Define classes with modifiers</h3>
+          <p class="text-muted" style="margin-bottom:1rem;">
+            Use <code class="code-inline">modifiers</code> to auto-generate
+            suffixed variants like <code class="code-inline">.btn-primary</code>,
+            <code class="code-inline">.btn-sm</code>, <code class="code-inline">.btn-pill</code>
+            — all from one config object.
+          </p>
+          <p class="text-muted">
+            Each modifier can mix <strong>Tailwind utilities</strong> via
+            <code class="code-inline">tw</code> and <strong>raw CSS properties</strong>
+            like <code class="code-inline">'font-size'</code>,
+            <code class="code-inline">'border-radius'</code>,
+            <code class="code-inline">'box-shadow'</code>.
+          </p>
+        </div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-dot"></span>
+            <span class="code-block-dot"></span>
+            <span class="code-block-dot"></span>
+            <span class="code-block-title">register() + modifiers</span>
+          </div>
+          <div class="code-block-body">
+            <pre>
+<span class="token-fn">register</span><span class="token-punct">(</span><span class="token-str">'btn'</span>, <span class="token-punct">{</span>
+  <span class="token-prop">base</span><span class="token-punct">:</span> <span class="token-punct">{</span>
+    <span class="token-prop">tw</span><span class="token-punct">:</span> <span class="token-str">'rounded-lg font-semibold transition-all'</span>,
+    <span class="token-prop">'font-family'</span><span class="token-punct">:</span> <span class="token-str">'inherit'</span>,
+    <span class="token-prop">'line-height'</span><span class="token-punct">:</span> <span class="token-str">'1'</span>,
+  <span class="token-punct">},</span>
+  <span class="token-prop">modifiers</span><span class="token-punct">:</span> <span class="token-punct">{</span>
+    <span class="token-comment">// colors</span>
+    <span class="token-prop">primary</span><span class="token-punct">:</span> <span class="token-punct">{</span> <span class="token-prop">tw</span><span class="token-punct">:</span> <span class="token-str">'bg-indigo-600 text-white hover:bg-indigo-700'</span> <span class="token-punct">},</span>
+    <span class="token-prop">danger</span><span class="token-punct">:</span>  <span class="token-punct">{</span> <span class="token-prop">tw</span><span class="token-punct">:</span> <span class="token-str">'bg-red-600 text-white hover:bg-red-700'</span> <span class="token-punct">},</span>
+    <span class="token-comment">// sizes</span>
+    <span class="token-prop">sm</span><span class="token-punct">:</span>      <span class="token-punct">{</span> <span class="token-prop">tw</span><span class="token-punct">:</span> <span class="token-str">'px-3 py-1.5'</span><span class="token-punct">,</span> <span class="token-prop">'font-size'</span><span class="token-punct">:</span> <span class="token-str">'12px'</span> <span class="token-punct">},</span>
+    <span class="token-prop">lg</span><span class="token-punct">:</span>      <span class="token-punct">{</span> <span class="token-prop">tw</span><span class="token-punct">:</span> <span class="token-str">'px-7 py-3.5'</span><span class="token-punct">,</span> <span class="token-prop">'font-size'</span><span class="token-punct">:</span> <span class="token-str">'16px'</span> <span class="token-punct">},</span>
+    <span class="token-comment">// shapes</span>
+    <span class="token-prop">pill</span><span class="token-punct">:</span>    <span class="token-punct">{</span> <span class="token-prop">'border-radius'</span><span class="token-punct">:</span> <span class="token-str">'9999px'</span> <span class="token-punct">},</span>
+  <span class="token-punct">}</span>
+<span class="token-punct">})</span>
+
+<span class="token-comment">// → .btn .btn-primary .btn-danger</span>
+<span class="token-comment">// → .btn-sm .btn-lg .btn-pill</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- register.group() -->
+      <div class="two-col">
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-dot"></span>
+            <span class="code-block-dot"></span>
+            <span class="code-block-dot"></span>
+            <span class="code-block-title">register.group()</span>
+          </div>
+          <div class="code-block-body">
+            <pre>
+<span class="token-fn">register</span><span class="token-punct">.</span><span class="token-fn">group</span><span class="token-punct">(</span><span class="token-str">'card'</span>, <span class="token-punct">{</span>
+  <span class="token-prop">root</span><span class="token-punct">:</span>   <span class="token-punct">{</span> <span class="token-prop">tw</span><span class="token-punct">:</span> <span class="token-str">'rounded-xl bg-white border shadow-sm'</span> <span class="token-punct">},</span>
+  <span class="token-prop">header</span><span class="token-punct">:</span> <span class="token-punct">{</span>
+    <span class="token-prop">tw</span><span class="token-punct">:</span> <span class="token-str">'px-6 py-4 border-b font-semibold'</span>,
+    <span class="token-prop">'font-size'</span><span class="token-punct">:</span> <span class="token-str">'16px'</span>,
+  <span class="token-punct">},</span>
+  <span class="token-prop">body</span><span class="token-punct">:</span>   <span class="token-punct">{</span> <span class="token-prop">tw</span><span class="token-punct">:</span> <span class="token-str">'px-6 py-4'</span><span class="token-punct">,</span> <span class="token-prop">'line-height'</span><span class="token-punct">:</span> <span class="token-str">'1.6'</span> <span class="token-punct">},</span>
+  <span class="token-prop">footer</span><span class="token-punct">:</span> <span class="token-punct">{</span> <span class="token-prop">tw</span><span class="token-punct">:</span> <span class="token-str">'px-6 py-4 border-t bg-gray-50 text-sm'</span> <span class="token-punct">},</span>
+<span class="token-punct">})</span>
+
+<span class="token-comment">// → .card .card-header .card-body .card-footer</span>
+
+<span class="token-comment">// Clean HTML:</span>
+<span class="token-tag">&lt;div</span> <span class="token-attr">class</span>=<span class="token-str">"card"</span><span class="token-tag">&gt;</span>
+  <span class="token-tag">&lt;div</span> <span class="token-attr">class</span>=<span class="token-str">"card-header"</span><span class="token-tag">&gt;</span>Title<span class="token-tag">&lt;/div&gt;</span>
+  <span class="token-tag">&lt;div</span> <span class="token-attr">class</span>=<span class="token-str">"card-body"</span><span class="token-tag">&gt;</span>Content<span class="token-tag">&lt;/div&gt;</span>
+<span class="token-tag">&lt;/div&gt;</span></pre>
+          </div>
+        </div>
+        <div>
+          <p class="eyebrow">02 — register.group()</p>
+          <h3 class="heading-md">Multi-part components</h3>
+          <p class="text-muted" style="margin-bottom:1rem;">
+            Register related elements in one call.
+            <code class="code-inline">root</code> maps to the base class name,
+            everything else becomes <code class="code-inline">.name-part</code>.
+          </p>
+          <p class="text-muted">
+            Perfect for cards, modals, navbars, and any compound component.
+            HTML stays clean — just class names, no inline styles.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- ═══════════════════════════════════════════════════════════
+       LIVE DEMO
+  ════════════════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="container">
+
+      <div class="section-header">
+        <p class="eyebrow">✦ Live demo</p>
+        <h2 class="heading-lg">This page uses register()</h2>
+        <p class="section-lead">
+          Every element you see — navbar, buttons, cards, code blocks —
+          is styled with <code class="code-inline">register()</code> in <strong>main.js</strong>.
+          The HTML is 100% clean.
+        </p>
+      </div>
+
+      <!-- Button showcase -->
+      <div style="text-align:center; margin-bottom:3rem;">
+        <p class="eyebrow" style="justify-content:center; margin-bottom:1.5rem;">Buttons</p>
+        <div class="btn-row">
+          <button class="btn btn-primary btn-md">Primary</button>
+          <button class="btn btn-outline btn-md">Outline</button>
+          <button class="btn btn-ghost btn-md">Ghost</button>
+          <button class="btn btn-primary btn-sm">Small</button>
+          <button class="btn btn-primary btn-lg">Large</button>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary btn-md btn-pill">✦ Pill Primary</button>
+          <button class="btn btn-outline btn-md btn-pill">Pill Outline</button>
+          <button class="btn btn-ghost btn-md btn-pill" style="opacity:.5;cursor:not-allowed">Disabled</button>
+        </div>
+      </div>
+
+      <!-- Feature cards mini showcase -->
+      <p class="eyebrow" style="justify-content:center;margin-bottom:1.5rem;">Cards</p>
+      <div class="feature-grid" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); margin-bottom:3rem;">
+        <div class="feature-card">
+          <div class="feature-icon">🚀</div>
+          <h3 class="heading-md">Fast</h3>
+          <p class="text-muted">LRU-cached CSS generation. Inject once, reuse forever.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3 class="heading-md">Precise</h3>
+          <p class="text-muted">Mix Tailwind utilities with exact CSS values in one object.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔗</div>
+          <h3 class="heading-md">Composable</h3>
+          <p class="text-muted">Extend any class. Override anything. Group related parts.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- ═══════════════════════════════════════════════════════════
+       COMPARISON
+  ════════════════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="container">
+
+      <div class="section-header">
+        <p class="eyebrow">✦ Comparison</p>
+        <h2 class="heading-lg">Why register()?</h2>
+      </div>
+
+      <div class="compare-wrap">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th class="compare-th">Feature</th>
+              <th class="compare-th compare-th-brand">register()</th>
+              <th class="compare-th">Tailwind CSS</th>
+              <th class="compare-th">Bootstrap</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="compare-row">
+              <td class="compare-td">Semantic class names</td>
+              <td class="compare-td compare-td-brand"><span class="compare-check">✓</span></td>
+              <td class="compare-td"><span class="compare-cross">✗</span></td>
+              <td class="compare-td"><span class="compare-check">✓</span></td>
+            </tr>
+            <tr class="compare-row">
+              <td class="compare-td">Clean HTML</td>
+              <td class="compare-td compare-td-brand"><span class="compare-check">✓</span></td>
+              <td class="compare-td"><span class="compare-cross">✗</span></td>
+              <td class="compare-td"><span class="compare-check">✓</span></td>
+            </tr>
+            <tr class="compare-row">
+              <td class="compare-td">Arbitrary CSS values</td>
+              <td class="compare-td compare-td-brand"><span class="compare-check">✓</span></td>
+              <td class="compare-td">Limited</td>
+              <td class="compare-td"><span class="compare-cross">✗</span></td>
+            </tr>
+            <tr class="compare-row">
+              <td class="compare-td">No build step</td>
+              <td class="compare-td compare-td-brand"><span class="compare-check">✓</span></td>
+              <td class="compare-td"><span class="compare-cross">✗</span></td>
+              <td class="compare-td"><span class="compare-check">✓</span></td>
+            </tr>
+            <tr class="compare-row">
+              <td class="compare-td">Runtime CSS injection</td>
+              <td class="compare-td compare-td-brand"><span class="compare-check">✓</span></td>
+              <td class="compare-td"><span class="compare-cross">✗</span></td>
+              <td class="compare-td"><span class="compare-cross">✗</span></td>
+            </tr>
+            <tr class="compare-row">
+              <td class="compare-td">TypeScript support</td>
+              <td class="compare-td compare-td-brand"><span class="compare-check">✓</span></td>
+              <td class="compare-td"><span class="compare-cross">✗</span></td>
+              <td class="compare-td"><span class="compare-cross">✗</span></td>
+            </tr>
+            <tr class="compare-row">
+              <td class="compare-td">CSS custom properties</td>
+              <td class="compare-td compare-td-brand"><span class="compare-check">✓</span></td>
+              <td class="compare-td"><span class="compare-cross">✗</span></td>
+              <td class="compare-td"><span class="compare-cross">✗</span></td>
+            </tr>
+            <tr class="compare-row">
+              <td class="compare-td">Component extend</td>
+              <td class="compare-td compare-td-brand"><span class="compare-check">✓</span></td>
+              <td class="compare-td"><span class="compare-cross">✗</span></td>
+              <td class="compare-td"><span class="compare-cross">✗</span></td>
+            </tr>
+            <tr class="compare-row">
+              <td class="compare-td">Bundle size (gzip)</td>
+              <td class="compare-td compare-td-brand">~8 KB</td>
+              <td class="compare-td">30 KB+</td>
+              <td class="compare-td">25 KB</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       CTA
+  ════════════════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-section">
+        <div class="cta-glow"></div>
+        <p class="eyebrow" style="color:rgba(255,255,255,.7); justify-content:center; margin-bottom:1.5rem;">
+          ✦ Get started today
+        </p>
+        <h2 class="heading-lg" style="color:#fff; margin-bottom:1rem;">
+          Clean HTML starts here.
+        </h2>
+        <p class="section-lead" style="color:rgba(255,255,255,.75); margin:0 auto 0 auto; text-align:center;">
+          Drop in one import. Register your classes. Write semantic HTML.
+        </p>
+        <div class="cta-actions">
+          <a href="#" class="btn btn-white btn-lg btn-pill">
+            npm install tailwind-to-style
+          </a>
+          <a href="https://github.com/Bigetion/tailwind-to-style" class="btn btn-lg btn-pill"
+            style="border:2px solid rgba(255,255,255,.35); color:#fff; background:transparent;">
+            View Docs →
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FOOTER
+  ════════════════════════════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <p class="text-muted">© 2025 tailwind-to-style — MIT License</p>
+      <div style="display:flex; gap:1.5rem;">
+        <a href="https://github.com/Bigetion/tailwind-to-style" class="nav-link">GitHub</a>
+        <a href="https://www.npmjs.com/package/tailwind-to-style" class="nav-link">npm</a>
+        <a href="#" class="nav-link">Docs</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+
+</html>
