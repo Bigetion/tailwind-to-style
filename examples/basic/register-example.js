@@ -70,7 +70,7 @@ test("register() runs without error (simple form)", () => {
 });
 
 test("register() with pseudo selector ('&:hover')", () => {
-  register("link", {
+  register("my-link", {
     tw: "text-blue-600",
     "text-decoration": "none",
     "&:hover": {
@@ -78,7 +78,7 @@ test("register() with pseudo selector ('&:hover')", () => {
       color: "#1d4ed8",
     },
   });
-  expect(register.extractCSS()).toContain(".link");
+  expect(register.extractCSS()).toContain(".my-link");
 });
 
 test("register() with pseudo shorthands (hover, focus, dark)", () => {
@@ -333,8 +333,8 @@ register.group("card", {
   actions: { tw: "px-6 py-4 flex items-center gap-3" },
 });
 
-// Form inputs
-register("input", {
+// Form inputs — use a class name, not 'input' (which is an HTML element tag)
+register("text-input", {
   tw: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-white transition-all",
   "font-family": "inherit",
   "font-size": "14px",
@@ -370,7 +370,7 @@ test("design system: card group registered", () => {
 });
 
 test("design system: input registered", () => {
-  expect(register.extractCSS()).toContain(".input");
+  expect(register.extractCSS()).toContain(".text-input");
 });
 
 test("design system: badge group registered", () => {

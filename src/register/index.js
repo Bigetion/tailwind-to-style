@@ -126,93 +126,141 @@ function _ensureStyleTag() {
     _styleTag = document.createElement("style");
     _styleTag.id = "tvs-style";
     _styleTag.setAttribute("data-tvs", "");
-    document.head.appendChild(_styleTag);
+    // Use documentElement as fallback if head not ready yet
+    const parent = document.head || document.documentElement;
+    parent.appendChild(_styleTag);
   }
   return _styleTag;
+}
+
+function _flushRegistry() {
+  if (_registry.size === 0) return;
+  try {
+    _ensureStyleTag();
+    _styleTag.textContent = [..._registry.values()].join("\n");
+  } catch (e) {
+    // DOM not ready — will retry on DOMContentLoaded
+  }
 }
 
 function _inject(key, css) {
   if (!css) return;
   _registry.set(key, css);
   if (IS_BROWSER) {
-    _ensureStyleTag();
-    _styleTag.textContent = [..._registry.values()].join("\n");
+    _flushRegistry();
   } else if (isSSRCollecting()) {
     collectSSRCSS(css);
   }
 }
 
+// Flush on DOMContentLoaded in case register() was called before <head> parsed
+if (IS_BROWSER && document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", _flushRegistry, { once: true });
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
-// Style object builder
-// Converts a mixed config value (tw + raw CSS + pseudo shorthands) into a
-// twsx-compatible style object for a given CSS selector.
+// Style builder
+// Converts a mixed config value into a CSS string directly.
+// Calls twsx twice when needed: once for tw classes, once for raw CSS.
+// This avoids the flattenStyleObject issue with @css object keys.
 // ─────────────────────────────────────────────────────────────────────────────
 
-function buildStyleObj(selector, config) {
+function buildCssForSelector(selector, config) {
   if (typeof config === "string") {
-    // Pure Tailwind class string
-    return { [selector]: config };
+    // Plain Tailwind class string
+    return twsx({ [selector]: config }, { inject: false });
   }
 
-  if (typeof config !== "object" || config === null) return {};
+  if (typeof config !== "object" || config === null) return "";
 
-  const styleObj = {};
-  const rawCss = {};
+  let css = "";
 
-  // Tailwind classes from `tw` or `_`
+  // 1. Tailwind classes from `tw` or `_`
   const twClasses = [config.tw, config._].filter(Boolean).join(" ");
+  if (twClasses) {
+    css += twsx({ [selector]: twClasses }, { inject: false });
+  }
 
-  // Collect raw CSS properties
+  // 2. Raw CSS properties — generate CSS declarations directly (no twsx needed)
+  const rawDecls = [];
   for (const [k, v] of Object.entries(config)) {
     if (k === "tw" || k === "_") continue;
     if (typeof v !== "string" && typeof v !== "number") continue;
     if (isCssProperty(k)) {
-      rawCss[toCssPropertyName(k)] = String(v);
+      rawDecls.push(`${toCssPropertyName(k)}: ${v};`);
     }
   }
-
-  // Assign base selector value
-  if (twClasses && Object.keys(rawCss).length > 0) {
-    styleObj[selector] = [twClasses, { "@css": rawCss }];
-  } else if (twClasses) {
-    styleObj[selector] = twClasses;
-  } else if (Object.keys(rawCss).length > 0) {
-    styleObj[selector] = [{ "@css": rawCss }];
+  if (rawDecls.length > 0) {
+    css += `${selector}{${rawDecls.join("")}}`;
   }
 
-  // Process pseudo shorthands, breakpoints, group/peer states, nested selectors
+  // 3. Pseudo shorthands, breakpoints, nested selectors
   for (const [k, v] of Object.entries(config)) {
     if (k === "tw" || k === "_") continue;
-    if (typeof v !== "string" && typeof v !== "number" && typeof v !== "object") continue;
     if (isCssProperty(k) && (typeof v === "string" || typeof v === "number")) continue;
+    if (typeof v !== "string" && typeof v !== "object") continue;
 
     if (PSEUDO_SHORTHANDS[k]) {
       const mapping = PSEUDO_SHORTHANDS[k];
       const nestedConfig = typeof v === "string" ? { tw: v } : v;
       if (mapping.startsWith("@media")) {
-        const inner = buildStyleObj(selector, nestedConfig);
-        styleObj[mapping] = { ...(styleObj[mapping] || {}), ...inner };
+        // Wrap inner css in media query
+        const innerCss = buildCssForSelector(selector, nestedConfig);
+        if (innerCss) css += `${mapping}{${innerCss}}`;
       } else {
         const resolvedSel = mapping.replace("&", selector);
-        const inner = buildStyleObj(resolvedSel, nestedConfig);
-        Object.assign(styleObj, inner);
+        css += buildCssForSelector(resolvedSel, nestedConfig);
       }
     } else if (GROUP_PEER_STATES[k]) {
       const resolvedSel = GROUP_PEER_STATES[k].replace("&", selector);
-      const inner = buildStyleObj(resolvedSel, typeof v === "string" ? { tw: v } : v);
-      Object.assign(styleObj, inner);
+      css += buildCssForSelector(resolvedSel, typeof v === "string" ? { tw: v } : v);
     } else if (BREAKPOINTS[k]) {
-      const mq = `@media (min-width: ${BREAKPOINTS[k]})`;
-      const inner = buildStyleObj(selector, typeof v === "string" ? { tw: v } : v);
-      styleObj[mq] = { ...(styleObj[mq] || {}), ...inner };
+      const innerCss = buildCssForSelector(selector, typeof v === "string" ? { tw: v } : v);
+      if (innerCss) css += `@media (min-width: ${BREAKPOINTS[k]}){${innerCss}}`;
     } else if (k.startsWith("&") || k.startsWith(".") || k.startsWith("@")) {
       const resolvedSel = k.replace(/^&/, selector);
-      const inner = buildStyleObj(resolvedSel, typeof v === "string" ? { tw: v } : v);
-      Object.assign(styleObj, inner);
+      css += buildCssForSelector(resolvedSel, typeof v === "string" ? { tw: v } : v);
     }
   }
 
-  return styleObj;
+  return css;
+}
+
+/**
+ * Generate CSS from a buildStyleObj result.
+ * Handles the __raw suffix trick: replaces `.sel__raw { @css {...} }` with `.sel { ... }`
+ */
+function buildCss(styleObj) {
+  // Separate raw entries from normal entries
+  const normalObj = {};
+  const rawMap = {}; // suffixed_key → real_selector
+
+  for (const [k, v] of Object.entries(styleObj)) {
+    if (k.startsWith("__raw_map__")) {
+      rawMap[k.slice("__raw_map__".length) + "__raw"] = v;
+    } else {
+      normalObj[k] = v;
+    }
+  }
+
+  // Replace __raw keys with their real selector before passing to twsx
+  const fixedObj = {};
+  for (const [k, v] of Object.entries(normalObj)) {
+    if (rawMap[k]) {
+      const realSel = rawMap[k];
+      // Merge with existing real selector entry
+      if (fixedObj[realSel]) {
+        // Already have entry — append @css as additional entry with unique key
+        fixedObj[`${realSel}__css${Object.keys(fixedObj).length}`] = v;
+      } else {
+        fixedObj[realSel] = v;
+      }
+    } else {
+      fixedObj[k] = v;
+    }
+  }
+
+  return twsx(fixedObj, { inject: false });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -307,7 +355,29 @@ function register(className, config = {}) {
   // Resolve extend
   const resolved = _resolveExtend(config);
 
-  const selector = `.${className}`;
+  // Raw CSS selectors (*, :root, body, html, element tags like 'input') are used as-is.
+  // Class names get the . prefix.
+  // Rule: if className starts with * , : , or is a known HTML tag → raw selector
+  const HTML_TAGS = new Set([
+    'a','abbr','address','article','aside','audio','b','blockquote','body',
+    'br','button','canvas','caption','cite','code','col','colgroup','data',
+    'datalist','dd','del','details','dfn','dialog','div','dl','dt','em',
+    'embed','fieldset','figcaption','figure','footer','form','h1','h2','h3',
+    'h4','h5','h6','head','header','hr','html','i','iframe','img','input',
+    'ins','kbd','label','legend','li','link','main','map','mark','menu',
+    'meta','meter','nav','noscript','object','ol','optgroup','option',
+    'output','p','picture','pre','progress','q','rp','rt','ruby','s',
+    'samp','script','section','select','small','source','span','strong',
+    'style','sub','summary','sup','table','tbody','td','template','textarea',
+    'tfoot','th','thead','time','title','tr','track','u','ul','var','video',
+    'wbr',
+  ]);
+  const isRawSelector =
+    className === '*' ||
+    className.startsWith(':') ||
+    className.startsWith('[') ||
+    HTML_TAGS.has(className.toLowerCase());
+  const selector = isRawSelector ? className : `.${className}`;
   let allCss = "";
 
   // ── Simple form: no `base` key — the whole config IS the base style
@@ -316,20 +386,17 @@ function register(className, config = {}) {
 
   if (!hasBase && !hasModifiers) {
     // Simple form: register('btn', { tw, css, '&:hover': ... })
-    const styleObj = buildStyleObj(selector, resolved);
-    allCss = twsx(styleObj, { inject: false });
+    allCss = buildCssForSelector(selector, resolved);
   } else {
     // Complex form: base + modifiers
     if (resolved.base) {
-      const styleObj = buildStyleObj(selector, resolved.base);
-      allCss += twsx(styleObj, { inject: false }) + "\n";
+      allCss += buildCssForSelector(selector, resolved.base) + "\n";
     }
 
     if (resolved.modifiers && typeof resolved.modifiers === "object") {
       for (const [modKey, modValue] of Object.entries(resolved.modifiers)) {
         const modSelector = `.${className}-${modKey}`;
-        const styleObj = buildStyleObj(modSelector, modValue);
-        allCss += twsx(styleObj, { inject: false }) + "\n";
+        allCss += buildCssForSelector(modSelector, modValue) + "\n";
       }
     }
   }
@@ -370,8 +437,7 @@ register.group = function group(baseName, components = {}) {
   for (const [key, config] of Object.entries(components)) {
     // `root` key → .baseName, others → .baseName-key
     const selector = key === "root" ? `.${baseName}` : `.${baseName}-${key}`;
-    const styleObj = buildStyleObj(selector, config);
-    allCss += twsx(styleObj, { inject: false }) + "\n";
+    allCss += buildCssForSelector(selector, config) + "\n";
   }
 
   _inject(baseName, allCss.trim());
