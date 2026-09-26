@@ -145,6 +145,24 @@ export declare function register(className: string, config?: RegisterConfig): vo
 
 export declare namespace register {
   /**
+   * Register multiple classes at once from a plain object map.
+   * Sugar syntax for calling register() on each key — each class still
+   * gets its own registry entry so individual updates stay isolated.
+   *
+   * @example
+   * register.all({
+   *   ':root':     { '--brand': '#6366f1' },
+   *   '*':         { 'box-sizing': 'border-box' },
+   *   'container': { tw: 'mx-auto w-full px-6', 'max-width': '1100px' },
+   *   'btn': {
+   *     base: { tw: 'px-4 py-2 rounded font-medium' },
+   *     modifiers: { primary: { tw: 'bg-blue-600 text-white' } },
+   *   },
+   * })
+   */
+  function all(map: Record<string, RegisterConfig>): void;
+
+  /**
    * Register multiple related classes at once.
    * `root` key → `.baseName`, others → `.baseName-{key}`.
    *

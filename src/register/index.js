@@ -444,8 +444,33 @@ register.group = function group(baseName, components = {}) {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SSR support
+// register.all()
 // ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Register multiple classes at once from a plain object map.
+ * Sugar syntax for calling register() on each key — each class still gets
+ * its own entry in the registry so individual updates stay isolated.
+ *
+ * @param {Object} map - { className: config, ... }
+ *
+ * @example
+ * register.all({
+ *   ':root':     { '--brand': '#6366f1', '--brand-dark': '#4f46e5' },
+ *   '*':         { 'box-sizing': 'border-box', margin: '0', padding: '0' },
+ *   'body':      { tw: 'text-slate-900 antialiased' },
+ *   'container': { tw: 'mx-auto w-full px-6', 'max-width': '1100px' },
+ *   'btn':       { base: { tw: 'px-4 py-2 rounded' }, modifiers: { primary: { tw: 'bg-blue-600 text-white' } } },
+ * })
+ */
+register.all = function all(map = {}) {
+  if (typeof map !== "object" || Array.isArray(map) || map === null) {
+    throw new Error("[tvs] register.all: expected a plain object map");
+  }
+  for (const [name, config] of Object.entries(map)) {
+    register(name, config);
+  }
+};
 
 /**
  * Extract all registered CSS as a single string (useful for SSR).
