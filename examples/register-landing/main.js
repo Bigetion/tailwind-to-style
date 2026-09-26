@@ -367,3 +367,14 @@ register('footer-inner', {
 register('divider', {
   tw: 'border-0 border-t border-slate-200',
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FOUC prevention — fade in after all register() calls have injected CSS
+// ─────────────────────────────────────────────────────────────────────────────
+// All register() calls above are synchronous, so by the time this line runs
+// every style is already in the #tvs-style tag. We wait one rAF so the
+// browser has a chance to parse and apply the injected stylesheet before
+// making the page visible — giving us a guaranteed zero-FOUC reveal.
+requestAnimationFrame(() => {
+  document.body.style.cssText += ';transition:opacity 200ms ease;opacity:1';
+});
