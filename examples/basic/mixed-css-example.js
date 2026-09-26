@@ -2,14 +2,19 @@
  * mixed-css-example.js
  *
  * Demonstrates the new mixed Tailwind + raw CSS feature in tw().
- * Run: node --experimental-vm-modules examples/basic/mixed-css-example.js
+ *
+ * Key concept: tw() lets you write CSS properties directly alongside
+ * Tailwind utilities — using kebab-case (native CSS syntax) as the
+ * idiomatic style, just like writing real CSS.
+ *
+ * Run: node examples/basic/mixed-css-example.js
  *       (from the workspace root)
  */
 
 import { twsxClassName as tw } from "../../src/className/index.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Helper: print test result
+// Minimal test runner
 // ─────────────────────────────────────────────────────────────────────────────
 let passed = 0;
 let failed = 0;
@@ -42,362 +47,357 @@ function expect(value) {
     },
     toHaveKey(key) {
       if (!Object.prototype.hasOwnProperty.call(value, key))
-        throw new Error(`Expected object to have key "${key}", got keys: ${Object.keys(value).join(", ")}`);
+        throw new Error(
+          `Expected object to have key "${key}", got keys: ${Object.keys(value).join(", ")}`
+        );
     },
   };
 }
 
 console.log("\n" + "=".repeat(60));
-console.log("  Mixed Tailwind + Raw CSS — tw() feature test");
-console.log("=".repeat(60) + "\n");
+console.log("  Mixed Tailwind + raw CSS — tw() examples & tests");
+console.log("  (kebab-case as idiomatic CSS-native style)");
+console.log("=".repeat(60));
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 1. Basic: `tw` key as Tailwind classes alias
+// 1. The basics — kebab-case CSS properties
 // ─────────────────────────────────────────────────────────────────────────────
-console.log("1. tw key as Tailwind class alias\n");
+console.log("\n── 1. Kebab-case CSS properties (idiomatic style) ─────────\n");
 
-test("`tw` key generates a className string", () => {
-  const cls = tw({ tw: "flex items-center gap-2" });
-  expect(cls).toBeTypeOf("string");
-  expect(cls.length > 0).toBe(true);
+// This is the on-brand way to write it — reads like real CSS
+const label = tw({
+  tw: "inline-flex items-center",
+  "font-size": "11px",
+  "font-weight": "600",
+  "letter-spacing": "0.05em",
+  "text-transform": "uppercase",
+  "line-height": "1",
 });
 
-test("`_` key still works (backward compat)", () => {
-  const cls = tw({ _: "flex items-center gap-2" });
-  expect(cls).toBeTypeOf("string");
-  expect(cls.length > 0).toBe(true);
+test("kebab-case: font-size, font-weight, letter-spacing", () => {
+  expect(label).toBeTypeOf("string");
+  expect(label.length > 0).toBe(true);
+  console.log(`       className: "${label}"`);
 });
 
-test("`tw` and `_` together merge classes", () => {
-  const cls = tw({ tw: "flex", _: "items-center" });
-  expect(cls).toBeTypeOf("string");
-  // Both produce a valid className (merged internally)
-  expect(cls.length > 0).toBe(true);
+const overlay = tw({
+  tw: "fixed inset-0",
+  "background-color": "rgba(0,0,0,0.5)",
+  "backdrop-filter": "blur(4px)",
+  "z-index": "50",
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 2. Raw CSS properties (camelCase)
-// ─────────────────────────────────────────────────────────────────────────────
-console.log("\n2. Raw CSS properties (camelCase)\n");
-
-test("fontSize as camelCase raw CSS property", () => {
-  const cls = tw({ tw: "p-4", fontSize: "13px" });
-  expect(cls).toBeTypeOf("string");
-  expect(cls.length > 0).toBe(true);
-});
-
-test("lineHeight + color raw CSS properties", () => {
-  const cls = tw({ lineHeight: "1.6", color: "#333" });
-  expect(cls).toBeTypeOf("string");
-});
-
-test("multiple raw CSS props with Tailwind", () => {
-  const cls = tw({
-    tw: "flex rounded-lg",
-    fontSize: "14px",
-    lineHeight: 1.5,
-    color: "var(--text-primary)",
-    backgroundColor: "#fff",
-  });
-  expect(cls).toBeTypeOf("string");
-  expect(cls.length > 0).toBe(true);
+test("kebab-case: background-color, backdrop-filter, z-index", () => {
+  expect(overlay).toBeTypeOf("string");
+  console.log(`       className: "${overlay}"`);
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 3. Raw CSS — kebab-case
+// 2. CamelCase still works (JS/React style)
 // ─────────────────────────────────────────────────────────────────────────────
-console.log("\n3. Raw CSS properties (kebab-case)\n");
+console.log("\n── 2. CamelCase also supported (React / JS style) ─────────\n");
 
-test("font-size kebab-case", () => {
-  const cls = tw({ tw: "p-2", "font-size": "15px" });
-  expect(cls).toBeTypeOf("string");
+const labelCamel = tw({
+  tw: "inline-flex items-center",
+  fontSize: "11px",
+  fontWeight: "600",
+  letterSpacing: "0.05em",
+  textTransform: "uppercase",
 });
 
-test("border-radius kebab-case", () => {
-  const cls = tw({ "border-radius": "8px", color: "#000" });
-  expect(cls).toBeTypeOf("string");
-});
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 4. CSS custom properties (--var)
-// ─────────────────────────────────────────────────────────────────────────────
-console.log("\n4. CSS custom properties (--var)\n");
-
-test("--custom-color CSS variable", () => {
-  const cls = tw({ "--custom-color": "#3b82f6", tw: "text-blue-500" });
-  expect(cls).toBeTypeOf("string");
+test("camelCase: fontSize, fontWeight, letterSpacing", () => {
+  expect(labelCamel).toBeTypeOf("string");
+  console.log(`       className: "${labelCamel}"`);
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 5. Mixed: Tailwind + raw CSS + pseudo shorthands
+// 3. CSS custom properties (--var)
 // ─────────────────────────────────────────────────────────────────────────────
-console.log("\n5. Mixed Tailwind + raw CSS + pseudo shorthands\n");
+console.log("\n── 3. CSS custom properties (--var) ───────────────────────\n");
 
-test("tw + raw CSS + hover shorthand", () => {
-  const cls = tw({
-    tw: "flex items-center",
-    fontSize: "14px",
-    hover: "opacity-90",
-  });
-  expect(cls).toBeTypeOf("string");
+const themed = tw({
+  tw: "rounded-lg p-4",
+  "--bg": "#3b82f6",
+  "--text": "#ffffff",
+  "background-color": "var(--bg)",
+  "color": "var(--text)",
 });
 
-test("tw + raw CSS + dark mode", () => {
-  const cls = tw({
-    tw: "bg-white text-gray-900",
-    lineHeight: "1.6",
-    dark: "bg-gray-900 text-white",
-  });
-  expect(cls).toBeTypeOf("string");
-});
-
-test("tw + raw CSS + responsive breakpoint", () => {
-  const cls = tw({
-    tw: "flex-col",
-    fontSize: "12px",
-    md: "flex-row",
-  });
-  expect(cls).toBeTypeOf("string");
+test("CSS custom properties as --var keys", () => {
+  expect(themed).toBeTypeOf("string");
+  console.log(`       className: "${themed}"`);
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 6. Variants with mixed style values
+// 4. Mixed with pseudo shorthands & responsive
 // ─────────────────────────────────────────────────────────────────────────────
-console.log("\n6. Variants with mixed style values\n");
+console.log("\n── 4. Mixed: Tailwind + raw CSS + pseudo + responsive ──────\n");
+
+const link = tw({
+  tw: "inline-flex items-center",
+  "font-size": "14px",
+  "text-decoration": "none",
+  "color": "inherit",
+  hover: "underline opacity-80",
+});
+
+test("kebab-case + hover shorthand", () => {
+  expect(link).toBeTypeOf("string");
+  console.log(`       className: "${link}"`);
+});
+
+const heading = tw({
+  tw: "font-bold",
+  "font-size": "18px",
+  "line-height": "1.3",
+  "letter-spacing": "-0.01em",
+  md: "text-2xl",
+  lg: "text-3xl",
+  dark: "text-white",
+});
+
+test("kebab-case + responsive (md, lg) + dark shorthand", () => {
+  expect(heading).toBeTypeOf("string");
+  console.log(`       className: "${heading}"`);
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 5. Variants — mixed base + variant option values
+// ─────────────────────────────────────────────────────────────────────────────
+console.log("\n── 5. Variants with mixed style values ─────────────────────\n");
 
 const btn = tw({
   name: "btn",
   base: {
     tw: "inline-flex items-center font-medium rounded-lg transition-all",
-    fontFamily: "inherit",
+    "font-family": "inherit",
+    "line-height": "1",
   },
   variants: {
     size: {
-      sm: { tw: "px-3 py-1.5", fontSize: "12px", lineHeight: "1.4" },
-      md: { tw: "px-4 py-2",   fontSize: "14px", lineHeight: "1.5" },
-      lg: { tw: "px-6 py-3",   fontSize: "16px", lineHeight: "1.6" },
+      // kebab-case raw CSS inside variant options
+      xs: { tw: "px-2.5 py-1.5", "font-size": "11px" },
+      sm: { tw: "px-3 py-2",     "font-size": "12px" },
+      md: { tw: "px-4 py-2.5",   "font-size": "14px" },
+      lg: { tw: "px-5 py-3",     "font-size": "16px" },
     },
-    color: {
+    intent: {
       primary: { tw: "bg-blue-600 text-white hover:bg-blue-700" },
-      ghost:   { tw: "bg-transparent", border: "1px solid currentColor" },
+      danger:  { tw: "bg-red-600 text-white hover:bg-red-700" },
+      ghost: {
+        tw: "bg-transparent hover:bg-gray-100",
+        border: "1px solid currentColor",
+      },
     },
     rounded: {
-      none: { borderRadius: "0" },
-      full: { borderRadius: "9999px" },
+      none:  { "border-radius": "0" },
+      sm:    { "border-radius": "4px" },
+      full:  { "border-radius": "9999px" },
     },
   },
-  defaultVariants: {
-    size: "md",
-    color: "primary",
-  },
+  compoundVariants: [
+    {
+      intent: "ghost",
+      size: "lg",
+      class: "border-2",
+    },
+  ],
+  defaultVariants: { size: "md", intent: "primary" },
 });
 
-test("variant selector function is returned", () => {
+test("variant function returned", () => {
   expect(btn).toBeTypeOf("function");
 });
 
-test("btn() with defaults returns className string", () => {
+test("btn() with defaults", () => {
   const cls = btn();
   expect(cls).toBeTypeOf("string");
-  expect(cls.length > 0).toBe(true);
-  console.log(`       Result: "${cls}"`);
+  console.log(`       "${cls}"`);
 });
 
-test("btn({ size:'lg', color:'primary' }) returns className", () => {
-  const cls = btn({ size: "lg", color: "primary" });
+test("btn({ size:'xs', intent:'ghost' })", () => {
+  const cls = btn({ size: "xs", intent: "ghost" });
   expect(cls).toBeTypeOf("string");
-  console.log(`       Result: "${cls}"`);
+  console.log(`       "${cls}"`);
 });
 
-test("btn({ size:'sm', color:'ghost' }) returns className", () => {
-  const cls = btn({ size: "sm", color: "ghost" });
+test("btn({ size:'lg', intent:'danger', rounded:'full' })", () => {
+  const cls = btn({ size: "lg", intent: "danger", rounded: "full" });
   expect(cls).toBeTypeOf("string");
-  console.log(`       Result: "${cls}"`);
+  console.log(`       "${cls}"`);
 });
 
-test("btn({ rounded:'full' }) returns className", () => {
-  const cls = btn({ rounded: "full" });
+test("btn({ size:'lg', intent:'ghost' }) — compound variant", () => {
+  const cls = btn({ size: "lg", intent: "ghost" });
   expect(cls).toBeTypeOf("string");
-  console.log(`       Result: "${cls}"`);
+  console.log(`       "${cls}"`);
 });
 
-test("btn.merge() works", () => {
-  const cls = btn.merge({ size: "md" }, "extra-class");
-  expect(cls).toBeTypeOf("string");
-  expect(cls).toContain("extra-class");
+test("btn.merge() appends extra classes", () => {
+  const cls = btn.merge({ size: "sm" }, "w-full");
+  expect(cls).toContain("w-full");
+  console.log(`       "${cls}"`);
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 7. Base as MixedStyleValue in variants
+// 6. Slots — CSS-native syntax throughout
 // ─────────────────────────────────────────────────────────────────────────────
-console.log("\n7. Base as MixedStyleValue\n");
-
-const badge = tw({
-  name: "badge",
-  base: {
-    tw: "inline-flex items-center rounded-full px-2.5 py-0.5",
-    fontSize: "11px",
-    fontWeight: "600",
-    letterSpacing: "0.05em",
-    textTransform: "uppercase",
-  },
-  variants: {
-    color: {
-      blue:   "bg-blue-100 text-blue-800",
-      green:  "bg-green-100 text-green-800",
-      red:    "bg-red-100 text-red-800",
-    },
-  },
-  defaultVariants: { color: "blue" },
-});
-
-test("badge() returns className with mixed base", () => {
-  const cls = badge();
-  expect(cls).toBeTypeOf("string");
-  console.log(`       Result: "${cls}"`);
-});
-
-test("badge({ color:'red' }) returns className", () => {
-  const cls = badge({ color: "red" });
-  expect(cls).toBeTypeOf("string");
-  console.log(`       Result: "${cls}"`);
-});
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 8. Slots with mixed style values
-// ─────────────────────────────────────────────────────────────────────────────
-console.log("\n8. Slots with mixed style values\n");
+console.log("\n── 6. Slots with kebab-case raw CSS ────────────────────────\n");
 
 const card = tw({
   name: "card",
   slots: {
     root: {
       tw: "rounded-xl overflow-hidden",
-      boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
-      backgroundColor: "#fff",
+      "box-shadow": "0 4px 24px rgba(0,0,0,0.08)",
+      "background-color": "#fff",
     },
     header: {
       tw: "px-6 py-4 border-b border-gray-100",
-      fontSize: "16px",
-      fontWeight: "600",
+      "font-size": "16px",
+      "font-weight": "600",
+      "line-height": "1.4",
     },
     body: {
       tw: "px-6 py-4",
-      lineHeight: "1.6",
+      "font-size": "14px",
+      "line-height": "1.6",
+      "color": "#374151",
     },
     footer: "px-6 py-3 bg-gray-50 text-sm text-gray-500",
   },
   variants: {
     elevated: {
       true: {
-        // slot-keyed variant values
-        root:   { tw: "shadow-2xl", boxShadow: "0 8px 40px rgba(0,0,0,0.16)" },
+        root:   { tw: "shadow-2xl", "box-shadow": "0 8px 40px rgba(0,0,0,0.16)" },
         header: { tw: "bg-gray-50" },
       },
-      false: {
-        root: "shadow-sm",
+      false: { root: "shadow-sm" },
+    },
+    compact: {
+      true: {
+        header: { tw: "px-4 py-3", "font-size": "14px" },
+        body:   { tw: "px-4 py-3", "font-size": "13px" },
       },
+      false: {},
     },
   },
-  defaultVariants: { elevated: "false" },
+  defaultVariants: { elevated: "false", compact: "false" },
 });
 
-test("slots generator function returned", () => {
+test("slots generator returned", () => {
   expect(card).toBeTypeOf("function");
 });
 
-test("card() returns object with all slot keys", () => {
-  const slots = card();
-  expect(slots).toHaveKey("root");
-  expect(slots).toHaveKey("header");
-  expect(slots).toHaveKey("body");
-  expect(slots).toHaveKey("footer");
-  console.log(`       root:   "${slots.root}"`);
-  console.log(`       header: "${slots.header}"`);
-  console.log(`       body:   "${slots.body}"`);
-  console.log(`       footer: "${slots.footer}"`);
+test("card() — all slot keys present", () => {
+  const s = card();
+  expect(s).toHaveKey("root");
+  expect(s).toHaveKey("header");
+  expect(s).toHaveKey("body");
+  expect(s).toHaveKey("footer");
+  console.log(`       root:   "${s.root}"`);
+  console.log(`       header: "${s.header}"`);
+  console.log(`       body:   "${s.body}"`);
+  console.log(`       footer: "${s.footer}"`);
 });
 
-test("card({ elevated:'true' }) returns slot objects", () => {
-  const slots = card({ elevated: "true" });
-  expect(slots).toHaveKey("root");
-  expect(slots).toHaveKey("header");
-  console.log(`       root (elevated):   "${slots.root}"`);
-  console.log(`       header (elevated): "${slots.header}"`);
+test("card({ elevated:'true' })", () => {
+  const s = card({ elevated: "true" });
+  expect(s).toHaveKey("root");
+  console.log(`       root (elevated): "${s.root}"`);
 });
 
-test("card.merge() works per slot", () => {
-  const slots = card.merge({ elevated: "false" }, { body: "extra-body-class" });
-  expect(slots).toHaveKey("body");
-  expect(slots.body).toContain("extra-body-class");
+test("card({ compact:'true' })", () => {
+  const s = card({ compact: "true" });
+  expect(s).toHaveKey("header");
+  console.log(`       header (compact): "${s.header}"`);
+});
+
+test("card.merge() per-slot override", () => {
+  const s = card.merge({ elevated: "false" }, { body: "custom-body" });
+  expect(s.body).toContain("custom-body");
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 9. Realistic component: Input field
+// 7. Realistic component: Typography scale
 // ─────────────────────────────────────────────────────────────────────────────
-console.log("\n9. Realistic component: Input field\n");
+console.log("\n── 7. Realistic: Typography scale ──────────────────────────\n");
 
-const input = tw({
-  name: "input",
+const text = tw({
+  name: "text",
   base: {
-    tw: "w-full rounded-lg border transition-all outline-none",
-    fontSize: "14px",
-    lineHeight: "1.5",
-    fontFamily: "inherit",
+    "font-family": "inherit",
+    "color": "inherit",
+    "line-height": "1.5",
   },
   variants: {
     size: {
-      sm: { tw: "px-3 py-1.5", fontSize: "12px" },
-      md: { tw: "px-4 py-2",   fontSize: "14px" },
-      lg: { tw: "px-4 py-3",   fontSize: "16px" },
+      xs:  { "font-size": "11px", "line-height": "1.4" },
+      sm:  { "font-size": "12px", "line-height": "1.4" },
+      md:  { "font-size": "14px", "line-height": "1.5" },
+      lg:  { "font-size": "16px", "line-height": "1.5" },
+      xl:  { "font-size": "18px", "line-height": "1.4" },
+      "2xl": { "font-size": "22px", "line-height": "1.3" },
+      "3xl": { "font-size": "28px", "line-height": "1.2" },
     },
-    state: {
-      default: {
-        tw: "border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20",
-      },
-      error: {
-        tw: "border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-500/20",
-        color: "inherit",
-      },
-      success: {
-        tw: "border-green-400",
-      },
+    weight: {
+      normal:   { "font-weight": "400" },
+      medium:   { "font-weight": "500" },
+      semibold: { "font-weight": "600" },
+      bold:     { "font-weight": "700" },
+    },
+    tracking: {
+      tight:  { "letter-spacing": "-0.02em" },
+      normal: { "letter-spacing": "0" },
+      wide:   { "letter-spacing": "0.05em" },
+      wider:  { "letter-spacing": "0.1em" },
     },
   },
-  defaultVariants: { size: "md", state: "default" },
+  defaultVariants: { size: "md", weight: "normal", tracking: "normal" },
 });
 
-test("input() default className", () => {
-  const cls = input();
+test("text() default", () => {
+  const cls = text();
   expect(cls).toBeTypeOf("string");
-  console.log(`       Result: "${cls}"`);
+  console.log(`       "${cls}"`);
 });
 
-test("input({ size:'lg', state:'error' }) className", () => {
-  const cls = input({ size: "lg", state: "error" });
+test("text({ size:'3xl', weight:'bold', tracking:'tight' })", () => {
+  const cls = text({ size: "3xl", weight: "bold", tracking: "tight" });
   expect(cls).toBeTypeOf("string");
-  console.log(`       Result: "${cls}"`);
+  console.log(`       "${cls}"`);
+});
+
+test("text({ size:'xs', weight:'medium', tracking:'wider' })", () => {
+  const cls = text({ size: "xs", weight: "medium", tracking: "wider" });
+  expect(cls).toBeTypeOf("string");
+  console.log(`       "${cls}"`);
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 10. Name + hash = deterministic output
+// 8. Determinism & backward compat
 // ─────────────────────────────────────────────────────────────────────────────
-console.log("\n10. Name + hash = deterministic output\n");
+console.log("\n── 8. Determinism & backward compatibility ──────────────────\n");
 
-test("same config called twice gives same className", () => {
-  const config = {
-    name: "deterministic",
-    tw: "flex items-center",
-    fontSize: "14px",
-  };
-  const cls1 = tw(config);
-  const cls2 = tw(config);
-  expect(cls1).toBe(cls2);
+test("same config → same className (deterministic)", () => {
+  const config = { name: "det", "font-size": "14px", tw: "flex" };
+  expect(tw(config)).toBe(tw(config));
 });
 
-test("hash:false gives clean name", () => {
-  const cls = tw({ name: "clean-btn", hash: false, tw: "flex", fontSize: "14px" });
-  expect(cls).toBe("clean-btn");
+test("`_` key still works (backward compat)", () => {
+  const cls = tw({ _: "flex items-center", "font-size": "14px" });
+  expect(cls).toBeTypeOf("string");
+  console.log(`       "${cls}"`);
+});
+
+test("`tw` and `_` together merge without error", () => {
+  const cls = tw({ tw: "flex", _: "items-center", "font-size": "14px" });
+  expect(cls).toBeTypeOf("string");
+});
+
+test("hash:false → clean readable name", () => {
+  const cls = tw({ name: "my-heading", hash: false, "font-size": "24px", tw: "font-bold" });
+  expect(cls).toBe("my-heading");
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
