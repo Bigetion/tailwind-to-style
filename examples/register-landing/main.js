@@ -235,16 +235,15 @@ register('hero-actions', {
 // Code blocks
 // ─────────────────────────────────────────────────────────────────────────────
 
-register('code-block', {
-  tw: 'rounded-2xl overflow-hidden text-left',
-  'background-color': '#0f172a',
-  'box-shadow': 'var(--shadow-lg), 0 0 0 1px rgba(255,255,255,.06)',
-  'font-family': "'Fira Code', 'Cascadia Code', Consolas, monospace",
-  'font-size': '13px',
-  'line-height': '1.75',
-});
-
 register.group('code-block', {
+  root: {
+    tw: 'rounded-2xl overflow-hidden text-left',
+    'background-color': '#0f172a',
+    'box-shadow': 'var(--shadow-lg), 0 0 0 1px rgba(255,255,255,.06)',
+    'font-family': "'Fira Code', 'Cascadia Code', Consolas, monospace",
+    'font-size': '13px',
+    'line-height': '1.75',
+  },
   header: {
     tw: 'flex items-center gap-2 px-5 py-3 border-b border-white/[.08]',
     'background-color': 'rgba(255,255,255,.04)',
