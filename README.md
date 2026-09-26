@@ -71,11 +71,13 @@ const classes = cx('base', isActive && 'ring-2', { 'opacity-50': disabled });
 
 Want to try the library with real demos?
 
-- `examples/basic/` — runtime `tws()` examples for inline conversion and custom values.
+- `examples/basic/` — runtime `tws()` examples, mixed CSS demo, and register API tests.
 - `examples/react-demo/` — full React showcase with components, variants, tokens, and theme switching.
 - `examples/twsx-classname-app/` — Vite-based runtime `tw()` v4 demo with variant and slots components.
+- `examples/register-landing/` — landing page built with `register()` — zero Tailwind CLI, pure HTML + register calls.
+- `examples/company-landing/` — single-file company landing page (Nexora) demonstrating `register.all()`, `register.group()`, `@keyframes`, and FOUC prevention.
 
-Run the demos by opening `examples/README.md` or using the commands below:
+Run the demos:
 
 ```bash
 cd examples/react-demo
@@ -85,6 +87,18 @@ npm run dev
 
 ```bash
 cd examples/twsx-classname-app
+npm install
+npm run dev
+```
+
+```bash
+cd examples/register-landing
+npm install
+npm run dev
+```
+
+```bash
+cd examples/company-landing
 npm install
 npm run dev
 ```
@@ -398,3 +412,398 @@ Works with any framework or vanilla JS:
 ## License
 
 MIT © [Bigetion](https://github.com/Bigetion)
+
+---
+
+## Mixed Tailwind + Raw CSS in `tw()`
+
+> New in v5 — what Tailwind alone can't do.
+
+Every style config object in `tw()` now accepts **raw CSS properties** alongside Tailwind utility classes. Use `tw:` for Tailwind, and any standard CSS property (kebab-case or camelCase) for exact values Tailwind can't express.
+
+```js
+import { tw } from 'tailwind-to-style';
+
+// tw: handles Tailwind, raw CSS handles the rest
+const label = tw({
+  tw: 'inline-flex items-center font-semibold',
+  'font-size': '11px',          // exact value — not in Tailwind scale
+  'letter-spacing': '0.1em',    // exact value
+  'text-transform': 'uppercase',
+  color: 'var(--text-muted)',   // CSS variable
+});
+```
+
+### Key rules
+
+| Key | Meaning |
+|-----|---------|
+| `tw` | Tailwind utility classes (preferred shorthand, replaces `_`) |
+| `_` | Legacy alias for `tw` — still supported |
+| kebab-case property | Raw CSS — `'font-size'`, `'border-radius'`, `'box-shadow'` |
+| camelCase property | Raw CSS — `fontSize`, `borderRadius`, `boxShadow` |
+| `--var-name` | CSS custom property |
+| `hover`, `focus`, `dark`… | Tailwind pseudo shorthands |
+| `sm`, `md`, `lg`… | Responsive breakpoint shorthands |
+| `'&:hover'`, `'&::before'`… | Arbitrary nested CSS selectors |
+
+### Works everywhere
+
+Mixed CSS works in all `tw()` modes — basic, variants, slots, and inside `register()`.
+
+```js
+// In variants
+const btn = tw({
+  name: 'btn',
+  base: {
+    tw: 'inline-flex items-center font-semibold rounded-lg transition-all',
+    'font-family': 'inherit',   // raw CSS
+    'line-height': '1',
+  },
+  variants: {
+    size: {
+      sm: { tw: 'px-3 py-1.5', 'font-size': '12px' },   // mixed
+      md: { tw: 'px-5 py-2.5', 'font-size': '14px' },
+      lg: { tw: 'px-7 py-3.5', 'font-size': '16px' },
+    },
+  },
+});
+
+// In slots
+const card = tw({
+  name: 'card',
+  slots: {
+    root: {
+      tw: 'rounded-2xl overflow-hidden',
+      'box-shadow': '0 4px 24px rgba(0,0,0,.08)',   // raw CSS
+    },
+    body: {
+      tw: 'px-6 py-4',
+      'line-height': '1.6',   // raw CSS
+    },
+  },
+});
+```
+
+### Pseudo shorthands + raw CSS together
+
+```js
+const input = tw({
+  tw: 'w-full px-4 py-2 border rounded-lg transition-all',
+  'font-family': 'inherit',
+  'font-size': '14px',
+  hover: 'border-gray-400',          // pseudo shorthand
+  focus: 'ring-2 ring-blue-500',
+  dark: 'bg-gray-900 text-white',    // media shorthand
+  md: 'text-base',                    // responsive shorthand
+  '&:disabled': { tw: 'opacity-50 cursor-not-allowed' }, // nested selector
+});
+```
+
+---
+
+## `tailwind-to-style/register`
+
+A semantic class registration API — Bootstrap-style clean HTML, Tailwind power under the hood.
+
+```js
+import { register, cx, cn } from 'tailwind-to-style/register';
+```
+
+### Why `register`?
+
+```html
+<!-- ❌ Tailwind: hard to read, duplicated everywhere -->
+<button class="inline-flex items-center px-5 py-2.5 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-all">
+  Submit
+</button>
+
+<!-- ✅ register(): define once, clean HTML everywhere -->
+<button class="btn btn-primary btn-md">Submit</button>
+```
+
+---
+
+### `register(className, config)`
+
+Define a semantic CSS class. Injects CSS into the DOM automatically.
+
+#### Simple form
+
+```js
+register('btn', {
+  tw: 'px-5 py-2.5 rounded-lg font-semibold transition-all cursor-pointer',
+  'font-family': 'inherit',
+  'background-color': '#3b82f6',
+  color: '#fff',
+  '&:hover': {
+    'background-color': '#2563eb',
+    transform: 'translateY(-1px)',
+  },
+});
+
+// <button class="btn">Click me</button>
+```
+
+#### Complex form — `base` + `modifiers`
+
+`modifiers` auto-generates `.className-key` for each entry:
+
+```js
+register('btn', {
+  base: {
+    tw: 'inline-flex items-center font-semibold rounded-lg transition-all',
+    'font-family': 'inherit',
+    'line-height': '1',
+  },
+  modifiers: {
+    // colors      → .btn-primary, .btn-danger
+    primary: { tw: 'bg-indigo-600 text-white hover:bg-indigo-700' },
+    danger:  { tw: 'bg-red-600 text-white hover:bg-red-700' },
+
+    // sizes       → .btn-sm, .btn-md, .btn-lg
+    sm:  { tw: 'px-3 py-1.5', 'font-size': '12px' },
+    md:  { tw: 'px-5 py-2.5', 'font-size': '14px' },
+    lg:  { tw: 'px-7 py-3.5', 'font-size': '16px' },
+
+    // shapes      → .btn-pill, .btn-square
+    pill:   { 'border-radius': '9999px' },
+    square: { 'border-radius': '0' },
+  },
+});
+
+// Clean HTML — compose modifiers freely
+// <button class="btn btn-primary btn-lg btn-pill">Get Started</button>
+// <button class="btn btn-danger btn-sm">Delete</button>
+```
+
+#### `extend` — inherit from another class
+
+```js
+register('btn', { tw: 'px-4 py-2 rounded font-medium' });
+
+// Inherits all btn styles, then adds its own
+register('icon-btn', {
+  extend: 'btn',
+  tw: 'w-10 h-10 p-0 flex items-center justify-center',
+});
+
+// Multi-level extend
+register('fab', {
+  extend: 'icon-btn',  // inherits btn + icon-btn
+  tw: 'rounded-full shadow-lg',
+  'background-color': '#6366f1',
+  color: '#fff',
+});
+```
+
+#### `@keyframes` support
+
+```js
+register('@keyframes fadeUp', {
+  from: { opacity: '0', transform: 'translateY(24px)' },
+  to:   { opacity: '1', transform: 'translateY(0)' },
+});
+
+register('@keyframes pulse', {
+  '0%, 100%': { opacity: '1' },
+  '50%':      { opacity: '0.4' },
+});
+```
+
+#### Global selectors — `:root`, `*`, element tags
+
+```js
+// CSS custom properties on :root
+register(':root', {
+  '--brand': '#6366f1',
+  '--brand-dark': '#4f46e5',
+  '--radius': '10px',
+});
+
+// Universal reset
+register('*', { 'box-sizing': 'border-box', margin: '0', padding: '0' });
+
+// Element tag styling
+register('body', {
+  tw: 'text-gray-900 antialiased',
+  'font-family': "system-ui, -apple-system, sans-serif",
+});
+```
+
+---
+
+### `register.group(baseName, components)`
+
+Register multiple related classes at once. `root` key → `.baseName`, others → `.baseName-key`.
+
+```js
+register.group('card', {
+  root: {
+    tw: 'rounded-2xl overflow-hidden bg-white',
+    'box-shadow': '0 4px 24px rgba(0,0,0,.08)',
+  },
+  header: {
+    tw: 'px-6 py-4 border-b border-gray-100 font-semibold',
+    'font-size': '16px',
+  },
+  body:   { tw: 'px-6 py-4', 'line-height': '1.6' },
+  footer: { tw: 'px-6 py-4 border-t bg-gray-50 text-sm text-gray-500' },
+});
+
+// Generates: .card  .card-header  .card-body  .card-footer
+```
+
+```html
+<div class="card">
+  <div class="card-header">Title</div>
+  <div class="card-body">Content goes here.</div>
+  <div class="card-footer">Footer</div>
+</div>
+```
+
+---
+
+### `register.all(map)`
+
+Register multiple classes at once from a plain object — sugar for calling `register()` on each key. Each class still gets its own registry entry.
+
+```js
+register.all({
+  ':root':     { '--brand': '#6366f1', '--brand-dark': '#4f46e5' },
+  '*':         { 'box-sizing': 'border-box', margin: '0', padding: '0' },
+  'body':      { tw: 'text-gray-900 antialiased' },
+  'container': { tw: 'mx-auto w-full px-6', 'max-width': '1200px' },
+  'section':   { tw: 'py-24' },
+  'heading-xl':{ tw: 'font-extrabold tracking-tight', 'font-size': 'clamp(2.5rem, 6vw, 4rem)' },
+  'lead':      { tw: 'text-lg leading-relaxed text-gray-500' },
+});
+```
+
+---
+
+### `register.extractCSS()`
+
+Extract all registered CSS as a string — useful for SSR.
+
+```js
+// Server-side rendering
+const html = renderApp();
+const css = register.extractCSS();
+
+res.send(`
+  <html>
+    <head><style>${css}</style></head>
+    <body>${html}</body>
+  </html>
+`);
+```
+
+---
+
+### `register.reset()`
+
+Clear all registered styles. Useful for testing.
+
+```js
+register.reset();
+```
+
+---
+
+### `cx()` / `cn()`
+
+Conditionally merge class names. `cn` is an alias of `cx` for shadcn/ui compatibility.
+
+```js
+import { cx, cn } from 'tailwind-to-style/register';
+
+cx('btn', isActive && 'btn-active', { 'btn-lg': isLarge })
+// → "btn btn-active btn-lg"
+
+cn('btn btn-primary', isLoading && 'opacity-50 cursor-not-allowed')
+// → "btn btn-primary opacity-50 cursor-not-allowed"
+```
+
+---
+
+### FOUC Prevention
+
+When using `register()` in the browser, add this to your HTML to prevent unstyled content flash:
+
+```html
+<head>
+  <!-- Hide body until JS injects all styles -->
+  <style>body { opacity: 0 }</style>
+  <noscript><style>body { opacity: 1 }</style></noscript>
+  <script type="module" src="./main.js"></script>
+</head>
+```
+
+```js
+// main.js — add at the end, after all register() calls
+requestAnimationFrame(() => {
+  document.body.style.cssText += ';transition:opacity 200ms ease;opacity:1';
+});
+```
+
+All `register()` calls are synchronous. By the time `requestAnimationFrame` fires, the browser has already parsed and applied the injected `<style>` tag — guaranteeing zero FOUC.
+
+---
+
+### Complete Example
+
+```js
+import { register, cx } from 'tailwind-to-style/register';
+
+// Tokens
+register.all({
+  ':root': { '--brand': '#6366f1', '--brand-dark': '#4f46e5' },
+  '*':     { 'box-sizing': 'border-box', margin: '0', padding: '0' },
+  'body':  { tw: 'text-gray-900 antialiased', 'font-family': 'system-ui, sans-serif' },
+});
+
+// Keyframes
+register('@keyframes fadeIn', {
+  from: { opacity: '0', transform: 'translateY(8px)' },
+  to:   { opacity: '1', transform: 'translateY(0)' },
+});
+
+// Components
+register('btn', {
+  base: {
+    tw: 'inline-flex items-center font-semibold rounded-lg transition-all cursor-pointer border-0',
+    'font-family': 'inherit',
+    'line-height': '1',
+  },
+  modifiers: {
+    primary: { tw: 'text-white', 'background-color': 'var(--brand)' },
+    outline: { tw: 'bg-transparent border border-current', color: 'var(--brand)' },
+    sm:   { tw: 'px-3 py-1.5 text-sm' },
+    md:   { tw: 'px-5 py-2.5 text-sm' },
+    lg:   { tw: 'px-7 py-3.5 text-base' },
+    pill: { 'border-radius': '9999px' },
+  },
+});
+
+register.group('card', {
+  root:   { tw: 'bg-white rounded-2xl border border-gray-200', 'box-shadow': '0 2px 12px rgba(0,0,0,.07)' },
+  header: { tw: 'px-6 py-4 border-b font-semibold', 'font-size': '16px' },
+  body:   { tw: 'px-6 py-4', 'line-height': '1.6' },
+});
+
+// Reveal page smoothly
+requestAnimationFrame(() => {
+  document.body.style.cssText += ';transition:opacity 200ms;opacity:1';
+});
+```
+
+```html
+<button class="btn btn-primary btn-lg btn-pill">Get Started</button>
+<button class="btn btn-outline btn-sm">Learn More</button>
+
+<div class="card">
+  <div class="card-header">Welcome</div>
+  <div class="card-body">Build the future, faster.</div>
+</div>
+```
