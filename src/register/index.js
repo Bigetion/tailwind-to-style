@@ -159,6 +159,31 @@ if (IS_BROWSER && document.readyState === "loading") {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Keyframes builder
+// Handles register('@keyframes fadeUp', { from: {...}, to: {...}, '50%': {...} })
+// Values inside each stop are treated as raw CSS declarations (not Tailwind).
+// ─────────────────────────────────────────────────────────────────────────────
+
+function buildKeyframesCss(atRule, stops) {
+  if (typeof stops !== "object" || stops === null) return "";
+
+  let css = `${atRule} {\n`;
+
+  for (const [stop, declarations] of Object.entries(stops)) {
+    if (typeof declarations !== "object" || declarations === null) continue;
+
+    const decls = Object.entries(declarations)
+      .map(([k, v]) => `  ${toCssPropertyName(k)}: ${v};`)
+      .join("\n");
+
+    css += `  ${stop} {\n${decls}\n  }\n`;
+  }
+
+  css += "}";
+  return css;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Style builder
 // Converts a mixed config value into a CSS string directly.
 // Calls twsx twice when needed: once for tw classes, once for raw CSS.
@@ -379,6 +404,13 @@ function register(className, config = {}) {
     HTML_TAGS.has(className.toLowerCase());
   const selector = isRawSelector ? className : `.${className}`;
   let allCss = "";
+
+  // ── @keyframes — special handling: generate keyframe CSS directly
+  if (className.startsWith('@keyframes')) {
+    allCss = buildKeyframesCss(className, resolved);
+    _inject(className, allCss.trim());
+    return;
+  }
 
   // ── Simple form: no `base` key — the whole config IS the base style
   const hasBase = "base" in resolved;

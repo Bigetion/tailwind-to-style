@@ -95,7 +95,7 @@
         'background-color': 'rgba(250,250,250,.88)',
         'backdrop-filter': 'blur(16px)',
         '-webkit-backdrop-filter': 'blur(16px)',
-        'border-bottom': '1px solid var(--c-border)',
+        'border-bottom': '1px solid #e5e7eb',
       },
       'nav-inner':  { tw: 'flex items-center justify-between w-full' },
       'nav-logo':   { tw: 'flex items-center gap-2 font-black text-gray-900', 'font-size': '20px', 'letter-spacing': '-0.04em' },
@@ -117,15 +117,15 @@
       modifiers: {
         brand: {
           tw: 'text-white',
-          'background': 'linear-gradient(135deg, var(--c-brand) 0%, var(--c-brand-dark) 100%)',
-          'box-shadow': '0 2px 12px var(--c-brand-glow)',
-          '&:hover': { transform: 'translateY(-1px)', 'box-shadow': '0 6px 24px var(--c-brand-glow)' },
+          'background': 'linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)',
+          'box-shadow': '0 2px 12px rgba(124,58,237,.25)',
+          '&:hover': { transform: 'translateY(-1px)', 'box-shadow': '0 6px 24px rgba(124,58,237,.35)' },
           '&:active': { transform: 'translateY(0)' },
         },
         outline: {
           tw: 'bg-transparent',
-          color: 'var(--c-brand)',
-          'border': '1.5px solid var(--c-brand)',
+          color: '#7c3aed',
+          'border': '1.5px solid #7c3aed',
           '&:hover': { 'background-color': 'rgba(124,58,237,.06)' },
         },
         ghost: {
@@ -155,7 +155,7 @@
       },
       'hero-grid': {
         tw: 'absolute inset-0 -z-10 pointer-events-none opacity-30',
-        background: 'linear-gradient(var(--c-border) 1px, transparent 1px), linear-gradient(90deg, var(--c-border) 1px, transparent 1px)',
+        background: 'linear-gradient(#e5e7eb 1px, transparent 1px), linear-gradient(90deg, #e5e7eb 1px, transparent 1px)',
         'background-size': '48px 48px',
         'mask-image': 'radial-gradient(ellipse 80% 50% at 50% 0%, black 40%, transparent 100%)',
         '-webkit-mask-image': 'radial-gradient(ellipse 80% 50% at 50% 0%, black 40%, transparent 100%)',
@@ -179,7 +179,7 @@
       'hero-stat-label': { tw: 'text-sm text-gray-400 mt-1 font-medium' },
       'hero-divider-v': {
         width: '1px', height: '40px',
-        'background-color': 'var(--c-border)',
+        'background-color': '#e5e7eb',
         display: 'inline-block',
       },
     });
@@ -205,13 +205,13 @@
       'section-header': { tw: 'text-center mb-16' },
       'feature-card': {
         tw: 'p-8 rounded-2xl bg-white border border-gray-100 transition-all',
-        'box-shadow': 'var(--shadow-card)',
-        '&:hover': { transform: 'translateY(-3px)', 'box-shadow': 'var(--shadow-hover)' },
+        'box-shadow': '0 2px 12px rgba(0,0,0,.07)',
+        '&:hover': { transform: 'translateY(-3px)', 'box-shadow': '0 8px 32px rgba(0,0,0,.12)' },
       },
       'feature-icon': {
         tw: 'flex items-center justify-center rounded-xl text-2xl mb-5',
         width: '52px', height: '52px',
-        'background': 'linear-gradient(135deg, var(--c-brand) 0%, #a78bfa 100%)',
+        'background': 'linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%)',
       },
       'feature-title': { tw: 'text-lg font-bold text-gray-900 mb-2' },
       'feature-body':  { tw: 'text-sm text-gray-500 leading-relaxed' },
@@ -269,7 +269,7 @@
     register.all({
       'testimonial-card': {
         tw: 'p-8 rounded-2xl bg-white border border-gray-100',
-        'box-shadow': 'var(--shadow-card)',
+        'box-shadow': '0 2px 12px rgba(0,0,0,.07)',
       },
       'testimonial-text': {
         tw: 'text-gray-700 leading-relaxed mb-6',
@@ -279,7 +279,7 @@
         tw: 'rounded-full flex items-center justify-center text-white font-bold flex-shrink-0',
         width: '40px', height: '40px',
         'font-size': '14px',
-        'background': 'linear-gradient(135deg, var(--c-brand) 0%, #a78bfa 100%)',
+        'background': 'linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%)',
       },
       'stars': { tw: 'flex gap-1 text-amber-400 mb-4', 'font-size': '14px' },
     });
@@ -290,12 +290,12 @@
     register.all({
       'pricing-card': {
         tw: 'p-8 rounded-2xl border border-gray-200 bg-white transition-all',
-        'box-shadow': 'var(--shadow-card)',
+        'box-shadow': '0 2px 12px rgba(0,0,0,.07)',
       },
       'pricing-card-featured': {
         tw: 'p-8 rounded-2xl text-white relative',
         'background': 'linear-gradient(145deg, #6d28d9 0%, #5b21b6 100%)',
-        'box-shadow': '0 16px 48px var(--c-brand-glow)',
+        'box-shadow': '0 16px 48px rgba(124,58,237,.35)',
       },
       'pricing-price': {
         tw: 'font-black text-gray-900 leading-none',
@@ -323,7 +323,7 @@
       'cta-section': {
         tw: 'relative rounded-3xl overflow-hidden text-center py-24 px-8',
         'background': 'linear-gradient(135deg, #6d28d9 0%, #7c3aed 50%, #4f46e5 100%)',
-        'box-shadow': 'var(--shadow-glow)',
+        'box-shadow': '0 0 40px rgba(124,58,237,.2)',
       },
       'cta-glow': {
         tw: 'absolute inset-0 pointer-events-none',
@@ -356,7 +356,7 @@
       'tag': {
         tw: 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold',
         'background-color': 'rgba(124,58,237,.1)',
-        color: 'var(--c-brand)',
+        color: '#7c3aed',
       },
       'tag-green':  { tw: 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700' },
       'tag-blue':   { tw: 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700' },
