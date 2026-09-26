@@ -3,7 +3,7 @@
 // Definitions by: Bigetion
 
 // v4 unified API re-exports
-export { tw, tws, cx, createSSRCollector } from './v4';
+export { tw, tws, cx, createSSRCollector, MixedStyleValue, RawCSSProperties } from './v4';
 
 // ============================================================================
 // Environment Detection
@@ -551,9 +551,7 @@ export interface ThemeTokens {
 /**
  * Basic twsxClassName config (returns className string)
  */
-export interface TwsxClassNameBasicConfig {
-  /** Base Tailwind classes */
-  _?: string;
+export type TwsxClassNameBasicConfig = MixedStyleValue & {
   /** Component name (for readable className) */
   name?: string;
   /** Custom prefix (default: "twsx") */
@@ -580,17 +578,12 @@ export interface TwsxClassNameBasicConfig {
   leaveFrom?: string;
   /** Leave to state */
   leaveTo?: string;
-  /** Pseudo-class shorthands, responsive, and custom selectors */
-  [key: string]: string | TwsxClassNameBasicConfig | AnimationPreset | AnimationConfig | boolean | number | undefined | any;
-}
+};
 
 /**
- * Variant value - string classes or nested object with pseudo states
+ * Variant value — Tailwind string or mixed Tailwind + raw CSS object
  */
-export type TwsxClassNameVariantValue = string | {
-  _?: string;
-  [key: string]: string | undefined;
-};
+export type TwsxClassNameVariantValue = string | MixedStyleValue;
 
 /**
  * Variants definition for twsxClassName
@@ -638,8 +631,8 @@ export interface TwsxClassNameVariantsConfig<V extends TwsxClassNameVariantsDefi
   inject?: boolean;
   /** Extend from another config */
   extend?: TwsxClassNameVariantFunction<any> | TwsxClassNameVariantsConfig<any>;
-  /** Base Tailwind classes or nested object */
-  base?: string | { _?: string; [key: string]: string | undefined };
+  /** Base styles — Tailwind string or mixed Tailwind + raw CSS object */
+  base?: string | MixedStyleValue;
   /** Variant definitions */
   variants: V;
   /** Compound variants */
@@ -654,7 +647,7 @@ export interface TwsxClassNameVariantsConfig<V extends TwsxClassNameVariantsDefi
  * Slots definition for multi-part components
  */
 export interface TwsxClassNameSlotsDefinition {
-  [slotName: string]: string | { _?: string; [key: string]: string | undefined };
+  [slotName: string]: string | MixedStyleValue;
 }
 
 /**
