@@ -145,10 +145,11 @@ function _flushRegistry() {
 
 function _inject(key, css) {
   if (!css) return;
-  _registry.set(key, css);
-  if (IS_BROWSER) {
-    _flushRegistry();
-  } else if (isSSRCollecting()) {
+  // Merge: if key already exists, append — never silently override
+  const existing = _registry.get(key);
+  _registry.set(key, existing ? existing + '\n' + css : css);
+  _flushRegistry();
+  if (!IS_BROWSER && isSSRCollecting()) {
     collectSSRCSS(css);
   }
 }
