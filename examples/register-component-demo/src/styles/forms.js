@@ -18,7 +18,7 @@ register('input-field', {
     sm:    { padding: '6px 10px',  'font-size': '13px' },
     md:    { padding: '8px 12px',  'font-size': '14px' },
     lg:    { padding: '11px 14px', 'font-size': '15px' },
-    error: { 'border-color': 'var(--c-danger)', '&:focus': { 'box-shadow': '0 0 0 3px rgba(220,38,38,.2)' } },
+    error: { 'border-color': 'var(--c-danger)', '&:focus': { 'border-color': 'var(--c-danger)', 'box-shadow': '0 0 0 3px rgba(220,38,38,.2)' } },
   },
 });
 
@@ -38,7 +38,7 @@ register('textarea-field', {
     '&::placeholder': { color: 'var(--c-text-light)' },
   },
   modifiers: {
-    error: { 'border-color': 'var(--c-danger)' },
+    error: { 'border-color': 'var(--c-danger)', '&:focus': { 'border-color': 'var(--c-danger)', 'box-shadow': '0 0 0 3px rgba(220,38,38,.2)' } },
   },
 });
 
