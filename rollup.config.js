@@ -115,12 +115,14 @@ export default [
     plugins: createPlugins({
       copyPlugin: [
         { src: 'types/index.d.ts', dest: 'dist/' },
+        { src: 'types/v4.d.ts', dest: 'dist/' },
         { src: 'types/core', dest: 'dist/' },
         { src: 'types/tokens', dest: 'dist/' },
         { src: 'types/react', dest: 'dist/' },
         { src: 'types/animations', dest: 'dist/' },
         { src: 'types/className', dest: 'dist/' },
         { src: 'types/cx.d.ts', dest: 'dist/' },
+        { src: 'types/register.d.ts', dest: 'dist/register/', rename: 'index.d.ts' },
       ],
       visualizer: process.env.ANALYZE ? { filename: 'stats/main-esm.html' } : false,
     }),
