@@ -8,6 +8,7 @@ This directory contains the real examples included in the repository.
 - `react-demo/` — a full React playground showcasing components, variants, slots, theme tokens, and runtime styling.
 - `performance/` — performance benchmark and cache demonstration.
 - `twsx-classname-app/` — Vite-based `tw()` v4 demo with named classes, variants, slots, and theme switching.
+- `twsx-stackblitz-starter/` — Tailmantic-inspired starter concept adapted to the compact `tailwind-to-style` object style.
 
 ## Run the examples
 
@@ -27,6 +28,13 @@ npm run dev
 ### tw() v4 demo
 ```bash
 cd examples/twsx-classname-app
+npm install
+npm run dev
+```
+
+### twsx StackBlitz-style concept
+```bash
+cd examples/twsx-stackblitz-starter
 npm install
 npm run dev
 ```

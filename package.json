@@ -50,6 +50,16 @@
       "import": "./dist/register/index.esm.js",
       "require": "./dist/register/index.cjs"
     },
+    "./build": {
+      "types": "./dist/build/index.d.ts",
+      "import": "./dist/build/index.esm.js",
+      "require": "./dist/build/index.cjs"
+    },
+    "./vite": {
+      "types": "./dist/vite/index.d.ts",
+      "import": "./dist/vite/index.esm.js",
+      "require": "./dist/vite/index.cjs"
+    },
     "./preflight.css": "./preflight.css",
     "./package.json": "./package.json"
   },
@@ -131,8 +141,10 @@
       "optional": true
     }
   },
+  "dependencies": {
+    "@babel/core": "^7.27.4"
+  },
   "devDependencies": {
-    "@babel/core": "^7.27.4",
     "@babel/plugin-proposal-optional-chaining": "^7.21.0",
     "@babel/preset-env": "^7.27.2",
     "@babel/preset-react": "^7.28.5",

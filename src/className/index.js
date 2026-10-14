@@ -919,6 +919,8 @@ function generateBasicClassName(config) {
     className = `${prefix}-${configHash.slice(0, hashLength)}`;
   }
 
+  if (!inject) return className;
+
   if (classNameCache.has(configHash)) {
     const cached = classNameCache.get(configHash);
     if (inject) injectCSS(className, cssCache.get(configHash));
@@ -1039,7 +1041,7 @@ function createVariants(config) {
   const variantStyles = new Map();
 
   // Generate base styles
-  if (base) {
+  if (inject && base) {
     const baseSelector = `.${baseClassName}`;
     const styleObj = buildStyleObj(base, baseSelector);
     const baseCss = twsx(styleObj, { inject: false });
@@ -1051,28 +1053,36 @@ function createVariants(config) {
     for (const [optionKey, optionValue] of Object.entries(variantOptions)) {
       const variantClassName = `${baseClassName}--${variantKey}-${optionKey}`;
       const selector = `.${variantClassName}`;
+      let styleObj;
 
-      const styleObj = buildStyleObj(optionValue, selector);
-
-      const css = twsx(styleObj, { inject: false });
-      variantStyles.set(`${variantKey}:${optionKey}`, {
-        className: variantClassName,
-        css,
-      });
+      if (inject) {
+        styleObj = buildStyleObj(optionValue, selector);
+        const css = twsx(styleObj, { inject: false });
+        variantStyles.set(`${variantKey}:${optionKey}`, {
+          className: variantClassName,
+          css,
+        });
+      } else {
+        variantStyles.set(`${variantKey}:${optionKey}`, { className: variantClassName });
+      }
       
       // Generate responsive variant styles if enabled
       if (responsiveVariants.includes(variantKey)) {
         for (const [bp, bpValue] of Object.entries(BREAKPOINTS)) {
           const respClassName = `${baseClassName}--${bp}-${variantKey}-${optionKey}`;
-          const respSelector = `.${respClassName}`;
-          const respStyleObj = {
-            [`@media (min-width: ${bpValue})`]: { [respSelector]: styleObj[selector] }
-          };
-          const respCss = twsx(respStyleObj, { inject: false });
-          variantStyles.set(`${variantKey}:${optionKey}:${bp}`, {
-            className: respClassName,
-            css: respCss,
-          });
+          if (inject) {
+            const respSelector = `.${respClassName}`;
+            const respStyleObj = {
+              [`@media (min-width: ${bpValue})`]: { [respSelector]: styleObj[selector] }
+            };
+            const respCss = twsx(respStyleObj, { inject: false });
+            variantStyles.set(`${variantKey}:${optionKey}:${bp}`, {
+              className: respClassName,
+              css: respCss,
+            });
+          } else {
+            variantStyles.set(`${variantKey}:${optionKey}:${bp}`, { className: respClassName });
+          }
         }
       }
     }
@@ -1086,13 +1096,17 @@ function createVariants(config) {
 
     if (compoundClass) {
       const compoundClassName = `${baseClassName}--compound-${i}`;
-      const selector = `.${compoundClassName}`;
-      const css = twsx({ [selector]: processTokens(compoundClass) }, { inject: false });
-      variantStyles.set(`__compound__:${i}`, {
-        className: compoundClassName,
-        conditions,
-        css,
-      });
+      if (inject) {
+        const selector = `.${compoundClassName}`;
+        const css = twsx({ [selector]: processTokens(compoundClass) }, { inject: false });
+        variantStyles.set(`__compound__:${i}`, {
+          className: compoundClassName,
+          conditions,
+          css,
+        });
+      } else {
+        variantStyles.set(`__compound__:${i}`, { className: compoundClassName, conditions });
+      }
     }
   }
 
@@ -1230,11 +1244,14 @@ function createSlots(config) {
     const slotClassName = `${componentName}__${slotName}`;
     const selector = `.${slotClassName}`;
 
-    const styleObj = buildStyleObj(slotStyles, selector);
-
-    const css = twsx(styleObj, { inject: false });
-    slotData.set(slotName, { className: slotClassName, css });
-    allCss += css + "\n";
+    if (inject) {
+      const styleObj = buildStyleObj(slotStyles, selector);
+      const css = twsx(styleObj, { inject: false });
+      slotData.set(slotName, { className: slotClassName, css });
+      allCss += css + "\n";
+    } else {
+      slotData.set(slotName, { className: slotClassName });
+    }
   }
 
   // Generate variant styles for each slot
@@ -1257,12 +1274,15 @@ function createSlots(config) {
             const variantClassName = `${componentName}__${slotName}--${variantKey}-${optionKey}`;
             const selector = `.${variantClassName}`;
 
-            const styleObj = buildStyleObj(slotStyles, selector);
-
-            const css = twsx(styleObj, { inject: false });
             const key = `${variantKey}:${optionKey}:${slotName}`;
-            variantSlotStyles.set(key, { className: variantClassName, css });
-            allCss += css + "\n";
+            if (inject) {
+              const styleObj = buildStyleObj(slotStyles, selector);
+              const css = twsx(styleObj, { inject: false });
+              variantSlotStyles.set(key, { className: variantClassName, css });
+              allCss += css + "\n";
+            } else {
+              variantSlotStyles.set(key, { className: variantClassName });
+            }
           }
         }
       }
@@ -1281,20 +1301,26 @@ function createSlots(config) {
         const compoundClassName = `${componentName}__${slotName}--compound-${i}`;
         const selector = `.${compoundClassName}`;
 
-        const styleObj = buildStyleObj(slotValue, selector);
-        const css = twsx(styleObj, { inject: false });
-        
         const conditions = {};
         for (const [k, v] of Object.entries(rest)) {
           if (!slots[k]) conditions[k] = v;
         }
-        
-        variantSlotStyles.set(`__compound__:${i}:${slotName}`, {
-          className: compoundClassName,
-          conditions,
-          css,
-        });
-        allCss += css + "\n";
+
+        if (inject) {
+          const styleObj = buildStyleObj(slotValue, selector);
+          const css = twsx(styleObj, { inject: false });
+          variantSlotStyles.set(`__compound__:${i}:${slotName}`, {
+            className: compoundClassName,
+            conditions,
+            css,
+          });
+          allCss += css + "\n";
+        } else {
+          variantSlotStyles.set(`__compound__:${i}:${slotName}`, {
+            className: compoundClassName,
+            conditions,
+          });
+        }
       }
     }
   }
@@ -1599,6 +1625,8 @@ twsxClassName.clearCache = function() {
   classNameCache.clear();
   cssCache.clear();
   styleRegistry.clear();
+  atomicCache.clear();
+  atomicStyleRegistry.clear();
 
   if (IS_BROWSER) {
     const styleTag = document.getElementById("twsx-classname-style");
@@ -1720,6 +1748,10 @@ function generateAtomicClass(utilityClass) {
     .replace(/\[/g, "_")
     .replace(/\]/g, "_")
     .replace(/\./g, "_");
+
+  if (!globalConfig.inject) {
+    return safeClassName;
+  }
   
   // Build CSS selector with modifiers
   let selector = `.${safeClassName.replace(/([[\]_.])/g, "\\$1")}`;
@@ -1755,7 +1787,9 @@ function generateAtomicClass(utilityClass) {
   
   // Store and inject
   atomicStyleRegistry.set(utilityClass, { className: safeClassName, css: cssRule });
-  injectCSS(safeClassName, cssRule);
+  if (globalConfig.inject) {
+    injectCSS(safeClassName, cssRule);
+  }
   
   return safeClassName;
 }

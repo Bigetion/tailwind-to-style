@@ -10,6 +10,7 @@
  */
 
 import { twsxClassName, tw as twAtomic } from '../className/index.js';
+import { twsx as twsxCore } from '../index.js';
 import { tws } from '../core/tws.js';
 import { cx } from '../cx.js';
 import { createSSRCollector } from '../utils/ssr.js';
@@ -64,14 +65,72 @@ function tw(classesOrConfig, classesIfNamed) {
 // tw.* utility methods
 // ============================================================================
 
+function minifyCssString(css) {
+  if (!css || typeof css !== 'string') return '';
+
+  return css
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/\s+/g, ' ')
+    .replace(/\s*([{}:;,])\s*/g, '$1')
+    .replace(/;}/g, '}')
+    .trim();
+}
+
 /**
- * Extract all generated CSS as a string (useful for SSR).
- * Creates a temporary SSR collector and returns accumulated styles.
- * @returns {string} All injected CSS
+ * Extract all generated CSS as a string for SSR or production export.
+ * Prefer the class-name registry because it contains the CSS emitted by tw()
+ * calls through the unified runtime API.
+ * @param {Object} [options]
+ * @param {boolean} [options.minify]
+ * @returns {string} CSS content
  */
-tw.extractCSS = function extractCSS() {
-  const collector = createSSRCollector();
-  return collector.extract();
+tw.extractCSS = function extractCSS(options = {}) {
+  const { minify = false } = options;
+
+  const css = typeof twsxClassName.getAllCSS === 'function'
+    ? twsxClassName.getAllCSS()
+    : '';
+
+  return minify ? minifyCssString(css) : css;
+};
+
+/**
+ * Build a static CSS file from the runtime-generated styles.
+ * Keeps the compact tw() authoring model but allows a production export step.
+ */
+tw.build = async function build(options = {}) {
+  const { outFile, minify = false, inject = false } = options;
+
+  tw.runtime({ inject: Boolean(inject) });
+  const css = tw.extractCSS({ minify });
+
+  if (outFile && typeof process !== 'undefined' && process.versions?.node) {
+    const fs = await import('node:fs/promises');
+    const path = await import('node:path');
+    await fs.mkdir(path.dirname(outFile), { recursive: true });
+    await fs.writeFile(outFile, css, 'utf8');
+  }
+
+  return css;
+};
+
+/**
+ * Runtime toggle for the unified API.
+ * Mirrors the twsx runtime behavior used by the hybrid build/extraction flow.
+ */
+tw.runtime = function runtime(options = {}) {
+  twsxCore.runtime(options);
+  if (typeof twsxClassName.config === 'function') {
+    twsxClassName.config(options);
+  }
+  return tw;
+};
+
+/**
+ * Expose SSR collection in the same shape as the hybrid runtime + extraction model.
+ */
+tw.collect = function collect(options = {}) {
+  return createSSRCollector(options);
 };
 
 /**
@@ -79,10 +138,8 @@ tw.extractCSS = function extractCSS() {
  * Useful for testing or hot-reload scenarios.
  */
 tw.clearCache = function clearCache() {
-  // twsxClassName exposes config() for global settings
-  // The caches are module-internal but we can reset by calling config
-  if (typeof twsxClassName.config === 'function') {
-    twsxClassName.config({ hash: true });
+  if (typeof twsxClassName.clearCache === 'function') {
+    twsxClassName.clearCache();
   }
 };
 

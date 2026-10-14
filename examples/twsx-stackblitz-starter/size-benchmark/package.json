@@ -1,0 +1,23 @@
+{
+  "name": "twsx-tailmantic-size-benchmark",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:tts": "vite build --config vite.tts.config.js",
+    "build:tailmantic": "vite build --config vite.tailmantic.config.js"
+  },
+  "dependencies": {
+    "@tailwindcss/postcss": "4.3.3",
+    "postcss": "8.5.28",
+    "postcss-selector-parser": "7.1.6",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "tailmantic": "file:../../../../tailmantic",
+    "tailwind-to-style": "file:../../../",
+    "tailwindcss": "4.3.3"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "4.7.0",
+    "vite": "6.4.3"
+  }
+}

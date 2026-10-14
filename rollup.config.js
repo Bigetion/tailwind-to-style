@@ -64,13 +64,20 @@ const subPathEntries = [
   { input: 'src/core/tws.js', name: 'core/tws' },
   { input: 'src/className/index.js', name: 'className/index' },
   { input: 'src/register/index.js', name: 'register/index' },
+  { input: 'src/build/index.js', name: 'build/index' },
+  { input: 'src/vite/index.js', name: 'vite/index' },
   { input: 'src/cx.js', name: 'cx' },
 ];
 
 // Generate sub-path builds (ESM + CJS for each)
 const subPathBuilds = subPathEntries.flatMap(({ input: entryInput, name }) => {
   const isReact = name.startsWith('react');
-  const external = isReact ? ['react', 'react-dom', ...NODE_EXTERNAL] : [...NODE_EXTERNAL];
+  const isVite = name === 'vite/index';
+  const external = [
+    ...(isReact ? ['react', 'react-dom'] : []),
+    ...(isVite ? ['@babel/core'] : []),
+    ...NODE_EXTERNAL,
+  ];
 
   return [
     {
@@ -121,6 +128,7 @@ export default [
         { src: 'types/react', dest: 'dist/' },
         { src: 'types/animations', dest: 'dist/' },
         { src: 'types/className', dest: 'dist/' },
+        { src: 'types/vite', dest: 'dist/' },
         { src: 'types/cx.d.ts', dest: 'dist/' },
         { src: 'types/register.d.ts', dest: 'dist/register/', rename: 'index.d.ts' },
       ],
